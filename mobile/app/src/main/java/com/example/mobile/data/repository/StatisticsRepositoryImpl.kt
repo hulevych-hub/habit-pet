@@ -13,6 +13,11 @@ class StatisticsRepositoryImpl @Inject constructor(
     override fun getStatistics(): Flow<StatisticsEntity> =
         statisticsDao.getStatistics().map { it ?: StatisticsEntity(id = 1) }
 
-    override suspend fun updateStatistics(statistics: StatisticsEntity): Int =
-        statisticsDao.updateStatistics(statistics)
+    override suspend fun updateStatistics(statistics: StatisticsEntity): Int {
+        val updatedRows = statisticsDao.updateStatistics(statistics.copy(id = 1))
+        if (updatedRows == 0) {
+            statisticsDao.insertStatistics(statistics.copy(id = 1))
+        }
+        return updatedRows
+    }
 }

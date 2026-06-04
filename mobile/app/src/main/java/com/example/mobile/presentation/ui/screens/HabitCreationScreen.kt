@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -40,6 +41,12 @@ fun HabitCreationScreen(
     onHabitCreated: () -> Unit
 ) {
     val viewModel: HabitCreationViewModel = hiltViewModel()
+    LaunchedEffect(viewModel) {
+        viewModel.habitCreated.collect {
+            onHabitCreated()
+        }
+    }
+
     HabitPetTheme {
         Scaffold(
             topBar = {
@@ -79,7 +86,7 @@ private fun HabitCreationForm(
     val error by viewModel.error.collectAsState()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -128,9 +135,6 @@ private fun HabitCreationForm(
         Button(
             onClick = {
                 viewModel.createHabit()
-                // In a real app, we'd observe navigation or success state
-                // For now, we'll call onHabitCreated after a short delay
-                // This is simplified - ideally we'd observe a UI event from ViewModel
             },
             enabled = !isLoading,
             modifier = Modifier

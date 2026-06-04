@@ -57,6 +57,16 @@ fun HabitEditScreen(
     LaunchedEffect(habitId) {
         viewModel.initialize(habitId)
     }
+    LaunchedEffect(viewModel) {
+        viewModel.habitUpdated.collect {
+            onHabitUpdated()
+        }
+    }
+    LaunchedEffect(viewModel) {
+        viewModel.habitDeleted.collect {
+            onHabitDeleted()
+        }
+    }
 
     HabitPetTheme {
         Scaffold(
@@ -152,9 +162,6 @@ private fun HabitEditForm(
             Button(
                 onClick = {
                     viewModel.updateHabit()
-                    // In a real app, we'd observe the habitUpdated flow
-                    // For simplicity, we'll call the callback directly
-                    onHabitUpdated()
                 },
                 enabled = !isLoading,
                 modifier = Modifier
@@ -175,7 +182,6 @@ private fun HabitEditForm(
             Button(
                 onClick = {
                     viewModel.deleteHabit()
-                    onHabitDeleted()
                 },
                 modifier = Modifier
                     .weight(1f)

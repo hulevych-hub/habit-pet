@@ -101,10 +101,10 @@ class HabitCreationViewModel @Inject constructor(
                 )
 
                 // Save to database
-                val habitId = habitRepository.addHabit(habit)
+                habitRepository.addHabit(habit)
 
                 // Notify habit creation
-                _habitCreated.tryEmit(Unit)
+                _habitCreated.emit(Unit)
 
             } catch (e: Exception) {
                 _error.value = e.message

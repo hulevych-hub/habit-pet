@@ -59,6 +59,11 @@ fun HabitDetailScreen(
     LaunchedEffect(habitId) {
         viewModel.initialize(habitId)
     }
+    LaunchedEffect(viewModel) {
+        viewModel.navigateBack.collect {
+            onNavigateUp()
+        }
+    }
 
     HabitPetTheme {
         Scaffold(
@@ -334,7 +339,7 @@ private fun TimerCompletion(
         // Show completion button if timer has reached minimum duration
         if (isTimerRunning && (elapsedSeconds / 60) >= habit.minimumDurationMinutes) {
             Button(
-                onClick = {/* Completion would be handled in stopTimer */},
+                onClick = onStopTimer,
                 enabled = true,
                 modifier = Modifier
                     .fillMaxWidth()

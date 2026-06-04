@@ -3,6 +3,7 @@ package com.example.mobile.data.local.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.mobile.data.local.entities.HabitCompletionEntity
@@ -16,7 +17,13 @@ interface HabitCompletionDao {
     @Query("SELECT * FROM habit_completions WHERE habitId = :habitId AND date = :date")
     fun getCompletionForHabitOnDate(habitId: Long, date: Long): Flow<HabitCompletionEntity?>
 
-    @Insert
+    @Query("SELECT COUNT(*) FROM habit_completions WHERE date = :date")
+    suspend fun getCompletionCountOnDate(date: Long): Int
+
+    @Query("SELECT COUNT(DISTINCT date) FROM habit_completions")
+    suspend fun getActiveDayCount(): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCompletion(completion: HabitCompletionEntity): Long
 
     @Update

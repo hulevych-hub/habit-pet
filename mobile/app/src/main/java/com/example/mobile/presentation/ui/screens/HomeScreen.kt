@@ -1,9 +1,28 @@
 package com.example.mobile.presentation.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,14 +30,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobile.data.local.entities.HabitEntity
 
 @Composable
-fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
+fun HomeScreen(
+    onNavigateToHabits: () -> Unit,
+    onNavigateToHabitDetail: (Long) -> Unit,
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
+    val pet = uiState.pet
+    val nextLevelXp = xpRequiredForNextLevel(pet.level)
+    val currentLevelXp = xpIntoCurrentLevel(pet.xp)
 
     Column(
         modifier = Modifier
@@ -27,61 +51,80 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Pet Scene (placeholder)
         Box(
             modifier = Modifier
                 .size(200.dp)
-                .background(Color.LightGray, CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+            contentAlignment = Alignment.Center
         ) {
-            Text("Pet Scene", color = Color.Black)
+            Text(
+                text = stageName(pet.evolutionStage),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = MaterialTheme.typography.titleLarge
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Streak
-        Text("🔥 ${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
-
+        Text("${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Pet Info
-        Text("Level 0 Egg", style = MaterialTheme.typography.titleMedium)
-
+        Text("Level ${pet.level} ${stageName(pet.evolutionStage)}", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(4.dp))
-
-        // XP Progress
-        Text("XP: 0 / 100", style = MaterialTheme.typography.bodyLarge)
+        Text("XP: $currentLevelXp / $nextLevelXp", style = MaterialTheme.typography.bodyLarge)
+        LinearProgressIndicator(
+            progress = { (currentLevelXp.toFloat() / nextLevelXp.toFloat()).coerceIn(0f, 1f) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Today's Habits
-        Text("Today's Habits:", style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // For now, showing static habits - in a real implementation, we'd iterate through uiState.habits
-            HabitItem("Skincare", completed = true)
-            HabitItem("Reading", completed = true)
-            HabitItem("Workout", completed = false)
+            Text("Today's Habits", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(onClick = onNavigateToHabits) {
+                Text("Manage")
+            }
+        }
+
+        if (uiState.habits.isEmpty()) {
+            Button(onClick = onNavigateToHabits) {
+                Text("Create your first habit")
+            }
+        } else {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                uiState.habits.forEach { habit ->
+                    HomeHabitItem(
+                        habit = habit,
+                        completed = uiState.completedToday[habit.id] == true,
+                        onClick = { onNavigateToHabitDetail(habit.id) }
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun HabitItem(name: String, completed: Boolean) {
-    Column(
+private fun HomeHabitItem(
+    habit: HabitEntity,
+    completed: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(8.dp)
             .background(
-                if (completed) Color.Green.copy(alpha = 0.2f) else Color.Red.copy(alpha = 0.2f),
+                if (completed) Color.Green.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant,
                 shape = MaterialTheme.shapes.medium
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
+            )
+            .clickable(onClick = onClick)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
@@ -89,6 +132,33 @@ private fun HabitItem(name: String, completed: Boolean) {
             tint = if (completed) Color.Green else Color.Red,
             modifier = Modifier.size(24.dp)
         )
-        Text(name)
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            Text(habit.name)
+            Text(
+                text = "${habit.type} | Streak ${habit.currentStreak}",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
     }
+}
+
+private fun stageName(stage: Int): String = when (stage) {
+    1 -> "Hatchling"
+    2 -> "Young Dragon"
+    3 -> "Adult Dragon"
+    4 -> "Ancient Dragon"
+    else -> "Egg"
+}
+
+private fun xpRequiredForNextLevel(level: Int): Long = 100L + (level * 50L)
+
+private fun xpIntoCurrentLevel(totalXp: Long): Long {
+    var level = 0
+    var remainingXp = totalXp
+    while (remainingXp >= xpRequiredForNextLevel(level)) {
+        remainingXp -= xpRequiredForNextLevel(level)
+        level++
+    }
+    return remainingXp
 }

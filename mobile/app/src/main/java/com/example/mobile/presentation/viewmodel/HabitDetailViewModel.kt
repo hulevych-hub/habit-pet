@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.delay
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -142,6 +143,7 @@ class HabitDetailViewModel @Inject constructor(
 
                 // Save completion
                 habitCompletionRepository.addCompletion(completion)
+                refreshCompletions(habitId)
 
                 // Notify completion
                 _habitCompleted.tryEmit(Unit)
@@ -159,25 +161,17 @@ class HabitDetailViewModel @Inject constructor(
 
     // Start timer habit
     fun startTimerHabit(habitId: Long) {
-        // Check if already completed today
-        if (isAlreadyCompletedToday(habitId)) {
-            _error.value = "Habit already completed today"
-            return
-        }
-
-        _isTimerRunning.value = true
-        _elapsedSeconds.value = 0
-
-        // Start timer loop
         viewModelScope.launch {
+            if (isAlreadyCompletedToday(habitId)) {
+                _error.value = "Habit already completed today"
+                return@launch
+            }
+
+            _isTimerRunning.value = true
+            _elapsedSeconds.value = 0
             while (_isTimerRunning.value) {
-                try {
-                    Thread.sleep(1000) // Update every second
-                    _elapsedSeconds.value += 1
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    break
-                }
+                delay(1000)
+                _elapsedSeconds.value += 1
             }
         }
     }
@@ -209,6 +203,7 @@ class HabitDetailViewModel @Inject constructor(
 
                     // Save completion
                     habitCompletionRepository.addCompletion(completion)
+                    refreshCompletions(habitId)
 
                     // Notify completion
                     _habitCompleted.tryEmit(Unit)
@@ -234,11 +229,11 @@ class HabitDetailViewModel @Inject constructor(
     }
 
     // Check if habit was already completed today
-    private fun isAlreadyCompletedToday(habitId: Long): Boolean {
-        // This is a synchronous check - in a real implementation we'd collect the flow
-        // For simplicity, we'll return false and rely on the repository to prevent duplicates
-        // A better approach would be to observe the completion flow
-        return false
+    private suspend fun isAlreadyCompletedToday(habitId: Long): Boolean {
+        val todayStart = getDayStart(System.currentTimeMillis())
+        return habitCompletionRepository
+            .getCompletionForHabitOnDate(habitId, todayStart)
+            .firstOrNull() != null
     }
 
     // Get completion status for today
@@ -257,5 +252,13 @@ class HabitDetailViewModel @Inject constructor(
     fun resetTimer() {
         _isTimerRunning.value = false
         _elapsedSeconds.value = 0
+    }
+
+    private suspend fun refreshCompletions(habitId: Long) {
+        val thirtyDaysAgo = getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
+        _completions.value = habitCompletionRepository
+            .getCompletionsForHabit(habitId, thirtyDaysAgo, System.currentTimeMillis())
+            .firstOrNull()
+            ?: emptyList()
     }
 }

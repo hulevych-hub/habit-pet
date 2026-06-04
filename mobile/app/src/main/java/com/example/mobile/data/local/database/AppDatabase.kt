@@ -20,7 +20,7 @@ import com.example.mobile.data.local.entities.StatisticsEntity
         JournalEntryEntity::class,
         StatisticsEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

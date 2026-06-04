@@ -1,9 +1,13 @@
 package com.example.mobile.data.local.entities
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "habit_completions")
+@Entity(
+    tableName = "habit_completions",
+    indices = [Index(value = ["habitId", "date"], unique = true)]
+)
 data class HabitCompletionEntity(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     var habitId: Long = 0,

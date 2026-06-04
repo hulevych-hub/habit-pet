@@ -2,11 +2,24 @@ package com.example.mobile.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -24,8 +37,22 @@ import com.example.mobile.ui.theme.HabitPetTheme
 @Composable
 fun HabitPetNavGraph(navController: NavHostController = rememberNavController()) {
     HabitPetTheme {
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = backStackEntry?.destination?.route
+
         Scaffold(
-            // We'll add a bottom navigation bar later
+            bottomBar = {
+                HabitPetBottomBar(
+                    currentRoute = currentRoute,
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            popUpTo("home") { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
         ) { innerPadding ->
             NavHost(
                 navController = navController,
@@ -34,7 +61,12 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                composable("home") { HomeScreen() }
+                composable("home") {
+                    HomeScreen(
+                        onNavigateToHabits = { navController.navigate("habits") },
+                        onNavigateToHabitDetail = { habitId -> navController.navigate("habitDetail/$habitId") }
+                    )
+                }
                 composable("habits") { HabitsScreen(navController = navController) }
                 composable("habitCreation") {
                     HabitCreationScreen(
@@ -68,6 +100,37 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
                 composable("rewards") { RewardsScreen() }
                 composable("statistics") { StatisticsScreen() }
             }
+        }
+    }
+}
+
+private data class BottomDestination(
+    val route: String,
+    val label: String,
+    val icon: ImageVector
+)
+
+@Composable
+private fun HabitPetBottomBar(
+    currentRoute: String?,
+    onNavigate: (String) -> Unit
+) {
+    val destinations = listOf(
+        BottomDestination("home", "Home", Icons.Default.Home),
+        BottomDestination("habits", "Habits", Icons.Default.Checklist),
+        BottomDestination("pet", "Pet", Icons.Default.Pets),
+        BottomDestination("rewards", "Rewards", Icons.Default.CardGiftcard),
+        BottomDestination("statistics", "Stats", Icons.Default.BarChart)
+    )
+
+    NavigationBar {
+        destinations.forEach { destination ->
+            NavigationBarItem(
+                selected = currentRoute == destination.route,
+                onClick = { onNavigate(destination.route) },
+                icon = { Icon(destination.icon, contentDescription = destination.label) },
+                label = { Text(destination.label) }
+            )
         }
     }
 }
