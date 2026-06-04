@@ -1,0 +1,119 @@
+package com.example.mobile.presentation.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
+import com.example.mobile.domain.repository.InventoryItemRepository
+import com.example.mobile.data.local.entities.InventoryItemEntity
+import dagger.hilt.android.lifecycle.HiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class RewardsViewModel @Inject constructor(
+    private val inventoryItemRepository: InventoryItemRepository
+) : ViewModel() {
+    val hats = inventoryItemRepository.getItemsByType("HAT")
+    val glasses = inventoryItemRepository.getItemsByType("GLASSES")
+    val scarves = inventoryItemRepository.getItemsByType("SCARF")
+    val backgrounds = inventoryItemRepository.getItemsByType("BACKGROUND")
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun RewardsScreen(rewardsViewModel: RewardsViewModel = hiltViewModel()) {
+    val hats by rewardsViewModel.hats.collectAsState(initial = emptyList())
+    val glasses by rewardsViewModel.glasses.collectAsState(initial = emptyList())
+    val scarves by rewardsViewModel.scarves.collectAsState(initial = emptyList())
+    val backgrounds by rewardsViewModel.backgrounds.collectAsState(initial = emptyList())
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(title = { Text("Rewards") })
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Hats Section
+            Text("Hats", style = MaterialTheme.typography.titleLarge)
+            hats.forEach { item ->
+                RewardItem(item)
+            }
+
+            Divider()
+
+            // Glasses Section
+            Text("Glasses", style = MaterialTheme.typography.titleLarge)
+            glasses.forEach { item ->
+                RewardItem(item)
+            }
+
+            Divider()
+
+            // Scarves Section
+            Text("Scarves", style = MaterialTheme.typography.titleLarge)
+            scarves.forEach { item ->
+                RewardItem(item)
+            }
+
+            Divider()
+
+            // Backgrounds Section
+            Text("Backgrounds", style = MaterialTheme.typography.titleLarge)
+            backgrounds.forEach { item ->
+                RewardItem(item)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RewardItem(item: InventoryItemEntity) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Placeholder for image
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color.LightGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.Image, contentDescription = "Item image")
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column {
+            Text(item.name)
+            Text("${item.price} coins", style = MaterialTheme.typography.bodySmall)
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = { },
+            enabled = item.isUnlocked
+        ) {
+            Text(if (item.isUnlocked) "Equipped" else "Equip")
+        }
+    }
+}

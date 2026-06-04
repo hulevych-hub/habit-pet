@@ -1,0 +1,38 @@
+Read CLAUDE.md.
+
+If PROJECT_STATE.md exists, read it. Otherwise create it before finishing.
+
+Implement Phase 3. You can read PHASE3.md for details.
+
+Requirements:
+
+* Extend the existing implementation.
+* Do not redesign the architecture.
+* Do not refactor unrelated code.
+* Do not replace working systems.
+* Preserve existing functionality.
+* Follow all constraints from CLAUDE.md.
+
+Output mode:
+
+* Silent implementation.
+* Do not narrate actions.
+* Do not print code unless necessary.
+* Do not print logs.
+* Do not print stack traces.
+* Do not explain routine changes.
+
+Before finishing:
+
+1. Run the appropriate build/tests.
+2. Fix any compilation errors introduced by this phase.
+3. Update PROJECT_STATE.md.
+4. Ensure existing functionality still works.
+
+At completion provide only:
+
+1. Features implemented
+2. Files created
+3. Files modified
+4. Any blocking issues
+5. Recommended next step

@@ -1,0 +1,865 @@
+# PROJECT: Habit Pet - Android MVP (Version 1)
+
+You are a senior Android engineer, Kotlin architect, UI/UX designer, game systems designer, and product manager.
+
+Your task is to design and implement a complete Android application from scratch called **Habit Pet**.
+
+The project must be production-quality, cleanly architected, and fully runnable in Android Studio.
+
+Build a complete working application.
+
+Use production-quality architecture and implementations.
+
+Placeholder visual assets are acceptable when required.
+
+---
+
+# PRODUCT VISION
+
+Habit Pet is not a habit tracker.
+
+Habit Pet is a virtual companion game where users maintain real-life habits in order to help a virtual pet grow and evolve.
+
+The emotional focus is the pet.
+
+The habit tracking system exists only to support the pet progression system.
+
+The app must feel:
+
+* Warm
+* Rewarding
+* Motivating
+* Cute
+* Addictive in a positive way
+* Never punishing
+
+Users should feel emotionally attached to their pet.
+
+---
+
+# MVP SCOPE
+
+This is Version 1.
+
+Requirements:
+
+* Android only
+* Kotlin
+* Jetpack Compose
+* Material 3
+* Room Database
+* Local storage only
+* No login
+* No cloud sync
+* No backend
+* No internet required
+* Offline-first
+
+---
+
+# TECH STACK
+
+Use:
+
+* Kotlin
+* Jetpack Compose
+* MVVM
+* Room
+* Navigation Compose
+* Kotlin Coroutines
+* StateFlow
+* Repository Pattern
+* Material 3
+
+Architecture:
+
+presentation/
+domain/
+data/
+
+Follow clean architecture principles.
+
+---
+
+# APP NAME
+
+Habit Pet
+
+---
+
+# CORE GAME LOOP
+
+User completes habits.
+
+Habits generate XP.
+
+XP grows the pet.
+
+Pet evolution unlocks rewards.
+
+Rewards encourage consistency.
+
+Consistency creates streaks.
+
+Streaks provide additional rewards.
+
+---
+
+# MAIN SCREENS
+
+## 1. Home Screen
+
+This is the primary screen.
+
+It must display:
+
+* Pet scene
+* Current global streak
+* Pet level
+* XP progress
+* Today's habits
+
+Layout priority:
+
+1. Pet
+2. Streak
+3. XP
+4. Habits
+
+The pet should occupy most of the screen.
+
+Example:
+
+[ Pet Scene ]
+
+🔥 12 Day Streak
+
+Level 5 Dragon
+
+XP: 420 / 500
+
+Today's Habits:
+✓ Skincare
+✓ Reading
+○ Workout
+
+---
+
+## 2. Habits Screen
+
+List of habits.
+
+Display:
+
+* Name
+* Current streak
+* Type
+* Completion status
+
+Actions:
+
+* Create habit
+* Edit habit
+* Delete habit
+
+---
+
+## 3. Pet Screen
+
+Dedicated pet page.
+
+Displays:
+
+* Large pet
+* Evolution stage
+* Level
+* XP
+* Equipped accessories
+
+Actions:
+
+* Change accessory
+* Change background
+
+---
+
+## 4. Rewards Screen
+
+Displays:
+
+Unlocked:
+
+* Hats
+* Glasses
+* Scarves
+* Backgrounds
+
+User can equip items.
+
+---
+
+## 5. Statistics Screen
+
+Display:
+
+Current streak
+
+Best streak
+
+Total completions
+
+Total XP
+
+Days active
+
+Total habits completed
+
+Pet age
+
+---
+
+# HABIT SYSTEM
+
+Users can create habits.
+
+Fields:
+
+* id
+* name
+* icon
+* type
+* minimumDurationMinutes
+
+Habit types:
+
+1. CHECKBOX
+2. TIMER
+
+---
+
+# CHECKBOX HABITS
+
+Examples:
+
+* Skincare
+* Vitamins
+* Make Bed
+
+User presses:
+
+COMPLETE
+
+Done.
+
+---
+
+# TIMER HABITS
+
+Examples:
+
+* Workout
+* Reading
+* Study
+
+Flow:
+
+Press Start
+
+Timer begins
+
+Press Finish
+
+If elapsed time >= minimum duration:
+
+Complete habit
+
+Award XP
+
+Otherwise:
+
+Display remaining time needed
+
+---
+
+# DAILY COMPLETION
+
+Only one completion per habit per day.
+
+Prevent duplicates.
+
+---
+
+# STREAK SYSTEM
+
+Each habit tracks:
+
+Current streak
+
+Best streak
+
+Global streak system also exists.
+
+Global streak means:
+
+All habits scheduled today completed.
+
+Global streak is displayed on Home Screen.
+
+---
+
+# IMPORTANT RULE
+
+Missing a day:
+
+Reset streak
+
+DO NOT:
+
+* Remove XP
+* Remove pet levels
+* Remove unlocked items
+* Remove rewards
+
+Progress should never feel destroyed.
+
+---
+
+# PET SYSTEM
+
+The pet is a Dragon.
+
+Only one species in MVP.
+
+Pet name is customizable.
+
+Default:
+
+"Luna"
+
+---
+
+# PET EVOLUTION STAGES
+
+Stage 0:
+
+Egg
+
+Stage 1:
+
+Hatchling
+
+Stage 2:
+
+Young Dragon
+
+Stage 3:
+
+Adult Dragon
+
+Stage 4:
+
+Ancient Dragon
+
+Evolution depends on Lifetime XP.
+
+NOT current streak.
+
+---
+
+# PET LIFE SYSTEM
+
+Pet must appear alive.
+
+This is extremely important.
+
+The pet should have animations.
+
+Use sprite animations, Lottie, frame animations, or Compose animation systems.
+
+Do not leave the pet static.
+
+---
+
+# EGG BEHAVIOR
+
+Level 0
+
+Egg idle.
+
+Very subtle floating animation.
+
+---
+
+After user earns some XP:
+
+Egg occasionally wiggles.
+
+Rare.
+
+---
+
+Near hatching threshold:
+
+Egg wiggles frequently.
+
+Small cracks appear.
+
+---
+
+At hatch evolution:
+
+Play hatching animation.
+
+Egg breaks.
+
+Dragon emerges.
+
+Confetti effect.
+
+Reward screen.
+
+---
+
+# HATCHLING BEHAVIOR
+
+Animations:
+
+* Blink
+* Breathing
+* Tail wag
+* Happy bounce
+
+Random idle animations every few seconds.
+
+---
+
+# YOUNG DRAGON
+
+Additional animations:
+
+* Looking around
+* Small jump
+* Wing flap
+
+---
+
+# ADULT DRAGON
+
+Additional animations:
+
+* Stretching
+* Roaring silently
+* Bigger wing movement
+
+---
+
+# ANCIENT DRAGON
+
+More majestic animations.
+
+Glowing effects.
+
+Particles.
+
+---
+
+# PET MOOD SYSTEM
+
+Simple.
+
+Mood based on recent consistency.
+
+Happy:
+completed habits recently
+
+Neutral:
+few completions
+
+Sad:
+missed recent habits
+
+Mood only affects animation and expression.
+
+Never affects progression.
+
+---
+
+# XP SYSTEM
+
+Base XP:
+
+Checkbox habit:
+
+10 XP
+
+Timed habit:
+
+10 XP
+
+Plus:
+
+1 XP per minute completed
+
+Example:
+
+30 minute workout
+
+10 + 30
+
+40 XP
+
+---
+
+# LEVEL SYSTEM
+
+Level formula can be progressive.
+
+Example:
+
+Level 1: 100 XP
+
+Level 2: 200 XP
+
+Level 3: 350 XP
+
+etc.
+
+Create scalable progression.
+
+---
+
+# REWARDS
+
+Users earn Coins.
+
+Sources:
+
+Daily completion
+
+Weekly streaks
+
+Achievements
+
+Level-ups
+
+---
+
+# COSMETICS
+
+Initial cosmetics:
+
+Hats:
+
+* Top Hat
+* Crown
+* Wizard Hat
+
+Glasses:
+
+* Round Glasses
+* Sunglasses
+
+Scarves:
+
+* Red Scarf
+* Blue Scarf
+
+Backgrounds:
+
+* Forest
+* Beach
+* Night Sky
+* Mountains
+
+---
+
+# EQUIPMENT SYSTEM
+
+User can equip:
+
+One Hat
+
+One Glasses
+
+One Scarf
+
+One Background
+
+Use layered rendering.
+
+Render order:
+
+Background
+
+Decorations
+
+Pet
+
+Scarf
+
+Glasses
+
+Hat
+
+Effects
+
+---
+
+# WEEKLY REWARDS
+
+7-day streak:
+
+Reward Chest
+
+Contains random cosmetic or coins.
+
+---
+
+# ACHIEVEMENTS
+
+Implement:
+
+First Habit
+
+7 Day Streak
+
+30 Day Streak
+
+100 Completions
+
+1000 XP
+
+Level 10
+
+Level 25
+
+Reward:
+
+Coins
+
+---
+
+# PET JOURNAL
+
+Create a timeline.
+
+Examples:
+
+Day 1:
+"Luna arrived."
+
+Day 7:
+"Luna learned to walk."
+
+Day 30:
+"Luna found a shiny scarf."
+
+Day 100:
+"Luna became an Adult Dragon."
+
+Journal entries are generated automatically.
+
+Display chronologically.
+
+---
+
+# NOTIFICATIONS
+
+Local notifications only.
+
+Examples:
+
+"Your dragon is waiting for you."
+
+"Luna wants to train today."
+
+"Keep your streak alive!"
+
+Implement using Android local notifications.
+
+Allow enabling/disabling.
+
+---
+
+# ROOM DATABASE
+
+Design entities for:
+
+Habit
+
+HabitCompletion
+
+Pet
+
+InventoryItem
+
+Achievement
+
+JournalEntry
+
+AppStatistics
+
+Create proper relationships.
+
+---
+
+# SAVE SYSTEM
+
+Everything persists locally.
+
+App must survive:
+
+* Restart
+* Device reboot
+* App update
+
+No cloud dependency.
+
+---
+
+# UI DESIGN
+
+Style:
+
+Modern
+
+Cute
+
+Clean
+
+Minimal
+
+Game-like
+
+Do NOT make it look like a spreadsheet.
+
+Use:
+
+Rounded cards
+
+Soft shadows
+
+Animated transitions
+
+Progress bars
+
+Reward popups
+
+Celebration effects
+
+---
+
+# ANIMATIONS
+
+Use Compose animations extensively.
+
+Examples:
+
+XP gain animation
+
+Level-up animation
+
+Reward chest opening
+
+Pet idle animations
+
+Evolution animations
+
+Screen transitions
+
+Completion celebration
+
+---
+
+# ACCESSIBILITY
+
+Support:
+
+Dark Mode
+
+Light Mode
+
+Large text
+
+Content descriptions
+
+---
+
+# DELIVERABLES
+
+Generate:
+
+1. Complete Android Studio project structure
+
+2. All Kotlin source files
+
+3. Room entities
+
+4. DAOs
+
+5. Repositories
+
+6. ViewModels
+
+7. Compose screens
+
+8. Navigation setup
+
+9. Theme system
+
+10. Local notification implementation
+
+11. Sample assets structure
+
+12. README with setup instructions
+
+13. Buildable application
+
+Do not provide pseudocode.
+
+Provide production-ready code.
+
+Implement feature by feature until the application is complete.
+
+When making architectural decisions, prioritize maintainability, simplicity, and future expansion to cloud sync and social features.
+
+Before finishing, run the appropriate build/tests and ensure the
+project builds successfully with no errors
+
+# Context Efficiency Rules
+
+When implementing features:
+
+Do not output build logs.
+Do not output compilation logs.
+Do not output dependency installation logs.
+Do not explain every file modification.
+Do not print generated code unless explicitly requested.
+Do not summarize intermediate implementation steps.
+
+Only report:
+
+Major architectural decisions
+Files created
+Files modified
+Errors that require user intervention
+Final implementation summary
+
+Keep responses concise and context-efficient.
+
+For debugging:
+
+Summarize errors instead of pasting full stack traces.
+Store findings in PROJECT_STATE.md when relevant.
+Avoid repeating previously discussed issues.
+
+# ARCHITECTURE STABILITY RULES
+
+When implementing new phases:
+
+* Prefer extending existing systems over replacing them.
+* Do not refactor working code unless explicitly requested.
+* Do not rename packages, modules, entities, DAOs, repositories, ViewModels, or navigation routes without a strong technical reason.
+* Maintain backward compatibility with previous phases.
+* Minimize changes outside the scope of the current phase.
+* New features should integrate with the existing architecture rather than introducing parallel systems.

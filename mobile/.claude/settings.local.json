@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p app/src/main/java/com/example/mobile/data/local/dao)",
+      "Bash(./gradlew :app:assembleDebug)",
+      "Bash(./gradlew :app:assembleDebug --stacktrace)",
+      "Bash(./gradlew assembleDebug)"
+    ]
+  }
+}
