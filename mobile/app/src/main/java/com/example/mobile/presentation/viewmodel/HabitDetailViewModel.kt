@@ -147,7 +147,7 @@ class HabitDetailViewModel @Inject constructor(
                 }
 
                 // Calculate XP (base 10 XP for checkbox habit)
-                val xpEarned: Long = 300
+                val xpEarned: Long = 10
 
                 // Create completion entity
                 val completion = HabitCompletionEntity(

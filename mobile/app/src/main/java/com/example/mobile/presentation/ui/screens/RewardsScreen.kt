@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -97,7 +98,10 @@ private fun RewardItem(item: InventoryItemEntity) {
                 .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Image, contentDescription = "Item image")
+            Box(
+                modifier = Modifier.size(24.dp)
+                .background(Color.LightGray.copy(alpha = 0.3f))
+            )
         }
 
         Spacer(modifier = Modifier.width(12.dp))

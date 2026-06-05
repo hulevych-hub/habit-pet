@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.presentation.ui.components.AnimatedPet
 
 @Composable
 fun HomeScreen(
@@ -51,32 +53,19 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Box(
-            modifier = Modifier
-                .size(200.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = pet.name,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.displaySmall
-                )
-                Text(
-                    text = stageName(pet.evolutionStage),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-        }
+        // Animated pet display
+        AnimatedPet(
+            pet = pet,
+            modifier = Modifier.size(180.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         Text("${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Level ${pet.level} ${stageName(pet.evolutionStage)}", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = "Level ${pet.level} ${getEvolutionStageName(pet.evolutionStage)}",
+            style = MaterialTheme.typography.titleMedium
+        )
         Spacer(modifier = Modifier.height(4.dp))
         Text("XP: $currentLevelXp / $nextLevelXp", style = MaterialTheme.typography.bodyLarge)
         LinearProgressIndicator(
@@ -152,12 +141,14 @@ private fun HomeHabitItem(
     }
 }
 
-private fun stageName(stage: Int): String = when (stage) {
+
+private fun getEvolutionStageName(stage: Int): String = when (stage) {
+    0 -> "Egg"
     1 -> "Hatchling"
     2 -> "Young Dragon"
     3 -> "Adult Dragon"
     4 -> "Ancient Dragon"
-    else -> "Egg"
+    else -> "Unknown"
 }
 
 private fun xpRequiredForNextLevel(level: Int): Long = 100L + (level * 50L)

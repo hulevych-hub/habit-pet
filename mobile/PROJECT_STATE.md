@@ -29,11 +29,13 @@
 - [x] Pet Screen displaying name, level, XP bar, evolution stage
 - [x] Home Screen displaying pet summary
 - [x] Persistence of all pet data locally
+- [x] Integrated pet assets (egg, hatchling, young dragon, adult dragon, ancient dragon) for visual representation
 
 ## Phase 5: Pet Animation System
 - [x] Pet Animation System with mood-based animations
 - [x] Different animations for each evolution stage (Egg, Hatchling, Young Dragon, Adult Dragon, Ancient Dragon)
 - [x] Animation modifiers based on pet mood (Happy, Neutral, Sad)
 - [x] Integrated animations into PetScreen
+- [x] Enhanced animations with actual pet assets including egg float, wiggle, hatch transition, and idle animations for all stages
 
 ## Phase 6-10: Not Started
