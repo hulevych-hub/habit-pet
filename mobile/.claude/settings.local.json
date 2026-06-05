@@ -1,5 +1,13 @@
 {
   "permissions": {
+    "deny": [
+      "Glob(**/.gradle/**)",
+      "Glob(**/build/**)",
+      "Glob(**/.idea/**)",
+      "Read(**/.gradle/**)",
+      "Read(**/build/**)",
+      "Read(**/.idea/**)"
+    ],
     "allow": [
       "Bash(mkdir -p app/src/main/java/com/example/mobile/data/local/dao)",
       "Bash(./gradlew :app:assembleDebug)",

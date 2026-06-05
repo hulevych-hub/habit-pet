@@ -5,9 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
+import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.utils.RewardPopupUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,7 +34,8 @@ import javax.inject.Inject
 class HabitDetailViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
     private val habitCompletionRepository: HabitCompletionRepository,
-    private val petRepository: PetRepository
+    private val petRepository: PetRepository,
+    private val statisticsRepository: StatisticsRepository
 ) : ViewModel() {
 
     // UI State
@@ -161,8 +165,14 @@ class HabitDetailViewModel @Inject constructor(
                 habitCompletionRepository.addCompletion(completion)
                 refreshCompletions(habitId)
 
-                // Award XP to pet
-                awardPetXp(xpEarned)
+                // Award XP and coins to pet
+                awardPetXpAndCoins(xpEarned, 1)
+
+                // Show coin reward popup for daily completion
+                RewardPopupUtil.showCoinReward(
+                    /* context = */ /* TODO: Pass context properly */ null,
+                    1
+                )
 
                 // Notify completion
                 _habitCompleted.tryEmit(Unit)
@@ -224,8 +234,14 @@ class HabitDetailViewModel @Inject constructor(
                     habitCompletionRepository.addCompletion(completion)
                     refreshCompletions(habitId)
 
-                    // Award XP to pet
-                    awardPetXp(xpEarned)
+                    // Award XP and coins to pet
+                    awardPetXpAndCoins(xpEarned, (10 + elapsedMinutes).toInt())
+
+                    // Show coin reward popup for timer habit completion
+                    RewardPopupUtil.showCoinReward(
+                        /* context = */ /* TODO: Pass context properly */ null,
+                        1 // Base coin reward for completion
+                    )
 
                     // Notify completion
                     _habitCompleted.tryEmit(Unit)
@@ -276,8 +292,8 @@ class HabitDetailViewModel @Inject constructor(
         _elapsedSeconds.value = 0
     }
 
-    // Award XP to pet and update level/evolution
-    private fun awardPetXp(xpToAdd: Long) {
+    // Award XP and coins to pet and update level/evolution
+    private fun awardPetXpAndCoins(xpToAdd: Long, coinsToAdd: Int) {
         viewModelScope.launch {
             val currentPet = _pet.value
             val updatedPet = currentPet.copy(xp = currentPet.xp + xpToAdd)
@@ -293,8 +309,40 @@ class HabitDetailViewModel @Inject constructor(
             // Update pet in database
             petRepository.updatePet(finalPet)
 
+            // Award coins
+            awardCoins(coinsToAdd)
+
+            // Award coins for level up if level increased
+            if (newLevel > currentPet.level) {
+                val levelUpCoins = newLevel * 10 // 10 coins per level
+                awardCoins(levelUpCoins)
+
+                // Show level up reward popup
+                RewardPopupUtil.showLevelUpReward(
+                    /* context = */ /* TODO: Pass context properly */ null,
+                    newLevel,
+                    levelUpCoins
+                )
+            }
+
             // Update UI state
             _pet.value = finalPet
+        }
+    }
+
+    // Award coins to statistics
+    private fun awardCoins(coinsToAdd: Int) {
+        viewModelScope.launch {
+            try {
+                val currentStats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity()
+                val updatedStats = currentStats.copy(
+                    totalCoins = currentStats.totalCoins + coinsToAdd,
+                    lastUpdated = System.currentTimeMillis()
+                )
+                statisticsRepository.updateStatistics(updatedStats)
+            } catch (e: Exception) {
+                // Handle error appropriately
+            }
         }
     }
 

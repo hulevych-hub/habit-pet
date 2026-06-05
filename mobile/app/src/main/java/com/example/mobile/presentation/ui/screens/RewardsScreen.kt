@@ -18,7 +18,9 @@ import com.example.mobile.data.local.entities.InventoryItemEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RewardsViewModel @Inject constructor(
@@ -28,6 +30,17 @@ class RewardsViewModel @Inject constructor(
     val glasses = inventoryItemRepository.getItemsByType("GLASSES")
     val scarves = inventoryItemRepository.getItemsByType("SCARF")
     val backgrounds = inventoryItemRepository.getItemsByType("BACKGROUND")
+
+    fun purchaseItem(itemId: Long) = viewModelScope.launch {
+        val result = inventoryItemRepository.purchaseItem(itemId)
+        // Handle purchase result (for now just logging, could show popup based on result)
+        when (result) {
+            1 -> { /* Success - item purchased */ }
+            -2 -> { /* Already purchased */ }
+            -4 -> { /* Not enough coins */ }
+            else -> { /* Other error */ }
+        }
+    }
 }
 
 @Composable
@@ -53,7 +66,7 @@ fun RewardsScreen(rewardsViewModel: RewardsViewModel = hiltViewModel()) {
             // Hats Section
             Text("Hats", style = MaterialTheme.typography.titleLarge)
             hats.forEach { item ->
-                RewardItem(item)
+                RewardItem(item, rewardsViewModel)
             }
 
             Divider()
@@ -61,7 +74,7 @@ fun RewardsScreen(rewardsViewModel: RewardsViewModel = hiltViewModel()) {
             // Glasses Section
             Text("Glasses", style = MaterialTheme.typography.titleLarge)
             glasses.forEach { item ->
-                RewardItem(item)
+                RewardItem(item, rewardsViewModel)
             }
 
             Divider()
@@ -69,7 +82,7 @@ fun RewardsScreen(rewardsViewModel: RewardsViewModel = hiltViewModel()) {
             // Scarves Section
             Text("Scarves", style = MaterialTheme.typography.titleLarge)
             scarves.forEach { item ->
-                RewardItem(item)
+                RewardItem(item, rewardsViewModel)
             }
 
             Divider()
@@ -77,14 +90,14 @@ fun RewardsScreen(rewardsViewModel: RewardsViewModel = hiltViewModel()) {
             // Backgrounds Section
             Text("Backgrounds", style = MaterialTheme.typography.titleLarge)
             backgrounds.forEach { item ->
-                RewardItem(item)
+                RewardItem(item, rewardsViewModel)
             }
         }
     }
 }
 
 @Composable
-private fun RewardItem(item: InventoryItemEntity) {
+private fun RewardItem(item: InventoryItemEntity, rewardsViewModel: RewardsViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,10 +127,14 @@ private fun RewardItem(item: InventoryItemEntity) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = { },
-            enabled = item.isUnlocked
+            onClick = {
+                if (!item.isPurchased) {
+                    rewardsViewModel.purchaseItem(item.id)
+                }
+            },
+            enabled = item.isUnlocked && !item.isPurchased
         ) {
-            Text(if (item.isUnlocked) "Equipped" else "Equip")
+            Text(if (item.isPurchased) "Purchased" else "Buy")
         }
     }
 }

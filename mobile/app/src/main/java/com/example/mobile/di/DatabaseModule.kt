@@ -3,6 +3,8 @@ package com.example.mobile.di
 import android.content.Context
 import androidx.room.Room
 import com.example.mobile.data.local.database.AppDatabase
+import com.example.mobile.data.local.dao.AchievementDao
+import com.example.mobile.data.local.dao.InventoryItemDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,6 +57,7 @@ object DatabaseModule {
     fun provideAchievementDao(database: AppDatabase): com.example.mobile.data.local.dao.AchievementDao {
         return database.achievementDao()
     }
+
 
     @Provides
     @Singleton

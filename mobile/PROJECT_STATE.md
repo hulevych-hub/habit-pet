@@ -38,4 +38,21 @@
 - [x] Integrated animations into PetScreen
 - [x] Enhanced animations with actual pet assets including egg float, wiggle, hatch transition, and idle animations for all stages
 
-## Phase 6-10: Not Started
+## Phase 6: Rewards and Economy
+- [x] Analyze current implementation for Phase 6 (Rewards and Economy)
+- [x] Add coin tracking to StatisticsEntity
+- [x] Implement coin awarding system for daily completion
+- [x] Implement coin awarding system for weekly streaks
+- [x] Implement coin awarding system for achievements
+- [x] Implement coin awarding system for level-ups
+- [x] Implement reward chest system for 7-day streaks
+- [x] Enhance InventoryItemEntity to track purchased status
+- [x] Implement reward popup system
+- [x] Update RewardsScreen to handle coin purchases
+
+## Phase 7: Cosmetics
+- [x] Analyze current implementation for Phase 7 (Cosmetics)
+- [x] Update PetScreen to show equipped items properly
+- [x] Verify layered rendering order in pet display
+- [x] Run build and fix any compilation errors
+- [x] Update PROJECT_STATE.md

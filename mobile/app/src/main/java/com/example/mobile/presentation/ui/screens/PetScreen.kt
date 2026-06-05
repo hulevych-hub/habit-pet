@@ -1,6 +1,7 @@
 package com.example.mobile.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -18,16 +19,26 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.data.local.entities.PetEntity
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class PetViewModel @Inject constructor(
     private val petRepository: PetRepository
 ) : ViewModel() {
     val pet = petRepository.getPet()
+
+    fun equipItem(itemType: String, itemId: String) = viewModelScope.launch {
+        petRepository.equipItem(itemType, itemId)
+    }
+
+    fun unequipItem(itemType: String) = viewModelScope.launch {
+        petRepository.unequipItem(itemType)
+    }
 }
 
 @Composable
@@ -118,14 +129,30 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                EquipmentSlot("Hat", pet.equippedHat)
-                EquipmentSlot("Glasses", pet.equippedGlasses)
-                EquipmentSlot("Scarf", pet.equippedScarf)
+                EquipmentSlot(
+                    label = "Hat",
+                    equippedItem = pet.equippedHat,
+                    onUnequipClick = { petViewModel.unequipItem("HAT") }
+                )
+                EquipmentSlot(
+                    label = "Glasses",
+                    equippedItem = pet.equippedGlasses,
+                    onUnequipClick = { petViewModel.unequipItem("GLASSES") }
+                )
+                EquipmentSlot(
+                    label = "Scarf",
+                    equippedItem = pet.equippedScarf,
+                    onUnequipClick = { petViewModel.unequipItem("SCARF") }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            EquipmentSlot("Background", pet.equippedBackground)
+            EquipmentSlot(
+                label = "Background",
+                equippedItem = pet.equippedBackground,
+                onUnequipClick = { petViewModel.unequipItem("BACKGROUND") }
+            )
         }
     }
 }
@@ -137,14 +164,20 @@ private fun calculateXpForNextLevel(level: Int): Int {
 }
 
 @Composable
-private fun EquipmentSlot(label: String, equippedItem: String?) {
+private fun EquipmentSlot(
+    label: String,
+    equippedItem: String?,
+    onUnequipClick: (() -> Unit)? = null
+) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .background(
                 if (equippedItem != null) Color.Green.copy(alpha = 0.2f) else Color.Gray.copy(alpha = 0.2f),
                 shape = MaterialTheme.shapes.medium
-            ),
+            )
+            .clickable { if (equippedItem != null) onUnequipClick?.invoke() }
+        ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(

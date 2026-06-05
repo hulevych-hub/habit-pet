@@ -1,0 +1,57 @@
+# =========================
+# Build outputs (SAFE TO IGNORE)
+# =========================
+**/build/
+**/out/
+**/generated/
+*.apk
+*.aab
+
+# =========================
+# Gradle caches (SAFE)
+# =========================
+.gradle/
+**/.gradle/
+
+# =========================
+# Android Studio / IDE files
+# =========================
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# =========================
+# Local system files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs (SAFE)
+# =========================
+*.log
+logcat.txt
+
+# =========================
+# Kotlin/Java compilation artifacts
+# =========================
+*.class
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+
+# =========================
+# Test reports (optional ignore)
+# =========================
+**/test-results/
+**/reports/
+
+# =========================
+# Local emulator / device files
+# =========================
+.emulator/
+.git

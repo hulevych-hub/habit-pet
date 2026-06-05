@@ -10,5 +10,6 @@ data class InventoryItemEntity(
     var type: String = "",
     var imageUrl: String = "",
     var isUnlocked: Boolean = false,
+    var isPurchased: Boolean = false,
     var price: Int = 0 // in coins
 )

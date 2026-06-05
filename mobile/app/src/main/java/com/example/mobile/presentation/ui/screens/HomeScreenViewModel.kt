@@ -9,6 +9,8 @@ import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.domain.repository.AchievementRepository
+import com.example.mobile.presentation.utils.RewardPopupUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +19,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlin.collections.firstOrNull
+import kotlin.sequences.firstOrNull
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -27,7 +33,8 @@ class HomeScreenViewModel @Inject constructor(
     private val statisticsRepository: StatisticsRepository,
     private val habitRepository: HabitRepository,
     private val petRepository: PetRepository,
-    private val habitCompletionRepository: HabitCompletionRepository
+    private val habitCompletionRepository: HabitCompletionRepository,
+    private val achievementRepository: AchievementRepository
 ) : ViewModel() {
 
     // UI State
@@ -86,16 +93,16 @@ class HomeScreenViewModel @Inject constructor(
             completedToday = completionStatuses
         )
     }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UiState(
-                globalStreak = 0,
-                habits = emptyList(),
-                pet = PetEntity(id = 1),
-                completedToday = emptyMap()
-            )
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = UiState(
+            globalStreak = 0,
+            habits = emptyList(),
+            pet = PetEntity(),
+            completedToday = emptyMap()
         )
+    )
 
     data class UiState(
         val globalStreak: Int,

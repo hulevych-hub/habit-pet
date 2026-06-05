@@ -14,5 +14,8 @@ data class StatisticsEntity(
     var daysActive: Int = 0,
     var totalHabitsCompleted: Int = 0,
     var petAgeDays: Int = 0,
-    var lastUpdated: Long = 0 // timestamp
+    var totalCoins: Int = 0,
+    var lastStreakAwardedAt: Int = 0,
+    var lastUpdated: Long = 0, // timestamp
+    var rewardChestsAvailable: Int = 0
 )

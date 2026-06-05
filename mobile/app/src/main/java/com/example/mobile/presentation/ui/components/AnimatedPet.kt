@@ -20,7 +20,7 @@ import com.example.mobile.presentation.ui.animations.PetAnimations
 import com.example.mobile.R
 
 /**
- * Animated pet display using actual drawable assets with proper animations
+ * Animated pet display using actual drawable assets with proper animations and equipped items
  */
 @Composable
 fun AnimatedPet(
@@ -54,6 +54,27 @@ fun AnimatedPet(
             .size(size.width.dp, size.height.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
+        // Layered rendering: Background -> Pet -> Scarf -> Glasses -> Hat
+
+        // Background (if equipped)
+        if (pet.equippedBackground != null) {
+            val backgroundImage = when (pet.equippedBackground) {
+                "background_forest" -> R.drawable.background_forest
+                "background_beach" -> R.drawable.background_beach
+                "background_mountains" -> R.drawable.background_mountains
+                "background_night_sky" -> R.drawable.background_night_sky
+                else -> R.drawable.background_forest // fallback
+            }
+            androidx.compose.foundation.Image(
+                painter = painterResource(backgroundImage),
+                contentDescription = "Pet background",
+                modifier = Modifier
+                    .size(180.dp)
+                    .offset(y = offset.dp)
+            )
+        }
+
+        // Base pet image
         androidx.compose.foundation.Image(
             painter = painterResource(petImage),
             contentDescription = "Pet image",
@@ -61,6 +82,55 @@ fun AnimatedPet(
                 .size(180.dp)
                 .offset(y = offset.dp)
         )
+
+        // Scarf (if equipped)
+        if (pet.equippedScarf != null) {
+            val scarfImage = when (pet.equippedScarf) {
+                "red_scarf" -> R.drawable.red_scarf
+                "blue_scarf" -> R.drawable.blue_scarf
+                else -> R.drawable.red_scarf // fallback
+            }
+            androidx.compose.foundation.Image(
+                painter = painterResource(scarfImage),
+                contentDescription = "Pet scarf",
+                modifier = Modifier
+                    .size(180.dp)
+                    .offset(y = offset.dp)
+            )
+        }
+
+        // Glasses (if equipped)
+        if (pet.equippedGlasses != null) {
+            val glassesImage = when (pet.equippedGlasses) {
+                "round_glasses" -> R.drawable.round_glasses
+                "sunglasses" -> R.drawable.sunglasses
+                else -> R.drawable.round_glasses // fallback
+            }
+            androidx.compose.foundation.Image(
+                painter = painterResource(glassesImage),
+                contentDescription = "Pet glasses",
+                modifier = Modifier
+                    .size(180.dp)
+                    .offset(y = offset.dp)
+            )
+        }
+
+        // Hat (if equipped)
+        if (pet.equippedHat != null) {
+            val hatImage = when (pet.equippedHat) {
+                "top_hat" -> R.drawable.top_hat
+                "crown" -> R.drawable.crown
+                "wizard_hat" -> R.drawable.wizard_hat
+                else -> R.drawable.top_hat // fallback
+            }
+            androidx.compose.foundation.Image(
+                painter = painterResource(hatImage),
+                contentDescription = "Pet hat",
+                modifier = Modifier
+                    .size(180.dp)
+                    .offset(y = offset.dp)
+            )
+        }
 
         // Pet name and level overlay
         androidx.compose.foundation.layout.Box(

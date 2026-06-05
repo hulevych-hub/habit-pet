@@ -9,4 +9,5 @@ interface InventoryItemRepository {
     suspend fun addItem(item: InventoryItemEntity): Long
     suspend fun updateItem(item: InventoryItemEntity): Int
     suspend fun deleteItem(item: InventoryItemEntity): Int
+    suspend fun purchaseItem(itemId: Long): Int
 }
