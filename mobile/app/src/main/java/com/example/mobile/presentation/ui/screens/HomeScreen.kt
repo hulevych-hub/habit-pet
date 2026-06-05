@@ -49,33 +49,33 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         // Animated pet display
         AnimatedPet(
             pet = pet,
-            modifier = Modifier.size(180.dp)
+            modifier = Modifier.size(280.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Text("${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Level ${pet.level} ${getEvolutionStageName(pet.evolutionStage)}",
             style = MaterialTheme.typography.titleMedium
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text("XP: $currentLevelXp / $nextLevelXp", style = MaterialTheme.typography.bodyLarge)
         LinearProgressIndicator(
             progress = { (currentLevelXp.toFloat() / nextLevelXp.toFloat()).coerceIn(0f, 1f) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 32.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

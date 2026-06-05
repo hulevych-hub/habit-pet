@@ -58,7 +58,7 @@ fun AnimatedPet(
             painter = painterResource(petImage),
             contentDescription = "Pet image",
             modifier = Modifier
-                .size(80.dp)
+                .size(180.dp)
                 .offset(y = offset.dp)
         )
 

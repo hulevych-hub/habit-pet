@@ -2,7 +2,7 @@ Read CLAUDE.md.
 
 PROJECT_STATE.md exists, read it
 
-Implement Phase 4 and Phase 5. You can read PHASE4.md and PHASE5.md for details.
+Implement Phase 6 and Phase 7. You can read PHASE6.md and PHASE7.md for details.
 
 Requirements:
 

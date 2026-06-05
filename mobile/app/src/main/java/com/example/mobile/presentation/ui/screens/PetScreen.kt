@@ -102,7 +102,7 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
             // Animated Pet Display
             AnimatedPet(
                 pet = pet,
-                modifier = Modifier.size(250.dp)
+                modifier = Modifier.size(350.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
