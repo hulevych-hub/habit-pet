@@ -1,17 +1,20 @@
 package com.example.mobile.data.local.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "pet")
 data class PetEntity(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
-    var name: String = "Luna",
-    var level: Int = 0,
-    var xp: Long = 0,
-    var evolutionStage: Int = 0, // 0: Egg, 1: Hatchling, 2: Young Dragon, 3: Adult Dragon, 4: Ancient Dragon
-    var equippedHat: String? = null,
-    var equippedGlasses: String? = null,
-    var equippedScarf: String? = null,
-    var equippedBackground: String? = null
+    @ColumnInfo(name = "name") var name: String = "Luna",
+    @ColumnInfo(name = "level") var level: Int = 0,
+    @ColumnInfo(name = "xp") var xp: Long = 0,
+    @ColumnInfo(name = "evolution_stage") var evolutionStage: Int = 0, // 0: Egg, 1: Hatchling, 2: Young Dragon, 3: Adult Dragon, 4: Ancient Dragon
+    @ColumnInfo(name = "equipped_hat") var equippedHat: String? = null,
+    @ColumnInfo(name = "equipped_glasses") var equippedGlasses: String? = null,
+    @ColumnInfo(name = "equipped_scarf") var equippedScarf: String? = null,
+    @ColumnInfo(name = "equipped_background") var equippedBackground: String? = null,
+    @ColumnInfo(name = "mood") var mood: String = "Neutral",
+    @ColumnInfo(name = "creation_date") var creationDate: Long = System.currentTimeMillis()
 )

@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.data.local.entities.PetEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +34,7 @@ class PetViewModel @Inject constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
     val pet by petViewModel.pet.collectAsState(initial = PetEntity())
+    val xpForNextLevel = remember { calculateXpForNextLevel(pet.level) }
 
     Scaffold(
         topBar = {
@@ -45,16 +48,62 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Large Pet Display
-            Box(
+            // Pet Info Card
+            Card(
                 modifier = Modifier
-                    .size(250.dp)
-                    .background(Color.LightGray, androidx.compose.foundation.shape.CircleShape)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Text("Pet: ${pet.name}\nStage: ${pet.evolutionStage}\nLevel: ${pet.level}\nXP: ${pet.xp}",
-                    textAlign = TextAlign.Center,
-                    color = Color.Black)
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = pet.name,
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "Level ${pet.level}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    // Evolution stage text
+                    Text(
+                        text = when (pet.evolutionStage) {
+                            0 -> "Egg"
+                            1 -> "Hatchling"
+                            2 -> "Young Dragon"
+                            3 -> "Adult Dragon"
+                            4 -> "Ancient Dragon"
+                            else -> "Unknown"
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    // XP Progress Bar
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                            .padding(top = 8.dp),
+                        progress = if (xpForNextLevel > 0) pet.xp % xpForNextLevel.toFloat() / xpForNextLevel else 0f,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "XP: ${pet.xp % xpForNextLevel.toLong()} / ${xpForNextLevel}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Animated Pet Display
+            AnimatedPet(
+                pet = pet,
+                modifier = Modifier.size(250.dp)
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -79,6 +128,12 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
             EquipmentSlot("Background", pet.equippedBackground)
         }
     }
+}
+
+// Helper function to calculate XP needed for next level
+private fun calculateXpForNextLevel(level: Int): Int {
+    // Same formula as in ViewModel: level 0 -> 100, level 1 -> 150, level 2 -> 200, etc.
+    return 100 + (level * 50)
 }
 
 @Composable

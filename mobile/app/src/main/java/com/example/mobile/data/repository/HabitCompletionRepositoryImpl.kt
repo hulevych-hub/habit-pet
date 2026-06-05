@@ -139,7 +139,7 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         upsertStatistics(updatedStatistics)
     }
 
-    private suspend fun updatePetProgress(xpEarned: Int) {
+    private suspend fun updatePetProgress(xpEarned: Long) {
         val pet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)
         val newXp = pet.xp + xpEarned
         val newLevel = calculateLevel(newXp)

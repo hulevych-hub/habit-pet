@@ -57,11 +57,20 @@ fun HomeScreen(
                 .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = stageName(pet.evolutionStage),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = pet.name,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.displaySmall
+                )
+                Text(
+                    text = stageName(pet.evolutionStage),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

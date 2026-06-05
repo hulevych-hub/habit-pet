@@ -12,5 +12,5 @@ data class HabitCompletionEntity(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     var habitId: Long = 0,
     var date: Long = 0, // Stored as timestamp
-    var xpEarned: Int = 0
+    var xpEarned: Long = 0
 )

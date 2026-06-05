@@ -1,8 +1,8 @@
 Read CLAUDE.md.
 
-If PROJECT_STATE.md exists, read it. Otherwise create it before finishing.
+PROJECT_STATE.md exists, read it
 
-Implement Phase 3. You can read PHASE3.md for details.
+Implement Phase 4 and Phase 5. You can read PHASE4.md and PHASE5.md for details.
 
 Requirements:
 
@@ -22,7 +22,7 @@ Output mode:
 * Do not print stack traces.
 * Do not explain routine changes.
 
-Before finishing:
+Before finishing each phase:
 
 1. Run the appropriate build/tests.
 2. Fix any compilation errors introduced by this phase.
