@@ -7,19 +7,15 @@ import com.example.mobile.domain.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel for achievement screen
- * Handles displaying and tracking achievement progress
- */
 @HiltViewModel
 class AchievementViewModel @Inject constructor(
     private val achievementRepository: AchievementRepository
 ) : ViewModel() {
 
-    // UI State
     private val _achievements = MutableStateFlow<List<AchievementEntity>>(emptyList())
     val achievements: StateFlow<List<AchievementEntity>> = _achievements
 
@@ -38,21 +34,15 @@ class AchievementViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
 
-            try {
-                achievementRepository.getAllAchievements()
-                    .collect { achievements ->
-                        _achievements.value = achievements
-                    }
-            } catch (e: Exception) {
-                _error.value = "Failed to load achievements: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
+            achievementRepository.getAllAchievements()
+                .catch { e ->
+                    _error.value = "Failed to load achievements: ${e.message}"
+                    _isLoading.value = false
+                }
+                .collect { list ->
+                    _achievements.value = list
+                    _isLoading.value = false
+                }
         }
-    }
-
-    // Navigation handlers
-    fun onNavigateUp() {
-        // This would be handled by the NavController in the composable
     }
 }

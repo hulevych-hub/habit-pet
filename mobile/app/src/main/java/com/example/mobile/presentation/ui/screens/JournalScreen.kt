@@ -6,18 +6,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mobile.data.local.entities.JournalEntryEntity
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.presentation.viewmodel.JournalViewModel
+
 
 /**
  * Simple screen for displaying journal entries
  */
 @Composable
 fun JournalScreen(
-    viewModel: JournalViewModel = viewModel()
+    viewModel: JournalViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
