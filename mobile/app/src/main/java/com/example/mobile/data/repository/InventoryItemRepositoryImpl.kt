@@ -53,8 +53,8 @@ class InventoryItemRepositoryImpl @Inject constructor(
         )
         statisticsRepository.updateStatistics(updatedStats)
 
-        // Mark item as purchased
-        val updatedItem = item.copy(isPurchased = true)
+        // Mark item as purchased (not equipped by default)
+        val updatedItem = item.copy(isPurchased = true, isEquipped = false)
         inventoryItemDao.updateItem(updatedItem)
 
         return 1 // Success

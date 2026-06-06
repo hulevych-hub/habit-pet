@@ -10,7 +10,6 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.domain.repository.AchievementRepository
-import com.example.mobile.presentation.utils.RewardPopupUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -90,7 +89,8 @@ class HomeScreenViewModel @Inject constructor(
             globalStreak = stats.globalStreak,
             habits = habList,
             pet = petState,
-            completedToday = completionStatuses
+            completedToday = completionStatuses,
+            totalCoins = stats.totalCoins
         )
     }
     .stateIn(
@@ -100,7 +100,8 @@ class HomeScreenViewModel @Inject constructor(
             globalStreak = 0,
             habits = emptyList(),
             pet = PetEntity(),
-            completedToday = emptyMap()
+            completedToday = emptyMap(),
+            totalCoins = 0
         )
     )
 
@@ -108,7 +109,8 @@ class HomeScreenViewModel @Inject constructor(
         val globalStreak: Int,
         val habits: List<HabitEntity>,
         val pet: PetEntity,
-        val completedToday: Map<Long, Boolean>
+        val completedToday: Map<Long, Boolean>,
+        val totalCoins: Int
     )
 
     private fun getDayStart(timestamp: Long): Long {

@@ -10,7 +10,7 @@ import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
-import com.example.mobile.presentation.utils.RewardPopupUtil
+import com.example.mobile.presentation.ui.events.RewardUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,6 +65,14 @@ class HabitDetailViewModel @Inject constructor(
     // Events
     private val _habitCompleted = MutableSharedFlow<Unit>(replay = 0)
     val habitCompleted: SharedFlow<Unit> = _habitCompleted.shareIn(
+        viewModelScope,
+        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+        replay = 0
+    )
+
+    // Reward events
+    private val _rewardUiEvent = MutableSharedFlow<RewardUiEvent>(replay = 0)
+    val rewardUiEvent: SharedFlow<RewardUiEvent> = _rewardUiEvent.shareIn(
         viewModelScope,
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
         replay = 0
@@ -151,7 +159,7 @@ class HabitDetailViewModel @Inject constructor(
                 }
 
                 // Calculate XP (base 10 XP for checkbox habit)
-                val xpEarned: Long = 10
+                val xpEarned: Long = 10000
 
                 // Create completion entity
                 val completion = HabitCompletionEntity(
@@ -168,11 +176,8 @@ class HabitDetailViewModel @Inject constructor(
                 // Award XP and coins to pet
                 awardPetXpAndCoins(xpEarned, 1)
 
-                // Show coin reward popup for daily completion
-                RewardPopupUtil.showCoinReward(
-                    /* context = */ /* TODO: Pass context properly */ null,
-                    1
-                )
+                // Emit coin reward event for daily completion
+                _rewardUiEvent.tryEmit(RewardUiEvent.CoinReward(1))
 
                 // Notify completion
                 _habitCompleted.tryEmit(Unit)
@@ -237,11 +242,8 @@ class HabitDetailViewModel @Inject constructor(
                     // Award XP and coins to pet
                     awardPetXpAndCoins(xpEarned, (10 + elapsedMinutes).toInt())
 
-                    // Show coin reward popup for timer habit completion
-                    RewardPopupUtil.showCoinReward(
-                        /* context = */ /* TODO: Pass context properly */ null,
-                        1 // Base coin reward for completion
-                    )
+                    // Emit coin reward event for timer habit completion
+                    _rewardUiEvent.tryEmit(RewardUiEvent.CoinReward(1))
 
                     // Notify completion
                     _habitCompleted.tryEmit(Unit)
@@ -317,12 +319,8 @@ class HabitDetailViewModel @Inject constructor(
                 val levelUpCoins = newLevel * 10 // 10 coins per level
                 awardCoins(levelUpCoins)
 
-                // Show level up reward popup
-                RewardPopupUtil.showLevelUpReward(
-                    /* context = */ /* TODO: Pass context properly */ null,
-                    newLevel,
-                    levelUpCoins
-                )
+                // Emit level up reward event
+                _rewardUiEvent.tryEmit(RewardUiEvent.LevelUpReward(newLevel, levelUpCoins))
             }
 
             // Update UI state

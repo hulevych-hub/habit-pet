@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import com.example.mobile.domain.repository.InventoryItemRepository
+import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,7 +25,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RewardsViewModel @Inject constructor(
-    private val inventoryItemRepository: InventoryItemRepository
+    private val inventoryItemRepository: InventoryItemRepository,
+    private val petRepository: PetRepository
 ) : ViewModel() {
     val hats = inventoryItemRepository.getItemsByType("HAT")
     val glasses = inventoryItemRepository.getItemsByType("GLASSES")
@@ -40,6 +42,10 @@ class RewardsViewModel @Inject constructor(
             -4 -> { /* Not enough coins */ }
             else -> { /* Other error */ }
         }
+    }
+
+    fun equipItem(itemType: String, itemId: String) = viewModelScope.launch {
+        petRepository.equipItem(itemType, itemId)
     }
 }
 
@@ -126,15 +132,36 @@ private fun RewardItem(item: InventoryItemEntity, rewardsViewModel: RewardsViewM
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            onClick = {
-                if (!item.isPurchased) {
-                    rewardsViewModel.purchaseItem(item.id)
+        Column {
+            if (item.isPurchased && !item.isEquipped) {
+                Button(
+                    onClick = {
+                        when (item.type) {
+                            "HAT" -> rewardsViewModel.equipItem("HAT", item.name.toLowerCase().replace(" ", "_"))
+                            "GLASSES" -> rewardsViewModel.equipItem("GLASSES", item.name.toLowerCase().replace(" ", "_"))
+                            "SCARF" -> rewardsViewModel.equipItem("SCARF", item.name.toLowerCase().replace(" ", "_"))
+                            "BACKGROUND" -> rewardsViewModel.equipItem("BACKGROUND", item.name.toLowerCase().replace(" ", "_"))
+                        }
+                    }
+                ) {
+                    Text("Equip")
                 }
-            },
-            enabled = item.isUnlocked && !item.isPurchased
-        ) {
-            Text(if (item.isPurchased) "Purchased" else "Buy")
+            } else if (item.isEquipped) {
+                Text("Equipped", style = MaterialTheme.typography.bodySmall, color = Color.Green)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    if (!item.isPurchased) {
+                        rewardsViewModel.purchaseItem(item.id)
+                    }
+                },
+                enabled = item.isUnlocked && !item.isPurchased
+            ) {
+                Text(if (item.isPurchased) "Purchased" else "Buy")
+            }
         }
     }
 }
