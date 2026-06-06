@@ -13,11 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -33,8 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
-import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.reward.RewardOverlay
 
 @Composable
 fun HomeScreen(
@@ -47,84 +46,93 @@ fun HomeScreen(
     val nextLevelXp = xpRequiredForNextLevel(pet.level)
     val currentLevelXp = xpIntoCurrentLevel(pet.xp)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Animated pet display
-        AnimatedPet(
-            pet = pet,
-            modifier = Modifier.size(280.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        // Coin balance display
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
+            // Animated pet display
+            AnimatedPet(
+                pet = pet,
+                modifier = Modifier.size(280.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            // Coin balance display
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${uiState.totalCoins} Coins",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Icon(
+                    imageVector = Icons.Default.AccountBalanceWallet,
+                    contentDescription = "Coin balance",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "${uiState.totalCoins} Coins",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                text = "Level ${pet.level} ${getEvolutionStageName(pet.evolutionStage)}",
+                style = MaterialTheme.typography.titleMedium
             )
-            Icon(
-                imageVector = Icons.Default.AccountBalanceWallet,
-                contentDescription = "Coin balance",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("XP: $currentLevelXp / $nextLevelXp", style = MaterialTheme.typography.bodyLarge)
+            LinearProgressIndicator(
+                progress = { (currentLevelXp.toFloat() / nextLevelXp.toFloat()).coerceIn(0f, 1f) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
             )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Level ${pet.level} ${getEvolutionStageName(pet.evolutionStage)}",
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("XP: $currentLevelXp / $nextLevelXp", style = MaterialTheme.typography.bodyLarge)
-        LinearProgressIndicator(
-            progress = { (currentLevelXp.toFloat() / nextLevelXp.toFloat()).coerceIn(0f, 1f) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-        )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Today's Habits", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = onNavigateToHabits) {
-                Text("Manage")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Today's Habits", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = onNavigateToHabits) {
+                    Text("Manage")
+                }
             }
-        }
 
-        if (uiState.habits.isEmpty()) {
-            Button(onClick = onNavigateToHabits) {
-                Text("Create your first habit")
-            }
-        } else {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                uiState.habits.forEach { habit ->
-                    HomeHabitItem(
-                        habit = habit,
-                        completed = uiState.completedToday[habit.id] == true,
-                        onClick = { onNavigateToHabitDetail(habit.id) }
-                    )
+            if (uiState.habits.isEmpty()) {
+                Button(onClick = onNavigateToHabits) {
+                    Text("Create your first habit")
+                }
+            } else {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    uiState.habits.forEach { habit ->
+                        HomeHabitItem(
+                            habit = habit,
+                            completed = uiState.completedToday[habit.id] == true,
+                            onClick = { onNavigateToHabitDetail(habit.id) }
+                        )
+                    }
                 }
             }
         }
+
+        // Reward overlay that appears above content
+        RewardOverlay(
+            onDismiss = {} // Empty lambda as dismissal is handled internally
+        )
     }
 }
 

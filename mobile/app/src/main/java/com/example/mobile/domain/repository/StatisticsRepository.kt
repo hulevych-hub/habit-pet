@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface StatisticsRepository {
     fun getStatistics(): Flow<StatisticsEntity>
     suspend fun updateStatistics(statistics: StatisticsEntity): Int
+
+    suspend fun addCoins(amount: Int)
 }

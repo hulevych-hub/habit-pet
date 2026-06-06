@@ -70,6 +70,12 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun provideRewardEventBus(): com.example.mobile.presentation.ui.reward.RewardEventBus {
+        return com.example.mobile.presentation.ui.reward.RewardEventBus()
+    }
+
+    @Provides
+    @Singleton
     fun provideAchievementInitializer(database: AppDatabase): com.example.mobile.data.local.database.AchievementDatabaseInitializer {
         return com.example.mobile.data.local.database.AchievementDatabaseInitializer(database)
     }
