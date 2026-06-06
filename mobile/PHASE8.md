@@ -22,18 +22,3 @@ Create:
 Achievement Engine
 
 Achievement Screen
-
-Pet Journal
-
-Journal Entries:
-
-Examples:
-- Luna arrived.
-- Luna hatched.
-- Luna learned to fly.
-- Luna became an Adult Dragon.
-
-Generate entries automatically.
-
-Requirements:
-Journal timeline sorted chronologically.
