@@ -8,6 +8,9 @@ import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,11 +27,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mobile.presentation.ui.screens.AchievementScreen
 import com.example.mobile.presentation.ui.screens.HabitCreationScreen
 import com.example.mobile.presentation.ui.screens.HabitDetailScreen
 import com.example.mobile.presentation.ui.screens.HabitEditScreen
 import com.example.mobile.presentation.ui.screens.HabitsScreen
 import com.example.mobile.presentation.ui.screens.HomeScreen
+import com.example.mobile.presentation.ui.screens.JournalScreen
+import com.example.mobile.presentation.ui.screens.NotificationSettingsScreen
 import com.example.mobile.presentation.ui.screens.PetScreen
 import com.example.mobile.presentation.ui.screens.RewardsScreen
 import com.example.mobile.presentation.ui.screens.StatisticsScreen
@@ -99,6 +105,9 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
                 composable("pet") { PetScreen() }
                 composable("rewards") { RewardsScreen() }
                 composable("statistics") { StatisticsScreen() }
+                composable("achievements") { AchievementScreen() }
+                composable("journal") { JournalScreen() }
+                composable("notification_settings") { NotificationSettingsScreen() }
             }
         }
     }
@@ -120,7 +129,10 @@ private fun HabitPetBottomBar(
         BottomDestination("habits", "Habits", Icons.Default.Checklist),
         BottomDestination("pet", "Pet", Icons.Default.Pets),
         BottomDestination("rewards", "Rewards", Icons.Default.CardGiftcard),
-        BottomDestination("statistics", "Stats", Icons.Default.BarChart)
+        BottomDestination("statistics", "Stats", Icons.Default.BarChart),
+        BottomDestination("achievements", "Achievements", Icons.Default.FavoriteBorder),
+        BottomDestination("journal", "Journal", Icons.Default.Book),
+        BottomDestination("notification_settings", "Notifications", Icons.Default.Notifications)
     )
 
     NavigationBar {

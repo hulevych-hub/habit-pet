@@ -58,7 +58,6 @@ object DatabaseModule {
         return database.achievementDao()
     }
 
-
     @Provides
     @Singleton
     fun provideJournalEntryDao(database: AppDatabase): com.example.mobile.data.local.dao.JournalEntryDao {
@@ -69,5 +68,43 @@ object DatabaseModule {
     @Singleton
     fun provideStatisticsDao(database: AppDatabase): com.example.mobile.data.local.dao.StatisticsDao {
         return database.statisticsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAchievementInitializer(database: AppDatabase): com.example.mobile.data.local.database.AchievementDatabaseInitializer {
+        return com.example.mobile.data.local.database.AchievementDatabaseInitializer(database)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAchievementEngine(
+        achievementRepository: com.example.mobile.domain.repository.AchievementRepository,
+        habitRepository: com.example.mobile.domain.repository.HabitRepository,
+        habitCompletionRepository: com.example.mobile.domain.repository.HabitCompletionRepository,
+        petRepository: com.example.mobile.domain.repository.PetRepository,
+        statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository
+    ): com.example.mobile.domain.AchievementEngine {
+        return com.example.mobile.domain.AchievementEngine(
+            achievementRepository,
+            habitRepository,
+            habitCompletionRepository,
+            petRepository,
+            statisticsRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideJournalEngine(
+        journalEntryDao: com.example.mobile.data.local.dao.JournalEntryDao,
+        petRepository: com.example.mobile.domain.repository.PetRepository,
+        statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository
+    ): com.example.mobile.domain.JournalEngine {
+        return com.example.mobile.domain.JournalEngine(
+            journalEntryDao,
+            petRepository,
+            statisticsRepository
+        )
     }
 }

@@ -2,7 +2,9 @@ Read CLAUDE.md.
 
 PROJECT_STATE.md exists, read it
 
-Implement Phase 6 and Phase 7. You can read PHASE6.md and PHASE7.md for details.
+Implement Phase 8, Phase 9 and Phase 10. You can read PHASE8.md, PHASE9.md and PHASE10.md for details.
+
+If a phase depends on functionality from a previous phase, implement only the minimum required supporting changes.
 
 Requirements:
 
