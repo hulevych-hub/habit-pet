@@ -4,77 +4,59 @@ import com.example.mobile.presentation.ui.events.RewardUiEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RewardQueue @Inject constructor(
-    private val rewardEventBus: RewardEventBus
-) {
+class RewardQueue @Inject constructor() {
 
-    private var isDisplaying = false
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val rewardPriorities = mapOf(
         RewardUiEvent.LevelUpReward::class.java to 1,
         RewardUiEvent.StreakReward::class.java to 2,
         RewardUiEvent.ChestReward::class.java to 3,
-        //RewardUiEvent.CoinReward::class.java to 4,
-        RewardUiEvent.AchievementReward::class.java to 5
+        RewardUiEvent.AchievementReward::class.java to 4
     )
 
-    private val rewardDelays = mapOf(
-        RewardUiEvent.LevelUpReward::class.java to 2500L,
-        RewardUiEvent.StreakReward::class.java to 1500L,
-        RewardUiEvent.ChestReward::class.java to 3000L,
-        //RewardUiEvent.CoinReward::class.java to 1000L,
-        RewardUiEvent.AchievementReward::class.java to 2000L
+    private val buffer = mutableListOf<RewardUiEvent>()
+
+    private val _rewardEvents = MutableSharedFlow<RewardUiEvent>(
+        replay = 0,
+        extraBufferCapacity = 64
     )
 
-    private val rewardBuffer = mutableListOf<RewardUiEvent>()
+    val rewardEvents = _rewardEvents
 
-    private var isProcessing = false
+    private var isEmitting = false
 
     fun addReward(event: RewardUiEvent) {
-        rewardBuffer.add(event)
+        buffer.add(event)
 
-        rewardBuffer.sortBy {
+        buffer.sortBy {
             rewardPriorities[it::class.java] ?: Int.MAX_VALUE
         }
 
-        if (!isProcessing) {
-            processQueue()
-        }
+        emitNextIfPossible()
     }
 
-    private fun processQueue() {
+    fun emitNextIfPossible() {
+        if (isEmitting) return
+        if (buffer.isEmpty()) return
+
+        val next = buffer.removeAt(0)
+
+        isEmitting = true
+
         scope.launch {
-
-            isProcessing = true
-
-            while (rewardBuffer.isNotEmpty()) {
-
-                val reward = rewardBuffer.removeAt(0)
-
-                rewardEventBus.emit(reward)
-                isDisplaying = true
-
-                delay(
-                    rewardDelays[reward::class.java] ?: 1000L
-                )
-            }
-
-            isProcessing = false
+            _rewardEvents.emit(next)
         }
     }
 
     fun rewardDismissed() {
-        isDisplaying = false
-
-        if (rewardBuffer.isNotEmpty()) {
-            processQueue()
-        }
+        isEmitting = false
+        emitNextIfPossible()
     }
 }

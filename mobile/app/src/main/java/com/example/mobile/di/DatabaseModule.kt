@@ -138,10 +138,8 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideRewardQueue(
-        rewardEventBus: RewardEventBus
-    ): RewardQueue {
-        return RewardQueue(rewardEventBus)
+    fun provideRewardQueue(): RewardQueue {
+        return RewardQueue()
     }
 
     @Provides
@@ -161,12 +159,10 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideRewardManager(
-        rewardEventBus: RewardEventBus,
         rewardQueue: RewardQueue,
         statisticsRepository: StatisticsRepository
     ): RewardManager {
         return RewardManager(
-            rewardEventBus,
             rewardQueue,
             statisticsRepository
         )

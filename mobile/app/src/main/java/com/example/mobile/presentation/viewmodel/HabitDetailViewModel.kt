@@ -330,6 +330,10 @@ class HabitDetailViewModel @Inject constructor(
                 rewardQueue.addReward(
                     RewardUiEvent.LevelUpReward(newLevel, bonus)
                 )
+
+                rewardQueue.addReward(
+                    RewardUiEvent.ChestReward("Level up", 20)
+                )
             }
         }
     }
