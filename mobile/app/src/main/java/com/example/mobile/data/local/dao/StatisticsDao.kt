@@ -18,4 +18,24 @@ interface StatisticsDao {
 
     @Update
     suspend fun updateStatistics(statistics: StatisticsEntity): Int
+
+    @Query("""
+UPDATE statistics 
+SET 
+    totalCoins = 0,
+    totalCompletions = 0,
+    currentStreak = 0,
+    bestStreak = 0,
+    globalStreak = 0,
+    totalXp = 0,
+    daysActive = 0,
+    totalHabitsCompleted = 0,
+    rewardChestsAvailable = 0,
+    lastStreakDate = 0,
+    lastUpdated = 0
+""")
+    suspend fun reset()
+
+    @Query("SELECT COUNT(*) FROM statistics")
+    suspend fun count(): Int
 }

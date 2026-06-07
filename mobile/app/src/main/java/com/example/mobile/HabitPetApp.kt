@@ -2,6 +2,7 @@ package com.example.mobile
 
 import android.app.Application
 import com.example.mobile.data.local.database.AchievementDatabaseInitializer
+import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.AchievementEngine
 import com.example.mobile.util.NotificationHelper
 import dagger.hilt.android.HiltAndroidApp
@@ -13,6 +14,10 @@ class HabitPetApp : Application() {
     @Inject
     lateinit var achievementInitializer: AchievementDatabaseInitializer
 
+    @Inject
+    lateinit var statisticsInitializer: StatisticsDatabaseInitializer
+
+
     // 🔥 ADD THIS
     @Inject
     lateinit var achievementEngine: AchievementEngine
@@ -21,6 +26,8 @@ class HabitPetApp : Application() {
         super.onCreate()
 
         achievementInitializer.initializeAchievementsAsync()
+
+        statisticsInitializer.initializeStatisticsAsync()
 
         // 🔥 FORCE ENGINE TO INITIALIZE
         achievementEngine // just accessing it is enough

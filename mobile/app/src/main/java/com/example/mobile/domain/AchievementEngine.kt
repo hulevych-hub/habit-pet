@@ -6,6 +6,7 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.reward.RewardEventBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,6 +27,7 @@ class AchievementEngine @Inject constructor(
     private val habitRepository: HabitRepository,
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
+    private val rewardEventBus: RewardEventBus
 ) {
 
     // IMPORTANT: structured coroutine scope
@@ -141,20 +143,12 @@ class AchievementEngine @Inject constructor(
     // UNLOCK LOGIC
     // -------------------------
     private suspend fun unlockAchievement(name: String): RewardUiEvent? {
+
         val achievement = achievementRepository.getAllAchievements()
             .first()
-            .firstOrNull { it.name == name }
+            .firstOrNull { it.name == name } ?: return null
 
-        if (achievement == null) {
-            Log.d("AchievementEngine", "Achievement not found: $name")
-            return null
-        }
-
-        if (achievement.isUnlocked) {
-            return null
-        }
-
-        Log.d("AchievementEngine", "Unlocking: $name")
+        if (achievement.isUnlocked) return null
 
         achievementRepository.updateAchievement(
             achievement.copy(
@@ -163,6 +157,15 @@ class AchievementEngine @Inject constructor(
             )
         )
 
-        return RewardUiEvent.AchievementReward(name, achievement.rewardCoins)
+        Log.d("ACHIEVEMENT", "Unlocked: $name")
+
+        val event = RewardUiEvent.AchievementReward(
+            name,
+            achievement.rewardCoins
+        )
+
+        rewardEventBus.emit(event)
+
+        return event
     }
 }

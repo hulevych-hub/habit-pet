@@ -8,4 +8,5 @@ interface AchievementRepository {
     fun getAchievementById(achievementId: Long): Flow<AchievementEntity?>
     suspend fun addAchievement(achievement: AchievementEntity): Long
     suspend fun updateAchievement(achievement: AchievementEntity): Int
-}
+
+    suspend fun reset() }

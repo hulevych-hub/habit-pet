@@ -24,6 +24,10 @@ class PetRepositoryImpl @Inject constructor(
         return updatedRows
     }
 
+    override suspend fun resetPet() {
+        petDao.resetPet()
+    }
+
     override suspend fun equipItem(itemType: String, itemId: String): Int {
         return try {
             val currentPet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)

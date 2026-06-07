@@ -9,4 +9,6 @@ interface HabitRepository {
     suspend fun addHabit(habit: HabitEntity): Long
     suspend fun updateHabit(habit: HabitEntity): Int
     suspend fun deleteHabit(habit: HabitEntity): Int
+
+    suspend fun deleteAll()
 }

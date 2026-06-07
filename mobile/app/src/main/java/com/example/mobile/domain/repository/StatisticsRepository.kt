@@ -8,4 +8,12 @@ interface StatisticsRepository {
     suspend fun updateStatistics(statistics: StatisticsEntity): Int
 
     suspend fun addCoins(amount: Int)
+
+    suspend fun reset()
+
+    suspend fun markStreakUpdatedToday()
+
+    suspend fun isStreakAlreadyCountedToday(): Boolean
+
+    suspend fun incrementStreak()
 }

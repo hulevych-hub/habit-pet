@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
-import com.example.mobile.presentation.ui.reward.RewardOverlay
 import com.example.mobile.presentation.viewmodel.HabitDetailViewModel
 import com.example.mobile.ui.theme.HabitPetTheme
 import java.text.SimpleDateFormat
@@ -86,11 +85,6 @@ fun HabitDetailScreen(
                     HabitDetailContent(
                         viewModel = viewModel,
                         habitId = habitId
-                    )
-
-                    // Reward overlay that appears above content
-                    RewardOverlay(
-                        onDismiss = {} // Empty lambda as dismissal is handled internally
                     )
                 }
             }

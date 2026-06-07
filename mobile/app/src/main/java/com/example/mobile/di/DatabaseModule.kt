@@ -3,6 +3,13 @@ package com.example.mobile.di
 import android.content.Context
 import androidx.room.Room
 import com.example.mobile.data.local.database.AppDatabase
+import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
+import com.example.mobile.domain.StreakEngine
+import com.example.mobile.domain.repository.HabitCompletionRepository
+import com.example.mobile.domain.repository.HabitRepository
+import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.reward.RewardEventBus
+import com.example.mobile.presentation.ui.reward.RewardManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,8 +77,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideRewardEventBus(): com.example.mobile.presentation.ui.reward.RewardEventBus {
-        return com.example.mobile.presentation.ui.reward.RewardEventBus()
+    fun provideHabitProgressDao(database: AppDatabase): com.example.mobile.data.local.dao.HabitProgressDao {
+        return database.habitProgressDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRewardEventBus(): RewardEventBus {
+        return RewardEventBus()
     }
 
     @Provides
@@ -82,17 +95,40 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun provideStatisticsDatabaseInitializer(
+        database: AppDatabase
+    ): StatisticsDatabaseInitializer {
+        return StatisticsDatabaseInitializer(database.statisticsDao())
+    }
+
+    @Provides
+    @Singleton
     fun provideAchievementEngine(
         achievementRepository: com.example.mobile.domain.repository.AchievementRepository,
         habitRepository: com.example.mobile.domain.repository.HabitRepository,
-        habitCompletionRepository: com.example.mobile.domain.repository.HabitCompletionRepository,
         petRepository: com.example.mobile.domain.repository.PetRepository,
-        statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository
+        statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository,
+        rewardEventBus: RewardEventBus
     ): com.example.mobile.domain.AchievementEngine {
         return com.example.mobile.domain.AchievementEngine(
             achievementRepository,
             habitRepository,
             petRepository,
+            statisticsRepository,
+            rewardEventBus
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideStreakEngine(
+        habitRepository: HabitRepository,
+        habitCompletionRepository: HabitCompletionRepository,
+        statisticsRepository: StatisticsRepository
+    ): StreakEngine {
+        return StreakEngine(
+            habitRepository,
+            habitCompletionRepository,
             statisticsRepository
         )
     }
@@ -109,5 +145,14 @@ object DatabaseModule {
             petRepository,
             statisticsRepository
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRewardManager(
+        rewardEventBus: RewardEventBus,
+        statisticsRepository: StatisticsRepository
+    ): RewardManager {
+        return RewardManager(rewardEventBus, statisticsRepository)
     }
 }

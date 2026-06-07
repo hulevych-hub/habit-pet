@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CheckCircle
@@ -33,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.AnimatedPet
-import com.example.mobile.presentation.ui.reward.RewardOverlay
 
 @Composable
 fun HomeScreen(
@@ -52,6 +53,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -71,6 +73,11 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Button(
+                    onClick = { homeScreenViewModel.resetAllGameData() }
+                ) {
+                    Text("Reset Game Data")
+                }
                 Text(
                     text = "${uiState.totalCoins} Coins",
                     style = MaterialTheme.typography.titleMedium,
@@ -130,9 +137,9 @@ fun HomeScreen(
         }
 
         // Reward overlay that appears above content
-        RewardOverlay(
+        /*RewardOverlay(
             onDismiss = {} // Empty lambda as dismissal is handled internally
-        )
+        )*/
     }
 }
 

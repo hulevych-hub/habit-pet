@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
+import com.example.mobile.domain.repository.HabitProgressRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
@@ -20,7 +23,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -35,7 +37,9 @@ class HabitDetailViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
     private val habitCompletionRepository: HabitCompletionRepository,
     private val petRepository: PetRepository,
-    private val statisticsRepository: StatisticsRepository
+    private val statisticsRepository: StatisticsRepository,
+    private val habitProgressRepository: HabitProgressRepository,
+    private val streakEngine: StreakEngine
 ) : ViewModel() {
 
     // UI State
@@ -52,63 +56,54 @@ class HabitDetailViewModel @Inject constructor(
     val error: StateFlow<String?> = _error
 
     // Pet state
-    private val _pet = MutableStateFlow<PetEntity>(PetEntity(id = 1))
+    private val _pet = MutableStateFlow(PetEntity(id = 1))
     val pet: StateFlow<PetEntity> = _pet
 
-    // Timer habit state
+    // Timer state
     private val _isTimerRunning = MutableStateFlow(false)
     val isTimerRunning: StateFlow<Boolean> = _isTimerRunning
 
     private val _elapsedSeconds = MutableStateFlow(0)
     val elapsedSeconds: StateFlow<Int> = _elapsedSeconds
 
-    // Events
-    private val _habitCompleted = MutableSharedFlow<Unit>(replay = 0)
-    val habitCompleted: SharedFlow<Unit> = _habitCompleted.shareIn(
-        viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-        replay = 0
-    )
+    // =========================
+    // EVENTS (FIXED)
+    // =========================
 
-    // Reward events
-    private val _rewardUiEvent = MutableSharedFlow<RewardUiEvent>(replay = 0)
-    val rewardUiEvent: SharedFlow<RewardUiEvent> = _rewardUiEvent.shareIn(
-        viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-        replay = 0
-    )
+    private val _habitCompleted = MutableSharedFlow<Unit>()
+    val habitCompleted: SharedFlow<Unit> = _habitCompleted
 
-    // Navigation events
-    private val _navigateBack = MutableSharedFlow<Unit>(replay = 0)
-    val navigateBack: SharedFlow<Unit> = _navigateBack.shareIn(
-        viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-        replay = 0
-    )
+    private val _rewardUiEvent = MutableSharedFlow<RewardUiEvent>()
+    val rewardUiEvent: SharedFlow<RewardUiEvent> = _rewardUiEvent
 
-    // Initialize with habit ID
+    private val _navigateBack = MutableSharedFlow<Unit>()
+    val navigateBack: SharedFlow<Unit> = _navigateBack
+
+    // =========================
+    // INIT
+    // =========================
+
     fun initialize(habitId: Long) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
             try {
-                // Get habit
                 habitRepository.getHabitById(habitId).firstOrNull()
                     ?.let { _habit.value = it }
 
-                // Get completion history (last 30 days)
-                val thirtyDaysAgo = getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
-                _completions.value = habitCompletionRepository
-                    .getCompletionsForHabit(habitId, thirtyDaysAgo, System.currentTimeMillis())
-                    .firstOrNull()
-                    ?: emptyList()
+                val thirtyDaysAgo =
+                    getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
 
-                // Initialize pet
+                _completions.value =
+                    habitCompletionRepository
+                        .getCompletionsForHabit(habitId, thirtyDaysAgo, System.currentTimeMillis())
+                        .firstOrNull()
+                        ?: emptyList()
+
                 petRepository.getPet().firstOrNull()
                     ?.let { _pet.value = it }
                     ?: run {
-                        // Create default pet if none exists
                         val defaultPet = PetEntity(id = 1)
                         petRepository.updatePet(defaultPet)
                         _pet.value = defaultPet
@@ -122,7 +117,10 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    // Helper to get start of day (00:00:00)
+    // =========================
+    // DAY HELPERS
+    // =========================
+
     private fun getDayStart(timestamp: Long): Long {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timestamp
@@ -133,35 +131,35 @@ class HabitDetailViewModel @Inject constructor(
         return calendar.timeInMillis
     }
 
-    // Check if habit was completed today
+    // =========================
+    // CHECK COMPLETION
+    // =========================
+
     fun isCompletedToday(habitId: Long): StateFlow<Boolean> {
         val todayStart = getDayStart(System.currentTimeMillis())
-        return habitCompletionRepository.getCompletionForHabitOnDate(habitId, todayStart)
+        return habitCompletionRepository
+            .getCompletionForHabitOnDate(habitId, todayStart)
             .map { it != null }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                false
-            )
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     }
 
-    // Complete checkbox habit
+    // =========================
+    // CHECKBOX HABIT
+    // =========================
+
     fun completeCheckboxHabit(habitId: Long) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
             try {
-                // Check if already completed today
                 if (isAlreadyCompletedToday(habitId)) {
-                    _error.value = "Habit already completed today"
+                    _error.value = "Already completed today"
                     return@launch
                 }
 
-                // Calculate XP (base 10 XP for checkbox habit)
-                val xpEarned: Long = 10000
+                val xpEarned: Long = 10
 
-                // Create completion entity
                 val completion = HabitCompletionEntity(
                     id = System.currentTimeMillis(),
                     habitId = habitId,
@@ -169,21 +167,17 @@ class HabitDetailViewModel @Inject constructor(
                     xpEarned = xpEarned
                 )
 
-                // Save completion
                 habitCompletionRepository.addCompletion(completion)
+                val today = getDayStart(System.currentTimeMillis())
+                streakEngine.evaluateTodayStreak(System.currentTimeMillis())
                 refreshCompletions(habitId)
 
-                // Award XP and coins to pet
                 awardPetXpAndCoins(xpEarned, 1)
 
-                // Emit coin reward event for daily completion
-                _rewardUiEvent.tryEmit(RewardUiEvent.CoinReward(1))
+                _rewardUiEvent.emit(RewardUiEvent.CoinReward(1))
+                _habitCompleted.emit(Unit)
 
-                // Notify completion
-                _habitCompleted.tryEmit(Unit)
-
-                // Navigate back
-                _navigateBack.tryEmit(Unit)
+                _navigateBack.emit(Unit)
 
             } catch (e: Exception) {
                 _error.value = e.message
@@ -193,16 +187,20 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    // Start timer habit
+    // =========================
+    // TIMER HABIT
+    // =========================
+
     fun startTimerHabit(habitId: Long) {
         viewModelScope.launch {
             if (isAlreadyCompletedToday(habitId)) {
-                _error.value = "Habit already completed today"
+                _error.value = "Already completed today"
                 return@launch
             }
 
             _isTimerRunning.value = true
             _elapsedSeconds.value = 0
+
             while (_isTimerRunning.value) {
                 delay(1000)
                 _elapsedSeconds.value += 1
@@ -210,7 +208,6 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    // Stop timer habit and attempt completion
     fun stopTimerHabit(habitId: Long) {
         _isTimerRunning.value = false
 
@@ -220,164 +217,170 @@ class HabitDetailViewModel @Inject constructor(
 
             try {
                 val habit = _habit.value ?: return@launch
-                val elapsedMinutes = _elapsedSeconds.value / 60
 
-                // Check if minimum duration is met
-                if (elapsedMinutes >= habit.minimumDurationMinutes) {
-                    // Calculate XP: 10 base + 1 per minute
-                    val xpEarned = (10 + elapsedMinutes).toLong()
+                val today = getDayStart(System.currentTimeMillis())
 
-                    // Create completion entity
+                val previous = habitProgressRepository
+                    .getProgress(habitId, today)
+                    .firstOrNull()
+                    ?.accumulatedMinutes ?: 0
+
+                val sessionMinutes = _elapsedSeconds.value / 60
+                val total = previous + sessionMinutes
+
+                habitProgressRepository.updateProgress(
+                    HabitProgressEntity(
+                        habitId = habitId,
+                        date = today,
+                        accumulatedMinutes = total,
+                        lastUpdated = System.currentTimeMillis()
+                    )
+                )
+
+                if (total >= habit.minimumDurationMinutes) {
+
+                    val xpEarned = (10 + total).toLong()
+
                     val completion = HabitCompletionEntity(
                         id = System.currentTimeMillis(),
                         habitId = habitId,
-                        date = getDayStart(System.currentTimeMillis()),
+                        date = today,
                         xpEarned = xpEarned
                     )
 
-                    // Save completion
                     habitCompletionRepository.addCompletion(completion)
+                    val today = getDayStart(System.currentTimeMillis())
+                    streakEngine.evaluateTodayStreak(System.currentTimeMillis())
                     refreshCompletions(habitId)
 
-                    // Award XP and coins to pet
-                    awardPetXpAndCoins(xpEarned, (10 + elapsedMinutes).toInt())
+                    awardPetXpAndCoins(xpEarned, (10 + sessionMinutes).toInt())
 
-                    // Emit coin reward event for timer habit completion
-                    _rewardUiEvent.tryEmit(RewardUiEvent.CoinReward(1))
+                    _rewardUiEvent.emit(RewardUiEvent.CoinReward(1))
+                    _habitCompleted.emit(Unit)
 
-                    // Notify completion
-                    _habitCompleted.tryEmit(Unit)
+                    _navigateBack.emit(Unit)
 
-                    // Navigate back
-                    _navigateBack.tryEmit(Unit)
+                    habitProgressRepository.reset(habitId)
 
                 } else {
-                    // Not enough time - show remaining time needed
-                    val remainingMinutes = habit.minimumDurationMinutes - elapsedMinutes
-                    _error.value = "Need ${remainingMinutes} more minutes to complete this habit"
+                    val remaining = habit.minimumDurationMinutes - total
+                    _error.value = "Need $remaining more minutes"
                 }
 
             } catch (e: Exception) {
                 _error.value = e.message
             } finally {
                 _isLoading.value = false
-                // Reset timer state
                 _isTimerRunning.value = false
                 _elapsedSeconds.value = 0
             }
         }
     }
 
-    // Check if habit was already completed today
+    // =========================
+    // HELPERS
+    // =========================
+
     private suspend fun isAlreadyCompletedToday(habitId: Long): Boolean {
-        val todayStart = getDayStart(System.currentTimeMillis())
+        val today = getDayStart(System.currentTimeMillis())
         return habitCompletionRepository
-            .getCompletionForHabitOnDate(habitId, todayStart)
+            .getCompletionForHabitOnDate(habitId, today)
             .firstOrNull() != null
     }
 
-    // Get completion status for today
     fun getTodayCompletionStatus(habitId: Long): StateFlow<Boolean> {
-        val todayStart = getDayStart(System.currentTimeMillis())
-        return habitCompletionRepository.getCompletionForHabitOnDate(habitId, todayStart)
+        val today = getDayStart(System.currentTimeMillis())
+        return habitCompletionRepository
+            .getCompletionForHabitOnDate(habitId, today)
             .map { it != null }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                false
-            )
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     }
 
-    // Reset timer state
     fun resetTimer() {
         _isTimerRunning.value = false
         _elapsedSeconds.value = 0
     }
 
-    // Award XP and coins to pet and update level/evolution
+    // =========================
+    // REWARDS
+    // =========================
+
     private fun awardPetXpAndCoins(xpToAdd: Long, coinsToAdd: Int) {
         viewModelScope.launch {
-            val currentPet = _pet.value
-            val updatedPet = currentPet.copy(xp = currentPet.xp + xpToAdd)
+            val current = _pet.value
+            val updated = current.copy(xp = current.xp + xpToAdd)
 
-            // Recalculate level based on new XP
-            val newLevel = calculateLevelFromXp(updatedPet.xp)
-            val updatedPetWithLevel = updatedPet.copy(level = newLevel)
+            val newLevel = calculateLevelFromXp(updated.xp)
+            val evolved = updated.copy(
+                level = newLevel,
+                evolutionStage = calculateEvolutionStageFromXp(updated.xp)
+            )
 
-            // Recalculate evolution stage based on lifetime XP
-            val newEvolutionStage = calculateEvolutionStageFromXp(updatedPet.xp)
-            val finalPet = updatedPetWithLevel.copy(evolutionStage = newEvolutionStage)
+            petRepository.updatePet(evolved)
+            _pet.value = evolved
 
-            // Update pet in database
-            petRepository.updatePet(finalPet)
-
-            // Award coins
             awardCoins(coinsToAdd)
 
-            // Award coins for level up if level increased
-            if (newLevel > currentPet.level) {
-                val levelUpCoins = newLevel * 10 // 10 coins per level
-                awardCoins(levelUpCoins)
+            if (newLevel > current.level) {
+                val bonus = newLevel * 10
+                awardCoins(bonus)
 
-                // Emit level up reward event
-                _rewardUiEvent.tryEmit(RewardUiEvent.LevelUpReward(newLevel, levelUpCoins))
+                _rewardUiEvent.emit(
+                    RewardUiEvent.LevelUpReward(newLevel, bonus)
+                )
             }
-
-            // Update UI state
-            _pet.value = finalPet
         }
     }
 
-    // Award coins to statistics
-    private fun awardCoins(coinsToAdd: Int) {
+    private fun awardCoins(coins: Int) {
         viewModelScope.launch {
-            try {
-                val currentStats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity()
-                val updatedStats = currentStats.copy(
-                    totalCoins = currentStats.totalCoins + coinsToAdd,
+            val stats = statisticsRepository.getStatistics().firstOrNull()
+                ?: StatisticsEntity()
+
+            statisticsRepository.updateStatistics(
+                stats.copy(
+                    totalCoins = stats.totalCoins + coins,
                     lastUpdated = System.currentTimeMillis()
                 )
-                statisticsRepository.updateStatistics(updatedStats)
-            } catch (e: Exception) {
-                // Handle error appropriately
-            }
+            )
         }
     }
 
-    // Calculate level from XP using progressive formula
+    // =========================
+    // FORMULAS
+    // =========================
+
     private fun calculateLevelFromXp(totalXp: Long): Int {
-        // Simple progressive formula: Level 1 = 100 XP, Level 2 = 200 XP, Level 3 = 350 XP, etc.
-        // This creates increasing gaps between levels
         var level = 0
         var xpRequired = 100
-        var xpRemaining = totalXp
+        var remaining = totalXp
 
-        while (xpRemaining >= xpRequired) {
-            xpRemaining -= xpRequired
+        while (remaining >= xpRequired) {
+            remaining -= xpRequired
             level++
-            xpRequired = 100 + (level * 50) // Increases by 50 XP each level
+            xpRequired = 100 + level * 50
         }
-
         return level
     }
 
-    // Calculate evolution stage from lifetime XP
     private fun calculateEvolutionStageFromXp(totalXp: Long): Int {
-        // Evolution stages based on lifetime XP thresholds
         return when {
-            totalXp < 500 -> 0 // Egg
-            totalXp < 1500 -> 1 // Hatchling
-            totalXp < 3000 -> 2 // Young Dragon
-            totalXp < 6000 -> 3 // Adult Dragon
-            else -> 4 // Ancient Dragon
+            totalXp < 500 -> 0
+            totalXp < 1500 -> 1
+            totalXp < 3000 -> 2
+            totalXp < 6000 -> 3
+            else -> 4
         }
     }
 
     private suspend fun refreshCompletions(habitId: Long) {
-        val thirtyDaysAgo = getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
-        _completions.value = habitCompletionRepository
-            .getCompletionsForHabit(habitId, thirtyDaysAgo, System.currentTimeMillis())
-            .firstOrNull()
-            ?: emptyList()
+        val thirtyDays =
+            getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
+
+        _completions.value =
+            habitCompletionRepository
+                .getCompletionsForHabit(habitId, thirtyDays, System.currentTimeMillis())
+                .firstOrNull()
+                ?: emptyList()
     }
 }

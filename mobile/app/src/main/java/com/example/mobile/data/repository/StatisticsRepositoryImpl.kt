@@ -31,4 +31,38 @@ class StatisticsRepositoryImpl @Inject constructor(
 
         statisticsDao.updateStatistics(updated)
     }
+
+    override suspend fun reset() {
+        statisticsDao.reset()
+    }
+
+    override suspend fun isStreakAlreadyCountedToday(): Boolean {
+        val stats = statisticsDao.getStatistics().first() ?: return false
+
+        val today = System.currentTimeMillis() / 86_400_000L
+
+        return stats.lastStreakDate == today
+    }
+
+    override suspend fun markStreakUpdatedToday() {
+        val stats = statisticsDao.getStatistics().first() ?: return
+
+        val today = System.currentTimeMillis() / 86_400_000L
+
+        val updated = stats.copy(
+            lastStreakDate = today
+        )
+
+        statisticsDao.updateStatistics(updated)
+    }
+
+    override suspend fun incrementStreak() {
+        val stats = statisticsDao.getStatistics().first() ?: return
+
+        val updated = stats.copy(
+            currentStreak = stats.currentStreak + 1
+        )
+
+        statisticsDao.updateStatistics(updated)
+    }
 }

@@ -20,4 +20,7 @@ interface JournalEntryDao {
 
     @Update
     suspend fun updateJournalEntry(entry: JournalEntryEntity): Int
+
+    @Query("DELETE FROM journal_entries")
+    suspend fun deleteAll()
 }

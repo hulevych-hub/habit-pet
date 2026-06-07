@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@HiltViewModel
+@Singleton
 class RewardManager @Inject constructor(
     private val rewardEventBus: RewardEventBus,
     private val statisticsRepository: StatisticsRepository

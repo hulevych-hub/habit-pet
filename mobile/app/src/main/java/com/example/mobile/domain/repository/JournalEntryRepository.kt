@@ -8,4 +8,6 @@ interface JournalEntryRepository {
     fun getJournalEntryByDay(dayNumber: Int): Flow<JournalEntryEntity?>
     suspend fun addJournalEntry(entry: JournalEntryEntity): Long
     suspend fun updateJournalEntry(entry: JournalEntryEntity): Int
+
+    suspend fun deleteAll()
 }

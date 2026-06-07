@@ -40,13 +40,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.R
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 
 @Composable
 fun RewardOverlay(
-    rewardManager: RewardManager = hiltViewModel(),
+    rewardManager: RewardManager,
     onDismiss: () -> Unit
 ) {
     val currentReward by rewardManager.currentReward.collectAsState()

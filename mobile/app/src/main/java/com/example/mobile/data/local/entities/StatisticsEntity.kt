@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "statistics")
 data class StatisticsEntity(
-    @PrimaryKey(autoGenerate = true) var id: Long = 0,
+    @PrimaryKey
+    var id: Long = 1,
     var currentStreak: Int = 0,
     var bestStreak: Int = 0,
     var globalStreak: Int = 0,
@@ -17,5 +18,6 @@ data class StatisticsEntity(
     var totalCoins: Int = 0,
     var lastStreakAwardedAt: Int = 0,
     var lastUpdated: Long = 0, // timestamp
-    var rewardChestsAvailable: Int = 0
+    var rewardChestsAvailable: Int = 0,
+    val lastStreakDate: Long = 0L
 )

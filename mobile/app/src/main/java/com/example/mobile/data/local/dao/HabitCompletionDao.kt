@@ -31,4 +31,13 @@ interface HabitCompletionDao {
 
     @Delete
     suspend fun deleteCompletion(completion: HabitCompletionEntity): Int
+
+    @Query("DELETE FROM habit_completions")
+    suspend fun deleteAll()
+
+    @Query("SELECT * FROM habit_completions WHERE habitId = :habitId AND date = :date LIMIT 1")
+    suspend fun getCompletionForHabitOnDateOnce(
+        habitId: Long,
+        date: Long
+    ): HabitCompletionEntity?
 }

@@ -20,4 +20,8 @@ class AchievementRepositoryImpl @Inject constructor(
 
     override suspend fun updateAchievement(achievement: AchievementEntity): Int =
         achievementDao.updateAchievement(achievement)
+
+    override suspend fun reset() {
+        achievementDao.resetAll()
+    }
 }

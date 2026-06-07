@@ -1,5 +1,7 @@
 package com.example.mobile.di
 
+import com.example.mobile.domain.repository.HabitProgressRepository
+import com.example.mobile.data.repository.HabitProgressRepositoryImpl
 import com.example.mobile.data.repository.AchievementRepositoryImpl
 import com.example.mobile.data.repository.HabitCompletionRepositoryImpl
 import com.example.mobile.data.repository.HabitRepositoryImpl
@@ -43,4 +45,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindStatisticsRepository(repository: StatisticsRepositoryImpl): StatisticsRepository
+
+    @Binds
+    abstract fun bindHabitProgressRepository(
+        repository: HabitProgressRepositoryImpl
+    ): HabitProgressRepository
 }

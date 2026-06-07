@@ -20,4 +20,8 @@ class JournalEntryRepositoryImpl @Inject constructor(
 
     override suspend fun updateJournalEntry(entry: JournalEntryEntity): Int =
         journalEntryDao.updateJournalEntry(entry)
+
+    override suspend fun deleteAll() {
+        journalEntryDao.deleteAll()
+    }
 }

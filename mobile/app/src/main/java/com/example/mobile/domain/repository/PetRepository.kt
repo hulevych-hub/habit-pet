@@ -8,4 +8,6 @@ interface PetRepository {
     suspend fun updatePet(pet: PetEntity): Int
     suspend fun equipItem(itemType: String, itemId: String): Int
     suspend fun unequipItem(itemType: String): Int
+
+    suspend fun resetPet()
 }

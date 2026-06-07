@@ -4,7 +4,6 @@ import com.example.mobile.data.local.dao.InventoryItemDao
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.domain.repository.InventoryItemRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -26,6 +25,10 @@ class InventoryItemRepositoryImpl @Inject constructor(
 
     override suspend fun deleteItem(item: InventoryItemEntity): Int =
         inventoryItemDao.deleteItem(item)
+
+    override suspend fun deleteAll() {
+        inventoryItemDao.deleteAll()
+    }
 
     override suspend fun purchaseItem(itemId: Long): Int {
         // Get the item details

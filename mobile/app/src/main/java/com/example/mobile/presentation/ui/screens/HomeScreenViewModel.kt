@@ -5,24 +5,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
-import com.example.mobile.domain.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.collections.firstOrNull
-import kotlin.sequences.firstOrNull
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -35,6 +32,16 @@ class HomeScreenViewModel @Inject constructor(
     private val habitCompletionRepository: HabitCompletionRepository,
     private val achievementRepository: AchievementRepository
 ) : ViewModel() {
+
+    fun resetAllGameData() {
+        viewModelScope.launch {
+            habitRepository.deleteAll()
+            habitCompletionRepository.deleteAll()
+            petRepository.resetPet()
+            statisticsRepository.reset()
+            achievementRepository.reset()
+        }
+    }
 
     // UI State
     val statistics: StateFlow<StatisticsEntity> = statisticsRepository.getStatistics()
@@ -86,7 +93,7 @@ class HomeScreenViewModel @Inject constructor(
         todayCompletionStatuses
     ) { stats, habList, petState, completionStatuses ->
         UiState(
-            globalStreak = stats.globalStreak,
+            globalStreak = stats.currentStreak,
             habits = habList,
             pet = petState,
             completedToday = completionStatuses,

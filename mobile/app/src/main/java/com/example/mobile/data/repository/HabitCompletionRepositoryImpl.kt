@@ -3,11 +3,10 @@ package com.example.mobile.data.repository
 import com.example.mobile.data.local.dao.HabitCompletionDao
 import com.example.mobile.data.local.dao.HabitDao
 import com.example.mobile.data.local.dao.PetDao
+import com.example.mobile.data.local.dao.StatisticsDao
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
-import com.example.mobile.data.local.dao.StatisticsDao
-import com.example.mobile.domain.StreakCalculator
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -19,16 +18,28 @@ class HabitCompletionRepositoryImpl @Inject constructor(
     private val statisticsDao: StatisticsDao,
     private val petDao: PetDao
 ) : HabitCompletionRepository {
-    override fun getCompletionsForHabit(habitId: Long, startDate: Long, endDate: Long): Flow<List<HabitCompletionEntity>> =
+
+    override fun getCompletionsForHabit(
+        habitId: Long,
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<HabitCompletionEntity>> =
         habitCompletionDao.getCompletionsForHabit(habitId, startDate, endDate)
 
-    override fun getCompletionForHabitOnDate(habitId: Long, date: Long): Flow<HabitCompletionEntity?> =
+    override fun getCompletionForHabitOnDate(
+        habitId: Long,
+        date: Long
+    ): Flow<HabitCompletionEntity?> =
         habitCompletionDao.getCompletionForHabitOnDate(habitId, date)
 
     override suspend fun addCompletion(completion: HabitCompletionEntity): Long {
-        val existingCompletion = habitCompletionDao
-            .getCompletionForHabitOnDate(completion.habitId, completion.date)
-            .firstOrNull()
+
+        val existingCompletion =
+            habitCompletionDao.getCompletionForHabitOnDateOnce(
+                completion.habitId,
+                completion.date
+            )
+
         if (existingCompletion != null) {
             return existingCompletion.id
         }
@@ -39,7 +50,6 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         updateHabitStreak(completion.habitId, completion.date)
         updatePetProgress(completion.xpEarned)
         updateStatistics(completion)
-        updateGlobalStreak(completion.date)
 
         return completionId
     }
@@ -50,140 +60,109 @@ class HabitCompletionRepositoryImpl @Inject constructor(
     override suspend fun deleteCompletion(completion: HabitCompletionEntity): Int =
         habitCompletionDao.deleteCompletion(completion)
 
-    private suspend fun updateHabitStreak(habitId: Long, completionDate: Long) {
-        // Get the habit
-        val habitOptional = habitDao.getHabitById(habitId).firstOrNull()
-        if (habitOptional == null) {
-            return // Habit not found, nothing to update
-        }
-        val habit = habitOptional
+    override suspend fun deleteAll() =
+        habitCompletionDao.deleteAll()
 
-        // Get yesterday's date (start of day)
+    // NEW: correct streak check for engine
+    override suspend fun hasAnyCompletionOnDate(date: Long): Boolean {
+        return habitCompletionDao.getCompletionCountOnDate(date) > 0
+    }
+
+    override suspend fun areAllHabitsCompletedOnDate(date: Long): Boolean {
+        val habits = habitDao.getAllHabits().firstOrNull() ?: return true
+
+        return habits.all { habit ->
+            habitCompletionDao.getCompletionForHabitOnDateOnce(habit.id, date) != null
+        }
+    }
+
+    // -------------------------
+    // STREAK LOGIC (UNCHANGED BUT NOW SAFE)
+    // -------------------------
+
+    private suspend fun updateHabitStreak(habitId: Long, completionDate: Long) {
+
+        val habit = habitDao.getHabitById(habitId).firstOrNull() ?: return
+
         val calendar = java.util.Calendar.getInstance()
         calendar.timeInMillis = completionDate
         calendar.add(java.util.Calendar.DAY_OF_MONTH, -1)
+
         calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
         calendar.set(java.util.Calendar.MINUTE, 0)
         calendar.set(java.util.Calendar.SECOND, 0)
         calendar.set(java.util.Calendar.MILLISECOND, 0)
-        val yesterdayStart = calendar.timeInMillis
 
-        // Check if there was a completion yesterday
-        val yesterdayCompletionOptional = habitCompletionDao.getCompletionForHabitOnDate(habitId, yesterdayStart).firstOrNull()
-        if (yesterdayCompletionOptional != null) {
-            // Consecutive day - increment streak
-            val newCurrentStreak = habit.currentStreak + 1
-            val newBestStreak = Math.max(habit.bestStreak, newCurrentStreak)
+        val yesterday = calendar.timeInMillis
 
-            // Update habit
-            val updatedHabit = habit.copy(
-                currentStreak = newCurrentStreak,
-                bestStreak = newBestStreak
-            )
-            habitDao.updateHabit(updatedHabit)
-        } else {
-            // Not consecutive - reset streak to 1 (for today's completion)
-            val newCurrentStreak = 1
-            val newBestStreak = Math.max(habit.bestStreak, newCurrentStreak)
+        val hadYesterday =
+            habitCompletionDao.getCompletionForHabitOnDateOnce(habitId, yesterday) != null
 
-            // Update habit
-            val updatedHabit = habit.copy(
-                currentStreak = newCurrentStreak,
-                bestStreak = newBestStreak
-            )
-            habitDao.updateHabit(updatedHabit)
-        }
-    }
+        val newStreak = if (hadYesterday) habit.currentStreak + 1 else 1
 
-    private suspend fun updateGlobalStreak(completionDate: Long) {
-        val statistics = statisticsDao.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
-        val globalStreak = calculateGlobalStreakFrom(completionDate)
-        val updatedStatistics = statistics.copy(
-            id = 1,
-            globalStreak = globalStreak,
-            currentStreak = globalStreak,
-            bestStreak = maxOf(statistics.bestStreak, globalStreak),
-            lastUpdated = System.currentTimeMillis()
+        val updated = habit.copy(
+            currentStreak = newStreak,
+            bestStreak = maxOf(habit.bestStreak, newStreak)
         )
-        upsertStatistics(updatedStatistics)
-    }
 
-    private suspend fun areAllHabitsCompletedOnDate(date: Long): Boolean {
-        // Get all habits
-        val allHabitsOptional = habitDao.getAllHabits().firstOrNull()
-        if (allHabitsOptional == null || allHabitsOptional.isEmpty()) {
-            return true // No habits to check, consider as completed
-        }
-        val allHabits = allHabitsOptional
-
-        // For each habit, check if completed on the given date
-        for (habit in allHabits) {
-            val completionOptional = habitCompletionDao.getCompletionForHabitOnDate(habit.id, date).firstOrNull()
-            if (completionOptional == null) {
-                return false // Found a habit not completed today
-            }
-        }
-        return true // All habits completed
+        habitDao.updateHabit(updated)
     }
 
     private suspend fun updateStatistics(completion: HabitCompletionEntity) {
-        val statistics = statisticsDao.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
-        val updatedStatistics = statistics.copy(
+        val stats = statisticsDao.getStatistics().firstOrNull()
+            ?: StatisticsEntity(id = 1)
+
+        val updated = stats.copy(
             id = 1,
-            totalCompletions = statistics.totalCompletions + 1,
-            totalHabitsCompleted = statistics.totalHabitsCompleted + 1,
-            totalXp = statistics.totalXp + completion.xpEarned,
+            totalCompletions = stats.totalCompletions + 1,
+            totalHabitsCompleted = stats.totalHabitsCompleted + 1,
+            totalXp = stats.totalXp + completion.xpEarned,
             daysActive = habitCompletionDao.getActiveDayCount(),
             lastUpdated = System.currentTimeMillis()
         )
-        upsertStatistics(updatedStatistics)
+
+        upsertStatistics(updated)
     }
 
     private suspend fun updatePetProgress(xpEarned: Long) {
         val pet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)
+
         val newXp = pet.xp + xpEarned
         val newLevel = calculateLevel(newXp)
-        val updatedPet = pet.copy(
+
+        val updated = pet.copy(
             id = 1,
             xp = newXp,
             level = newLevel,
             evolutionStage = calculateEvolutionStage(newXp)
         )
-        val updatedRows = petDao.updatePet(updatedPet)
-        if (updatedRows == 0) {
-            petDao.insertPet(updatedPet)
-        }
+
+        petDao.updatePet(updated)
     }
 
     private fun calculateLevel(xp: Long): Int {
         var level = 0
-        var remainingXp = xp
-        while (remainingXp >= xpRequiredForNextLevel(level)) {
-            remainingXp -= xpRequiredForNextLevel(level)
+        var remaining = xp
+
+        while (remaining >= (100 + level * 50)) {
+            remaining -= (100 + level * 50)
             level++
         }
+
         return level
     }
 
-    private fun xpRequiredForNextLevel(level: Int): Long = 100L + (level * 50L)
-
     private fun calculateEvolutionStage(xp: Long): Int = when {
-        xp >= 2_500L -> 4
-        xp >= 1_000L -> 3
-        xp >= 350L -> 2
-        xp >= 100L -> 1
+        xp >= 2500 -> 4
+        xp >= 1000 -> 3
+        xp >= 350 -> 2
+        xp >= 100 -> 1
         else -> 0
     }
 
-    private suspend fun calculateGlobalStreakFrom(date: Long): Int {
-        return StreakCalculator.calculateConsecutiveStreak(date) { day ->
-            areAllHabitsCompletedOnDate(day)
-        }
-    }
-
     private suspend fun upsertStatistics(statistics: StatisticsEntity) {
-        val updatedRows = statisticsDao.updateStatistics(statistics.copy(id = 1))
-        if (updatedRows == 0) {
+        val updated = statisticsDao.updateStatistics(statistics.copy(id = 1))
+        if (updated == 0) {
             statisticsDao.insertStatistics(statistics.copy(id = 1))
         }
     }

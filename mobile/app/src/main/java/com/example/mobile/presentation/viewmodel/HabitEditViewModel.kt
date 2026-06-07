@@ -3,6 +3,7 @@ package com.example.mobile.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -21,7 +23,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HabitEditViewModel @Inject constructor(
-    private val habitRepository: HabitRepository
+    private val habitRepository: HabitRepository,
+    private val streakEngine: StreakEngine
 ) : ViewModel() {
 
     // UI State
@@ -153,13 +156,13 @@ class HabitEditViewModel @Inject constructor(
             _error.value = null
 
             try {
-                // Check if we have a habit to delete
                 val habit = habitBeingEdited ?: return@launch
 
-                // Delete from database
                 habitRepository.deleteHabit(habit)
 
-                // Notify habit deletion
+                // 🔥 IMPORTANT FIX
+                streakEngine.recalculateTodayStreak(System.currentTimeMillis())
+
                 _habitDeleted.emit(Unit)
 
             } catch (e: Exception) {
@@ -168,6 +171,16 @@ class HabitEditViewModel @Inject constructor(
                 _isLoading.value = false
             }
         }
+    }
+
+    private fun getDayStart(timestamp: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 
     private fun validateForm(): String? {

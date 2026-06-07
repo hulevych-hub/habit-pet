@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.domain.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -88,6 +88,21 @@ class HabitCreationViewModel @Inject constructor(
                 val validationError = validateForm()
                 if (validationError != null) {
                     _error.value = validationError
+                    return@launch
+                }
+
+                // Check for duplicate habit names
+                val existingHabits = habitRepository.getAllHabits().first()
+
+                val duplicateExists = existingHabits.any {
+                    it.name.trim().equals(
+                        _name.value.trim(),
+                        ignoreCase = true
+                    )
+                }
+
+                if (duplicateExists) {
+                    _error.value = "A habit with this name already exists"
                     return@launch
                 }
 
