@@ -1,14 +1,18 @@
 package com.example.mobile.domain
 
+import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.reward.RewardQueue
 import kotlinx.coroutines.flow.firstOrNull
 
 class StreakEngine(
     private val habitRepository: HabitRepository,
     private val habitCompletionRepository: HabitCompletionRepository,
-    private val statisticsRepository: StatisticsRepository
+    private val statisticsRepository: StatisticsRepository,
+    private val rewardQueue: RewardQueue
 ) {
 
     /**
@@ -33,6 +37,30 @@ class StreakEngine(
         if (allCompleted) {
             statisticsRepository.incrementStreak()
             statisticsRepository.markStreakUpdatedToday()
+
+            // Check for chest rewards (7-day milestone)
+            val stats = statisticsRepository.getStatistics().firstOrNull()
+            val currentStreak = stats?.currentStreak ?: 0
+            val lastStreakAwardedAt = stats?.lastStreakAwardedAt ?: 0
+
+            // Award chest every 7 days
+            if (currentStreak >= 7 && currentStreak % 7 == 0 && currentStreak > lastStreakAwardedAt) {
+                // Award chest reward
+                val chestEvent = RewardUiEvent.ChestReward(
+                    "7_day_streak",
+                    50 // 50 coins as chest reward
+                )
+                rewardQueue.addReward(chestEvent)
+
+                // Update last streak awarded
+                statisticsRepository.updateStatistics(
+                    stats?.copy(
+                        lastStreakAwardedAt = currentStreak
+                    ) ?: StatisticsEntity().copy(
+                        lastStreakAwardedAt = currentStreak
+                    )
+                )
+            }
         }
     }
 

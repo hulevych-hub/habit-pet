@@ -6,7 +6,7 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
-import com.example.mobile.presentation.ui.reward.RewardEventBus
+import com.example.mobile.presentation.ui.reward.RewardQueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,7 +27,7 @@ class AchievementEngine @Inject constructor(
     private val habitRepository: HabitRepository,
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
-    private val rewardEventBus: RewardEventBus
+    private val rewardQueue: RewardQueue
 ) {
 
     // IMPORTANT: structured coroutine scope
@@ -164,7 +164,7 @@ class AchievementEngine @Inject constructor(
             achievement.rewardCoins
         )
 
-        rewardEventBus.emit(event)
+        rewardQueue.addReward(event)
 
         return event
     }

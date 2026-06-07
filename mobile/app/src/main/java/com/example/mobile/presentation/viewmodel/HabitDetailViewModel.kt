@@ -14,6 +14,7 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.reward.RewardQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,7 +40,8 @@ class HabitDetailViewModel @Inject constructor(
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
     private val habitProgressRepository: HabitProgressRepository,
-    private val streakEngine: StreakEngine
+    private val streakEngine: StreakEngine,
+    private val rewardQueue: RewardQueue
 ) : ViewModel() {
 
     // UI State
@@ -158,7 +160,7 @@ class HabitDetailViewModel @Inject constructor(
                     return@launch
                 }
 
-                val xpEarned: Long = 10
+                val xpEarned: Long = 150
 
                 val completion = HabitCompletionEntity(
                     id = System.currentTimeMillis(),
@@ -174,7 +176,7 @@ class HabitDetailViewModel @Inject constructor(
 
                 awardPetXpAndCoins(xpEarned, 1)
 
-                _rewardUiEvent.emit(RewardUiEvent.CoinReward(1))
+                //rewardQueue.addReward(RewardUiEvent.CoinReward(1))
                 _habitCompleted.emit(Unit)
 
                 _navigateBack.emit(Unit)
@@ -255,7 +257,7 @@ class HabitDetailViewModel @Inject constructor(
 
                     awardPetXpAndCoins(xpEarned, (10 + sessionMinutes).toInt())
 
-                    _rewardUiEvent.emit(RewardUiEvent.CoinReward(1))
+                    //rewardQueue.addReward(RewardUiEvent.CoinReward(1))
                     _habitCompleted.emit(Unit)
 
                     _navigateBack.emit(Unit)
@@ -325,7 +327,7 @@ class HabitDetailViewModel @Inject constructor(
                 val bonus = newLevel * 10
                 awardCoins(bonus)
 
-                _rewardUiEvent.emit(
+                rewardQueue.addReward(
                     RewardUiEvent.LevelUpReward(newLevel, bonus)
                 )
             }

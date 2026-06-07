@@ -10,6 +10,7 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.reward.RewardEventBus
 import com.example.mobile.presentation.ui.reward.RewardManager
+import com.example.mobile.presentation.ui.reward.RewardQueue
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -108,14 +109,14 @@ object DatabaseModule {
         habitRepository: com.example.mobile.domain.repository.HabitRepository,
         petRepository: com.example.mobile.domain.repository.PetRepository,
         statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository,
-        rewardEventBus: RewardEventBus
+        rewardQueue: RewardQueue
     ): com.example.mobile.domain.AchievementEngine {
         return com.example.mobile.domain.AchievementEngine(
             achievementRepository,
             habitRepository,
             petRepository,
             statisticsRepository,
-            rewardEventBus
+            rewardQueue
         )
     }
 
@@ -124,13 +125,23 @@ object DatabaseModule {
     fun provideStreakEngine(
         habitRepository: HabitRepository,
         habitCompletionRepository: HabitCompletionRepository,
-        statisticsRepository: StatisticsRepository
+        statisticsRepository: StatisticsRepository,
+        rewardQueue: RewardQueue
     ): StreakEngine {
         return StreakEngine(
             habitRepository,
             habitCompletionRepository,
-            statisticsRepository
+            statisticsRepository,
+            rewardQueue
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRewardQueue(
+        rewardEventBus: RewardEventBus
+    ): RewardQueue {
+        return RewardQueue(rewardEventBus)
     }
 
     @Provides
@@ -151,8 +162,13 @@ object DatabaseModule {
     @Singleton
     fun provideRewardManager(
         rewardEventBus: RewardEventBus,
+        rewardQueue: RewardQueue,
         statisticsRepository: StatisticsRepository
     ): RewardManager {
-        return RewardManager(rewardEventBus, statisticsRepository)
+        return RewardManager(
+            rewardEventBus,
+            rewardQueue,
+            statisticsRepository
+        )
     }
 }

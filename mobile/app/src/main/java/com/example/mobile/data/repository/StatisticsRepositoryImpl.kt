@@ -65,4 +65,14 @@ class StatisticsRepositoryImpl @Inject constructor(
 
         statisticsDao.updateStatistics(updated)
     }
+
+    override suspend fun incrementRewardChestsAvailable(amount: Int) {
+        val stats = statisticsDao.getStatistics().first() ?: return
+
+        val updated = stats.copy(
+            rewardChestsAvailable = stats.rewardChestsAvailable + amount
+        )
+
+        statisticsDao.updateStatistics(updated)
+    }
 }

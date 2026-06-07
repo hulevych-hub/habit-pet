@@ -16,4 +16,6 @@ interface StatisticsRepository {
     suspend fun isStreakAlreadyCountedToday(): Boolean
 
     suspend fun incrementStreak()
+
+    suspend fun incrementRewardChestsAvailable(amount: Int)
 }
