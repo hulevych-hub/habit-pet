@@ -136,10 +136,6 @@ fun HomeScreen(
             }
         }
 
-        // Reward overlay that appears above content
-        /*RewardOverlay(
-            onDismiss = {} // Empty lambda as dismissal is handled internally
-        )*/
     }
 }
 
