@@ -3,6 +3,7 @@ package com.example.mobile.presentation.ui.reward
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.mobile.R
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 
@@ -67,14 +69,20 @@ fun RewardScreen(
                     coinsEarned = reward.coins
                 )
 
-                is RewardUiEvent.ChestReward -> ChestRewardContent(
-                    rewardType = reward.rewardType,
-                    amount = reward.amount
+                is RewardUiEvent.DragonEvolutionReward -> DragonEvolutionRewardContent(
+                    fromStage = reward.fromStage,
+                    toStage = reward.toStage,
+                    onConfirm = onRewardCompleted
                 )
 
                 is RewardUiEvent.StreakReward -> StreakRewardContent(
                     streak = reward.streak,
                     coinsEarned = reward.coins
+                )
+
+                is RewardUiEvent.ChestReward -> ChestRewardContent(
+                    rewardType = reward.rewardType,
+                    amount = reward.amount
                 )
 
                 is RewardUiEvent.AchievementReward -> AchievementRewardContent(
@@ -262,3 +270,71 @@ private fun CoinRewardContent(
         )
     }
 }
+
+// Dragon Evolution Reward Screen
+@Composable
+private fun DragonEvolutionRewardContent(
+    fromStage: Int,
+    toStage: Int,
+    onConfirm: () -> Unit
+) {
+    var isEvolved by remember { mutableStateOf(false) }
+
+    // Map stage numbers to drawable resources (using actual asset names)
+    val fromImageRes = when (fromStage) {
+        0 -> R.drawable.egg
+        1 -> R.drawable.hatchling
+        2 -> R.drawable.young_dragon
+        3 -> R.drawable.adult_dragon
+        4 -> R.drawable.ancient_dragon
+        else -> R.drawable.egg // fallback
+    }
+
+    val toImageRes = when (toStage) {
+        0 -> R.drawable.egg
+        1 -> R.drawable.hatchling
+        2 -> R.drawable.young_dragon
+        3 -> R.drawable.adult_dragon
+        4 -> R.drawable.ancient_dragon
+        else -> R.drawable.ancient_dragon // fallback
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .clickable {
+                if (isEvolved) {
+                    onConfirm()
+                } else {
+                    isEvolved = true
+                }
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(if (isEvolved) toImageRes else fromImageRes),
+            contentDescription = if (isEvolved) "Dragon evolved to stage $toStage" else "Dragon stage $fromStage",
+            modifier = Modifier
+                .size(200.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = if (isEvolved) "Evolution Complete!" else "Tap to evolve",
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White
+        )
+
+        if (!isEvolved) {
+            Text(
+                text = "Your pet is transforming...",
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 16.sp
+            )
+        }
+    }
+}
+

@@ -16,9 +16,10 @@ class RewardQueue @Inject constructor() {
 
     private val rewardPriorities = mapOf(
         RewardUiEvent.LevelUpReward::class.java to 1,
-        RewardUiEvent.StreakReward::class.java to 2,
-        RewardUiEvent.ChestReward::class.java to 3,
-        RewardUiEvent.AchievementReward::class.java to 4
+        RewardUiEvent.DragonEvolutionReward::class.java to 2,
+        RewardUiEvent.StreakReward::class.java to 3,
+        RewardUiEvent.ChestReward::class.java to 4,
+        RewardUiEvent.AchievementReward::class.java to 5
     )
 
     private val buffer = mutableListOf<RewardUiEvent>()

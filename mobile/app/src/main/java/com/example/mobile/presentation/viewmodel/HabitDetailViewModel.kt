@@ -160,7 +160,7 @@ class HabitDetailViewModel @Inject constructor(
                     return@launch
                 }
 
-                val xpEarned: Long = 150
+                val xpEarned: Long = 1500
 
                 val completion = HabitCompletionEntity(
                     id = System.currentTimeMillis(),
@@ -313,9 +313,10 @@ class HabitDetailViewModel @Inject constructor(
             val updated = current.copy(xp = current.xp + xpToAdd)
 
             val newLevel = calculateLevelFromXp(updated.xp)
+            val newEvolutionStage = calculateEvolutionStageFromXp(updated.xp)
             val evolved = updated.copy(
                 level = newLevel,
-                evolutionStage = calculateEvolutionStageFromXp(updated.xp)
+                evolutionStage = newEvolutionStage
             )
 
             petRepository.updatePet(evolved)
@@ -333,6 +334,13 @@ class HabitDetailViewModel @Inject constructor(
 
                 rewardQueue.addReward(
                     RewardUiEvent.ChestReward("Level up", 20)
+                )
+            }
+
+            // Check for evolution stage change and emit DragonEvolutionReward
+            if (newEvolutionStage > current.evolutionStage) {
+                rewardQueue.addReward(
+                    RewardUiEvent.DragonEvolutionReward(current.evolutionStage, newEvolutionStage)
                 )
             }
         }

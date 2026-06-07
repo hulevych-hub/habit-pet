@@ -43,6 +43,7 @@ class RewardManager @Inject constructor(
             val coinsToAdd = when (current) {
                 is RewardUiEvent.CoinReward -> current.amount
                 is RewardUiEvent.LevelUpReward -> current.coins
+                is RewardUiEvent.DragonEvolutionReward -> 0
                 is RewardUiEvent.StreakReward -> current.coins
                 is RewardUiEvent.AchievementReward -> current.coins
                 is RewardUiEvent.ChestReward -> (current.amount as? Int) ?: 0

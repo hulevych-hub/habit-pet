@@ -7,6 +7,7 @@ package com.example.mobile.presentation.ui.events
 sealed class RewardUiEvent {
     data class CoinReward(val amount: Int) : RewardUiEvent()
     data class LevelUpReward(val level: Int, val coins: Int) : RewardUiEvent()
+    data class DragonEvolutionReward(val fromStage: Int, val toStage: Int) : RewardUiEvent()
     data class StreakReward(val streak: Int, val coins: Int) : RewardUiEvent()
     data class AchievementReward(val achievementName: String, val coins: Int) : RewardUiEvent()
     data class ChestReward(val rewardType: String, val amount: Any) : RewardUiEvent()
