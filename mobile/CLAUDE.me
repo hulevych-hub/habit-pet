@@ -2,864 +2,278 @@
 
 You are a senior Android engineer, Kotlin architect, UI/UX designer, game systems designer, and product manager.
 
-Your task is to design and implement a complete Android application from scratch called **Habit Pet**.
+Your task is to incrementally build and improve a production-quality Android application called **Habit Pet**.
 
-The project must be production-quality, cleanly architected, and fully runnable in Android Studio.
-
-Build a complete working application.
-
-Use production-quality architecture and implementations.
-
-Placeholder visual assets are acceptable when required.
+This is an iterative long-term project. Do NOT regenerate or re-analyze the full system on every request.
 
 ---
 
-# PRODUCT VISION
+# ⚠️ CRITICAL WORKING MODE
 
-Habit Pet is not a habit tracker.
+You MUST NOT:
 
-Habit Pet is a virtual companion game where users maintain real-life habits in order to help a virtual pet grow and evolve.
+- Re-analyze the entire project unless explicitly requested
+- Refactor unrelated systems
+- Rebuild working architecture
+- Output full project dumps unless asked
+- Modify unrelated modules
 
-The emotional focus is the pet.
-
-The habit tracking system exists only to support the pet progression system.
-
-The app must feel:
-
-* Warm
-* Rewarding
-* Motivating
-* Cute
-* Addictive in a positive way
-* Never punishing
-
-Users should feel emotionally attached to their pet.
+Always work incrementally.
 
 ---
 
-# MVP SCOPE
+# 🧠 GRAPHIFY MODE (MANDATORY)
 
-This is Version 1.
+This project uses Graphify dependency tracking.
 
-Requirements:
+You MUST:
 
-* Android only
-* Kotlin
-* Jetpack Compose
-* Material 3
-* Room Database
-* Local storage only
-* No login
-* No cloud sync
-* No backend
-* No internet required
-* Offline-first
+- Treat features as independent graph nodes
+- Modify ONLY directly connected nodes
+- Avoid global refactors
+- Assume stable systems are correct unless proven broken
+- Prefer extension over replacement
 
 ---
 
-# TECH STACK
+# 🧩 CORE DEVELOPMENT PRINCIPLE
 
-Use:
+Every change must be:
 
-* Kotlin
-* Jetpack Compose
-* MVVM
-* Room
-* Navigation Compose
-* Kotlin Coroutines
-* StateFlow
-* Repository Pattern
-* Material 3
-
-Architecture:
-
-presentation/
-domain/
-data/
-
-Follow clean architecture principles.
+> Minimal, localized, and backward-compatible.
 
 ---
 
-# APP NAME
+# 🧠 CLAUDE.MD SELF-MAINTENANCE RULES
 
-Habit Pet
+This file is the **source of truth** for architecture and system rules.
 
----
+## Update ONLY when:
 
-# CORE GAME LOOP
+- A new system is added (e.g. reward type, pet evolution stage)
+- Architecture changes (ViewModel, repository, event flow)
+- Global game rules change
+- UX/game design rules affect multiple systems
 
-User completes habits.
+## DO NOT update when:
 
-Habits generate XP.
-
-XP grows the pet.
-
-Pet evolution unlocks rewards.
-
-Rewards encourage consistency.
-
-Consistency creates streaks.
-
-Streaks provide additional rewards.
+- Fixing bugs
+- Making local UI changes
+- Small feature additions inside existing systems
+- Refactoring isolated code
 
 ---
 
-# MAIN SCREENS
+## ⚙️ UPDATE PRINCIPLE
 
-## 1. Home Screen
-
-This is the primary screen.
-
-It must display:
-
-* Pet scene
-* Current global streak
-* Pet level
-* XP progress
-* Today's habits
-
-Layout priority:
-
-1. Pet
-2. Streak
-3. XP
-4. Habits
-
-The pet should occupy most of the screen.
-
-Example:
-
-[ Pet Scene ]
-
-🔥 12 Day Streak
-
-Level 5 Dragon
-
-XP: 420 / 500
-
-Today's Habits:
-✓ Skincare
-✓ Reading
-○ Workout
+- Keep edits minimal and surgical
+- Never rewrite the full file
+- Prefer appending or modifying sections only
+- Avoid duplication
 
 ---
 
-## 2. Habits Screen
+## 🚨 IMPORTANT
 
-List of habits.
+If a change affects multiple systems (especially Reward, XP, Evolution, or Event Pipeline),
+this file MUST be updated.
 
-Display:
-
-* Name
-* Current streak
-* Type
-* Completion status
-
-Actions:
-
-* Create habit
-* Edit habit
-* Delete habit
+Otherwise, do not modify it.
 
 ---
 
-## 3. Pet Screen
+# 🎮 PRODUCT VISION
 
-Dedicated pet page.
+Habit Pet is a virtual companion game where users grow a dragon through real-life habit completion.
 
-Displays:
+The pet is the emotional core.
 
-* Large pet
-* Evolution stage
-* Level
-* XP
-* Equipped accessories
+The habit system is supportive gameplay.
 
-Actions:
+The experience must feel:
 
-* Change accessory
-* Change background
-
----
-
-## 4. Rewards Screen
-
-Displays:
-
-Unlocked:
-
-* Hats
-* Glasses
-* Scarves
-* Backgrounds
-
-User can equip items.
+- Warm
+- Rewarding
+- Cute
+- Addictive (positive reinforcement)
+- Never punishing
 
 ---
 
-## 5. Statistics Screen
+# 🧠 CORE GAME LOOP
 
-Display:
-
-Current streak
-
-Best streak
-
-Total completions
-
-Total XP
-
-Days active
-
-Total habits completed
-
-Pet age
+Habit completion → XP → Level → Pet evolution → Rewards → Motivation loop
 
 ---
 
-# HABIT SYSTEM
+# 🎁 REWARD SYSTEM (CRITICAL ARCHITECTURE)
 
-Users can create habits.
+All rewards flow through:
 
-Fields:
+RewardEventBus → RewardQueue → RewardManager → UI Overlay
 
-* id
-* name
-* icon
-* type
-* minimumDurationMinutes
-
-Habit types:
-
-1. CHECKBOX
-2. TIMER
+NO direct UI triggering allowed.
 
 ---
 
-# CHECKBOX HABITS
+# 🎯 REWARD PRIORITY ORDER
 
-Examples:
-
-* Skincare
-* Vitamins
-* Make Bed
-
-User presses:
-
-COMPLETE
-
-Done.
+1. LevelUpReward (HIGHEST PRIORITY)
+2. DragonEvolutionReward (NEW SYSTEM)
+3. StreakReward
+4. ChestReward
+5. AchievementReward
+6. CoinReward (NO POPUP UI)
 
 ---
 
-# TIMER HABITS
+# 🧱 REWARD UI RULES
 
-Examples:
+- LevelUpReward → Full-screen immersive UI
+- DragonEvolutionReward → Full-screen transition UI
+- ChestReward → Full-screen chest animation UI
+- AchievementReward → lightweight overlay
+- CoinReward → silent (no UI)
 
-* Workout
-* Reading
-* Study
+All major rewards MUST be sequential.
 
-Flow:
-
-Press Start
-
-Timer begins
-
-Press Finish
-
-If elapsed time >= minimum duration:
-
-Complete habit
-
-Award XP
-
-Otherwise:
-
-Display remaining time needed
+User must dismiss each screen manually before next appears.
 
 ---
 
-# DAILY COMPLETION
+# 🐉 DRAGON EVOLUTION SYSTEM (NEW)
 
-Only one completion per habit per day.
+When pet evolves:
 
-Prevent duplicates.
-
----
-
-# STREAK SYSTEM
-
-Each habit tracks:
-
-Current streak
-
-Best streak
-
-Global streak system also exists.
-
-Global streak means:
-
-All habits scheduled today completed.
-
-Global streak is displayed on Home Screen.
+- Emit `DragonEvolutionReward`
+- Show full-screen transition
+- Initially use static image swap (old → new stage)
+- Later replace with animation/video without architecture change
 
 ---
 
-# IMPORTANT RULE
+# 🎬 FULL-SCREEN OVERLAY RULE
 
-Missing a day:
+Reward screens:
 
-Reset streak
-
-DO NOT:
-
-* Remove XP
-* Remove pet levels
-* Remove unlocked items
-* Remove rewards
-
-Progress should never feel destroyed.
+- Block navigation
+- Use immersive mode
+- Must cover entire screen
+- Must support tap-to-continue flow
+- Must never overlap
 
 ---
 
-# PET SYSTEM
+# 🐉 PET SYSTEM
 
-The pet is a Dragon.
+Single dragon species:
 
-Only one species in MVP.
+Stages:
+- Egg
+- Hatchling
+- Young Dragon
+- Adult Dragon
+- Ancient Dragon
 
-Pet name is customizable.
-
-Default:
-
-"Luna"
-
----
-
-# PET EVOLUTION STAGES
-
-Stage 0:
-
-Egg
-
-Stage 1:
-
-Hatchling
-
-Stage 2:
-
-Young Dragon
-
-Stage 3:
-
-Adult Dragon
-
-Stage 4:
-
-Ancient Dragon
-
-Evolution depends on Lifetime XP.
-
-NOT current streak.
+Evolution is based on lifetime XP.
 
 ---
 
-# PET LIFE SYSTEM
+# 📦 XP + LEVEL SYSTEM
 
-Pet must appear alive.
-
-This is extremely important.
-
-The pet should have animations.
-
-Use sprite animations, Lottie, frame animations, or Compose animation systems.
-
-Do not leave the pet static.
+- XP increases level
+- Level-up triggers LevelUpReward
+- Level-up ALWAYS triggers ChestReward AFTER completion
 
 ---
 
-# EGG BEHAVIOR
+# 🎁 CHEST SYSTEM
 
-Level 0
+Triggered by:
+- 7-day streak
+- milestone streaks
+- level-up bonus
 
-Egg idle.
+Uses:
+- chest_closed.png → chest_open.png transition
 
-Very subtle floating animation.
-
----
-
-After user earns some XP:
-
-Egg occasionally wiggles.
-
-Rare.
+Future upgrade:
+- replace with animation/video system
 
 ---
 
-Near hatching threshold:
+# 🧠 EVENT SYSTEM RULE
 
-Egg wiggles frequently.
+All game events must go through:
 
-Small cracks appear.
+ViewModel → Domain logic → RewardEventBus → RewardQueue
 
----
-
-At hatch evolution:
-
-Play hatching animation.
-
-Egg breaks.
-
-Dragon emerges.
-
-Confetti effect.
-
-Reward screen.
+No direct UI calls.
 
 ---
 
-# HATCHLING BEHAVIOR
+# 🎨 UI DESIGN RULES
 
-Animations:
-
-* Blink
-* Breathing
-* Tail wag
-* Happy bounce
-
-Random idle animations every few seconds.
+- Game-like feel
+- Soft gradients
+- Rounded UI
+- Full-screen reward moments
+- No spreadsheet-style layouts
 
 ---
 
-# YOUNG DRAGON
+# ⚡ PERFORMANCE RULE
 
-Additional animations:
+Prefer:
 
-* Looking around
-* Small jump
-* Wing flap
-
----
-
-# ADULT DRAGON
-
-Additional animations:
-
-* Stretching
-* Roaring silently
-* Bigger wing movement
+- simple state flows
+- minimal coroutine scopes
+- no unnecessary abstraction
+- reuse existing systems
 
 ---
 
-# ANCIENT DRAGON
+# 🧪 DEBUGGING RULE
 
-More majestic animations.
+When fixing issues:
 
-Glowing effects.
-
-Particles.
-
----
-
-# PET MOOD SYSTEM
-
-Simple.
-
-Mood based on recent consistency.
-
-Happy:
-completed habits recently
-
-Neutral:
-few completions
-
-Sad:
-missed recent habits
-
-Mood only affects animation and expression.
-
-Never affects progression.
+- Only inspect relevant graph nodes
+- Do NOT scan full project
+- Do NOT refactor unrelated systems
+- Keep changes minimal
 
 ---
 
-# XP SYSTEM
+# 🚫 STRICT LIMITS
 
-Base XP:
+Never:
 
-Checkbox habit:
-
-10 XP
-
-Timed habit:
-
-10 XP
-
-Plus:
-
-1 XP per minute completed
-
-Example:
-
-30 minute workout
-
-10 + 30
-
-40 XP
+- redesign full architecture
+- remove working systems
+- break backward compatibility
+- bypass event pipeline
 
 ---
 
-# LEVEL SYSTEM
+# 📱 DELIVERY RULE
 
-Level formula can be progressive.
+When implementing:
 
-Example:
+ONLY output:
 
-Level 1: 100 XP
+- files changed
+- files created
+- minimal explanation
 
-Level 2: 200 XP
-
-Level 3: 350 XP
-
-etc.
-
-Create scalable progression.
+NO full project dumps unless requested.
 
 ---
 
-# REWARDS
+# 🧭 FINAL GOAL
 
-Users earn Coins.
+Create a highly addictive, emotionally engaging pet game where:
 
-Sources:
-
-Daily completion
-
-Weekly streaks
-
-Achievements
-
-Level-ups
-
----
-
-# COSMETICS
-
-Initial cosmetics:
-
-Hats:
-
-* Top Hat
-* Crown
-* Wizard Hat
-
-Glasses:
-
-* Round Glasses
-* Sunglasses
-
-Scarves:
-
-* Red Scarf
-* Blue Scarf
-
-Backgrounds:
-
-* Forest
-* Beach
-* Night Sky
-* Mountains
-
----
-
-# EQUIPMENT SYSTEM
-
-User can equip:
-
-One Hat
-
-One Glasses
-
-One Scarf
-
-One Background
-
-Use layered rendering.
-
-Render order:
-
-Background
-
-Decorations
-
-Pet
-
-Scarf
-
-Glasses
-
-Hat
-
-Effects
-
----
-
-# WEEKLY REWARDS
-
-7-day streak:
-
-Reward Chest
-
-Contains random cosmetic or coins.
-
----
-
-# ACHIEVEMENTS
-
-Implement:
-
-First Habit
-
-7 Day Streak
-
-30 Day Streak
-
-100 Completions
-
-1000 XP
-
-Level 10
-
-Level 25
-
-Reward:
-
-Coins
-
----
-
-# PET JOURNAL
-
-Create a timeline.
-
-Examples:
-
-Day 1:
-"Luna arrived."
-
-Day 7:
-"Luna learned to walk."
-
-Day 30:
-"Luna found a shiny scarf."
-
-Day 100:
-"Luna became an Adult Dragon."
-
-Journal entries are generated automatically.
-
-Display chronologically.
-
----
-
-# NOTIFICATIONS
-
-Local notifications only.
-
-Examples:
-
-"Your dragon is waiting for you."
-
-"Luna wants to train today."
-
-"Keep your streak alive!"
-
-Implement using Android local notifications.
-
-Allow enabling/disabling.
-
----
-
-# ROOM DATABASE
-
-Design entities for:
-
-Habit
-
-HabitCompletion
-
-Pet
-
-InventoryItem
-
-Achievement
-
-JournalEntry
-
-AppStatistics
-
-Create proper relationships.
-
----
-
-# SAVE SYSTEM
-
-Everything persists locally.
-
-App must survive:
-
-* Restart
-* Device reboot
-* App update
-
-No cloud dependency.
-
----
-
-# UI DESIGN
-
-Style:
-
-Modern
-
-Cute
-
-Clean
-
-Minimal
-
-Game-like
-
-Do NOT make it look like a spreadsheet.
-
-Use:
-
-Rounded cards
-
-Soft shadows
-
-Animated transitions
-
-Progress bars
-
-Reward popups
-
-Celebration effects
-
----
-
-# ANIMATIONS
-
-Use Compose animations extensively.
-
-Examples:
-
-XP gain animation
-
-Level-up animation
-
-Reward chest opening
-
-Pet idle animations
-
-Evolution animations
-
-Screen transitions
-
-Completion celebration
-
----
-
-# ACCESSIBILITY
-
-Support:
-
-Dark Mode
-
-Light Mode
-
-Large text
-
-Content descriptions
-
----
-
-# DELIVERABLES
-
-Generate:
-
-1. Complete Android Studio project structure
-
-2. All Kotlin source files
-
-3. Room entities
-
-4. DAOs
-
-5. Repositories
-
-6. ViewModels
-
-7. Compose screens
-
-8. Navigation setup
-
-9. Theme system
-
-10. Local notification implementation
-
-11. Sample assets structure
-
-12. README with setup instructions
-
-13. Buildable application
-
-Do not provide pseudocode.
-
-Provide production-ready code.
-
-Implement feature by feature until the application is complete.
-
-When making architectural decisions, prioritize maintainability, simplicity, and future expansion to cloud sync and social features.
-
-Before finishing, run the appropriate build/tests and ensure the
-project builds successfully with no errors
-
-# Context Efficiency Rules
-
-When implementing features:
-
-Do not output build logs.
-Do not output compilation logs.
-Do not output dependency installation logs.
-Do not explain every file modification.
-Do not print generated code unless explicitly requested.
-Do not summarize intermediate implementation steps.
-
-Only report:
-
-Major architectural decisions
-Files created
-Files modified
-Errors that require user intervention
-Final implementation summary
-
-Keep responses concise and context-efficient.
-
-For debugging:
-
-Summarize errors instead of pasting full stack traces.
-Store findings in PROJECT_STATE.md when relevant.
-Avoid repeating previously discussed issues.
-
-# ARCHITECTURE STABILITY RULES
-
-When implementing new phases:
-
-* Prefer extending existing systems over replacing them.
-* Do not refactor working code unless explicitly requested.
-* Do not rename packages, modules, entities, DAOs, repositories, ViewModels, or navigation routes without a strong technical reason.
-* Maintain backward compatibility with previous phases.
-* Minimize changes outside the scope of the current phase.
-* New features should integrate with the existing architecture rather than introducing parallel systems.
+- habits feel like gameplay
+- rewards feel meaningful
+- pet evolution feels magical
+- progression feels smooth and satisfying
