@@ -1,103 +1,260 @@
 # ACCESSORIES
 
-## Overview
+# 🧠 OVERVIEW
 
-The accessories system in Habit Pet allows players to customize their pet's appearance with hats, glasses, scarves, and background items. Players can purchase accessories using coins earned from habit completions and equip them to change their pet's appearance.
+The accessories system allows players to customize their dragon using cosmetic items such as hats, glasses, scarves, and background items.
 
-## Current Implementation
+Accessories are:
+
+- Cosmetic only (no gameplay effects)
+- Unlockable via shop, chests, and future systems
+- Equippable per slot
+- Stored persistently in a local database
+
+The system is designed to support future expansion (chests, rarity, achievements, events).
+
+---
+
+# 🧩 CURRENT IMPLEMENTATION
 
 The accessory system consists of:
-- Inventory items stored in a Room database with properties for name, type, price, and ownership state
-- Categorization system for four accessory types: HAT, GLASSES, SCARF, BACKGROUND
-- Purchase mechanics using in-game currency (coins)
-- Equip/unequip functionality that updates the pet's appearance
-- UI for browsing, purchasing, and equipping items in the Rewards screen
-- Visual display of equipped items on the pet in the Pet screen
 
-## Rules
+- Room database storage for inventory items
+- Four accessory slots:
+  - HAT
+  - GLASSES
+  - SCARF
+  - BACKGROUND
+- Coin-based purchase system
+- Equip / unequip system
+- Persistent storage via PetEntity
+- Basic UI in RewardsScreen and PetScreen
+- Placeholder rendering in AnimatedPet
 
-### Inventory Item Structure
-Each accessory item has the following properties:
-- `id: Long` - unique identifier
-- `name: String` - display name of the accessory
-- `type: String` - category: "HAT", "GLASSES", "SCARF", or "BACKGROUND"
-- `imageUrl: String` - reference to image asset (currently unused in UI, uses placeholders)
-- `isUnlocked: Boolean` - whether the item is available for purchase
-- `isPurchased: Boolean` - whether the player has bought the item
-- `isEquipped: Boolean` - whether the item is currently equipped on the pet
-- `price: Int` - cost in coins to purchase the item
+---
 
-### Accessory Types
-The system supports four accessory types, corresponding to fields in PetEntity:
-- **HAT** - maps to `equippedHat` field in PetEntity
-- **GLASSES** - maps to `equippedGlasses` field in PetEntity
-- **SCARF** - maps to `equippedScarf` field in PetEntity
-- **BACKGROUND** - maps to `equippedBackground` field in PetEntity
+# 📦 DATA MODEL
 
-### Item Identification
-When equipping an item, the system uses a derived item ID:
-- `itemId = item.name.toLowerCase().replace(" ", "_")`
-- This string value is stored in the PetEntity equipped* fields
-- Example: "Top Hat" becomes "top_hat"
+## InventoryItemEntity
 
-### Purchase Process
-1. Player selects an item in the Rewards screen
-2. System checks if player has enough coins (`statisticsRepository.getStatistics().firstOrNull()?.totalCoins >= item.price`)
-3. If sufficient funds:
-   - Deduct item price from total coins
-   - Mark item as `isPurchased = true`
-   - Item remains unequipped by default (`isEquipped = false`)
+Stored in `inventory_items` table:
 
-### Equipping Process
-1. Player selects "Equip" on a purchased item
-2. System updates PetEntity:
-   - Sets appropriate equipped* field to the itemId (derived from name)
-   - Marks inventory item as `isEquipped = true`
-3. Only one item per type can be equipped at a time
-4. Equipping a new item automatically unequips the previous item of that type (by setting its isEquipped to false)
+- id: Long (primary key)
+- name: String
+- type: String (HAT | GLASSES | SCARF | BACKGROUND)
+- imageUrl: String (currently unused)
+- isUnlocked: Boolean
+- isPurchased: Boolean
+- isEquipped: Boolean
+- price: Int
+    - rarity: String (NORMAL | RARE | EPIC | LEGENDARY)
 
-### Unequipping Process
-1. Player selects an equipped item (shows "Equipped" status)
-2. System updates:
-   - Sets the corresponding equipped* field in PetEntity to null
-   - Marks inventory item as `isEquipped = false`
+---
 
-## Configuration
+## PetEntity (equipped state)
 
-All accessory system values are managed through the inventory item database:
-- Item names, types, prices, and initial lock/purchase states are stored per item
-- No hardcoded values for specific items in the source code
-- Default state: inventory database starts empty (no initializer implemented)
+- equippedHat: String?
+- equippedGlasses: String?
+- equippedScarf: String?
+- equippedBackground: String?
 
-## Data Model
+Stores derived item IDs (see rules below)
 
-**InventoryItemEntity** (app/src/main/java/com/example/mobile/data/local/entities/InventoryItemEntity.kt):
-- Table: `inventory_items`
-- Columns: id, name, type, imageUrl, isUnlocked, isPurchased, isEquipped, price
+---
 
-**PetEntity** (app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt):
-- Relevant columns: equippedHat, equippedGlasses, equippedScarf, equippedBackground (all String?)
+# ⚠️ CORE SYSTEM RULES
 
-## Source Files
+---
 
-- app/src/main/java/com/example/mobile/data/local/entities/InventoryItemEntity.kt
-- app/src/main/java/com/example/mobile/data/local/dao/InventoryItemDao.kt
-- app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt
-- app/src/main/java/com/example/mobile/data/repository/InventoryItemRepositoryImpl.kt
-- app/src/main/java/com/example/mobile/domain/repository/InventoryItemRepository.kt
-- app/src/main/java/com/example/mobile/data/repository/PetRepositoryImpl.kt
-- app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt
-- app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
-- app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt
+## SLOT RULES
 
-## Known Gaps
+Each accessory belongs to exactly one slot:
 
-1. **No Default Inventory**: The system lacks an initializer to populate the database with default accessory items, meaning the inventory starts empty unless items are added through other means.
+- HAT → head accessories
+- GLASSES → face accessories
+- SCARF → neck accessories
+- BACKGROUND → environment layer
 
-2. **Image URL Unused**: The `imageUrl` field is stored but not utilized in the current UI; items display as gray placeholders instead of actual images.
+Only one item per slot can be equipped at a time.
 
-3. **Unlocked State Unused**: The `isUnlocked` field exists but doesn't appear to gate item availability in the current implementation (all items in database are shown regardless of this flag).
+---
 
-4. **No Item Source**: No mechanism exists in the current codebase to add new inventory items; the purchase system assumes items already exist in the database.
+## ITEM IDENTIFICATION (IMPORTANT)
 
-5. **Visual Integration**: While equipped items are saved to PetEntity, the AnimatedPet component appears to use placeholder logic for displaying equipped items rather than actual item images or animations.
+Currently, equipped items are stored using a derived ID:
+
+itemId = item.name.toLowerCase().replace(" ", "_")
+
+Example:
+- "Top Hat" → top_hat
+
+⚠️ LIMITATION:
+This system is fragile:
+- renaming breaks saves
+- duplicate names cause collisions
+- localization is not supported
+
+Future improvement:
+- replace with stable UUID-based item IDs
+
+---
+
+## RARITY SYSTEM (FUTURE)
+
+Each accessory should support rarity:
+
+- NORMAL
+- RARE
+- EPIC
+- LEGENDARY
+
+Rarity will be used for:
+- chest drop probabilities
+- economy balancing
+- visual effects (future)
+
+---
+
+## ACQUISITION SOURCES
+
+Accessories can be obtained from:
+
+- Shop purchase (coins)
+- Chest rewards
+- Achievements (future systems)
+
+Each accessory conceptually supports multiple acquisition sources.
+
+---
+
+## PURCHASE RULES
+
+1. Player selects accessory
+2. System checks coin balance:
+   - totalCoins >= price
+3. If sufficient:
+   - deduct coins
+   - set isPurchased = true
+4. Item is NOT auto-equipped
+
+---
+
+## EQUIP RULES
+
+1. Only purchased items can be equipped
+2. Only one item per slot
+3. Equipping replaces previous item in same slot
+4. Equipped state is stored in PetEntity
+
+---
+
+## UNEQUIP RULES
+
+1. Clearing slot sets PetEntity field to null
+2. Updates inventory isEquipped = false
+
+---
+
+## CHEST INTEGRATION RULES (CRITICAL)
+
+When accessories are granted from chests:
+
+- Only grant accessories not already owned
+- Prioritize unowned items
+- If all accessories are owned:
+  - fallback to coins or EXP
+- Avoid duplicate rewards whenever possible
+
+---
+
+## ECONOMY ROLE
+
+Accessories act as:
+
+- Coin sink (shop purchases)
+- Reward system items (chests)
+- Long-term collection progression
+
+Prices are currently static per item.
+
+---
+
+## ASSET SYSTEM RULES
+
+Accessory images follow:
+
+assets/accessories/{type}/{id}.png
+
+Examples:
+- assets/accessories/hat/top_hat.png
+- assets/accessories/glasses/round_glasses.png
+- assets/accessories/scarf/red_scarf.png
+
+If asset is missing:
+- use placeholder rendering
+- never block UI
+- never break flow
+
+---
+
+## UI BEHAVIOR
+
+Current UI includes:
+
+- RewardsScreen (purchase system)
+- PetScreen (equipped display)
+
+Limitations:
+
+- No dedicated inventory separation (owned vs locked)
+- No rarity filtering
+- No slot filtering
+- No sorting system
+
+---
+
+## CONFIGURATION RULES
+
+- No accessory seed system exists yet
+- Items must exist in database before use
+- No global registry for accessories
+
+---
+
+# 📂 SOURCE FILES
+
+- InventoryItemEntity.kt
+- InventoryItemDao.kt
+- AppDatabase.kt
+- InventoryItemRepositoryImpl.kt
+- InventoryItemRepository.kt
+- PetRepositoryImpl.kt
+- RewardsScreen.kt
+- PetScreen.kt
+- AnimatedPet.kt
+
+---
+
+# ⚠️ KNOWN LIMITATIONS
+
+- No default inventory seeding system
+- imageUrl field unused in UI
+- isUnlocked not enforced in UI logic
+- No rarity system implemented in data model
+- No chest integration implemented in code
+- Derived ID system is fragile
+- No inventory UI separation (locked vs owned)
+- No global accessory registry
+
+---
+
+# 🧭 DESIGN INTENT
+
+The system is designed to evolve into:
+
+- Chest-based reward system
+- Rarity-driven economy
+- Collection progression system
+- Long-term cosmetic motivation loop
+
+Current simplicity exists only to support MVP speed and iteration.

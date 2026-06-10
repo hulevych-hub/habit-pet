@@ -82,7 +82,9 @@ fun RewardScreen(
 
                 is RewardUiEvent.ChestReward -> ChestRewardContent(
                     rewardType = reward.rewardType,
-                    amount = reward.amount
+                    amount = reward.amount,
+                    expAmount = reward.expAmount,
+                    accessoryId = reward.accessoryId
                 )
 
                 is RewardUiEvent.AchievementReward -> AchievementRewardContent(
@@ -140,7 +142,9 @@ private fun LevelUpRewardContent(
 @Composable
 private fun ChestRewardContent(
     rewardType: String,
-    amount: Any
+    amount: Any,
+    expAmount: Int = 0,
+    accessoryId: Long? = null
 ) {
     var isOpen by remember { mutableStateOf(false) }
 
@@ -163,15 +167,33 @@ private fun ChestRewardContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (isOpen) {
-            Text(
-                text = when (amount) {
-                    is Int -> "+$amount coins"
-                    is String -> amount
-                    else -> amount.toString()
-                },
-                color = Color(0xFFFFD700),
-                style = MaterialTheme.typography.titleLarge
-            )
+            val rewardText = mutableListOf<String>()
+
+            // Add coin reward if present
+            when (amount) {
+                is Int -> if (amount > 0) rewardText.add("+$amount coins")
+                is String -> if (!amount.isEmpty()) rewardText.add(amount)
+            }
+
+            // Add EXP reward if present
+            if (expAmount > 0) {
+                rewardText.add("+$expAmount EXP")
+            }
+
+            // Note: Accessory rewards would require accessing the inventory to get the name
+            // For now, we'll show a generic message if an accessory is included
+            if (accessoryId != null) {
+                rewardText.add("Accessory!")
+            }
+
+            // Display all rewards
+            if (rewardText.isNotEmpty()) {
+                Text(
+                    text = rewardText.joinToString("\n"),
+                    color = Color(0xFFFFD700),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
 
             Text(
                 text = rewardType,

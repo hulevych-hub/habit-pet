@@ -7,6 +7,8 @@ import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
+import com.example.mobile.domain.repository.InventoryItemRepository
+import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.reward.RewardEventBus
 import com.example.mobile.presentation.ui.reward.RewardManager
@@ -126,13 +128,15 @@ object DatabaseModule {
         habitRepository: HabitRepository,
         habitCompletionRepository: HabitCompletionRepository,
         statisticsRepository: StatisticsRepository,
-        rewardQueue: RewardQueue
+        rewardQueue: RewardQueue,
+        inventoryItemRepository: InventoryItemRepository
     ): StreakEngine {
         return StreakEngine(
             habitRepository,
             habitCompletionRepository,
             statisticsRepository,
-            rewardQueue
+            rewardQueue,
+            inventoryItemRepository
         )
     }
 
@@ -160,11 +164,15 @@ object DatabaseModule {
     @Singleton
     fun provideRewardManager(
         rewardQueue: RewardQueue,
-        statisticsRepository: StatisticsRepository
+        statisticsRepository: StatisticsRepository,
+        petRepository: PetRepository,
+        inventoryItemRepository: InventoryItemRepository
     ): RewardManager {
         return RewardManager(
             rewardQueue,
-            statisticsRepository
+            statisticsRepository,
+            petRepository,
+            inventoryItemRepository
         )
     }
 }

@@ -82,6 +82,14 @@ The data model includes 9 Room entities:
 - `isPurchased: Boolean` - Whether player has bought the item
 - `isEquipped: Boolean` - Whether item is currently equipped
 - `price: Int` - Cost in coins to purchase the item
+    - `rarity: String` - Rarity of the item (NORMAL, RARE, EPIC, LEGENDARY)
+
+**Chest Reward Integration**
+The chest reward system interacts with InventoryItemEntity through the InventoryItemRepository:
+- `grantItem(itemId: Long)`: Marks an item as purchased (isPurchased = true) when awarded from a chest
+- `getUnownedItemsByType(type: String)`: Returns items not yet purchased, used to avoid duplicate chest rewards
+- Chest rewards only grant accessories that are not already owned, preventing duplicates
+- When all accessories of a rarity are owned, the chest reward falls back to coin and EXP rewards only
 
 **AchievementEntity** (table: `achievements`)
 - `id: Long` - Primary key (auto-generated)

@@ -5,6 +5,7 @@ import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.domain.repository.InventoryItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class InventoryItemRepositoryImpl @Inject constructor(
@@ -61,5 +62,29 @@ class InventoryItemRepositoryImpl @Inject constructor(
         inventoryItemDao.updateItem(updatedItem)
 
         return 1 // Success
+    }
+
+    override suspend fun grantItem(itemId: Long): Int {
+        // Get the item details
+        val item = inventoryItemDao.getItemById(itemId).firstOrNull()
+            ?: return -1 // Item not found
+
+        // Check if already granted/purchased
+        if (item.isPurchased) {
+            return -2 // Already purchased
+        }
+
+        // Mark item as granted/purchased (not equipped by default)
+        val updatedItem = item.copy(isPurchased = true, isEquipped = false)
+        inventoryItemDao.updateItem(updatedItem)
+
+        return 1 // Success
+    }
+
+    override fun getUnownedItemsByType(type: String): Flow<List<InventoryItemEntity>> {
+        return inventoryItemDao.getItemsByType(type)
+            .map { items ->
+                items.filter { !it.isPurchased }
+            }
     }
 }

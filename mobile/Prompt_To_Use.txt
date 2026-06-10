@@ -1,40 +1,48 @@
-Read CLAUDE.md.
+Complete task 4 (CHEST REWARD SYSTEM) from TODO.md.
 
-PROJECT_STATE.md exists, read it
+## CRITICAL RULES (NON-NEGOTIABLE)
 
-Implement Phase 8, Phase 9 and Phase 10. You can read PHASE8.md, PHASE9.md and PHASE10.md for details.
+- Do NOT invent APIs, classes, composables, imports, or packages.
+- Do NOT assume a symbol exists unless it is shown in provided code or official AndroidX APIs.
+- The code must compile exactly as written.
 
-If a phase depends on functionality from a previous phase, implement only the minimum required supporting changes.
+## IMPORT AND PACKAGE CONSISTENCY RULE
 
-Requirements:
+Before creating or modifying any file:
 
-* Extend the existing implementation.
-* Do not redesign the architecture.
-* Do not refactor unrelated code.
-* Do not replace working systems.
-* Preserve existing functionality.
-* Follow all constraints from CLAUDE.md.
+1. Always first inspect the provided codebase context for existing implementations:
+   Entity, Repository, Event, UseCase, Model, DTO, State, Action, ViewModel, Mapper, Manager, or Service.
 
-Output mode:
+2. Prefer reusing existing packages, files, and imports over creating new ones.
 
-* Silent implementation.
-* Do not narrate actions.
-* Do not print code unless necessary.
-* Do not print logs.
-* Do not print stack traces.
-* Do not explain routine changes.
+3. Never guess package names or file locations.
 
-Before finishing each phase:
+4. Match existing project structure:
+   - data.local.entities
+   - domain.repository
+   - presentation.ui.*
+   (only if already used in the project)
 
-1. Run the appropriate build/tests.
-2. Fix any compilation errors introduced by this phase.
-3. Update PROJECT_STATE.md.
-4. Ensure existing functionality still works.
+5. If multiple versions of a class exist:
+   - Use the one already used in the project
+   - Do NOT create duplicates
 
-At completion provide only:
+## BUILD VERIFICATION RULE
 
-1. Features implemented
-2. Files created
-3. Files modified
-4. Any blocking issues
-5. Recommended next step
+A task is NOT complete unless:
+
+- Code compiles successfully
+- Imports and packages are correct
+- No duplicate or conflicting types exist
+
+If any of these fail → fix before proceeding.
+
+## FINAL REPORT REQUIREMENTS
+
+After completion, provide:
+
+- Files changed
+- Files created
+- Documentation updated
+- TODO.md progress update
+- Remaining issues (if any)

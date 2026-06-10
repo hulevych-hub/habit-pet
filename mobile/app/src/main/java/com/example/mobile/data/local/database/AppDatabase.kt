@@ -23,7 +23,7 @@ import com.example.mobile.data.local.entities.StatisticsEntity
         StatisticsEntity::class,
         HabitProgressEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

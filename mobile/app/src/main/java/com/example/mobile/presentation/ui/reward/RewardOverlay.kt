@@ -124,6 +124,8 @@ private fun RewardDialog(
                     is RewardUiEvent.ChestReward -> ChestRewardContent(
                         rewardType = reward.rewardType,
                         amount = reward.amount,
+                        expAmount = reward.expAmount,
+                        accessoryId = reward.accessoryId,
                         onConfirm = onDismiss
                     )
                 }
@@ -251,6 +253,8 @@ private fun AchievementRewardContent(
 private fun ChestRewardContent(
     rewardType: String,
     amount: Any,
+    expAmount: Int = 0,
+    accessoryId: Long? = null,
     onConfirm: () -> Unit
 ) {
     var isOpen by remember { mutableStateOf(false) }
@@ -274,13 +278,32 @@ private fun ChestRewardContent(
             Text("Chest Reward!")
             Text("Type: $rewardType")
 
-            val text = when (amount) {
-                is Int -> "+$amount coins"
-                is String -> amount
-                else -> "Unknown"
+            val rewardText = mutableListOf<String>()
+
+            // Add coin reward if present
+            when (amount) {
+                is Int -> if ((amount as Int) > 0) rewardText.add("+$amount coins")
+                is String -> if (!amount.isEmpty()) rewardText.add(amount)
             }
 
-            Text(text)
+            // Add EXP reward if present
+            if (expAmount > 0) {
+                rewardText.add("+$expAmount EXP")
+            }
+
+            // Note: Accessory rewards would require accessing the inventory to get the name
+            // For now, we'll show a generic message if an accessory is included
+            if (accessoryId != null) {
+                rewardText.add("Accessory!")
+            }
+
+            // Display all rewards
+            if (rewardText.isNotEmpty()) {
+                Text(
+                    text = rewardText.joinToString("\n"),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
 
             Button(onClick = onConfirm) {
                 Text("Collect")

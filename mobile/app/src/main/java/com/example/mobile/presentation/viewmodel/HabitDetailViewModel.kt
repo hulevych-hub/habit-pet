@@ -7,10 +7,12 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.ChestRewardConfigProvider
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitProgressRepository
 import com.example.mobile.domain.repository.HabitRepository
+import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
@@ -41,7 +43,8 @@ class HabitDetailViewModel @Inject constructor(
     private val statisticsRepository: StatisticsRepository,
     private val habitProgressRepository: HabitProgressRepository,
     private val streakEngine: StreakEngine,
-    private val rewardQueue: RewardQueue
+    private val rewardQueue: RewardQueue,
+    private val inventoryItemRepository: InventoryItemRepository
 ) : ViewModel() {
 
     // UI State
@@ -332,8 +335,45 @@ class HabitDetailViewModel @Inject constructor(
                     RewardUiEvent.LevelUpReward(newLevel, bonus)
                 )
 
+                // Determine chest type (mostly normal, with chances for better chests)
+                val chestType = ChestRewardConfigProvider.getRandomChestType()
+                val config = ChestRewardConfigProvider.getConfig(chestType)
+
+                // Initialize reward values
+                var coinAmount = config.getRandomCoins()
+                var expAmount = config.getRandomExp()
+                var accessoryId: Long? = null
+
+                // Determine if we should grant an accessory based on drop chance
+                if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
+                    // Try to get an unowned accessory of the specified rarity
+                    val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
+                        .firstOrNull()?.toList() ?: emptyList()
+
+                    if (unownedItems.isNotEmpty()) {
+                        // Select a random unowned accessory
+                        val selectedItem = unownedItems.random()
+                        // Grant the accessory (mark as purchased)
+                        val grantResult = inventoryItemRepository.grantItem(selectedItem.id)
+                        if (grantResult == 1) {
+                            // Successfully granted, set the accessory ID
+                            accessoryId = selectedItem.id
+                        } else {
+                            // Failed to grant accessory (already owned?), fall back to standard rewards
+                            // (coinAmount and expAmount are already set above)
+                        }
+                    }
+                    // If no unowned items available, we fall back to standard rewards
+                    // (coinAmount and expAmount are already set above)
+                }
+
                 rewardQueue.addReward(
-                    RewardUiEvent.ChestReward("Level up", 20)
+                    RewardUiEvent.ChestReward(
+                        rewardType = "level_up_${chestType.name.lowercase()}",
+                        amount = coinAmount,
+                        expAmount = expAmount,
+                        accessoryId = accessoryId
+                    )
                 )
             }
 

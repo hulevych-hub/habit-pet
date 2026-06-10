@@ -10,6 +10,8 @@ interface InventoryItemRepository {
     suspend fun updateItem(item: InventoryItemEntity): Int
     suspend fun deleteItem(item: InventoryItemEntity): Int
     suspend fun purchaseItem(itemId: Long): Int
+    suspend fun grantItem(itemId: Long): Int
+    fun getUnownedItemsByType(type: String): Flow<List<InventoryItemEntity>>
 
     suspend fun deleteAll()
 }
