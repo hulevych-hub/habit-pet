@@ -13,47 +13,58 @@ The EXP system is implemented across multiple components:
 - Level progression uses a formula where each level requires increasingly more XP
 - Evolution stages are determined by XP thresholds
 - XP observations trigger achievement unlocks (e.g., 1000 XP achievement)
+- **Centralized configuration: `ExpConfig`** (single source of truth)
 
 ## Rules
 
 ### XP Earning
-- Checkbox habit completion awards a fixed 1500 XP
-- Timer habit completion awards XP based on duration: (10 + total minutes) XP, where total minutes is the accumulated time spent on the habit
+
+- **Checkbox habit completion**: 100 XP (from `ExpConfig.CHECKBOX_HABIT_XP`)
+- **Timer habit completion**: 10 base XP + 5 XP per minute (from `ExpConfig.TIMER_HABIT_BASE_XP` + `ExpConfig.TIMER_HABIT_XP_PER_MINUTE`)
+  - Example: 30 min session → 10 + 150 = 160 XP
 - XP is added to the pet's current XP total
 
 ### Level Calculation
-- To reach level 1 from level 0: 100 XP required
+
+- To reach level 1 from level 0: 100 XP required (`ExpConfig.BASE_XP_FOR_LEVEL_1`)
 - To reach level 2 from level 1: 150 XP required
-- To reach level L+1 from level L: (100 + L * 50) XP required
+- To reach level L+1 from level L: `BASE_XP_FOR_LEVEL_1 + L * XP_PER_LEVEL_INCREMENT` (50 more XP per level)
 - This creates an arithmetic progression where each level requires 50 more XP than the previous level
+- **Centralized in `ExpConfig.calculateLevelFromXp()`** - single source of truth
 
 ### Evolution Stages
-Pet evolution stages are determined by XP thresholds, but there are two different implementations causing inconsistency:
 
-**In HabitCompletionRepositoryImpl:**
-- Egg: 0-99 XP
-- Hatchling: 100-349 XP
-- Young Dragon: 350-999 XP
-- Adult Dragon: 1000-2499 XP
-- Ancient Dragon: 2500+ XP
+Pet evolution stages are determined by XP thresholds (**NOW CONSISTENT - single source in `ExpConfig`**):
 
-**In HabitDetailViewModel:**
-- Egg: 0-499 XP
-- Hatchling: 500-1499 XP
-- Young Dragon: 1500-2999 XP
-- Adult Dragon: 3000-5999 XP
-- Ancient Dragon: 6000+ XP
+| Stage | Name | XP Range |
+|-------|------|----------|
+| 0 | Egg | 0 - 499 |
+| 1 | Hatchling | 500 - 1,499 |
+| 2 | Young Dragon | 1,500 - 2,999 |
+| 3 | Adult Dragon | 3,000 - 5,999 |
+| 4 | Ancient Dragon | 6,000+ |
+
+**Thresholds defined in `ExpConfig.EVOLUTION_THRESHOLDS`**
 
 ### Achievement Integration
+
 - Reaching 1000 XP unlocks the "1000 XP" achievement (observed via AchievementEngine.observeXp())
+
+### Level-Up Rewards
+
+- **Coins**: level × 10 (from `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`)
+- **Chest**: Random chest reward (Normal 55%, Rare 30%, Epic 12%, Legendary 3%)
 
 ## Configuration
 
-No external configuration files found for EXP values. All values are hardcoded in the source code:
-- Checkbox habit XP: 1500 (HabitDetailViewModel.kt line 163)
-- Timer habit XP base: 10 XP plus 1 XP per minute (HabitDetailViewModel.kt line 244)
-- Level formula: 100 + (level * 50) (PetScreen.kt line 163, HabitCompletionRepositoryImpl.kt lines 143-153, HabitDetailViewModel.kt lines 367-378)
-- Evolution stage thresholds vary between implementations as noted above
+All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example/mobile/domain/ExpConfig.kt):
+
+- Checkbox habit XP: 100 (`ExpConfig.CHECKBOX_HABIT_XP`)
+- Timer habit XP base: 10 (`ExpConfig.TIMER_HABIT_BASE_XP`)
+- Timer habit XP per minute: 5 (`ExpConfig.TIMER_HABIT_XP_PER_MINUTE`)
+- Level formula: 100 + (level * 50) (`ExpConfig.BASE_XP_FOR_LEVEL_1` + `ExpConfig.XP_PER_LEVEL_INCREMENT`)
+- Evolution stage thresholds: Defined in `ExpConfig.EVOLUTION_THRESHOLDS`
+- Level-up coin multiplier: 10 (`ExpConfig.LEVEL_UP_COIN_MULTIPLIER`)
 
 ## Data Model
 
@@ -69,14 +80,30 @@ No external configuration files found for EXP values. All values are hardcoded i
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
+- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (NEW - centralized configuration)
 
-## Known Gaps
+## Known Gaps (RESOLVED)
 
-1. **Inconsistent Evolution Stage Calculation**: Two different formulas for determining pet evolution stage from XP exist in HabitCompletionRepositoryImpl.kt and HabitDetailViewModel.kt, leading to potential discrepancies in pet evolution based on which code path updates the pet.
+1. ✅ **FIXED: Inconsistent Evolution Stage Calculation** - Now single source in `ExpConfig.calculateEvolutionStageFromXp()`
+2. ✅ **FIXED: Redundant Level Calculation** - Now centralized in `ExpConfig.calculateLevelFromXp()`
+3. ✅ **FIXED: XP Awarding Inconsistency** - Both paths now use `ExpConfig` for calculations
 
-2. **Redundant Level Calculation**: The level calculation formula is duplicated in multiple places (PetScreen.kt, HabitCompletionRepositoryImpl.kt, HabitDetailViewModel.kt) rather than being centralized.
+## Progression Validation
 
-3. **XP Awarding Inconsistency**: XP is updated through two different paths:
-   - Via HabitCompletionRepositoryImpl.updatePetProgress() (used when adding completions through the repository)
-   - Via HabitDetailViewModel.awardPetXpAndCoins() (used directly in the ViewModel for habit completion)
-   This creates two separate update mechanisms that may evolve differently.
+| Level | Total XP Required | Est. Habits (Checkbox) | Est. Days (3/day) |
+|-------|-------------------|------------------------|-------------------|
+| 1 | 100 | 1 | 0.3 |
+| 5 | 750 | 8 | 2.5 |
+| 10 | 3,250 | 33 | 11 |
+| 15 | 8,000 | 80 | 27 |
+| 20 | 15,750 | 158 | 53 |
+| 25 | 26,500 | 265 | 88 |
+| 30 | 40,250 | 403 | 134 |
+| 40 | 75,750 | 758 | 253 |
+| 50 | 121,250 | 1,213 | 404 |
+
+**Evolution Milestones:**
+- Hatchling (Stage 1): 500 XP → ~5 habits → ~1.5 days
+- Young Dragon (Stage 2): 1,500 XP → ~15 habits → ~5 days
+- Adult Dragon (Stage 3): 3,000 XP → ~30 habits → ~10 days
+- Ancient Dragon (Stage 4): 6,000 XP → ~60 habits → ~20 days

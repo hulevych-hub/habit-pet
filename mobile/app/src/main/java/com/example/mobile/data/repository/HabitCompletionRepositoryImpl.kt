@@ -7,6 +7,7 @@ import com.example.mobile.data.local.dao.StatisticsDao
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -128,36 +129,17 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         val pet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)
 
         val newXp = pet.xp + xpEarned
-        val newLevel = calculateLevel(newXp)
+        val newLevel = ExpConfig.calculateLevelFromXp(newXp)
+        val newEvolutionStage = ExpConfig.calculateEvolutionStageFromXp(newXp)
 
         val updated = pet.copy(
             id = 1,
             xp = newXp,
             level = newLevel,
-            evolutionStage = calculateEvolutionStage(newXp)
+            evolutionStage = newEvolutionStage
         )
 
         petDao.updatePet(updated)
-    }
-
-    private fun calculateLevel(xp: Long): Int {
-        var level = 0
-        var remaining = xp
-
-        while (remaining >= (100 + level * 50)) {
-            remaining -= (100 + level * 50)
-            level++
-        }
-
-        return level
-    }
-
-    private fun calculateEvolutionStage(xp: Long): Int = when {
-        xp >= 2500 -> 4
-        xp >= 1000 -> 3
-        xp >= 350 -> 2
-        xp >= 100 -> 1
-        else -> 0
     }
 
     private suspend fun upsertStatistics(statistics: StatisticsEntity) {

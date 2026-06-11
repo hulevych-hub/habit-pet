@@ -5,6 +5,7 @@ import com.example.mobile.data.local.entities.Rarity
 /**
  * Provider for chest reward configurations.
  * Contains default configurations for each chest type.
+ * Values are sourced from EconomyConfig for centralized balancing.
  */
 object ChestRewardConfigProvider {
 
@@ -16,34 +17,34 @@ object ChestRewardConfigProvider {
         return when (chestType) {
             ChestType.NORMAL -> ChestRewardConfig(
                 chestType = ChestType.NORMAL,
-                coinRange = 10..50, // Normal chests give 10-50 coins
-                expRange = 0..0,    // No EXP by default
+                coinRange = EconomyConfig.NORMAL_CHEST_COIN_RANGE,
+                expRange = EconomyConfig.NORMAL_CHEST_EXP_RANGE,
                 accessoryRarity = null,
-                accessoryDropChance = 0.0, // No accessory drop by default
+                accessoryDropChance = 0.0,
                 guaranteedReward = true
             )
             ChestType.RARE -> ChestRewardConfig(
                 chestType = ChestType.RARE,
-                coinRange = 50..150, // Rare chests give 50-150 coins
-                expRange = 100..300, // Rare chests give 100-300 EXP
+                coinRange = EconomyConfig.RARE_CHEST_COIN_RANGE,
+                expRange = EconomyConfig.RARE_CHEST_EXP_RANGE,
                 accessoryRarity = Rarity.RARE,
-                accessoryDropChance = 0.2, // 20% chance for rare accessory
+                accessoryDropChance = EconomyConfig.RARE_CHEST_ACCESSORY_DROP_CHANCE,
                 guaranteedReward = true
             )
             ChestType.EPIC -> ChestRewardConfig(
                 chestType = ChestType.EPIC,
-                coinRange = 150..300, // Epic chests give 150-300 coins
-                expRange = 300..600,  // Epic chests give 300-600 EXP
+                coinRange = EconomyConfig.EPIC_CHEST_COIN_RANGE,
+                expRange = EconomyConfig.EPIC_CHEST_EXP_RANGE,
                 accessoryRarity = Rarity.EPIC,
-                accessoryDropChance = 0.35, // 35% chance for epic accessory
+                accessoryDropChance = EconomyConfig.EPIC_CHEST_ACCESSORY_DROP_CHANCE,
                 guaranteedReward = true
             )
             ChestType.LEGENDARY -> ChestRewardConfig(
                 chestType = ChestType.LEGENDARY,
-                coinRange = 300..600, // Legendary chests give 300-600 coins
-                expRange = 600..1200, // Legendary chests give 600-1200 EXP
+                coinRange = EconomyConfig.LEGENDARY_CHEST_COIN_RANGE,
+                expRange = EconomyConfig.LEGENDARY_CHEST_EXP_RANGE,
                 accessoryRarity = Rarity.LEGENDARY,
-                accessoryDropChance = 0.5, // 50% chance for legendary accessory
+                accessoryDropChance = EconomyConfig.LEGENDARY_CHEST_ACCESSORY_DROP_CHANCE,
                 guaranteedReward = true
             )
         }
@@ -52,14 +53,15 @@ object ChestRewardConfigProvider {
     /**
      * Get a random chest type based on rarity probabilities.
      * In the future, this could be influenced by player level, game progression, etc.
+     * Probabilities are sourced from EconomyConfig for centralized balancing.
      */
     fun getRandomChestType(): ChestType {
         val roll = Math.random() // 0.0 to 1.0
         return when {
-            roll < 0.5 -> ChestType.NORMAL        // 50% chance
-            roll < 0.8 -> ChestType.RARE          // 30% chance
-            roll < 0.95 -> ChestType.EPIC         // 15% chance
-            else -> ChestType.LEGENDARY           // 5% chance
+            roll < EconomyConfig.CHEST_NORMAL_PROBABILITY -> ChestType.NORMAL
+            roll < EconomyConfig.CHEST_NORMAL_PROBABILITY + EconomyConfig.CHEST_RARE_PROBABILITY -> ChestType.RARE
+            roll < EconomyConfig.CHEST_NORMAL_PROBABILITY + EconomyConfig.CHEST_RARE_PROBABILITY + EconomyConfig.CHEST_EPIC_PROBABILITY -> ChestType.EPIC
+            else -> ChestType.LEGENDARY
         }
     }
 }

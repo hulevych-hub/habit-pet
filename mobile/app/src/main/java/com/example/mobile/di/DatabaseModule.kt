@@ -3,6 +3,7 @@ package com.example.mobile.di
 import android.content.Context
 import androidx.room.Room
 import com.example.mobile.data.local.database.AppDatabase
+import com.example.mobile.data.local.database.InventoryItemDatabaseInitializer
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
@@ -102,6 +103,14 @@ object DatabaseModule {
         database: AppDatabase
     ): StatisticsDatabaseInitializer {
         return StatisticsDatabaseInitializer(database.statisticsDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideInventoryItemDatabaseInitializer(
+        database: AppDatabase
+    ): InventoryItemDatabaseInitializer {
+        return InventoryItemDatabaseInitializer(database)
     }
 
     @Provides

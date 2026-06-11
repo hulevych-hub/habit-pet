@@ -8,11 +8,12 @@ The dragon phase system in Habit Pet tracks the pet's evolution through five dis
 
 The dragon phase system consists of:
 - Evolution stage stored in PetEntity (evolution_stage field: 0-4)
-- Stage determination based on XP thresholds (with inconsistent implementations)
+- Stage determination based on XP thresholds (**NOW CONSISTENT - single source in `ExpConfig`**)
 - Visual representation through different pet images for each stage
 - Journal logging of evolution events
-- Evolution stage rewards (though currently valueless)
+- Evolution stage rewards (DragonEvolutionReward - currently 0 coins)
 - Display in UI showing stage name alongside level
+- **Centralized configuration: `ExpConfig`** (single source of truth)
 
 ## Rules
 
@@ -24,24 +25,19 @@ The pet has five evolution stages, represented by integer values:
 - **Stage 3: Adult Dragon** - Third evolution
 - **Stage 4: Ancient Dragon** - Final form
 
-### Evolution Stage Calculation (INCONSISTENT)
-There are two different implementations for calculating evolution stage from XP:
+### Evolution Stage Calculation (NOW CONSISTENT)
 
-**In HabitCompletionRepositoryImpl.kt:**
-- Egg: 0-99 XP
-- Hatchling: 100-349 XP
-- Young Dragon: 350-999 XP
-- Adult Dragon: 1000-2499 XP
-- Ancient Dragon: 2500+ XP
+**Single source of truth: `ExpConfig.calculateEvolutionStageFromXp()`**
 
-**In HabitDetailViewModel.kt:**
-- Egg: 0-499 XP
-- Hatchling: 500-1499 XP
-- Young Dragon: 1500-2999 XP
-- Adult Dragon: 3000-5999 XP
-- Ancient Dragon: 6000+ XP
+| Stage | Name | XP Range | Threshold |
+|-------|------|----------|-----------|
+| 0 | Egg | 0 - 499 | 0 |
+| 1 | Hatchling | 500 - 1,499 | 500 |
+| 2 | Young Dragon | 1,500 - 2,999 | 1,500 |
+| 3 | Adult Dragon | 3,000 - 5,999 | 3,000 |
+| 4 | Ancient Dragon | 6,000+ | 6,000 |
 
-*Note: This inconsistency means the pet's evolution stage may differ depending on which code path last updated the pet.*
+*Previously inconsistent between HabitCompletionRepositoryImpl and HabitDetailViewModel - now unified in ExpConfig*
 
 ### Visual Representation
 Each evolution stage has a corresponding visual representation:
@@ -53,12 +49,12 @@ Each evolution stage has a corresponding visual representation:
 
 ### Evolution Triggers
 Evolution stage increases when:
-1. XP crosses a threshold threshold in either calculation method
-2. The pet object is updated via HabitCompletionRepositoryImpl.updatePetProgress() OR HabitDetailViewModel.awardPetXpAndCoins()
+1. XP crosses a threshold in `ExpConfig.EVOLUTION_THRESHOLDS`
+2. The pet object is updated via `HabitCompletionRepositoryImpl.updatePetProgress()` OR `HabitDetailViewModel.awardPetXpAndCoins()` (both now use `ExpConfig`)
 
 ### Evolution Events
 When evolution stage increases:
-1. **Journal Entry**: JournalEngine creates a log entry "[Pet Name] evolved to stage [X]."
+1. **Journal Entry**: JournalEngine creates a log entry "[Pet Name] evolved to [Stage Name]."
 2. **Reward**: A DragonEvolutionReward event is added to the reward queue (currently provides 0 coins)
 3. **Visual Update**: The pet's image changes to match the new stage
 4. **UI Update**: Display shows new stage name (e.g., "Level 5 Ancient Dragon")
@@ -68,13 +64,17 @@ In the home screen and pet screen, the pet is displayed as:
 "{pet.name} Lv. {pet.level} {evolution stage name}"
 Example: "Luna Lv. 5 Ancient Dragon"
 
+Stage names sourced from `ExpConfig.EVOLUTION_STAGE_NAMES`
+
 ## Configuration
 
-Evolution stage thresholds are hardcoded in two locations:
-- HabitCompletionRepositoryImpl.kt lines 155-161
-- HabitDetailViewModel.kt lines 380-388
+Evolution stage thresholds are now centralized in `ExpConfig`:
+- `ExpConfig.EVOLUTION_THRESHOLDS` - XP thresholds for each stage
+- `ExpConfig.EVOLUTION_STAGE_NAMES` - Display names for each stage
+- `ExpConfig.calculateEvolutionStageFromXp()` - Single calculation function
+- `ExpConfig.evolutionStageName()` - Single name lookup function
 
-Visual asset mappings are hardcoded in:
+Visual asset mappings remain in:
 - AnimatedPet.kt lines 42-49 (pet images)
 - AnimatedPet.kt lines 61-67 (backgrounds)
 - AnimatedPet.kt lines 89-92 (scarves)
@@ -96,12 +96,25 @@ Visual asset mappings are hardcoded in:
 - app/src/main/java/com/example/mobile/domain/JournalEngine.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
+- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (NEW - centralized configuration)
 
-## Known Gaps
+## Known Gaps (UPDATED)
 
-1. **Inconsistent Evolution Calculation**: Two different XP-to-stage formulas exist, causing potential desynchronization between game systems.
+1. ✅ **FIXED: Inconsistent Evolution Calculation** - Now single source in `ExpConfig.calculateEvolutionStageFromXp()`
 2. **Valueless Evolution**: DragonEvolutionReward provides 0 coins, making evolution stages progression-reward neutral.
-3. **Stage Names Hardcoded**: Evolution stage names are duplicated in multiple places (HomeScreen.kt, PetEntity.kt comments, AnimatedPet.kt logic).
+3. **Stage Names Hardcoded in UI**: Evolution stage names still duplicated in HomeScreen.kt, PetScreen.kt (should use `ExpConfig.evolutionStageName()`)
 4. **No Evolution Effects**: Beyond visual changes and journal entries, evolution stages don't affect gameplay mechanics (no stat boosts, special abilities, etc.).
 5. **Visual Inconsistency**: While pet images change with evolution, equipped items (hats, glasses, etc.) remain the same across all stages, which may look incongruous.
 6. **No Evolution Requirements**: No additional requirements beyond XP (e.g., specific habits, time periods, or items) needed to evolve.
+
+## Progression Timeline
+
+| Stage | XP Required | Est. Checkbox Habits | Est. Days (3/day) |
+|-------|-------------|---------------------|-------------------|
+| Egg (0) | 0 | 0 | 0 |
+| Hatchling (1) | 500 | 5 | ~1.5 |
+| Young Dragon (2) | 1,500 | 15 | ~5 |
+| Adult Dragon (3) | 3,000 | 30 | ~10 |
+| Ancient Dragon (4) | 6,000 | 60 | ~20 |
+
+*Assumes 100 XP per checkbox habit completion*

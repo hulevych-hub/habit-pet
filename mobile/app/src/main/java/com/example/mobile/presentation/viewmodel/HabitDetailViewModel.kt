@@ -8,6 +8,8 @@ import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ChestRewardConfigProvider
+import com.example.mobile.domain.EconomyConfig
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitProgressRepository
@@ -163,7 +165,8 @@ class HabitDetailViewModel @Inject constructor(
                     return@launch
                 }
 
-                val xpEarned: Long = 1500
+                val xpEarned = ExpConfig.CHECKBOX_HABIT_XP
+                val coinsEarned = EconomyConfig.CHECKBOX_HABIT_COINS
 
                 val completion = HabitCompletionEntity(
                     id = System.currentTimeMillis(),
@@ -177,9 +180,8 @@ class HabitDetailViewModel @Inject constructor(
                 streakEngine.evaluateTodayStreak(System.currentTimeMillis())
                 refreshCompletions(habitId)
 
-                awardPetXpAndCoins(xpEarned, 1)
+                awardPetXpAndCoins(xpEarned, coinsEarned)
 
-                //rewardQueue.addReward(RewardUiEvent.CoinReward(1))
                 _habitCompleted.emit(Unit)
 
                 _navigateBack.emit(Unit)
@@ -244,7 +246,8 @@ class HabitDetailViewModel @Inject constructor(
 
                 if (total >= habit.minimumDurationMinutes) {
 
-                    val xpEarned = (10 + total).toLong()
+                    val xpEarned = (ExpConfig.TIMER_HABIT_BASE_XP + total * ExpConfig.TIMER_HABIT_XP_PER_MINUTE).toLong()
+                    val coinsEarned = EconomyConfig.TIMER_HABIT_BASE_COINS + sessionMinutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE
 
                     val completion = HabitCompletionEntity(
                         id = System.currentTimeMillis(),
@@ -258,9 +261,8 @@ class HabitDetailViewModel @Inject constructor(
                     streakEngine.evaluateTodayStreak(System.currentTimeMillis())
                     refreshCompletions(habitId)
 
-                    awardPetXpAndCoins(xpEarned, (10 + sessionMinutes).toInt())
+                    awardPetXpAndCoins(xpEarned, coinsEarned)
 
-                    //rewardQueue.addReward(RewardUiEvent.CoinReward(1))
                     _habitCompleted.emit(Unit)
 
                     _navigateBack.emit(Unit)
@@ -315,8 +317,8 @@ class HabitDetailViewModel @Inject constructor(
             val current = _pet.value
             val updated = current.copy(xp = current.xp + xpToAdd)
 
-            val newLevel = calculateLevelFromXp(updated.xp)
-            val newEvolutionStage = calculateEvolutionStageFromXp(updated.xp)
+            val newLevel = ExpConfig.calculateLevelFromXp(updated.xp)
+            val newEvolutionStage = ExpConfig.calculateEvolutionStageFromXp(updated.xp)
             val evolved = updated.copy(
                 level = newLevel,
                 evolutionStage = newEvolutionStage
@@ -328,7 +330,7 @@ class HabitDetailViewModel @Inject constructor(
             awardCoins(coinsToAdd)
 
             if (newLevel > current.level) {
-                val bonus = newLevel * 10
+                val bonus = ExpConfig.levelUpCoins(newLevel)
                 awardCoins(bonus)
 
                 rewardQueue.addReward(
@@ -397,33 +399,6 @@ class HabitDetailViewModel @Inject constructor(
                     lastUpdated = System.currentTimeMillis()
                 )
             )
-        }
-    }
-
-    // =========================
-    // FORMULAS
-    // =========================
-
-    private fun calculateLevelFromXp(totalXp: Long): Int {
-        var level = 0
-        var xpRequired = 100
-        var remaining = totalXp
-
-        while (remaining >= xpRequired) {
-            remaining -= xpRequired
-            level++
-            xpRequired = 100 + level * 50
-        }
-        return level
-    }
-
-    private fun calculateEvolutionStageFromXp(totalXp: Long): Int {
-        return when {
-            totalXp < 500 -> 0
-            totalXp < 1500 -> 1
-            totalXp < 3000 -> 2
-            totalXp < 6000 -> 3
-            else -> 4
         }
     }
 

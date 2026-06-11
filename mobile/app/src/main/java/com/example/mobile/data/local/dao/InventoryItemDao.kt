@@ -27,4 +27,7 @@ interface InventoryItemDao {
 
     @Query("DELETE FROM inventory_items")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM inventory_items")
+    fun getAllItems(): Flow<List<InventoryItemEntity>>
 }

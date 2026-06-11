@@ -1,119 +1,278 @@
 # ECONOMY
 
-## Overview
+---
 
-The economy system in Habit Pet manages the in-game currency (coins) that players earn through various activities and spend on purchasing accessories. Coins serve as the primary resource for progression and customization.
+# 🧠 OVERVIEW
 
-## Current Implementation
+The economy system in Habit Pet manages the in-game currency (coins) that players earn through gameplay and spend on customization.
+
+Coins are the primary progression resource and must feel:
+
+- Earned
+- Meaningful
+- Balanced over long-term play
+
+---
+
+# 🧩 CURRENT IMPLEMENTATION
 
 The economy consists of:
-- Coin storage in StatisticsEntity (totalCoins field)
-- Sources of coin income: achievements, streaks, level-ups, and pet evolution
-- Spending mechanism: purchasing accessories in the Rewards screen
-- Centralized coin management through StatisticsRepository
 
-## Rules
+- Coin storage in `StatisticsEntity.totalCoins`
+- Central repository: `StatisticsRepository`
+- Reward-based income system
+- Shop-based spending system (accessories)
+- **Centralized configuration: `EconomyConfig`**
 
-### Coin Storage
-- Single currency type: coins (integer)
-- Stored in `StatisticsEntity.totalCoins`
-- Default starting value: 0 coins
+---
+
+# ⚠️ SYSTEM AUTHORITY RULE
+
+The **RewardManager is the single source of truth for all coin rewards**.
+
+Exceptions:
+- Direct `statisticsRepository.addCoins()` is only allowed for explicitly documented cases (e.g. timer habit rewards)
+
+All coin sources MUST be explicitly documented in this file.
+
+---
+
+# 💰 COIN STORAGE
+
+- Currency type: coins (Int only)
+- Stored in: `StatisticsEntity.totalCoins`
+- Initial value: 0
 - Persisted via Room database
 
-### Sources of Coin Income
+No fractional currency is supported.
 
-1. **Achievement Rewards**
-   - Each achievement grants a fixed coin reward upon unlocking
-   - Rewards are defined in AchievementDatabaseInitializer.kt:
-     * First Habit: 50 coins
-     * 7 Day Streak: 100 coins
-     * 30 Day Streak: 250 coins
-     * 100 Completions: 200 coins
-     * 1000 XP: 150 coins
-     * Level 10: 300 coins
-     * Level 25: 500 coins
+---
 
-2. **Streak Milestone Chests**
-   - Awarded every 7 consecutive days of completing all habits
-   - Reward: 50 coins (fixed amount)
-   - Trigger condition: currentStreak ≥ 7 AND currentStreak % 7 = 0 AND currentStreak > lastStreakAwardedAt
-   - Delivered as ChestReward with type "7_day_streak"
+# 📈 COIN SOURCES
 
-3. **Level Up Bonuses**
-   - Awarded each time the pet gains a level
-   - Base reward: level × 10 coins (e.g., level 5 → 50 coins)
-   - Additional chest reward: 20 coins (fixed)
-   - Delivered as:
-     * LevelUpReward with coins = level × 10
-     * ChestReward with type "Level up" and amount = 20 coins
+Coins can be earned from the following systems:
 
-4. **Timer Habit Completion**
-   - Coins awarded based on session duration
-   - Formula: (10 + sessionMinutes) coins
-   - Where sessionMinutes is the accumulated time spent on the timer habit
-   - Awarded directly via awardCoins() (not through reward queue)
+---
 
-### Spending Mechanics
-- **Accessory Purchases**
-  - Items have individual prices in coins (stored in InventoryItemEntity.price)
-  - Purchase requires sufficient totalCoins ≥ item.price
-  - On successful purchase:
-    * totalCoins decreases by item.price
-    * Item marked as isPurchased = true
-  - Purchase failure codes:
-    * -1: Item not found
-    * -2: Already purchased
-    * -3: Unable to get statistics
-    * -4: Not enough coins
+## 1. Habit Completion Rewards
 
-### Coin Processing Flow
-When reward events are processed:
-1. RewardManager receives reward events from RewardQueue
-2. Extracts coin value based on reward type:
-   - CoinReward: current.amount
-   - LevelUpReward: current.coins
-   - DragonEvolutionReward: 0
-   - StreakReward: current.coins
-   - AchievementReward: current.coins
-   - ChestReward: (current.amount as? Int) ?: 0
-3. If coinsToAdd > 0, calls statisticsRepository.addCoins(coinsToAdd)
-4. StatisticsRepository adds coins to totalCoins and persists to database
+### Checkbox Habits
+- **Reward**: 10 coins per completion
+- **Source**: Direct reward via `HabitDetailViewModel.awardPetXpAndCoins()`
 
-## Configuration
+### Timer Habits
+- **Formula**: 5 base coins + 2 coins per minute
+- **Example**: 30 min session → 5 + 60 = 65 coins
+- **Source**: Direct reward via `HabitDetailViewModel.awardPetXpAndCoins()`
 
-All economy values are defined in source code:
-- Achievement rewards: hardcoded in AchievementDatabaseInitializer.kt
-- Streak chest reward: 50 coins (StreakEngine.kt line 51)
-- Level up chest reward: 20 coins (HabitDetailViewModel.kt line 336)
-- Level up base multiplier: 10 coins per level (HabitDetailViewModel.kt line 328)
-- Timer habit base: 10 coins + 1 coin per minute (HabitDetailViewModel.kt line 244)
+---
 
-## Data Model
+## 2. Achievement Rewards
 
-**StatisticsEntity** (app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt):
-- `totalCoins: Int` - total coins owned by player
+Each achievement grants a fixed reward:
 
-**InventoryItemEntity** (app/src/main/java/com/example/mobile/data/local/entities/InventoryItemEntity.kt):
-- `price: Int` - cost in coins to purchase the item
+- First Habit → 50 coins
+- 7 Day Streak → 100 coins
+- 30 Day Streak → 250 coins
+- 100 Completions → 200 coins
+- 1000 XP → 150 coins
+- Level 10 → 300 coins
+- Level 25 → 500 coins
 
-## Source Files
+---
 
-- app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt
-- app/src/main/java/com/example/mobile/data/local/entities/InventoryItemEntity.kt
-- app/src/main/java/com/example/mobile/data/local/database/StatisticsDatabaseInitializer.kt
-- app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt
-- app/src/main/java/com/example/mobile/domain/repository/StatisticsRepository.kt
-- app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
-- app/src/main/java/com/example/mobile/domain/StreakEngine.kt
-- app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt
+## 3. Streak Rewards
 
-## Known Gaps
+Triggered on milestone streaks:
 
-1. **No Coin Caps**: No maximum limit on coin accumulation; players can earn unlimited coins through extended play.
-2. **Inflation Sources**: Multiple independent coin sources with no balancing mechanism (e.g., achievements give fixed amounts regardless of player progress).
-3. **Limited Spending Options**: Coins can only be spent on accessory purchases; no other sinks for currency (donations, upgrades, consumables, etc.).
-4. **Price Scaling**: Item prices in the inventory are static; no dynamic pricing based on rarity, player level, or demand.
-5. **No Earning Variance**: Most coin sources have fixed values; no bonus multipliers, streaks, or difficulty-based variations.
-6. **Decimal Precision**: Coin system uses integers only; no support for fractional coin rewards.
+Conditions:
+- currentStreak ≥ 7
+- currentStreak % 7 == 0
+- currentStreak > lastStreakAwardedAt
+
+Reward:
+- 50 coins per milestone (delivered via ChestReward system as part of streak chest)
+
+Delivered via ChestReward system.
+
+---
+
+## 4. Level Up Rewards
+
+Each level-up grants:
+
+- **Base reward**: level × 10 coins (defined in `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`)
+- **Additional chest reward**: 20 coins (defined in `EconomyConfig.LEVEL_UP_CHEST_BONUS_COINS`)
+
+Example:
+- Level 5 → 50 coins + 20 coin chest bonus
+
+---
+
+## 5. Chest Rewards (Streak Milestones & Level-Ups)
+
+Chest rewards are awarded for:
+- 7-day streak milestones
+- Every level-up
+
+Chest type is randomly determined with the following probabilities (from `EconomyConfig`):
+- **Normal (55%)**: 10-30 coins, no EXP, no accessory
+- **Rare (30%)**: 30-80 coins, 50-150 EXP, 15% chance for Rare accessory
+- **Epic (12%)**: 80-180 coins, 150-350 EXP, 30% chance for Epic accessory
+- **Legendary (3%)**: 180-400 coins, 350-800 EXP, 50% chance for Legendary accessory
+
+---
+
+# 🧾 COIN SPENDING
+
+## Accessory Purchases
+
+Coins are spent only on accessories.
+
+Rules:
+- Each item has a fixed price (`InventoryItemEntity.price`) calculated from `EconomyConfig.accessoryPrice(rarity)`
+- Purchase requires: totalCoins ≥ price
+- On success:
+  - Deduct coins
+  - Mark item as purchased
+
+### Accessory Pricing (from `EconomyConfig`)
+
+| Rarity | Base Multiplier | Price | Target Save Time |
+|--------|----------------|-------|------------------|
+| Normal | 1.0x | 100 coins | ~1 day |
+| Rare | 3.0x | 300 coins | ~3 days |
+| Epic | 8.0x | 800 coins | ~8 days |
+| Legendary | 20.0x | 2000 coins | ~20 days |
+
+---
+
+## Purchase Failure Codes
+
+- -1 → Item not found
+- -2 → Already purchased
+- -3 → Statistics unavailable
+- -4 → Not enough coins
+
+---
+
+# 🔄 COIN FLOW PIPELINE
+
+All rewards flow through:
+
+RewardManager → RewardQueue → StatisticsRepository
+
+Processing rules:
+
+1. RewardManager receives reward events
+2. Extract coin value based on type:
+   - CoinReward → amount
+   - LevelUpReward → coins
+   - AchievementReward → coins
+   - StreakReward → coins
+   - ChestReward → amount
+   - DragonEvolutionReward → 0
+3. If coins > 0:
+   - statisticsRepository.addCoins(coins)
+
+---
+
+# 🎯 DESIGN INTENT
+
+The economy is designed to:
+
+- Provide steady progression (~100 coins/day for active player)
+- Encourage daily engagement (streaks)
+- Make accessories feel valuable (1-20 days to save)
+- Avoid inflation spikes
+- Prevent passive farming loops
+
+Coins should always feel **earned, not free**.
+
+---
+
+# 🚫 ANTI-INFLATION RULE
+
+Do NOT introduce new permanent coin sources without:
+
+- Defining purpose clearly
+- Updating this file
+- Evaluating long-term economy impact
+- Ensuring balance with existing systems
+
+---
+
+# ⚙️ ECONOMY CHANGE RULE
+
+Any change to economy must:
+
+1. Update this file first
+2. Update dependent systems afterward
+3. Preserve balance across progression systems
+4. Avoid untracked coin generation
+5. **Use `EconomyConfig` as single source of truth**
+
+---
+
+# 📦 DATA MODEL
+
+## StatisticsEntity
+
+- totalCoins: Int
+
+---
+
+## InventoryItemEntity
+
+- price: Int (coin cost for purchase)
+
+---
+
+# 📂 SOURCE FILES
+
+- StatisticsEntity.kt
+- InventoryItemEntity.kt
+- StatisticsRepository.kt
+- StatisticsRepositoryImpl.kt
+- AchievementEngine.kt
+- StreakEngine.kt
+- HabitDetailViewModel.kt
+- RewardManager.kt
+- RewardQueue.kt
+- EconomyConfig.kt (NEW - centralized configuration)
+- ExpConfig.kt (NEW - centralized XP/level configuration)
+
+---
+
+# ⚠️ KNOWN GAPS
+
+1. No coin cap (infinite accumulation possible)
+2. No inflation control system
+3. No dynamic pricing (static rarity-based)
+4. Limited spending mechanics (only accessories)
+5. No reward multipliers or dynamic bonuses
+6. No economy sink systems beyond accessories
+
+---
+
+# 📊 ECONOMY BALANCE VALIDATION
+
+## Target Metrics (from `EconomyConfig`)
+
+- **Target daily coins** (3 habits/day): ~100 coins
+- **Normal accessory**: 100 coins (~1 day)
+- **Rare accessory**: 300 coins (~3 days)
+- **Epic accessory**: 800 coins (~8 days)
+- **Legendary accessory**: 2000 coins (~20 days)
+
+## Progression Validation
+
+| Level | Total XP | Coins from Level-Ups | Est. Days |
+|-------|----------|---------------------|-----------|
+| 1 | 100 | 10 | 0.1 |
+| 5 | 750 | 150 | 1.5 |
+| 10 | 3,250 | 550 | 5.5 |
+| 25 | 20,000 | 3,250 | 32.5 |
+| 50 | 65,250 | 12,750 | 127.5 |
+
+*Assumes no spending. With spending, progression extends naturally.*
