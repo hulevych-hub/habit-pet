@@ -11,6 +11,8 @@ The dragon phase system consists of:
 - Stage determination based on XP thresholds (**NOW CONSISTENT - single source in `ExpConfig`**)
 - Visual representation through different pet images for each stage
 - Lightweight idle animations for each stage using subtle scale, rotation, and vertical translation
+- One-time phase transition animations for adjacent evolution stages using crossfade, scale, and vertical shift
+- Reward-overlay phase transition screen that appears after level-up rewards for evolution events
 - Journal logging of evolution events
 - Evolution stage rewards (DragonEvolutionReward - currently 0 coins)
 - Display in UI showing stage name alongside level
@@ -55,6 +57,12 @@ Idle animation behavior is handled in `AnimatedPet.kt` with Compose infinite tra
 - Stage 3 (Adult Dragon): calmer breathing scale plus vertical motion and slower sway
 - Stage 4 (Ancient Dragon): slowest and smallest breathing scale, vertical motion, and sway
 
+Phase transition behavior is shared through `PetPhaseTransition` in `AnimatedPet.kt`. When `PetEntity.evolutionStage` changes to a new adjacent stage, the previous stage image crossfades into the next stage image with easing-based scale and vertical shift. The reward overlay uses the same component for evolution reward screens. The transitions are:
+- Stage 0 → 1: Egg → Hatchling
+- Stage 1 → 2: Hatchling → Young Dragon
+- Stage 2 → 3: Young Dragon → Adult Dragon
+- Stage 3 → 4: Adult Dragon → Ancient Dragon
+
 ### Evolution Triggers
 Evolution stage increases when:
 1. XP crosses a threshold in `ExpConfig.EVOLUTION_THRESHOLDS`
@@ -64,7 +72,7 @@ Evolution stage increases when:
 When evolution stage increases:
 1. **Journal Entry**: JournalEngine creates a log entry "[Pet Name] evolved to [Stage Name]."
 2. **Reward**: A DragonEvolutionReward event is added to the reward queue (currently provides 0 coins)
-3. **Visual Update**: The pet's image changes to match the new stage
+3. **Visual Update**: The reward overlay shows a phase transition screen after level-up rewards, then the pet settles into the new idle animation
 4. **UI Update**: Display shows new stage name (e.g., "Level 5 Ancient Dragon")
 
 ### Display Format
@@ -82,8 +90,11 @@ Evolution stage thresholds are now centralized in `ExpConfig`:
 - `ExpConfig.calculateEvolutionStageFromXp()` - Single calculation function
 - `ExpConfig.evolutionStageName()` - Single name lookup function
 
-Visual asset mappings and idle animation behavior remain in:
-- AnimatedPet.kt (pet images, backgrounds, equipped items, and stage-specific idle animations)
+Visual asset mappings and animation behavior remain in:
+- AnimatedPet.kt (pet images, backgrounds, equipped items, stage-specific idle animations, and shared phase transitions)
+- PetTransitionPrefs.kt (SharedPreferences keys that prevent completed phase transitions from replaying)
+- RewardScreen.kt (reward-overlay phase transition screen)
+- RewardManager.kt and RewardOverlayHost.kt (current pet state passed into reward screens)
 
 ## Data Model
 
@@ -97,6 +108,10 @@ Visual asset mappings and idle animation behavior remain in:
 - app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt
+- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt
+- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlayHost.kt
+- app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt
 - app/src/main/java/com/example/mobile/domain/JournalEngine.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt

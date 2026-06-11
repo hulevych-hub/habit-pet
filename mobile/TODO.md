@@ -52,14 +52,14 @@ Update:
 
 ## Tasks
 
-- [ ] Audit available phase assets
-- [ ] Implement Egg → Hatchling transition
-- [ ] Implement Hatchling → Young Dragon transition
-- [ ] Implement Young Dragon → Adult Dragon transition
-- [ ] Implement Adult Dragon → Ancient Dragon transition
-- [ ] Trigger transitions automatically on phase change
-- [ ] Ensure transitions only play once per unlock
-- [ ] Update DRAGON_PHASES.md
+- [x] Audit available phase assets
+- [x] Implement Egg → Hatchling transition
+- [x] Implement Hatchling → Young Dragon transition
+- [x] Implement Young Dragon → Adult Dragon transition
+- [x] Implement Adult Dragon → Ancient Dragon transition
+- [x] Trigger transitions automatically on phase change
+- [x] Ensure transitions only play once per unlock
+- [x] Update DRAGON_PHASES.md
 
 ---
 

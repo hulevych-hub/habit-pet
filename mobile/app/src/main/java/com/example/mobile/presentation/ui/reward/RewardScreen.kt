@@ -38,9 +38,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile.R
+import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.presentation.ui.components.PetPhaseTransition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import kotlin.math.cos
 import kotlin.math.sin
@@ -48,6 +51,7 @@ import kotlin.math.sin
 @Composable
 fun RewardScreen(
     reward: RewardUiEvent?,
+    pet: PetEntity = PetEntity(id = 1),
     onRewardCompleted: () -> Unit
 ) {
     if (reward == null) return
@@ -81,6 +85,7 @@ fun RewardScreen(
                 )
 
                 is RewardUiEvent.DragonEvolutionReward -> DragonEvolutionRewardContent(
+                    pet = pet,
                     fromStage = reward.fromStage,
                     toStage = reward.toStage,
                     onConfirm = onRewardCompleted
@@ -428,63 +433,44 @@ private fun CoinRewardContent(
 // Dragon Evolution Reward Screen
 @Composable
 private fun DragonEvolutionRewardContent(
+    pet: PetEntity,
     fromStage: Int,
     toStage: Int,
     onConfirm: () -> Unit
 ) {
-    var isEvolved by remember { mutableStateOf(false) }
-
-    // Map stage numbers to drawable resources (using actual asset names)
-    val fromImageRes = when (fromStage) {
-        0 -> R.drawable.egg
-        1 -> R.drawable.hatchling
-        2 -> R.drawable.young_dragon
-        3 -> R.drawable.adult_dragon
-        4 -> R.drawable.ancient_dragon
-        else -> R.drawable.egg // fallback
-    }
-
-    val toImageRes = when (toStage) {
-        0 -> R.drawable.egg
-        1 -> R.drawable.hatchling
-        2 -> R.drawable.young_dragon
-        3 -> R.drawable.adult_dragon
-        4 -> R.drawable.ancient_dragon
-        else -> R.drawable.ancient_dragon // fallback
-    }
+    var isTransitionComplete by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
             .clickable {
-                if (isEvolved) {
+                if (isTransitionComplete) {
                     onConfirm()
-                } else {
-                    isEvolved = true
                 }
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(if (isEvolved) toImageRes else fromImageRes),
-            contentDescription = if (isEvolved) "Dragon evolved to stage $toStage" else "Dragon stage $fromStage",
-            modifier = Modifier
-                .size(200.dp)
+        PetPhaseTransition(
+            pet = pet.copy(evolutionStage = toStage),
+            fromStage = fromStage,
+            toStage = toStage,
+            size = IntSize(240, 240),
+            onTransitionCompleted = { isTransitionComplete = true }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = if (isEvolved) "Evolution Complete!" else "Tap to evolve",
+            text = if (isTransitionComplete) "Evolution Complete!" else "Watch your dragon evolve",
             style = MaterialTheme.typography.titleLarge,
             color = Color.White
         )
 
-        if (!isEvolved) {
+        if (!isTransitionComplete) {
             Text(
-                text = "Your pet is transforming...",
+                text = "Tap after the transformation to continue",
                 color = Color.White.copy(alpha = 0.7f),
                 fontSize = 16.sp
             )

@@ -27,10 +27,19 @@ class RewardManager @Inject constructor(
     private val _currentReward = MutableStateFlow<RewardUiEvent?>(null)
     val currentReward: StateFlow<RewardUiEvent?> = _currentReward
 
+    private val _currentPet = MutableStateFlow(PetEntity(id = 1))
+    val currentPet: StateFlow<PetEntity> = _currentPet
+
     private val _isDisplayingReward = MutableStateFlow(false)
     val isDisplayingReward: StateFlow<Boolean> = _isDisplayingReward
 
     init {
+        viewModelScope.launch {
+            petRepository.getPet().collect { pet ->
+                _currentPet.value = pet
+            }
+        }
+
         viewModelScope.launch {
             rewardQueue.rewardEvents.collect { reward ->
                 _currentReward.value = reward

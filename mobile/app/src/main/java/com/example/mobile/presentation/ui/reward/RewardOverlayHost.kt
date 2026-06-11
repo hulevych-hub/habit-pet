@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.mobile.presentation.ui.events.RewardUiEvent
 
 @Composable
 fun RewardOverlayHost(
@@ -16,17 +17,25 @@ fun RewardOverlayHost(
     onRewardCompleted: () -> Unit
 ) {
     val currentReward by rewardManager.currentReward.collectAsState()
+    val currentPet by rewardManager.currentPet.collectAsState()
     val isDisplaying by rewardManager.isDisplayingReward.collectAsState()
 
     if (isDisplaying && currentReward != null) {
+        val backgroundModifier = if (currentReward is RewardUiEvent.DragonEvolutionReward) {
+            Modifier
+        } else {
+            Modifier.clickable { onRewardCompleted() }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = 0.7f))
-                .clickable { onRewardCompleted() }
+                .then(backgroundModifier)
         ) {
             RewardScreen(
                 reward = currentReward,
+                pet = currentPet,
                 onRewardCompleted = onRewardCompleted
             )
         }

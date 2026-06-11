@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -43,17 +44,47 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.domain.StreakEngine
+import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HabitsViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
+    private val habitCompletionRepository: HabitCompletionRepository,
     private val streakEngine: StreakEngine
 ) : ViewModel() {
     val habits = habitRepository.getAllHabits()
+
+    val completedToday: StateFlow<Map<Long, Boolean>> = habitRepository.getAllHabits()
+        .flatMapLatest { habits ->
+            val today = getDayStart(System.currentTimeMillis())
+
+            if (habits.isEmpty()) {
+                flowOf(emptyMap())
+            } else {
+                combine(
+                    habits.map { habit ->
+                        habitCompletionRepository.getCompletionForHabitOnDate(habit.id, today)
+                            .map { completion -> habit.id to (completion != null) }
+                    }
+                ) { pairs ->
+                    pairs.toList().toMap()
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     fun deleteHabit(habit: HabitEntity) {
         viewModelScope.launch {
@@ -70,6 +101,7 @@ fun HabitsScreen(
     habitsViewModel: HabitsViewModel = hiltViewModel()
 ) {
     val habits by habitsViewModel.habits.collectAsState(initial = emptyList())
+    val completedToday by habitsViewModel.completedToday.collectAsState()
 
     Scaffold(
         topBar = {
@@ -104,6 +136,7 @@ fun HabitsScreen(
             items(habits) { habit ->
                 HabitItem(
                     habit = habit,
+                    completed = completedToday[habit.id] == true,
                     navController = navController,
                     onDelete = { habitsViewModel.deleteHabit(habit) }
                 )
@@ -115,6 +148,7 @@ fun HabitsScreen(
 @Composable
 private fun HabitItem(
     habit: HabitEntity,
+    completed: Boolean,
     navController: NavHostController,
     onDelete: () -> Unit
 ) {
@@ -130,9 +164,9 @@ private fun HabitItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Default.CheckCircle,
-            contentDescription = "Complete",
-            tint = Color.Gray,
+            imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+            contentDescription = if (completed) "Completed" else "Not completed",
+            tint = if (completed) Color.Green else Color.Gray,
             modifier = Modifier.size(24.dp)
         )
         Column {
@@ -198,4 +232,14 @@ private fun HabitItem(
             }
         )
     }
+}
+
+private fun getDayStart(time: Long): Long {
+    val calendar = java.util.Calendar.getInstance()
+    calendar.timeInMillis = time
+    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+    calendar.set(java.util.Calendar.MINUTE, 0)
+    calendar.set(java.util.Calendar.SECOND, 0)
+    calendar.set(java.util.Calendar.MILLISECOND, 0)
+    return calendar.timeInMillis
 }
