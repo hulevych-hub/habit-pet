@@ -271,13 +271,13 @@ Update:
 
 ## Tasks
 
-- [ ] Define streak milestone triggers
-- [ ] Detect milestone streaks
-- [ ] Create celebration screen
-- [ ] Implement heart animation (Duolingo-style)
-- [ ] Display reward summary
-- [ ] Prevent duplicate triggers
-- [ ] Update documentation
+- [x] Define streak milestone triggers
+- [x] Detect milestone streaks
+- [x] Create celebration screen
+- [x] Implement heart animation (Duolingo-style)
+- [x] Display reward summary
+- [x] Prevent duplicate triggers
+- [x] Update documentation
 
 ---
 

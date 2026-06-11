@@ -23,7 +23,7 @@ The primary event system for rewards and popups:
 - `CoinReward(amount: Int)` - Awards coins directly
 - `LevelUpReward(level: Int, coins: Int)` - Awards level-up bonus coins
 - `DragonEvolutionReward(fromStage: Int, toStage: Int)` - Signals evolution (0 coins)
-- `StreakReward(streak: Int, coins: Int)` - Awards streak milestone coins
+- `StreakReward(streak: Int, coins: Int, rewardSummary: List<String>)` - Shows a global streak celebration before the chest reward
 - `AchievementReward(achievementName: String, coins: Int)` - Awards achievement coins
 - `ChestReward(rewardType: String, amount: Any)` - Awards chest contents (usually coins)
 
@@ -79,13 +79,13 @@ Evaluates habit completion streaks and awards rewards:
 
 **Trigger Conditions**:
 - When all habits are completed on a given day
-- Checks if currentStreak ≥ 7 AND currentStreak % 7 = 0 AND currentStreak > lastStreakAwardedAt
+- Checks the highest unrewarded global streak milestone where currentStreak reached 7, 14, 30, 60, or 100 days and currentStreak > lastStreakAwardedAt
 
 **Event Generated**:
-- ChestReward with:
-  * rewardType: "7_day_streak"
-  * amount: 50 (coins as Int)
-- Updates StatisticsEntity.lastStreakAwardedAt to currentStreak
+- `StreakReward` with the milestone streak and reward summary, followed by `ChestReward`
+- `ChestReward` rewardType uses `global_streak_{milestone}_{chestType}`
+- Chest type mapping: 7 = Normal, 14 = Rare, 30/60 = Epic, 100 = Legendary
+- Updates StatisticsEntity.lastStreakAwardedAt to the awarded milestone
 
 ### Additional Event Systems
 
@@ -106,7 +106,8 @@ All event systems use hardcoded values:
 - RewardUiEvent class definitions are sealed in RewardUiEvent.kt
 - JournalEngine milestone array: [7, 14, 30, 60, 100]
 - AchievementEngine thresholds: habit count ≥ 1, streaks ≥ 7/30, completions ≥ 100, XP ≥ 1000, levels ≥ 10/25
-- StreakEngine chest award: 50 coins every 7 days
+- StreakEngine global streak milestones: 7, 14, 30, 60, and 100 days
+- StreakEngine chest reward amounts come from ChestRewardConfigProvider and EconomyConfig
 - HabitDetailViewModel level-up coins: level × 10
 - HabitDetailViewModel level-up chest: 20 coins
 - HabitDetailViewModel timer habit coins: (10 + sessionMinutes)

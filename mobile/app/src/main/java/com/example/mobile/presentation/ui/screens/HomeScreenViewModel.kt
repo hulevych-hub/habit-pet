@@ -93,7 +93,7 @@ class HomeScreenViewModel @Inject constructor(
         todayCompletionStatuses
     ) { stats, habList, petState, completionStatuses ->
         UiState(
-            globalStreak = stats.currentStreak,
+            globalStreak = stats.globalStreak,
             habits = habList,
             pet = petState,
             completedToday = completionStatuses,

@@ -17,6 +17,29 @@ class StreakEngine(
     private val inventoryItemRepository: InventoryItemRepository
 ) {
 
+    private data class StreakChestReward(
+        val event: RewardUiEvent.ChestReward,
+        val summary: List<String>
+    )
+
+    companion object {
+        private val STREAK_MILESTONES = listOf(7, 14, 30, 60, 100)
+
+        private fun getChestTypeForMilestone(streak: Int): ChestType = when (streak) {
+            14 -> ChestType.RARE
+            30, 60 -> ChestType.EPIC
+            100 -> ChestType.LEGENDARY
+            else -> ChestType.NORMAL
+        }
+
+        private fun formatChestLabel(chestType: ChestType): String = when (chestType) {
+            ChestType.NORMAL -> "Normal"
+            ChestType.RARE -> "Rare"
+            ChestType.EPIC -> "Epic"
+            ChestType.LEGENDARY -> "Legendary"
+        }
+    }
+
     /**
      * Called after completing a habit
      */
@@ -40,61 +63,28 @@ class StreakEngine(
             statisticsRepository.incrementStreak()
             statisticsRepository.markStreakUpdatedToday()
 
-            // Check for chest rewards (7-day milestone)
             val stats = statisticsRepository.getStatistics().firstOrNull()
             val currentStreak = stats?.currentStreak ?: 0
             val lastStreakAwardedAt = stats?.lastStreakAwardedAt ?: 0
+            val milestone = STREAK_MILESTONES
+                .filter { currentStreak >= it && it > lastStreakAwardedAt }
+                .lastOrNull()
 
-            // Award chest every 7 days
-            if (currentStreak >= 7 && currentStreak % 7 == 0 && currentStreak > lastStreakAwardedAt) {
-                // Determine chest type (mostly normal, with chances for better chests)
-                val chestType = ChestRewardConfigProvider.getRandomChestType()
-                val config = ChestRewardConfigProvider.getConfig(chestType)
+            if (milestone != null) {
+                val streakChestReward = buildStreakChestReward(milestone)
 
-                // Initialize reward values
-                var coinAmount = config.getRandomCoins()
-                var expAmount = config.getRandomExp()
-                var accessoryId: Long? = null
-
-                // Determine if we should grant an accessory based on drop chance
-                if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
-                    // Try to get an unowned accessory of the specified rarity
-                    val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
-                        .firstOrNull()?.toList() ?: emptyList()
-
-                    if (unownedItems.isNotEmpty()) {
-                        // Select a random unowned accessory
-                        val selectedItem = unownedItems.random()
-                        // Grant the accessory (mark as purchased)
-                        val grantResult = inventoryItemRepository.grantItem(selectedItem.id)
-                        if (grantResult == 1) {
-                            // Successfully granted, set the accessory ID
-                            accessoryId = selectedItem.id
-                        } else {
-                            // Failed to grant accessory (already owned?), fall back to standard rewards
-                            // (coinAmount and expAmount are already set above)
-                        }
-                    }
-                    // If no unowned items available, we fall back to standard rewards
-                    // (coinAmount and expAmount are already set above)
-                }
-
-                // Award chest reward based on chest type
-                val chestEvent = RewardUiEvent.ChestReward(
-                    rewardType = "7_day_streak_${chestType.name.lowercase()}",
-                    amount = coinAmount,
-                    expAmount = expAmount,
-                    accessoryId = accessoryId
-                )
-                rewardQueue.addReward(chestEvent)
-
-                // Update last streak awarded
-                statisticsRepository.updateStatistics(
-                    stats?.copy(
-                        lastStreakAwardedAt = currentStreak
-                    ) ?: StatisticsEntity().copy(
-                        lastStreakAwardedAt = currentStreak
+                rewardQueue.addReward(
+                    RewardUiEvent.StreakReward(
+                        streak = currentStreak,
+                        coins = 0,
+                        rewardSummary = streakChestReward.summary
                     )
+                )
+                rewardQueue.addReward(streakChestReward.event)
+
+                statisticsRepository.updateStatistics(
+                    stats?.copy(lastStreakAwardedAt = milestone)
+                        ?: StatisticsEntity().copy(lastStreakAwardedAt = milestone)
                 )
             }
         }
@@ -121,15 +111,81 @@ class StreakEngine(
         val alreadyCounted = statisticsRepository.isStreakAlreadyCountedToday()
 
         when {
-            allCompleted && !alreadyCounted -> {
-                statisticsRepository.incrementStreak()
-                statisticsRepository.markStreakUpdatedToday()
-            }
-
+            allCompleted && !alreadyCounted -> evaluateTodayStreak(today)
             !allCompleted && alreadyCounted -> {
                 // optional safety rollback if you ever support it
             }
         }
+    }
+
+    private suspend fun buildStreakChestReward(streak: Int): StreakChestReward {
+        val chestType = getChestTypeForMilestone(streak)
+        val config = ChestRewardConfigProvider.getConfig(chestType)
+
+        var coinAmount = config.getRandomCoins()
+        var expAmount = config.getRandomExp()
+        var accessoryId: Long? = null
+
+        if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
+            val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
+                .firstOrNull()?.toList() ?: emptyList()
+
+            if (unownedItems.isNotEmpty()) {
+                val selectedItem = unownedItems.random()
+                if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
+                    accessoryId = selectedItem.id
+                }
+            }
+        }
+
+        val rewardType = "global_streak_${streak}_${chestType.name.lowercase()}"
+        val event = RewardUiEvent.ChestReward(
+            rewardType = rewardType,
+            amount = coinAmount,
+            expAmount = expAmount,
+            accessoryId = accessoryId
+        )
+
+        val summary = buildRewardSummary(
+            streak = streak,
+            chestType = chestType,
+            coinAmount = coinAmount,
+            expAmount = expAmount,
+            accessoryId = accessoryId,
+            hasAccessoryChance = config.accessoryRarity != null
+        )
+
+        return StreakChestReward(event, summary)
+    }
+
+    private fun buildRewardSummary(
+        streak: Int,
+        chestType: ChestType,
+        coinAmount: Int,
+        expAmount: Int,
+        accessoryId: Long?,
+        hasAccessoryChance: Boolean
+    ): List<String> {
+        val summary = mutableListOf(
+            "$streak Day Streak Milestone",
+            "${formatChestLabel(chestType)} Reward Chest"
+        )
+
+        if (coinAmount > 0) {
+            summary.add("+$coinAmount coins")
+        }
+
+        if (expAmount > 0) {
+            summary.add("+$expAmount EXP")
+        }
+
+        if (accessoryId != null) {
+            summary.add("Accessory unlocked")
+        } else if (hasAccessoryChance) {
+            summary.add("Accessory chance")
+        }
+
+        return summary
     }
 
     private fun normalize(time: Long): Long {

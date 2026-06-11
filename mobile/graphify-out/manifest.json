@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt": {
-    "mtime": 1780848250.975176,
-    "ast_hash": "78063e7ca3f769de4a9c9ff87778465c",
+    "mtime": 1781163143.659215,
+    "ast_hash": "1776a23bd7fd637e8cb4e385f6963a99",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/DatabaseModule.kt": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/StreakEngine.kt": {
-    "mtime": 1781125266.9184184,
-    "ast_hash": "3d78beb6f3d0d4c43f99f392c9c3bc99",
+    "mtime": 1781163398.052886,
+    "ast_hash": "2765d5736952cb214adbd6b93de46e59",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt": {
-    "mtime": 1781160596.9267752,
-    "ast_hash": "c58762052a1b5e31501b7b6ad0fe0aee",
+    "mtime": 1781163136.0369549,
+    "ast_hash": "de596c861aab08f238c633be66dc6ac7",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardEventBus.kt": {
@@ -285,8 +285,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt": {
-    "mtime": 1781160646.2523327,
-    "ast_hash": "57af282a7b45eb2dc3b66b49342d38ec",
+    "mtime": 1781163388.4525359,
+    "ast_hash": "2b7864385a9227b02f235b1c0a41035c",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt": {
@@ -320,8 +320,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
-    "mtime": 1780842985.787176,
-    "ast_hash": "949b9cf9c0ed6a7c272a7ca816eba444",
+    "mtime": 1781163150.425331,
+    "ast_hash": "af389279ef86e052abdee16012c727e0",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/JournalScreen.kt": {
@@ -445,8 +445,8 @@
     "semantic_hash": ""
   },
   "Prompt_To_Use.txt": {
-    "mtime": 1781158998.1050587,
-    "ast_hash": "456bf4a58013b66baa04ab714ad39a3a",
+    "mtime": 1781162383.5997715,
+    "ast_hash": "2887da9ed9b8c5b5f57fa269eceb7974",
     "semantic_hash": ""
   },
   "README.md": {
@@ -630,8 +630,8 @@
     "semantic_hash": ""
   },
   "ACHIEVEMENTS.md": {
-    "mtime": 1781161013.9551656,
-    "ast_hash": "e085630fd5d45579a79a8f2064a4b00e",
+    "mtime": 1781163500.5057664,
+    "ast_hash": "271922f7b761cf0a5d69ae70a880bb93",
     "semantic_hash": ""
   },
   "CHEST_REWARDS.md": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "EVENTS.md": {
-    "mtime": 1781033598.2159758,
-    "ast_hash": "a94e3d3e77834ec0ec352d465ba7e8c2",
+    "mtime": 1781164205.8483882,
+    "ast_hash": "e38775185d43f95f9155f4aa66669f42",
     "semantic_hash": ""
   },
   "EXP.md": {
@@ -685,8 +685,8 @@
     "semantic_hash": ""
   },
   "STATISTICS.md": {
-    "mtime": 1781029921.1638713,
-    "ast_hash": "5cef7758b4731bff885c0aa228457fb5",
+    "mtime": 1781164072.1716027,
+    "ast_hash": "f45078f616ff03e6ba01d307b48b33d9",
     "semantic_hash": ""
   },
   "SUMMARY.md": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781161080.0499308,
-    "ast_hash": "4e446fbf4b307153cf60b1bf701e2ea5",
+    "mtime": 1781164224.1627586,
+    "ast_hash": "add21e20d37f4b3b3401e5c4c84d2ea6",
     "semantic_hash": ""
   }
 }

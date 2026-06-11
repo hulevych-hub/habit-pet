@@ -9,17 +9,20 @@ The achievements system gives players long-term goals across habit creation, hab
 Achievements are persisted in Room and monitored by `AchievementEngine`. The flow is:
 
 1. `AchievementEngine` observes habit, streak, completion, XP, level, and accessory collection state.
-2. When a threshold is reached, the matching achievement is marked unlocked.
-3. The player opens the Achievements screen and claims unlocked rewards.
-4. `AchievementViewModel` calls `AchievementEngine.claimAchievement(...)`.
-5. The engine queues a `RewardUiEvent.AchievementReward`.
-6. `RewardManager` processes the reward through the centralized reward system.
+2. `StreakEngine` observes daily all-habits completion and emits global streak milestone events.
+3. When a threshold is reached, the matching achievement is marked unlocked.
+4. The player opens the Achievements screen and claims unlocked rewards.
+5. `AchievementViewModel` calls `AchievementEngine.claimAchievement(...)`.
+6. The engine queues a `RewardUiEvent.AchievementReward`.
+7. `RewardManager` processes the reward through the centralized reward system.
 
 Achievement rewards can be:
 - Coins
 - EXP
 - Chest rewards
 - Coin + chest follow-up rewards
+
+Global streak milestones are separate from claimable achievements. They trigger immediately through `StreakEngine`, display an immersive celebration screen, and then flow into the centralized chest reward pipeline.
 
 ## Achievement Entity Structure
 
@@ -173,7 +176,9 @@ Coin values reuse `EconomyConfig` where defined. Chest rewards use `ChestType` a
 - `app/src/main/java/com/example/mobile/data/repository/AchievementRepositoryImpl.kt`
 - `app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt`
 - `app/src/main/java/com/example/mobile/domain/AchievementEngine.kt`
+- `app/src/main/java/com/example/mobile/domain/StreakEngine.kt`
 - `app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt`
+- `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt`

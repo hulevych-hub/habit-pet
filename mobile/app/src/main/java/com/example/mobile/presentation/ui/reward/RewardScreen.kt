@@ -2,6 +2,13 @@ package com.example.mobile.presentation.ui.reward
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.InfiniteTransition
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,10 +17,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile.R
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun RewardScreen(
@@ -77,7 +88,9 @@ fun RewardScreen(
 
                 is RewardUiEvent.StreakReward -> StreakRewardContent(
                     streak = reward.streak,
-                    coinsEarned = reward.coins
+                    coinsEarned = reward.coins,
+                    rewardSummary = reward.rewardSummary,
+                    onConfirm = onRewardCompleted
                 )
 
                 is RewardUiEvent.ChestReward -> ChestRewardContent(
@@ -209,21 +222,125 @@ private fun ChestRewardContent(
 @Composable
 private fun StreakRewardContent(
     streak: Int,
-    coinsEarned: Int
+    coinsEarned: Int,
+    rewardSummary: List<String> = emptyList(),
+    onConfirm: () -> Unit
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    val infiniteTransition = rememberInfiniteTransition(label = "streak hearts")
+    val mainScale = infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.18f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(650, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "main heart scale"
+    )
+    val mainFloat = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = -14f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(900, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "main heart float"
+    )
+    val displayedSummary = if (rewardSummary.isNotEmpty()) {
+        rewardSummary
+    } else {
+        listOf(
+            "$streak Day Streak",
+            if (coinsEarned > 0) "+$coinsEarned coins" else "Reward chest unlocked"
+        )
+    }
 
-        Text(
-            text = "🔥 $streak DAY STREAK!",
-            style = MaterialTheme.typography.headlineLarge,
-            color = Color.White
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { onConfirm() },
+        contentAlignment = Alignment.Center
+    ) {
+        HeartOrbit(infiniteTransition)
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Streak celebration",
+                tint = Color(0xFFFF4D6D),
+                modifier = Modifier
+                    .size((96 * mainScale.value).dp)
+                    .offset(y = mainFloat.value.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "GLOBAL STREAK!",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color(0xFFFFD166)
+            )
+
+            Text(
+                text = "$streak DAY STREAK",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            displayedSummary.forEach { rewardLine ->
+                Text(
+                    text = rewardLine,
+                    color = Color(0xFF34D399),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Text(
+                text = "Tap to continue",
+                color = Color.White.copy(alpha = 0.75f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun HeartOrbit(infiniteTransition: InfiniteTransition) {
+    repeat(8) { index ->
+        val angle = (index * 45).toDouble() * (kotlin.math.PI / 180.0)
+        val x = (cos(angle) * 128).dp
+        val y = (sin(angle) * 86).dp
+        val scale = infiniteTransition.animateFloat(
+            initialValue = 0.65f,
+            targetValue = 1.15f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(700 + index * 70, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "orbit heart scale $index"
+        )
+        val alpha = infiniteTransition.animateFloat(
+            initialValue = 0.35f,
+            targetValue = 0.95f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(900 + index * 60, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "orbit heart alpha $index"
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "+$coinsEarned coins",
-            color = Color(0xFF34D399)
+        Icon(
+            imageVector = Icons.Default.Favorite,
+            contentDescription = null,
+            tint = Color(0xFFFF4D6D).copy(alpha = alpha.value),
+            modifier = Modifier
+                .offset(x = x, y = y)
+                .size((30 * scale.value).dp)
         )
     }
 }

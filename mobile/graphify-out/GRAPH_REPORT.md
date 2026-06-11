@@ -1,16 +1,16 @@
 # Graph Report - mobile  (2026-06-11)
 
 ## Corpus Check
-- 111 files · ~708,062 words
+- 111 files · ~708,606 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1207 nodes · 1616 edges · 110 communities (93 shown, 17 thin omitted)
+- 1220 nodes · 1643 edges · 103 communities (87 shown, 16 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 27 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5144b123`
+- Built from commit: `a97fc369`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -99,26 +99,19 @@
 - [[_COMMUNITY_Community 84|Community 84]]
 - [[_COMMUNITY_Community 85|Community 85]]
 - [[_COMMUNITY_Community 86|Community 86]]
-- [[_COMMUNITY_Community 87|Community 87]]
 - [[_COMMUNITY_Community 88|Community 88]]
-- [[_COMMUNITY_Community 89|Community 89]]
 - [[_COMMUNITY_Community 90|Community 90]]
 - [[_COMMUNITY_Community 91|Community 91]]
 - [[_COMMUNITY_Community 92|Community 92]]
 - [[_COMMUNITY_Community 93|Community 93]]
 - [[_COMMUNITY_Community 94|Community 94]]
-- [[_COMMUNITY_Community 95|Community 95]]
-- [[_COMMUNITY_Community 96|Community 96]]
 - [[_COMMUNITY_Community 97|Community 97]]
 - [[_COMMUNITY_Community 98|Community 98]]
 - [[_COMMUNITY_Community 99|Community 99]]
-- [[_COMMUNITY_Community 100|Community 100]]
 - [[_COMMUNITY_Community 101|Community 101]]
 - [[_COMMUNITY_Community 102|Community 102]]
 - [[_COMMUNITY_Community 103|Community 103]]
 - [[_COMMUNITY_Community 104|Community 104]]
-- [[_COMMUNITY_Community 105|Community 105]]
-- [[_COMMUNITY_Community 106|Community 106]]
 - [[_COMMUNITY_Community 107|Community 107]]
 - [[_COMMUNITY_Community 108|Community 108]]
 - [[_COMMUNITY_Community 109|Community 109]]
@@ -138,27 +131,27 @@
 ## Surprising Connections (you probably didn't know these)
 - `HabitPetNavGraph()` --calls--> `AchievementScreen()`  [INFERRED]
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt
-- `HabitPetNavGraph()` --calls--> `HabitCreationScreen()`  [INFERRED]
-  app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt
 - `HabitPetNavGraph()` --calls--> `HabitDetailScreen()`  [INFERRED]
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt
 - `HabitPetNavGraph()` --calls--> `HabitEditScreen()`  [INFERRED]
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitEditScreen.kt
 - `HabitPetNavGraph()` --calls--> `HabitsScreen()`  [INFERRED]
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt
+- `HabitPetNavGraph()` --calls--> `HomeScreen()`  [INFERRED]
+  app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
 
 ## Import Cycles
 - None detected.
 
-## Communities (110 total, 17 thin omitted)
+## Communities (103 total, 16 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.10
-Nodes (28): Boolean, Int, Modifier, PaddingValues, String, Boolean, Int, Long (+20 more)
+Cohesion: 0.06
+Nodes (38): RewardManager, NavHostController, String, Boolean, Int, Modifier, PaddingValues, String (+30 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.22
-Nodes (6): Boolean, JournalEntryEntity, List, StateFlow, String, JournalViewModel
+Cohesion: 0.25
+Nodes (13): Boolean, Int, Long, PaddingValues, String, HabitEditViewModel, DurationSelection(), HabitEditForm() (+5 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.11
@@ -173,8 +166,8 @@ Cohesion: 0.18
 Nodes (13): Boolean, HabitCompletionEntity, HabitEntity, Int, List, Long, PetEntity, RewardUiEvent (+5 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.17
-Nodes (15): Modifier, PetEntity, Boolean, HabitEntity, Int, Long, String, AnimatedPet() (+7 more)
+Cohesion: 0.11
+Nodes (22): Modifier, PetEntity, Boolean, HabitEntity, Int, Long, String, Int (+14 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.08
@@ -221,8 +214,8 @@ Cohesion: 0.23
 Nodes (7): Flow, Int, InventoryItemEntity, List, Long, String, InventoryItemRepository
 
 ### Community 17 - "Community 17"
-Cohesion: 0.13
-Nodes (18): RewardManager, RewardManager, Any, Int, Long, RewardUiEvent, String, Bundle (+10 more)
+Cohesion: 0.19
+Nodes (17): RewardManager, Any, Int, List, Long, RewardUiEvent, String, InfiniteTransition (+9 more)
 
 ### Community 18 - "Community 18"
 Cohesion: 0.23
@@ -245,8 +238,8 @@ Cohesion: 0.07
 Nodes (29): 1. Habit Completion Rewards, 2. Achievement Rewards, 3. Streak Rewards, 4. Level Up Rewards, 5. Chest Rewards (Streak Milestones & Level-Ups), Accessory Pricing (from `EconomyConfig`), Accessory Purchases, 🚫 ANTI-INFLATION RULE (+21 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.15
-Nodes (11): Boolean, HabitEntity, List, Long, PetEntity, StateFlow, StatisticsEntity, Map (+3 more)
+Cohesion: 0.05
+Nodes (32): Boolean, Int, RewardUiEvent, StateFlow, String, HabitEntity, NavHostController, Boolean (+24 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.14
@@ -352,6 +345,10 @@ Nodes (7): AchievementReward, ChestReward, CoinReward, DragonEvolutionReward, Le
 Cohesion: 0.33
 Nodes (4): Int, Long, Calendar, StreakCalculator
 
+### Community 50 - "Community 50"
+Cohesion: 0.26
+Nodes (10): Boolean, ChestType, Int, List, Long, String, formatChestLabel(), getChestTypeForMilestone() (+2 more)
+
 ### Community 52 - "Community 52"
 Cohesion: 0.40
 Nodes (3): PetAnimations, Float, String
@@ -413,12 +410,12 @@ Cohesion: 0.15
 Nodes (12): Configuration, Current Implementation, Data Model, Displayed Statistics, Known Gaps, Overview, Rules, Source Files (+4 more)
 
 ### Community 83 - "Community 83"
-Cohesion: 0.27
-Nodes (6): Boolean, Int, RewardUiEvent, StateFlow, String, RewardManager
+Cohesion: 0.67
+Nodes (3): 7. GLOBAL STREAK EVENT, Documentation, Tasks
 
 ### Community 84 - "Community 84"
-Cohesion: 0.29
-Nodes (8): InventoryItemEntity, Long, String, InventoryItemRow(), RewardsScreen(), RewardsViewModel, Tab, Tab
+Cohesion: 0.67
+Nodes (3): 8. UI / LAYOUT POLISH, Documentation, Tasks
 
 ### Community 85 - "Community 85"
 Cohesion: 0.18
@@ -428,17 +425,9 @@ Nodes (10): Absence of Calendar-Based Rewards, Activity-Based Daily Systems, Con
 Cohesion: 0.29
 Nodes (9): AchievementViewModel, AchievementEntity, Float, Int, PetEntity, StatisticsEntity, AchievementItem(), AchievementScreen() (+1 more)
 
-### Community 87 - "Community 87"
-Cohesion: 0.33
-Nodes (7): Int, String, Unit, calculateXpForNextLevel(), EquipmentSlot(), PetScreen(), PetViewModel
-
 ### Community 88 - "Community 88"
 Cohesion: 0.20
 Nodes (9): Configuration, Current Implementation, Data Flow, DATA_MODEL, Entity Relationships, Known Gaps, Overview, Rules (+1 more)
-
-### Community 89 - "Community 89"
-Cohesion: 0.28
-Nodes (7): NavHostController, String, JournalViewModel, BottomDestination, HabitPetBottomBar(), HabitPetNavGraph(), JournalScreen()
 
 ### Community 90 - "Community 90"
 Cohesion: 0.22
@@ -446,7 +435,7 @@ Nodes (8): Configuration, Current Implementation, Data Model, Known Gaps, Overvi
 
 ### Community 91 - "Community 91"
 Cohesion: 0.22
-Nodes (8): 7. GLOBAL STREAK EVENT, 8. UI / LAYOUT POLISH, Documentation, Documentation, 🧠 GENERAL EXECUTION RULES, Tasks, Tasks, TODO - Habit Pet MVP
+Nodes (8): 1. STATIC ANIMATIONS, 2. PHASE TRANSITION ANIMATIONS, Documentation, Documentation, 🧠 GENERAL EXECUTION RULES, Tasks, Tasks, TODO - Habit Pet MVP
 
 ### Community 92 - "Community 92"
 Cohesion: 0.22
@@ -460,14 +449,6 @@ Nodes (8): 3. ACCESSORIES SYSTEM, Data Model, Documentation, Documentation, Econ
 Cohesion: 0.38
 Nodes (3): InventoryItemEntity, List, InventoryItemDatabaseInitializer
 
-### Community 95 - "Community 95"
-Cohesion: 0.52
-Nodes (5): HabitEntity, NavHostController, HabitItem(), HabitsScreen(), HabitsViewModel
-
-### Community 96 - "Community 96"
-Cohesion: 0.43
-Nodes (3): Boolean, StateFlow, NotificationSettingsViewModel
-
 ### Community 97 - "Community 97"
 Cohesion: 0.29
 Nodes (7): 5. ECONOMY + PROGRESSION BALANCING, CHEST BALANCE, COINS, Documentation, EXP SYSTEM, Tasks, VALIDATION
@@ -480,13 +461,9 @@ Nodes (7): 6. ACHIEVEMENTS, Content, Documentation, Rewards, System, Tasks, UI
 Cohesion: 0.40
 Nodes (4): Int, EconomyConfig, Double, Rarity
 
-### Community 100 - "Community 100"
-Cohesion: 0.47
-Nodes (5): String, StatisticsScreen(), StatisticsViewModel, StatRow(), ViewModel
-
 ### Community 101 - "Community 101"
 Cohesion: 0.40
-Nodes (3): ChestRewardConfig, ChestType, ChestRewardConfigProvider
+Nodes (3): ChestType, ChestRewardConfig, ChestRewardConfigProvider
 
 ### Community 103 - "Community 103"
 Cohesion: 0.50
@@ -495,14 +472,6 @@ Nodes (3): Documentation Audit Summary, Overall Statistics, Systems by Implement
 ### Community 104 - "Community 104"
 Cohesion: 0.67
 Nodes (3): 10. NOTIFICATIONS, Documentation, Tasks
-
-### Community 105 - "Community 105"
-Cohesion: 0.67
-Nodes (3): 1. STATIC ANIMATIONS, Documentation, Tasks
-
-### Community 106 - "Community 106"
-Cohesion: 0.67
-Nodes (3): 2. PHASE TRANSITION ANIMATIONS, Documentation, Tasks
 
 ### Community 107 - "Community 107"
 Cohesion: 0.67
@@ -513,24 +482,24 @@ Cohesion: 0.67
 Nodes (3): 🚧 FUTURE SYSTEMS (DO NOT IMPLEMENT), QUESTS, REBIRTH SYSTEM
 
 ## Knowledge Gaps
-- **425 isolated node(s):** `PreToolUse`, `deny`, `allow`, `AchievementDatabaseInitializer`, `StatisticsDatabaseInitializer` (+420 more)
+- **429 isolated node(s):** `PreToolUse`, `deny`, `allow`, `AchievementDatabaseInitializer`, `StatisticsDatabaseInitializer` (+424 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `HabitPetNavGraph()` connect `Community 89` to `Community 0`, `Community 100`, `Community 5`, `Community 8`, `Community 42`, `Community 17`, `Community 84`, `Community 86`, `Community 87`, `Community 95`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `HabitCompletionViewModel` connect `Community 10` to `Community 100`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `HabitDetailViewModel` connect `Community 4` to `Community 100`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Why does `HabitPetNavGraph()` connect `Community 0` to `Community 1`, `Community 5`, `Community 8`, `Community 42`, `Community 86`, `Community 23`?**
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `HabitDetailViewModel` connect `Community 4` to `Community 23`?**
+  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `PetScreen()` connect `Community 5` to `Community 0`?**
+  _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `HabitPetNavGraph()` (e.g. with `.onCreate()` and `AchievementScreen()`) actually correct?**
   _`HabitPetNavGraph()` has 13 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `PreToolUse`, `deny`, `allow` to the rest of the system?**
-  _425 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _429 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.1010752688172043 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05697278911564626 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.10752688172043011 - nodes in this community are weakly interconnected._

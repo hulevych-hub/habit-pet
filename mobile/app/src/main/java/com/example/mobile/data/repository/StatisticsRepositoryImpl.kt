@@ -58,9 +58,13 @@ class StatisticsRepositoryImpl @Inject constructor(
 
     override suspend fun incrementStreak() {
         val stats = statisticsDao.getStatistics().first() ?: return
+        val nextStreak = stats.currentStreak + 1
 
         val updated = stats.copy(
-            currentStreak = stats.currentStreak + 1
+            currentStreak = nextStreak,
+            globalStreak = nextStreak,
+            bestStreak = maxOf(stats.bestStreak, nextStreak),
+            lastUpdated = System.currentTimeMillis()
         )
 
         statisticsDao.updateStatistics(updated)
