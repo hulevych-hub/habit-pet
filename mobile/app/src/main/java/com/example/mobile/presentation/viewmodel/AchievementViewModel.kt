@@ -35,6 +35,14 @@ class AchievementViewModel @Inject constructor(
     private val _achievements = MutableStateFlow<List<AchievementEntity>>(emptyList())
     val achievements: StateFlow<List<AchievementEntity>> = _achievements
 
+    val claimableAchievementCount: StateFlow<Int> = achievements
+        .map { list -> list.count { achievement -> achievement.isUnlocked && !achievement.isClaimed } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 

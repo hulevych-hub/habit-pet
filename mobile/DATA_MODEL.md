@@ -44,7 +44,7 @@ The data model includes 9 Room entities:
 - `lastUpdated: Long` - Last update timestamp
 
 **PetEntity** (table: `pet`)
-- `id: Long` - Primary key (auto-generated)
+- `id: Long` - Primary key (auto-generated; missing pet rows are exposed as `id = 0` until first persisted)
 - `name: String` - Pet name (default: "Luna", persisted and editable in the Pet screen)
 - `level: Int` - Current level (0+)
 - `xp: Long` - Total experience points

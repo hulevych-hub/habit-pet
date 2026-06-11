@@ -26,8 +26,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +48,18 @@ fun HomeScreen(
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val pet = uiState.pet
+    val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
+    var showMandatoryPetNameDialog by remember { mutableStateOf(false) }
+    var petNameDraft by remember { mutableStateOf(pet.name) }
+
+    LaunchedEffect(shouldRequestPetName) {
+        showMandatoryPetNameDialog = shouldRequestPetName
+    }
+
+    LaunchedEffect(pet.name) {
+        petNameDraft = pet.name
+    }
+
     val nextLevelXp = xpRequiredForNextLevel(pet.level)
     val currentLevelXp = xpIntoCurrentLevel(pet.xp)
 
@@ -140,6 +156,18 @@ fun HomeScreen(
             }
         }
 
+        if (showMandatoryPetNameDialog) {
+            PetRenameDialog(
+                initialName = petNameDraft,
+                helperText = "You can rename your dragon later.",
+                allowDismiss = false,
+                onDismissRequest = { showMandatoryPetNameDialog = false },
+                onConfirm = { newName ->
+                    homeScreenViewModel.renamePet(newName.trim())
+                    showMandatoryPetNameDialog = false
+                }
+            )
+        }
     }
 }
 

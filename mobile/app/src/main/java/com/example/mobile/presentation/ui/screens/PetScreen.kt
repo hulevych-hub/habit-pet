@@ -132,7 +132,7 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
             }
 
             if (showRenameDialog) {
-                RenamePetDialog(
+                PetRenameDialog(
                     initialName = pet.name,
                     onDismissRequest = { showRenameDialog = false },
                     onConfirm = { newName ->
@@ -193,7 +193,7 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
 
 private const val MAX_PET_NAME_LENGTH = 24
 
-private fun validatePetName(name: String): String? {
+internal fun validatePetName(name: String): String? {
     val trimmedName = name.trim()
     return when {
         trimmedName.isEmpty() -> "Please enter a pet name"
@@ -203,16 +203,22 @@ private fun validatePetName(name: String): String? {
 }
 
 @Composable
-private fun RenamePetDialog(
+internal fun PetRenameDialog(
     initialName: String,
     onDismissRequest: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (String) -> Unit,
+    helperText: String? = null,
+    allowDismiss: Boolean = true
 ) {
     var nameDraft by remember { mutableStateOf(initialName) }
     var nameError by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = {
+            if (allowDismiss) {
+                onDismissRequest()
+            }
+        },
         title = { Text("Rename Pet") },
         text = {
             Column(
@@ -231,6 +237,13 @@ private fun RenamePetDialog(
                     isError = nameError != null,
                     modifier = Modifier.fillMaxWidth()
                 )
+                helperText?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 nameError?.let {
                     Text(
                         text = it,
@@ -260,8 +273,10 @@ private fun RenamePetDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
+            if (allowDismiss) {
+                TextButton(onClick = onDismissRequest) {
+                    Text("Cancel")
+                }
             }
         }
     )

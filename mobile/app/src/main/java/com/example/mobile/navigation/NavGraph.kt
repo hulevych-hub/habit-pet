@@ -1,7 +1,11 @@
 package com.example.mobile.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CardGiftcard
@@ -13,12 +17,17 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,6 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.presentation.ui.screens.AchievementScreen
 import com.example.mobile.presentation.ui.screens.HabitCreationScreen
 import com.example.mobile.presentation.ui.screens.HabitDetailScreen
@@ -38,6 +48,7 @@ import com.example.mobile.presentation.ui.screens.NotificationSettingsScreen
 import com.example.mobile.presentation.ui.screens.PetScreen
 import com.example.mobile.presentation.ui.screens.RewardsScreen
 import com.example.mobile.presentation.ui.screens.StatisticsScreen
+import com.example.mobile.presentation.viewmodel.AchievementViewModel
 import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
@@ -45,11 +56,14 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
     HabitPetTheme {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
+        val achievementViewModel: AchievementViewModel = hiltViewModel()
+        val claimableAchievementCount by achievementViewModel.claimableAchievementCount.collectAsState()
 
         Scaffold(
             bottomBar = {
                 HabitPetBottomBar(
                     currentRoute = currentRoute,
+                    claimableAchievementCount = claimableAchievementCount,
                     onNavigate = { route ->
                         navController.navigate(route) {
                             popUpTo("home") { saveState = true }
@@ -116,12 +130,14 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
 private data class BottomDestination(
     val route: String,
     val label: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val badgeCount: Int = 0
 )
 
 @Composable
 private fun HabitPetBottomBar(
     currentRoute: String?,
+    claimableAchievementCount: Int,
     onNavigate: (String) -> Unit
 ) {
     val destinations = listOf(
@@ -130,7 +146,12 @@ private fun HabitPetBottomBar(
         BottomDestination("pet", "Pet", Icons.Default.Pets),
         BottomDestination("rewards", "Rewards", Icons.Default.CardGiftcard),
         BottomDestination("statistics", "Stats", Icons.Default.BarChart),
-        BottomDestination("achievements", "Achievements", Icons.Default.FavoriteBorder),
+        BottomDestination(
+            route = "achievements",
+            label = "Achievements",
+            icon = Icons.Default.FavoriteBorder,
+            badgeCount = claimableAchievementCount
+        ),
         BottomDestination("journal", "Journal", Icons.Default.Book),
         BottomDestination("notification_settings", "Notifications", Icons.Default.Notifications)
     )
@@ -140,9 +161,47 @@ private fun HabitPetBottomBar(
             NavigationBarItem(
                 selected = currentRoute == destination.route,
                 onClick = { onNavigate(destination.route) },
-                icon = { Icon(destination.icon, contentDescription = destination.label) },
+                icon = { BottomBarIcon(destination) },
                 label = { Text(destination.label) }
             )
         }
+    }
+}
+
+@Composable
+private fun BottomBarIcon(destination: BottomDestination) {
+    val isAchievementBadgeVisible = destination.route == "achievements" && destination.badgeCount > 0
+    val contentDescription = if (isAchievementBadgeVisible) {
+        "${destination.label}, ${destination.badgeCount} achievements ready to claim"
+    } else {
+        destination.label
+    }
+
+    if (isAchievementBadgeVisible) {
+        Box(contentAlignment = Alignment.CenterEnd) {
+            Icon(
+                imageVector = destination.icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(22.dp)
+                    .background(Color(0xFF22C55E), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = destination.badgeCount.toString(),
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
+    } else {
+        Icon(
+            imageVector = destination.icon,
+            contentDescription = contentDescription
+        )
     }
 }

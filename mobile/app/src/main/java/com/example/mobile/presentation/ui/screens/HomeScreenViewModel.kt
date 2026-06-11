@@ -43,6 +43,13 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun renamePet(name: String) {
+        viewModelScope.launch {
+            val currentPet = pet.value
+            petRepository.updatePet(currentPet.copy(id = 1, name = name))
+        }
+    }
+
     // UI State
     val statistics: StateFlow<StatisticsEntity> = statisticsRepository.getStatistics()
         .stateIn(
@@ -106,7 +113,7 @@ class HomeScreenViewModel @Inject constructor(
         initialValue = UiState(
             globalStreak = 0,
             habits = emptyList(),
-            pet = PetEntity(),
+            pet = PetEntity(id = 1),
             completedToday = emptyMap(),
             totalCoins = 0
         )

@@ -160,8 +160,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/PetRepositoryImpl.kt": {
-    "mtime": 1780833061.872089,
-    "ast_hash": "14e042ac5c02337cfb3a78b76e6f6fa2",
+    "mtime": 1781167762.8660557,
+    "ast_hash": "bed776a77366b7769f8ce89487c1be12",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt": {
@@ -240,8 +240,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/navigation/NavGraph.kt": {
-    "mtime": 1780771891.5783286,
-    "ast_hash": "228a1c110274df2448abc0c2af4ec3e1",
+    "mtime": 1781168190.8736987,
+    "ast_hash": "3f7ee8999f5d32f62ff52810ca638998",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/animations/PetAnimations.kt": {
@@ -315,13 +315,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1781165886.955696,
-    "ast_hash": "549969158af9ed7d0653b9523a1ead52",
+    "mtime": 1781167928.7697742,
+    "ast_hash": "37773c41332c45d0e9667458f69fdfd8",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
-    "mtime": 1781163150.425331,
-    "ast_hash": "af389279ef86e052abdee16012c727e0",
+    "mtime": 1781167854.1430883,
+    "ast_hash": "8446abeddb7dbb23b685edce72ab5a45",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/JournalScreen.kt": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781165868.0714922,
-    "ast_hash": "eaee557a397132697af1bcd45f768193",
+    "mtime": 1781167838.3145306,
+    "ast_hash": "5cbce21741e96aa98ba3b034bc61293e",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
@@ -355,8 +355,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt": {
-    "mtime": 1781160624.486329,
-    "ast_hash": "869a1803ccb26ce2c8b60899ef4d1861",
+    "mtime": 1781167614.179731,
+    "ast_hash": "e963de1f794b25692b19e9e1647e3db0",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitCompletionViewModel.kt": {
@@ -645,8 +645,8 @@
     "semantic_hash": ""
   },
   "DATA_MODEL.md": {
-    "mtime": 1781165954.4402223,
-    "ast_hash": "f601cc49255bbc3e5d0f8bcbc89d7c9f",
+    "mtime": 1781168340.3848019,
+    "ast_hash": "142d195a79418208bcb71d5ccb3fd428",
     "semantic_hash": ""
   },
   "DRAGON_PHASES.md": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781165974.4392774,
-    "ast_hash": "192e9ee8a3206bc75f35d8bb0f063918",
+    "mtime": 1781167146.2999103,
+    "ast_hash": "d7d4b3ad3fe632e576430600512a2e02",
     "semantic_hash": ""
   }
 }

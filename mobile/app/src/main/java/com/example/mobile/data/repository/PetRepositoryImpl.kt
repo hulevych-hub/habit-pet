@@ -14,7 +14,7 @@ class PetRepositoryImpl @Inject constructor(
     private val inventoryItemRepository: InventoryItemRepository
 ) : PetRepository {
     override fun getPet(): Flow<PetEntity> =
-        petDao.getPet().map { it ?: PetEntity(id = 1) }
+        petDao.getPet().map { it ?: PetEntity(id = 0) }
 
     override suspend fun updatePet(pet: PetEntity): Int {
         val updatedRows = petDao.updatePet(pet.copy(id = 1))
