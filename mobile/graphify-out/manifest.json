@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt": {
-    "mtime": 1781173330.561537,
-    "ast_hash": "16faaf3de6b1819bf15d4ac5db3d6d18",
+    "mtime": 1781174801.3729486,
+    "ast_hash": "00a65661867d5d11ef75ad86eb8f1853",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt": {
@@ -650,8 +650,8 @@
     "semantic_hash": ""
   },
   "DRAGON_PHASES.md": {
-    "mtime": 1781130669.5287988,
-    "ast_hash": "4a55c310b6cf823b5d2dfae43a7c3814",
+    "mtime": 1781174904.8107314,
+    "ast_hash": "53d32b94f0c20062f66b26c1c2e582fe",
     "semantic_hash": ""
   },
   "ECONOMY.md": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781173330.560536,
-    "ast_hash": "1ef7511feb50be72b68033b5d0d9b5f5",
+    "mtime": 1781174815.934806,
+    "ast_hash": "e01e17e43499ce6eeec76e3223930c0f",
     "semantic_hash": ""
   }
 }

@@ -220,7 +220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "mobile_mainactivity",
-      "community": 17,
+      "community": 0,
       "norm_label": "mainactivity.kt"
     },
     {
@@ -230,7 +230,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity",
-      "community": 17,
+      "community": 0,
       "norm_label": "mainactivity"
     },
     {
@@ -240,7 +240,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "componentactivity",
-      "community": 17,
+      "community": 0,
       "norm_label": "componentactivity"
     },
     {
@@ -250,7 +250,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_rewardmanager",
-      "community": 17,
+      "community": 0,
       "norm_label": "rewardmanager"
     },
     {
@@ -260,7 +260,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity_oncreate",
-      "community": 17,
+      "community": 0,
       "norm_label": ".oncreate()"
     },
     {
@@ -270,7 +270,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "bundle",
-      "community": 17,
+      "community": 0,
       "norm_label": "bundle"
     },
     {
@@ -280,7 +280,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity_onbackpressed",
-      "community": 17,
+      "community": 0,
       "norm_label": ".onbackpressed()"
     },
     {
@@ -5480,48 +5480,158 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_animatedpet",
-      "community": 5,
+      "community": 89,
       "norm_label": "animatedpet.kt"
     },
     {
       "label": "AnimatedPet()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L25",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "components_animatedpet_animatedpet",
-      "community": 5,
+      "community": 89,
       "norm_label": "animatedpet()"
     },
     {
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L25",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_petentity",
-      "community": 5,
+      "community": 89,
       "norm_label": "petentity"
     },
     {
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L25",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_modifier",
-      "community": 5,
+      "community": 89,
       "norm_label": "modifier"
     },
     {
       "label": "IntSize",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L25",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "intsize",
-      "community": 5,
+      "community": 89,
       "norm_label": "intsize"
+    },
+    {
+      "label": "petIdleScaleAmplitude()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidlescaleamplitude",
+      "community": 89,
+      "norm_label": "petidlescaleamplitude()"
+    },
+    {
+      "label": "Int",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "community": 89,
+      "norm_label": "int"
+    },
+    {
+      "label": "String",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
+      "community": 89,
+      "norm_label": "string"
+    },
+    {
+      "label": "Float",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
+      "community": 89,
+      "norm_label": "float"
+    },
+    {
+      "label": "petIdleVerticalAmplitude()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L227",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidleverticalamplitude",
+      "community": 89,
+      "norm_label": "petidleverticalamplitude()"
+    },
+    {
+      "label": "petIdleRotationAmplitude()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L239",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidlerotationamplitude",
+      "community": 89,
+      "norm_label": "petidlerotationamplitude()"
+    },
+    {
+      "label": "petIdleBounceAmplitude()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L251",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidlebounceamplitude",
+      "community": 89,
+      "norm_label": "petidlebounceamplitude()"
+    },
+    {
+      "label": "petIdleBreathingDuration()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L263",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidlebreathingduration",
+      "community": 89,
+      "norm_label": "petidlebreathingduration()"
+    },
+    {
+      "label": "petIdleSwayDuration()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L274",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidleswayduration",
+      "community": 89,
+      "norm_label": "petidleswayduration()"
+    },
+    {
+      "label": "petIdleBounceDuration()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L285",
+      "_origin": "ast",
+      "id": "components_animatedpet_petidlebounceduration",
+      "community": 89,
+      "norm_label": "petidlebounceduration()"
+    },
+    {
+      "label": "moodAdjusted()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L296",
+      "_origin": "ast",
+      "id": "components_animatedpet_moodadjusted",
+      "community": 89,
+      "norm_label": "moodadjusted()"
     },
     {
       "label": "RewardUiEvent.kt",
@@ -6790,7 +6900,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habitsscreen",
-      "community": 23,
+      "community": 0,
       "norm_label": "habitsscreen.kt"
     },
     {
@@ -6800,7 +6910,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitsviewmodel",
-      "community": 23,
+      "community": 0,
       "norm_label": "habitsviewmodel"
     },
     {
@@ -6810,7 +6920,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitsviewmodel_deletehabit",
-      "community": 23,
+      "community": 0,
       "norm_label": ".deletehabit()"
     },
     {
@@ -6820,7 +6930,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_habitentity",
-      "community": 23,
+      "community": 0,
       "norm_label": "habitentity"
     },
     {
@@ -6830,7 +6940,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitsscreen",
-      "community": 23,
+      "community": 0,
       "norm_label": "habitsscreen()"
     },
     {
@@ -6840,7 +6950,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_navhostcontroller",
-      "community": 23,
+      "community": 0,
       "norm_label": "navhostcontroller"
     },
     {
@@ -6850,7 +6960,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "screens_habitsscreen_habititem",
-      "community": 23,
+      "community": 0,
       "norm_label": "habititem()"
     },
     {
@@ -7420,7 +7530,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_rewardsscreen",
-      "community": 0,
+      "community": 23,
       "norm_label": "rewardsscreen.kt"
     },
     {
@@ -7430,7 +7540,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsviewmodel",
-      "community": 0,
+      "community": 23,
       "norm_label": "rewardsviewmodel"
     },
     {
@@ -7440,7 +7550,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsviewmodel_purchaseitem",
-      "community": 0,
+      "community": 23,
       "norm_label": ".purchaseitem()"
     },
     {
@@ -7450,7 +7560,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_long",
-      "community": 0,
+      "community": 23,
       "norm_label": "long"
     },
     {
@@ -7460,7 +7570,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsviewmodel_equipitem",
-      "community": 0,
+      "community": 23,
       "norm_label": ".equipitem()"
     },
     {
@@ -7470,7 +7580,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_string",
-      "community": 0,
+      "community": 23,
       "norm_label": "string"
     },
     {
@@ -7480,7 +7590,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsscreen",
-      "community": 0,
+      "community": 23,
       "norm_label": "rewardsscreen()"
     },
     {
@@ -7490,7 +7600,7 @@
       "source_location": "L346",
       "_origin": "ast",
       "id": "screens_rewardsscreen_inventoryitemrow",
-      "community": 0,
+      "community": 23,
       "norm_label": "inventoryitemrow()"
     },
     {
@@ -7500,7 +7610,7 @@
       "source_location": "L346",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_inventoryitementity",
-      "community": 0,
+      "community": 23,
       "norm_label": "inventoryitementity"
     },
     {
@@ -7510,7 +7620,7 @@
       "source_location": "L346",
       "_origin": "ast",
       "id": "tab",
-      "community": 0,
+      "community": 23,
       "norm_label": "tab"
     },
     {
@@ -7520,7 +7630,7 @@
       "source_location": "L483",
       "_origin": "ast",
       "id": "screens_rewardsscreen_tab",
-      "community": 0,
+      "community": 23,
       "norm_label": "tab"
     },
     {
@@ -10347,7 +10457,7 @@
       "label": "Rules",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "dragon_phases_rules",
       "community": 74,
@@ -10357,7 +10467,7 @@
       "label": "Evolution Stages",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "dragon_phases_evolution_stages",
       "community": 74,
@@ -10367,7 +10477,7 @@
       "label": "Evolution Stage Calculation (NOW CONSISTENT)",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L28",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "dragon_phases_evolution_stage_calculation_now_consistent",
       "community": 74,
@@ -10377,7 +10487,7 @@
       "label": "Visual Representation",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L42",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "dragon_phases_visual_representation",
       "community": 74,
@@ -10387,7 +10497,7 @@
       "label": "Evolution Triggers",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L50",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "dragon_phases_evolution_triggers",
       "community": 74,
@@ -10397,7 +10507,7 @@
       "label": "Evolution Events",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L55",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "dragon_phases_evolution_events",
       "community": 74,
@@ -10407,7 +10517,7 @@
       "label": "Display Format",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L62",
+      "source_location": "L70",
       "_origin": "ast",
       "id": "dragon_phases_display_format",
       "community": 74,
@@ -10417,7 +10527,7 @@
       "label": "Configuration",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L69",
+      "source_location": "L77",
       "_origin": "ast",
       "id": "dragon_phases_configuration",
       "community": 74,
@@ -10427,7 +10537,7 @@
       "label": "Data Model",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L84",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "dragon_phases_data_model",
       "community": 74,
@@ -10437,7 +10547,7 @@
       "label": "Source Files",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L90",
+      "source_location": "L94",
       "_origin": "ast",
       "id": "dragon_phases_source_files",
       "community": 74,
@@ -10447,7 +10557,7 @@
       "label": "Known Gaps (UPDATED)",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L101",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "dragon_phases_known_gaps_updated",
       "community": 74,
@@ -10457,7 +10567,7 @@
       "label": "Progression Timeline",
       "file_type": "document",
       "source_file": "DRAGON_PHASES.md",
-      "source_location": "L110",
+      "source_location": "L114",
       "_origin": "ast",
       "id": "dragon_phases_progression_timeline",
       "community": 74,
@@ -20719,6 +20829,86 @@
       "target": "components_animatedpet_animatedpet"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L296",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_moodadjusted",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L251",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidlebounceamplitude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L285",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidlebounceduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L263",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidlebreathingduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L239",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidlerotationamplitude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidlescaleamplitude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L274",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidleswayduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L227",
+      "weight": 1.0,
+      "source": "components_animatedpet",
+      "target": "components_animatedpet_petidleverticalamplitude",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
@@ -20739,6 +20929,83 @@
       "confidence_score": 1.0,
       "source": "components_animatedpet_animatedpet",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_petentity"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidlebounceamplitude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidlebounceduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidlebreathingduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidlerotationamplitude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidlescaleamplitude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidleswayduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "components_animatedpet_animatedpet",
+      "target": "components_animatedpet_petidleverticalamplitude",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -20772,6 +21039,237 @@
       "weight": 1.0,
       "source": "screens_petscreen_petscreen",
       "target": "components_animatedpet_animatedpet"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidlescaleamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidlescaleamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L215",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidlescaleamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L224",
+      "weight": 1.0,
+      "source": "components_animatedpet_petidlescaleamplitude",
+      "target": "components_animatedpet_moodadjusted",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L251",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidlebounceamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L285",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidlebounceduration",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L263",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidlebreathingduration",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L239",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidlerotationamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L274",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidleswayduration",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L227",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidleverticalamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L296",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_moodadjusted",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L251",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidlebounceamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L239",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidlerotationamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L227",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "components_animatedpet_petidleverticalamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L296",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_moodadjusted",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L251",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidlebounceamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L239",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidlerotationamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L227",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "components_animatedpet_petidleverticalamplitude",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L236",
+      "weight": 1.0,
+      "source": "components_animatedpet_petidleverticalamplitude",
+      "target": "components_animatedpet_moodadjusted",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L248",
+      "weight": 1.0,
+      "source": "components_animatedpet_petidlerotationamplitude",
+      "target": "components_animatedpet_moodadjusted",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
+      "source_location": "L260",
+      "weight": 1.0,
+      "source": "components_animatedpet_petidlebounceamplitude",
+      "target": "components_animatedpet_moodadjusted",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -29773,5 +30271,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7f7f58271b1b2290edf3f17c12e4cdd48c6982ff"
+  "built_at_commit": "a2fa237036c86aaabce99c59adacf52da3e69c38"
 }

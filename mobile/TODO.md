@@ -28,15 +28,15 @@ Update:
 
 ## Tasks
 
-- [ ] Audit all dragon phases and available assets
-- [ ] Implement idle animation for Egg
-- [ ] Implement idle animation for Hatchling
-- [ ] Implement idle animation for Young Dragon
-- [ ] Implement idle animation for Adult Dragon
-- [ ] Implement idle animation for Ancient Dragon
-- [ ] Verify animations loop correctly
-- [ ] Verify performance on mobile
-- [ ] Update DRAGON_PHASES.md
+- [x] Audit all dragon phases and available assets
+- [x] Implement idle animation for Egg
+- [x] Implement idle animation for Hatchling
+- [x] Implement idle animation for Young Dragon
+- [x] Implement idle animation for Adult Dragon
+- [x] Implement idle animation for Ancient Dragon
+- [x] Verify animations loop correctly
+- [x] Verify performance on mobile
+- [x] Update DRAGON_PHASES.md
 
 ---
 

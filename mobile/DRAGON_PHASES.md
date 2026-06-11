@@ -10,6 +10,7 @@ The dragon phase system consists of:
 - Evolution stage stored in PetEntity (evolution_stage field: 0-4)
 - Stage determination based on XP thresholds (**NOW CONSISTENT - single source in `ExpConfig`**)
 - Visual representation through different pet images for each stage
+- Lightweight idle animations for each stage using subtle scale, rotation, and vertical translation
 - Journal logging of evolution events
 - Evolution stage rewards (DragonEvolutionReward - currently 0 coins)
 - Display in UI showing stage name alongside level
@@ -47,6 +48,13 @@ Each evolution stage has a corresponding visual representation:
 - Stage 3 (Adult Dragon): R.drawable.adult_dragon
 - Stage 4 (Ancient Dragon): R.drawable.ancient_dragon
 
+Idle animation behavior is handled in `AnimatedPet.kt` with Compose infinite transitions so the static drawables feel alive without frame swapping:
+- Stage 0 (Egg): slow breathing scale, gentle left-right tilt, and very subtle bounce
+- Stage 1 (Hatchling): breathing scale plus vertical motion with slow idle sway
+- Stage 2 (Young Dragon): breathing scale plus vertical motion with slower idle sway
+- Stage 3 (Adult Dragon): calmer breathing scale plus vertical motion and slower sway
+- Stage 4 (Ancient Dragon): slowest and smallest breathing scale, vertical motion, and sway
+
 ### Evolution Triggers
 Evolution stage increases when:
 1. XP crosses a threshold in `ExpConfig.EVOLUTION_THRESHOLDS`
@@ -74,12 +82,8 @@ Evolution stage thresholds are now centralized in `ExpConfig`:
 - `ExpConfig.calculateEvolutionStageFromXp()` - Single calculation function
 - `ExpConfig.evolutionStageName()` - Single name lookup function
 
-Visual asset mappings remain in:
-- AnimatedPet.kt lines 42-49 (pet images)
-- AnimatedPet.kt lines 61-67 (backgrounds)
-- AnimatedPet.kt lines 89-92 (scarves)
-- AnimatedPet.kt lines 105-108 (glasses)
-- AnimatedPet.kt lines 121-125 (hats)
+Visual asset mappings and idle animation behavior remain in:
+- AnimatedPet.kt (pet images, backgrounds, equipped items, and stage-specific idle animations)
 
 ## Data Model
 
