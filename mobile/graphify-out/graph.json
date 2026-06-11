@@ -6007,7 +6007,7 @@
       "label": "RewardScreen()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L46",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardscreen",
       "community": 17,
@@ -6017,7 +6017,7 @@
       "label": "RewardUiEvent",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L46",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_rewarduievent",
       "community": 17,
@@ -6027,7 +6027,7 @@
       "label": "LevelUpRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L117",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "reward_rewardscreen_leveluprewardcontent",
       "community": 17,
@@ -6037,7 +6037,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L117",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_int",
       "community": 17,
@@ -6047,7 +6047,7 @@
       "label": "ChestRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L155",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "reward_rewardscreen_chestrewardcontent",
       "community": 17,
@@ -6057,7 +6057,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L155",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string",
       "community": 17,
@@ -6067,7 +6067,7 @@
       "label": "Any",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L155",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any",
       "community": 17,
@@ -6077,7 +6077,7 @@
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L155",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long",
       "community": 17,
@@ -6087,7 +6087,7 @@
       "label": "StreakRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L220",
+      "source_location": "L222",
       "_origin": "ast",
       "id": "reward_rewardscreen_streakrewardcontent",
       "community": 17,
@@ -6097,7 +6097,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L220",
+      "source_location": "L222",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_list",
       "community": 17,
@@ -6107,7 +6107,7 @@
       "label": "HeartOrbit()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L310",
+      "source_location": "L312",
       "_origin": "ast",
       "id": "reward_rewardscreen_heartorbit",
       "community": 17,
@@ -6117,7 +6117,7 @@
       "label": "InfiniteTransition",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L310",
+      "source_location": "L312",
       "_origin": "ast",
       "id": "infinitetransition",
       "community": 17,
@@ -6127,7 +6127,7 @@
       "label": "AchievementRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L347",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "reward_rewardscreen_achievementrewardcontent",
       "community": 17,
@@ -6137,7 +6137,7 @@
       "label": "CoinRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L398",
+      "source_location": "L400",
       "_origin": "ast",
       "id": "reward_rewardscreen_coinrewardcontent",
       "community": 17,
@@ -6147,7 +6147,7 @@
       "label": "DragonEvolutionRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L427",
+      "source_location": "L429",
       "_origin": "ast",
       "id": "reward_rewardscreen_dragonevolutionrewardcontent",
       "community": 17,
@@ -6630,7 +6630,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habiteditscreen",
-      "community": 1,
+      "community": 0,
       "norm_label": "habiteditscreen.kt"
     },
     {
@@ -6640,7 +6640,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "screens_habiteditscreen_habiteditscreen",
-      "community": 1,
+      "community": 0,
       "norm_label": "habiteditscreen()"
     },
     {
@@ -6650,7 +6650,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_long",
-      "community": 1,
+      "community": 0,
       "norm_label": "long"
     },
     {
@@ -6660,7 +6660,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "habiteditviewmodel",
-      "community": 1,
+      "community": 0,
       "norm_label": "habiteditviewmodel"
     },
     {
@@ -6670,7 +6670,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "screens_habiteditscreen_habiteditform",
-      "community": 1,
+      "community": 0,
       "norm_label": "habiteditform()"
     },
     {
@@ -6680,7 +6680,7 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "screens_habiteditscreen_iconselection",
-      "community": 1,
+      "community": 0,
       "norm_label": "iconselection()"
     },
     {
@@ -6690,7 +6690,7 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_string",
-      "community": 1,
+      "community": 0,
       "norm_label": "string"
     },
     {
@@ -6700,7 +6700,7 @@
       "source_location": "L236",
       "_origin": "ast",
       "id": "screens_habiteditscreen_typeselection",
-      "community": 1,
+      "community": 0,
       "norm_label": "typeselection()"
     },
     {
@@ -6710,7 +6710,7 @@
       "source_location": "L268",
       "_origin": "ast",
       "id": "screens_habiteditscreen_typechoicechip",
-      "community": 1,
+      "community": 0,
       "norm_label": "typechoicechip()"
     },
     {
@@ -6720,7 +6720,7 @@
       "source_location": "L268",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_boolean",
-      "community": 1,
+      "community": 0,
       "norm_label": "boolean"
     },
     {
@@ -6730,7 +6730,7 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "screens_habiteditscreen_durationselection",
-      "community": 1,
+      "community": 0,
       "norm_label": "durationselection()"
     },
     {
@@ -6740,7 +6740,7 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_int",
-      "community": 1,
+      "community": 0,
       "norm_label": "int"
     },
     {
@@ -6750,7 +6750,7 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "screens_habiteditscreen_singlelinespecifiedpadding",
-      "community": 1,
+      "community": 0,
       "norm_label": "singlelinespecifiedpadding()"
     },
     {
@@ -6760,7 +6760,7 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_paddingvalues",
-      "community": 1,
+      "community": 0,
       "norm_label": "paddingvalues"
     },
     {
@@ -6867,7 +6867,7 @@
       "label": "HomeHabitItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L142",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "screens_homescreen_homehabititem",
       "community": 5,
@@ -6877,7 +6877,7 @@
       "label": "HabitEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L142",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_habitentity",
       "community": 5,
@@ -6887,7 +6887,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L142",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_boolean",
       "community": 5,
@@ -6897,7 +6897,7 @@
       "label": "getEvolutionStageName()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L178",
+      "source_location": "L182",
       "_origin": "ast",
       "id": "screens_homescreen_getevolutionstagename",
       "community": 5,
@@ -6907,7 +6907,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L178",
+      "source_location": "L182",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int",
       "community": 5,
@@ -6917,7 +6917,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L178",
+      "source_location": "L182",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_string",
       "community": 5,
@@ -6927,7 +6927,7 @@
       "label": "xpRequiredForNextLevel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L187",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "screens_homescreen_xprequiredfornextlevel",
       "community": 5,
@@ -6937,7 +6937,7 @@
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L187",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_long",
       "community": 5,
@@ -6947,7 +6947,7 @@
       "label": "xpIntoCurrentLevel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L189",
+      "source_location": "L193",
       "_origin": "ast",
       "id": "screens_homescreen_xpintocurrentlevel",
       "community": 5,
@@ -6960,7 +6960,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel",
-      "community": 23,
+      "community": 1,
       "norm_label": "homescreenviewmodel.kt"
     },
     {
@@ -6970,7 +6970,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel",
-      "community": 23,
+      "community": 1,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -6980,7 +6980,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_resetallgamedata",
-      "community": 23,
+      "community": 1,
       "norm_label": ".resetallgamedata()"
     },
     {
@@ -6990,7 +6990,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_stateflow",
-      "community": 23,
+      "community": 1,
       "norm_label": "stateflow"
     },
     {
@@ -7000,7 +7000,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_statisticsentity",
-      "community": 23,
+      "community": 1,
       "norm_label": "statisticsentity"
     },
     {
@@ -7010,7 +7010,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_list",
-      "community": 23,
+      "community": 1,
       "norm_label": "list"
     },
     {
@@ -7020,7 +7020,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_habitentity",
-      "community": 23,
+      "community": 1,
       "norm_label": "habitentity"
     },
     {
@@ -7030,7 +7030,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_petentity",
-      "community": 23,
+      "community": 1,
       "norm_label": "petentity"
     },
     {
@@ -7040,7 +7040,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "map",
-      "community": 23,
+      "community": 1,
       "norm_label": "map"
     },
     {
@@ -7050,7 +7050,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_long",
-      "community": 23,
+      "community": 1,
       "norm_label": "long"
     },
     {
@@ -7060,7 +7060,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_boolean",
-      "community": 23,
+      "community": 1,
       "norm_label": "boolean"
     },
     {
@@ -7070,7 +7070,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "uistate",
-      "community": 23,
+      "community": 1,
       "norm_label": "uistate"
     },
     {
@@ -7080,7 +7080,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_uistate",
-      "community": 23,
+      "community": 1,
       "norm_label": "uistate"
     },
     {
@@ -7090,7 +7090,7 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_getdaystart",
-      "community": 23,
+      "community": 1,
       "norm_label": ".getdaystart()"
     },
     {
@@ -7237,7 +7237,7 @@
       "label": "PetViewModel",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L29",
+      "source_location": "L32",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel",
       "community": 5,
@@ -7247,7 +7247,7 @@
       "label": ".equipItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L35",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel_equipitem",
       "community": 5,
@@ -7257,7 +7257,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L35",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
       "community": 5,
@@ -7267,27 +7267,67 @@
       "label": ".unequipItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L39",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel_unequipitem",
       "community": 5,
       "norm_label": ".unequipitem()"
     },
     {
-      "label": "PetScreen()",
+      "label": ".renamePet()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
       "source_location": "L46",
+      "_origin": "ast",
+      "id": "screens_petscreen_petviewmodel_renamepet",
+      "community": 5,
+      "norm_label": ".renamepet()"
+    },
+    {
+      "label": "PetEntity",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
+      "community": 5,
+      "norm_label": "petentity"
+    },
+    {
+      "label": "PetScreen()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L53",
       "_origin": "ast",
       "id": "screens_petscreen_petscreen",
       "community": 5,
       "norm_label": "petscreen()"
     },
     {
+      "label": "validatePetName()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L196",
+      "_origin": "ast",
+      "id": "screens_petscreen_validatepetname",
+      "community": 5,
+      "norm_label": "validatepetname()"
+    },
+    {
+      "label": "RenamePetDialog()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L205",
+      "_origin": "ast",
+      "id": "screens_petscreen_renamepetdialog",
+      "community": 5,
+      "norm_label": "renamepetdialog()"
+    },
+    {
       "label": "calculateXpForNextLevel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L161",
+      "source_location": "L271",
       "_origin": "ast",
       "id": "screens_petscreen_calculatexpfornextlevel",
       "community": 5,
@@ -7297,7 +7337,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L161",
+      "source_location": "L271",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_int",
       "community": 5,
@@ -7307,7 +7347,7 @@
       "label": "EquipmentSlot()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L166",
+      "source_location": "L276",
       "_origin": "ast",
       "id": "screens_petscreen_equipmentslot",
       "community": 5,
@@ -7317,7 +7357,7 @@
       "label": "Unit",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L166",
+      "source_location": "L276",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_unit",
       "community": 5,
@@ -7440,7 +7480,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_statisticsscreen",
-      "community": 0,
+      "community": 23,
       "norm_label": "statisticsscreen.kt"
     },
     {
@@ -7450,7 +7490,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsviewmodel",
-      "community": 0,
+      "community": 23,
       "norm_label": "statisticsviewmodel"
     },
     {
@@ -7460,7 +7500,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsscreen",
-      "community": 0,
+      "community": 23,
       "norm_label": "statisticsscreen()"
     },
     {
@@ -7470,7 +7510,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statrow",
-      "community": 0,
+      "community": 23,
       "norm_label": "statrow()"
     },
     {
@@ -7480,7 +7520,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_string",
-      "community": 0,
+      "community": 23,
       "norm_label": "string"
     },
     {
@@ -10187,7 +10227,7 @@
       "label": "Configuration",
       "file_type": "document",
       "source_file": "DATA_MODEL.md",
-      "source_location": "L122",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "data_model_configuration",
       "community": 88,
@@ -10197,7 +10237,7 @@
       "label": "Source Files",
       "file_type": "document",
       "source_file": "DATA_MODEL.md",
-      "source_location": "L131",
+      "source_location": "L132",
       "_origin": "ast",
       "id": "data_model_source_files",
       "community": 88,
@@ -10207,7 +10247,7 @@
       "label": "Known Gaps",
       "file_type": "document",
       "source_file": "DATA_MODEL.md",
-      "source_location": "L144",
+      "source_location": "L145",
       "_origin": "ast",
       "id": "data_model_known_gaps",
       "community": 88,
@@ -17718,9 +17758,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardconfigprovider_chestrewardconfigprovider_getconfig",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardconfigprovider_kt_chesttype",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardconfigprovider_kt_chesttype"
     },
     {
       "relation": "references",
@@ -17740,9 +17780,9 @@
       "source_location": "L58",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardconfigprovider_chestrewardconfigprovider_getrandomchesttype",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardconfigprovider_kt_chesttype",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardconfigprovider_kt_chesttype"
     },
     {
       "relation": "contains",
@@ -18431,9 +18471,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine",
-      "target": "domain_streakengine_formatchestlabel",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_formatchestlabel"
     },
     {
       "relation": "contains",
@@ -18441,9 +18481,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine",
-      "target": "domain_streakengine_getchesttypeformilestone",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_getchesttypeformilestone"
     },
     {
       "relation": "contains",
@@ -18451,9 +18491,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine",
-      "target": "domain_streakengine_streakchestreward",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakchestreward"
     },
     {
       "relation": "contains",
@@ -18471,9 +18511,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L161",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine",
-      "target": "domain_streakengine_streakengine_buildrewardsummary",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakengine_buildrewardsummary"
     },
     {
       "relation": "method",
@@ -18481,9 +18521,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L121",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine",
-      "target": "domain_streakengine_streakengine_buildstreakchestreward",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakengine_buildstreakchestreward"
     },
     {
       "relation": "method",
@@ -18522,9 +18562,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L121",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildstreakchestreward",
-      "target": "domain_streakengine_streakchestreward",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakchestreward"
     },
     {
       "relation": "references",
@@ -18533,9 +18573,9 @@
       "source_location": "L28",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_getchesttypeformilestone",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_chesttype",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_chesttype"
     },
     {
       "relation": "references",
@@ -18544,9 +18584,9 @@
       "source_location": "L28",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_getchesttypeformilestone",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_int",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_int"
     },
     {
       "relation": "calls",
@@ -18555,9 +18595,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L122",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildstreakchestreward",
-      "target": "domain_streakengine_getchesttypeformilestone",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_getchesttypeformilestone"
     },
     {
       "relation": "references",
@@ -18566,9 +18606,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_int",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_int"
     },
     {
       "relation": "references",
@@ -18577,9 +18617,9 @@
       "source_location": "L121",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildstreakchestreward",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_int",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_int"
     },
     {
       "relation": "references",
@@ -18588,9 +18628,9 @@
       "source_location": "L35",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_formatchestlabel",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_chesttype",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_chesttype"
     },
     {
       "relation": "references",
@@ -18599,9 +18639,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_chesttype",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_chesttype"
     },
     {
       "relation": "references",
@@ -18610,9 +18650,9 @@
       "source_location": "L35",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_formatchestlabel",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_string",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_string"
     },
     {
       "relation": "calls",
@@ -18621,9 +18661,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L171",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "domain_streakengine_formatchestlabel",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_formatchestlabel"
     },
     {
       "relation": "references",
@@ -18632,9 +18672,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "context": "generic_arg",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_string",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_string"
     },
     {
       "relation": "references",
@@ -18654,9 +18694,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_evaluatetodaystreak",
-      "target": "domain_streakengine_streakengine_buildstreakchestreward",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakengine_buildstreakchestreward"
     },
     {
       "relation": "calls",
@@ -18676,9 +18716,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L114",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_recalculatetodaystreak",
-      "target": "domain_streakengine_streakengine_evaluatetodaystreak",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakengine_evaluatetodaystreak"
     },
     {
       "relation": "references",
@@ -18687,9 +18727,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_long",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_long"
     },
     {
       "relation": "references",
@@ -18731,9 +18771,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L149",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildstreakchestreward",
-      "target": "domain_streakengine_streakengine_buildrewardsummary",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakengine_buildrewardsummary"
     },
     {
       "relation": "references",
@@ -18742,9 +18782,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_boolean",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_boolean"
     },
     {
       "relation": "references",
@@ -18753,9 +18793,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_buildrewardsummary",
-      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_list",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_streakengine_kt_list"
     },
     {
       "relation": "contains",
@@ -21553,9 +21593,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L310",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen",
-      "target": "reward_rewardscreen_heartorbit",
-      "confidence_score": 1.0
+      "target": "reward_rewardscreen_heartorbit"
     },
     {
       "relation": "contains",
@@ -21781,9 +21821,9 @@
       "source_location": "L220",
       "weight": 1.0,
       "context": "generic_arg",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_streakrewardcontent",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string"
     },
     {
       "relation": "references",
@@ -21792,9 +21832,9 @@
       "source_location": "L220",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_streakrewardcontent",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_list",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_list"
     },
     {
       "relation": "calls",
@@ -21803,9 +21843,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L261",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_streakrewardcontent",
-      "target": "reward_rewardscreen_heartorbit",
-      "confidence_score": 1.0
+      "target": "reward_rewardscreen_heartorbit"
     },
     {
       "relation": "references",
@@ -21814,9 +21854,9 @@
       "source_location": "L310",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_heartorbit",
-      "target": "infinitetransition",
-      "confidence_score": 1.0
+      "target": "infinitetransition"
     },
     {
       "relation": "contains",
@@ -23571,6 +23611,26 @@
       "target": "screens_petscreen_petviewmodel"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L205",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_renamepetdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L196",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_validatepetname",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
@@ -23590,6 +23650,16 @@
       "confidence_score": 1.0,
       "source": "screens_petscreen_petviewmodel",
       "target": "screens_petscreen_petviewmodel_equipitem"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "screens_petscreen_petviewmodel",
+      "target": "screens_petscreen_petviewmodel_renamepet",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -23627,12 +23697,45 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L46",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_petviewmodel_renamepet",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
       "source_location": "L39",
       "weight": 1.0,
       "context": "parameter_type",
       "confidence_score": 1.0,
       "source": "screens_petscreen_petviewmodel_unequipitem",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L205",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_renamepetdialog",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L196",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "screens_petscreen_validatepetname",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -23644,6 +23747,39 @@
       "confidence_score": 1.0,
       "source": "screens_petscreen_petscreen",
       "target": "screens_petscreen_petviewmodel_unequipitem"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "screens_petscreen_petscreen",
+      "target": "screens_petscreen_petviewmodel_renamepet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L46",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_petviewmodel_renamepet",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "screens_petscreen_petscreen",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -23666,6 +23802,28 @@
       "confidence_score": 1.0,
       "source": "screens_petscreen_petscreen",
       "target": "screens_petscreen_equipmentslot"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L135",
+      "weight": 1.0,
+      "source": "screens_petscreen_petscreen",
+      "target": "screens_petscreen_renamepetdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L251",
+      "weight": 1.0,
+      "source": "screens_petscreen_renamepetdialog",
+      "target": "screens_petscreen_validatepetname",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -29479,5 +29637,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a97fc369b96b453dd3f93bb6275a7ef96d284a1e"
+  "built_at_commit": "c865a0c4e4521c0707b160f782ba99f47529595b"
 }

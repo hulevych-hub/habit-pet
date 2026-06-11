@@ -5,9 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,12 +42,23 @@ class PetViewModel @Inject constructor(
     fun unequipItem(itemType: String) = viewModelScope.launch {
         petRepository.unequipItem(itemType)
     }
+
+    fun renamePet(name: String, currentPet: PetEntity) = viewModelScope.launch {
+        petRepository.updatePet(currentPet.copy(id = 1, name = name))
+    }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
     val pet by petViewModel.pet.collectAsState(initial = PetEntity())
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var nameDraft by remember { mutableStateOf(pet.name) }
+
+    LaunchedEffect(pet.name) {
+        nameDraft = pet.name
+    }
+
     val xpForNextLevel = remember { calculateXpForNextLevel(pet.level) }
 
     Scaffold(
@@ -75,6 +89,15 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
                         style = MaterialTheme.typography.displaySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
+                    Button(
+                        onClick = {
+                            nameDraft = pet.name
+                            showRenameDialog = true
+                        },
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text("Rename Pet")
+                    }
                     Text(
                         text = "Level ${pet.level}",
                         style = MaterialTheme.typography.titleMedium
@@ -106,6 +129,17 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
+            }
+
+            if (showRenameDialog) {
+                RenamePetDialog(
+                    initialName = pet.name,
+                    onDismissRequest = { showRenameDialog = false },
+                    onConfirm = { newName ->
+                        petViewModel.renamePet(newName.trim(), pet)
+                        showRenameDialog = false
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -155,6 +189,82 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
             )
         }
     }
+}
+
+private const val MAX_PET_NAME_LENGTH = 24
+
+private fun validatePetName(name: String): String? {
+    val trimmedName = name.trim()
+    return when {
+        trimmedName.isEmpty() -> "Please enter a pet name"
+        trimmedName.length > MAX_PET_NAME_LENGTH -> "Pet name must be $MAX_PET_NAME_LENGTH characters or fewer"
+        else -> null
+    }
+}
+
+@Composable
+private fun RenamePetDialog(
+    initialName: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var nameDraft by remember { mutableStateOf(initialName) }
+    var nameError by remember { mutableStateOf<String?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text("Rename Pet") },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = nameDraft,
+                    onValueChange = {
+                        nameDraft = it
+                        nameError = null
+                    },
+                    label = { Text("Pet name") },
+                    placeholder = { Text("Enter pet name") },
+                    singleLine = true,
+                    isError = nameError != null,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                nameError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Text(
+                    text = "${nameDraft.length}/$MAX_PET_NAME_LENGTH",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val error = validatePetName(nameDraft)
+                    if (error == null) {
+                        onConfirm(nameDraft)
+                    } else {
+                        nameError = error
+                    }
+                }
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 // Helper function to calculate XP needed for next level

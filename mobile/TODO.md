@@ -188,31 +188,31 @@ Update:
 
 ### EXP SYSTEM
 
-- [ ] Define normal habit EXP rewards
-- [ ] Define timer habit EXP rewards
-- [ ] Define chest EXP rewards
-- [ ] Define level progression curve
-- [ ] Define EXP required per level
+- [x] Define normal habit EXP rewards
+- [x] Define timer habit EXP rewards
+- [x] Define chest EXP rewards
+- [x] Define level progression curve
+- [x] Define EXP required per level
 
 ### COINS
 
 - [ ] Define coin rewards
-- [ ] Define coin sinks
-- [ ] Define accessory pricing balance
+- [x] Define coin sinks
+- [x] Define accessory pricing balance
 
 ### CHEST BALANCE
 
-- [ ] Define level-up chest probabilities
-- [ ] Define chest rarity probabilities
-- [ ] Define accessory reward probabilities
-- [ ] Define coin reward probabilities
-- [ ] Define EXP reward probabilities
+- [x] Define level-up chest probabilities
+- [x] Define chest rarity probabilities
+- [x] Define accessory reward probabilities
+- [x] Define coin reward probabilities
+- [x] Define EXP reward probabilities
 
 ### VALIDATION
 
-- [ ] Verify progression speed
-- [ ] Verify reward balance
-- [ ] Verify economy stability
+- [x] Verify progression speed
+- [x] Verify reward balance
+- [x] Verify economy stability
 
 ---
 
@@ -314,10 +314,10 @@ Update:
 
 ## Tasks
 
-- [ ] Implement pet rename feature
-- [ ] Persist pet name
-- [ ] Validate input
-- [ ] Display name across UI
+- [x] Implement pet rename feature
+- [x] Persist pet name
+- [x] Validate input
+- [x] Display name across UI
 
 ---
 

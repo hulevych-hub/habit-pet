@@ -65,6 +65,10 @@ fun HomeScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Meet ${pet.name}",
+                style = MaterialTheme.typography.titleLarge
+            )
             // Coin balance display
             Row(
                 modifier = Modifier

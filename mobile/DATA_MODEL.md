@@ -45,7 +45,7 @@ The data model includes 9 Room entities:
 
 **PetEntity** (table: `pet`)
 - `id: Long` - Primary key (auto-generated)
-- `name: String` - Pet name (default: "Luna")
+- `name: String` - Pet name (default: "Luna", persisted and editable in the Pet screen)
 - `level: Int` - Current level (0+)
 - `xp: Long` - Total experience points
 - `coins: Int` - Total coins owned
@@ -115,9 +115,10 @@ The chest reward system interacts with InventoryItemEntity through the Inventory
    - StatisticsEntity is updated with new totals (XP, completions, etc.)
    - PetEntity is updated with new XP, level, and evolution stage
    - HabitProgressEntity tracks timer habit accumulation
-4. **Achievement Tracking**: AchievementEntity records are updated when milestones are reached
-5. **Journal Generation**: JournalEntryEntity records are created for significant events
-6. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items
+4. **Pet Rename**: PetEntity.name is updated through PetRepository.updatePet from the Pet screen and displayed on the Home and Pet screens
+5. **Achievement Tracking**: AchievementEntity records are updated when milestones are reached
+6. **Journal Generation**: JournalEntryEntity records are created for significant events
+7. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items
 
 ## Configuration
 
