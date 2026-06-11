@@ -80,6 +80,10 @@ class RewardsViewModel @Inject constructor(
     fun equipItem(itemType: String, itemId: String) = viewModelScope.launch {
         petRepository.equipItem(itemType, itemId)
     }
+
+    fun unequipItem(itemType: String) = viewModelScope.launch {
+        petRepository.unequipItem(itemType)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -406,11 +410,23 @@ fun InventoryItemRow(
 
                 } else if (item.isEquipped) {
 
-                    Text(
-                        "Equipped",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF16A34A)
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = "Equipped",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF16A34A)
+                        )
+
+                        Button(
+                            onClick = {
+                                viewModel.unequipItem(item.type)
+                            }
+                        ) {
+                            Text("Unequip")
+                        }
+                    }
                 }
             }
 
