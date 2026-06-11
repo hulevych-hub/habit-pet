@@ -32,6 +32,13 @@ object EconomyConfig {
     const val STREAK_MILESTONE_INTERVAL: Int = 7
 
     // =========================
+    // COIN REWARDS - DAILY GOALS
+    // =========================
+
+    /** Coins awarded when the daily XP goal is completed */
+    const val DAILY_GOAL_COIN_BONUS: Int = 25
+
+    // =========================
     // COIN REWARDS - LEVEL UP
     // =========================
 

@@ -20,6 +20,49 @@ object ExpConfig {
     const val TIMER_HABIT_XP_PER_MINUTE: Long = 5
 
     // =========================
+    // COMBO / MOMENTUM
+    // =========================
+
+    /** Short window where consecutive habit completions keep momentum alive */
+    const val COMBO_INACTIVITY_WINDOW_MS: Long = 2L * 60L * 60L * 1000L
+
+    /** Small additive XP bonus per consecutive completion after the first */
+    const val COMBO_BONUS_XP_PER_CONSECUTIVE_COMPLETION: Long = 5
+
+    /** Maximum combo bonus XP awarded to a single habit completion */
+    const val COMBO_MAX_BONUS_XP: Long = 20
+
+    /** Combo milestones that are meaningful enough to record in the activity timeline */
+    val COMBO_MILESTONES = listOf(3, 5, 10)
+
+    fun isComboActive(lastHabitCompletionTimestamp: Long, now: Long): Boolean {
+        return lastHabitCompletionTimestamp > 0L && now - lastHabitCompletionTimestamp <= COMBO_INACTIVITY_WINDOW_MS
+    }
+
+    fun comboBonusXp(combo: Int): Long {
+        if (combo <= 1) return 0L
+        return ((combo - 1) * COMBO_BONUS_XP_PER_CONSECUTIVE_COMPLETION)
+            .coerceAtMost(COMBO_MAX_BONUS_XP)
+    }
+
+    fun comboMultiplier(combo: Int): Float {
+        val bonus = comboBonusXp(combo)
+        return 1f + (bonus.toFloat() / CHECKBOX_HABIT_XP.toFloat())
+    }
+
+    fun comboMilestoneReached(combo: Int): Boolean = COMBO_MILESTONES.contains(combo)
+
+    // =========================
+    // DAILY GOALS
+    // =========================
+
+    /** XP target for the daily goal; three checkbox habits reach this goal */
+    const val DAILY_XP_GOAL: Long = 300
+
+    /** Bonus XP awarded when the daily goal is completed */
+    const val DAILY_GOAL_BONUS_XP: Long = 25
+
+    // =========================
     // LEVEL PROGRESSION
     // =========================
 

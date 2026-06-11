@@ -142,7 +142,9 @@ private fun HabitDetailContent(
                     xp = progressUiState.pet.xp,
                     evolutionStage = progressUiState.pet.evolutionStage,
                     totalCoins = progressUiState.totalCoins,
-                    globalStreak = progressUiState.globalStreak
+                    globalStreak = progressUiState.globalStreak,
+                    currentCombo = progressUiState.currentCombo,
+                    lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
                 )
             )
 

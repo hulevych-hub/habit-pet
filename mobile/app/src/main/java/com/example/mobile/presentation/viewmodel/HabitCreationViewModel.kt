@@ -43,12 +43,8 @@ class HabitCreationViewModel @Inject constructor(
     val error: StateFlow<String?> = _error
 
     // Events
-    private val _habitCreated = MutableSharedFlow<Unit>(replay = 0)
-    val habitCreated: SharedFlow<Unit> = _habitCreated.shareIn(
-        viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-        replay = 0
-    )
+    private val _habitCreated = MutableSharedFlow<HabitEntity>(extraBufferCapacity = 1)
+    val habitCreated: SharedFlow<HabitEntity> = _habitCreated
 
     private val _navigateUp = MutableSharedFlow<Unit>(replay = 0)
     val navigateUp: SharedFlow<Unit> = _navigateUp.shareIn(
@@ -108,7 +104,7 @@ class HabitCreationViewModel @Inject constructor(
 
                 // Create habit entity
                 val habit = HabitEntity(
-                    id = System.currentTimeMillis(), // Simple ID generation
+                    id = 0,
                     name = _name.value.trim(),
                     icon = _icon.value,
                     type = _type.value,
@@ -116,10 +112,15 @@ class HabitCreationViewModel @Inject constructor(
                 )
 
                 // Save to database
-                habitRepository.addHabit(habit)
+                val insertedId = habitRepository.addHabit(habit)
+                if (insertedId == -1L) {
+                    _error.value = "Habit could not be saved"
+                    return@launch
+                }
 
                 // Notify habit creation
-                _habitCreated.emit(Unit)
+                _habitCreated.emit(habit.copy(id = insertedId))
+                resetForm()
 
             } catch (e: Exception) {
                 _error.value = e.message

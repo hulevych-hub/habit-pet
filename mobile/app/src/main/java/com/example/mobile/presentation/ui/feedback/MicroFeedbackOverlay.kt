@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.mobile.presentation.ui.events.MicroFeedbackEvent
 import kotlinx.coroutines.delay
+import java.util.Locale
 
 @Composable
 fun MicroFeedbackOverlay(
@@ -146,7 +147,14 @@ private fun MicroFeedbackXpPulse(progress: Float) {
 
 @Composable
 private fun labelForEvent(event: MicroFeedbackEvent): String = when (event) {
-    is MicroFeedbackEvent.HabitCompleted -> "Habit complete +${event.xp} XP +${event.coins} coins"
+    is MicroFeedbackEvent.HabitCompleted -> {
+        val comboLabel = if (event.combo > 1) {
+            " • Combo x${String.format(Locale.US, "%.2f", event.comboMultiplier)}"
+        } else {
+            ""
+        }
+        "Habit complete +${event.xp} XP +${event.coins} coins$comboLabel"
+    }
     is MicroFeedbackEvent.XpGained -> "+${event.amount} EXP"
     is MicroFeedbackEvent.CoinGained -> "+${event.amount} coins"
     MicroFeedbackEvent.TabSwitched -> "Nice choice"

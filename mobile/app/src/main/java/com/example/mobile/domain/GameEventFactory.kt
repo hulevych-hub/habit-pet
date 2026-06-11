@@ -1,25 +1,38 @@
 package com.example.mobile.domain
 
 import com.example.mobile.data.local.entities.GameEventEntity
+import java.util.Locale
 
 object GameEventFactory {
 
     fun habitCompleted(
         habitName: String,
         xpEarned: Long,
-        coinsEarned: Int
+        coinsEarned: Int,
+        combo: Int = 0,
+        comboBonusXp: Long = 0L,
+        comboMultiplier: Float = 1f
     ): GameEventEntity {
         val safeHabitName = habitName.ifBlank { "Habit" }
+        val comboText = if (combo > 1) {
+            " Momentum combo x${formatMultiplier(comboMultiplier)} added +$comboBonusXp XP."
+        } else {
+            ""
+        }
+
         return GameEventEntity(
             type = GameEventType.HABIT_COMPLETED.name,
             title = "$safeHabitName completed",
-            description = "You completed $safeHabitName. Your dragon gained ${xpEarned} XP and $coinsEarned coins.",
+            description = "You completed $safeHabitName. Your dragon gained ${xpEarned} XP and $coinsEarned coins.$comboText",
             icon = "habit_completed",
-            rarity = GameEventRarity.COMMON.name,
+            rarity = if (combo > 1) GameEventRarity.RARE.name else GameEventRarity.COMMON.name,
             payload = payloadOf(
                 "habit" to safeHabitName,
                 "xp" to xpEarned.toInt(),
-                "coins" to coinsEarned
+                "coins" to coinsEarned,
+                "combo" to combo,
+                "comboBonusXp" to comboBonusXp,
+                "comboMultiplier" to comboMultiplier
             )
         )
     }
@@ -135,6 +148,21 @@ object GameEventFactory {
         )
     }
 
+    fun dailyGoalCompleted(goalXp: Long, bonusCoins: Int, bonusExp: Long): GameEventEntity {
+        return GameEventEntity(
+            type = GameEventType.DAILY_GOAL_COMPLETED.name,
+            title = "Daily goal complete",
+            description = "You gathered $goalXp XP today and earned +$bonusExp XP plus $bonusCoins coins for your dragon.",
+            icon = "daily_goal_completed",
+            rarity = GameEventRarity.RARE.name,
+            payload = payloadOf(
+                "goalXp" to goalXp,
+                "coins" to bonusCoins,
+                "xp" to bonusExp
+            )
+        )
+    }
+
     fun surpriseReward(
         coins: Int,
         xp: Long,
@@ -154,6 +182,21 @@ object GameEventFactory {
                 "xp" to xp.toInt(),
                 "chestType" to chestType,
                 "hasCustomization" to hasCustomization
+            )
+        )
+    }
+
+    fun comboMilestone(combo: Int, bonusXp: Long, multiplier: Float): GameEventEntity {
+        return GameEventEntity(
+            type = GameEventType.COMBO_MILESTONE.name,
+            title = "${combo}-hit momentum",
+            description = "Your dragon caught the rhythm: combo x${formatMultiplier(multiplier)} added +$bonusXp bonus XP.",
+            icon = "combo_milestone",
+            rarity = if (combo >= 5) GameEventRarity.RARE.name else GameEventRarity.COMMON.name,
+            payload = payloadOf(
+                "combo" to combo,
+                "bonusXp" to bonusXp,
+                "comboMultiplier" to multiplier
             )
         )
     }
@@ -186,6 +229,9 @@ object GameEventFactory {
         "rare" -> GameEventRarity.RARE.name
         else -> GameEventRarity.COMMON.name
     }
+
+    private fun formatMultiplier(multiplier: Float): String =
+        String.format(Locale.US, "%.2f", multiplier)
 
     private fun payloadOf(vararg values: Pair<String, Any?>): String {
         return values.joinToString(prefix = "{", postfix = "}") { (key, value) ->

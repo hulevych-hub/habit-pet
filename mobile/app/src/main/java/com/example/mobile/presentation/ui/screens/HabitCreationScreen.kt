@@ -65,7 +65,6 @@ fun HabitCreationScreen(
         ) { padding ->
             HabitCreationForm(
                 viewModel = viewModel,
-                onHabitCreated = onHabitCreated,
                 modifier = Modifier.padding(padding)
             )
         }
@@ -75,7 +74,6 @@ fun HabitCreationScreen(
 @Composable
 private fun HabitCreationForm(
     viewModel: HabitCreationViewModel,
-    onHabitCreated: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val name by viewModel.name.collectAsState()

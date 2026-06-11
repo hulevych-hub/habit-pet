@@ -19,5 +19,12 @@ data class StatisticsEntity(
     var lastStreakAwardedAt: Int = 0,
     var lastUpdated: Long = 0, // timestamp
     var rewardChestsAvailable: Int = 0,
-    val lastStreakDate: Long = 0L
+    val lastStreakDate: Long = 0L,
+    var currentCombo: Int = 0,
+    var bestCombo: Int = 0,
+    var lastHabitCompletionTimestamp: Long = 0L,
+    var dailyGoalXp: Int = 300,
+    var dailyGoalProgressXp: Int = 0,
+    var dailyGoalDate: Long = 0L,
+    var dailyGoalCompletedDate: Long = 0L
 )

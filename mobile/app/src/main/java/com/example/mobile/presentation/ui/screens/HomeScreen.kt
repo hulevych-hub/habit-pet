@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -21,7 +22,9 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -117,8 +120,17 @@ fun HomeScreen(
                     xp = pet.xp,
                     evolutionStage = pet.evolutionStage,
                     totalCoins = uiState.totalCoins,
-                    globalStreak = uiState.globalStreak
+                    globalStreak = uiState.globalStreak,
+                    lastStreakDate = uiState.lastStreakDate,
+                    currentCombo = uiState.currentCombo,
+                    lastHabitCompletionTimestamp = uiState.lastHabitCompletionTimestamp
                 )
+            )
+            DailyGoalCard(
+                goalXp = uiState.dailyGoalXp.toLong(),
+                progressXp = uiState.dailyGoalProgressXp,
+                completed = uiState.dailyGoalCompleted,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             EvolutionTeaser(
                 totalXp = pet.xp,
@@ -184,6 +196,61 @@ fun HomeScreen(
                     homeScreenViewModel.renamePet(newName.trim())
                     showMandatoryPetNameDialog = false
                 }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DailyGoalCard(
+    goalXp: Long,
+    progressXp: Long,
+    completed: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val progress = (progressXp.toFloat() / goalXp.toFloat()).coerceIn(0f, 1f)
+    val title = if (completed) "Daily goal complete" else "Daily XP goal"
+    val message = if (completed) {
+        "Your dragon is glowing from today's steady rhythm."
+    } else {
+        "${progressXp.toInt()} / ${goalXp.toInt()} XP · three checkbox habits usually finish this."
+    }
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = if (completed) Color(0xFFFFF3E0) else MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = if (completed) "Protected" else "Growing",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (completed) Color(0xFF43A047) else MaterialTheme.colorScheme.primary
+                )
+            }
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp),
+                color = if (completed) Color(0xFFFFB74D) else MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

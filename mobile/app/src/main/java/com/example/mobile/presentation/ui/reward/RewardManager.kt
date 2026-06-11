@@ -69,6 +69,7 @@ class RewardManager @Inject constructor(
                 is RewardUiEvent.LevelUpReward -> current.coins
                 is RewardUiEvent.DragonEvolutionReward -> 0
                 is RewardUiEvent.StreakReward -> current.coins
+                is RewardUiEvent.DailyGoalReward -> current.bonusCoins
                 is RewardUiEvent.AchievementReward -> 0
                 is RewardUiEvent.ChestReward -> (current.amount as? Int) ?: 0
             }
@@ -82,6 +83,37 @@ class RewardManager @Inject constructor(
 
             when (current) {
                 is RewardUiEvent.AchievementReward -> Unit
+
+                is RewardUiEvent.DailyGoalReward -> {
+                    rewardEventBus.emit(current)
+
+                    if (current.bonusExp > 0) {
+                        val expAmount = current.bonusExp.toInt()
+                        microFeedbackManager.triggerXpGained(expAmount.toLong())
+                        val (previousPet, updatedPet) = addPetExp(expAmount)
+                        val newLevel = ExpConfig.calculateLevelFromXp(updatedPet.xp)
+                        val newEvolutionStage = ExpConfig.calculateEvolutionStageFromXp(updatedPet.xp)
+
+                        if (newLevel > previousPet.level) {
+                            activityTimelineEngine.logLevelUp(newLevel, ExpConfig.levelUpCoins(newLevel))
+                        }
+
+                        val nextEvolutionStage = (newEvolutionStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
+                        if (nextEvolutionStage > newEvolutionStage) {
+                            activityTimelineEngine.logEvolutionMilestoneNearing(
+                                toStage = nextEvolutionStage,
+                                xp = updatedPet.xp
+                            )
+                        }
+
+                        if (newEvolutionStage > previousPet.evolutionStage) {
+                            activityTimelineEngine.logDragonEvolution(
+                                fromStage = previousPet.evolutionStage,
+                                toStage = newEvolutionStage
+                            )
+                        }
+                    }
+                }
 
                 is RewardUiEvent.ChestReward -> {
                     rewardEventBus.emit(current)

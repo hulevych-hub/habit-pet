@@ -9,6 +9,7 @@ import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.HabitCompletionRepository
+import com.example.mobile.domain.repository.HabitCompletionResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -33,7 +34,10 @@ class HabitCompletionRepositoryImpl @Inject constructor(
     ): Flow<HabitCompletionEntity?> =
         habitCompletionDao.getCompletionForHabitOnDate(habitId, date)
 
-    override suspend fun addCompletion(completion: HabitCompletionEntity): Long {
+    override suspend fun addCompletion(completion: HabitCompletionEntity): Long =
+        addCompletionWithCombo(completion).completionId
+
+    override suspend fun addCompletionWithCombo(completion: HabitCompletionEntity): HabitCompletionResult {
 
         val existingCompletion =
             habitCompletionDao.getCompletionForHabitOnDateOnce(
@@ -42,17 +46,53 @@ class HabitCompletionRepositoryImpl @Inject constructor(
             )
 
         if (existingCompletion != null) {
-            return existingCompletion.id
+            return HabitCompletionResult(
+                completionId = existingCompletion.id,
+                baseXpEarned = completion.xpEarned,
+                comboBonusXp = 0L,
+                totalXpEarned = existingCompletion.xpEarned,
+                combo = 0,
+                comboMultiplier = 1f,
+                comboMilestoneReached = false
+            )
         }
 
-        val completionId = habitCompletionDao.insertCompletion(completion)
-        if (completionId == -1L) return -1L
+        val completionTimestamp = completion.id.takeIf { it > 0L } ?: System.currentTimeMillis()
+        val stats = statisticsDao.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
+        val comboActive = ExpConfig.isComboActive(
+            lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
+            now = completionTimestamp
+        )
+        val nextCombo = if (comboActive) stats.currentCombo + 1 else 1
+        val comboBonusXp = ExpConfig.comboBonusXp(nextCombo)
+        val completionWithCombo = completion.copy(xpEarned = completion.xpEarned + comboBonusXp)
+
+        val completionId = habitCompletionDao.insertCompletion(completionWithCombo)
+        if (completionId == -1L) {
+            return HabitCompletionResult(
+                completionId = -1L,
+                baseXpEarned = completion.xpEarned,
+                comboBonusXp = comboBonusXp,
+                totalXpEarned = completionWithCombo.xpEarned,
+                combo = nextCombo,
+                comboMultiplier = ExpConfig.comboMultiplier(nextCombo),
+                comboMilestoneReached = ExpConfig.comboMilestoneReached(nextCombo)
+            )
+        }
 
         updateHabitStreak(completion.habitId, completion.date)
-        updatePetProgress(completion.xpEarned)
-        updateStatistics(completion)
+        updatePetProgress(completionWithCombo.xpEarned)
+        updateStatistics(completionWithCombo, completionTimestamp, nextCombo)
 
-        return completionId
+        return HabitCompletionResult(
+            completionId = completionId,
+            baseXpEarned = completion.xpEarned,
+            comboBonusXp = comboBonusXp,
+            totalXpEarned = completionWithCombo.xpEarned,
+            combo = nextCombo,
+            comboMultiplier = ExpConfig.comboMultiplier(nextCombo),
+            comboMilestoneReached = ExpConfig.comboMilestoneReached(nextCombo)
+        )
     }
 
     override suspend fun updateCompletion(completion: HabitCompletionEntity): Int =
@@ -109,9 +149,21 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         habitDao.updateHabit(updated)
     }
 
-    private suspend fun updateStatistics(completion: HabitCompletionEntity) {
+    private suspend fun updateStatistics(
+        completion: HabitCompletionEntity,
+        completionTimestamp: Long,
+        combo: Int
+    ) {
         val stats = statisticsDao.getStatistics().firstOrNull()
             ?: StatisticsEntity(id = 1)
+
+        val todayKey = completion.date / 86_400_000L
+        val sameDayGoal = stats.dailyGoalDate == todayKey
+        val previousProgress = if (sameDayGoal) stats.dailyGoalProgressXp else 0
+        val newProgress = (previousProgress + completion.xpEarned.toInt())
+            .coerceAtMost(stats.dailyGoalXp)
+        val alreadyCompletedToday = stats.dailyGoalCompletedDate == todayKey
+        val completedToday = newProgress >= stats.dailyGoalXp && !alreadyCompletedToday
 
         val updated = stats.copy(
             id = 1,
@@ -119,6 +171,12 @@ class HabitCompletionRepositoryImpl @Inject constructor(
             totalHabitsCompleted = stats.totalHabitsCompleted + 1,
             totalXp = stats.totalXp + completion.xpEarned,
             daysActive = habitCompletionDao.getActiveDayCount(),
+            currentCombo = combo,
+            bestCombo = maxOf(stats.bestCombo, combo),
+            lastHabitCompletionTimestamp = completionTimestamp,
+            dailyGoalDate = todayKey,
+            dailyGoalProgressXp = newProgress,
+            dailyGoalCompletedDate = if (completedToday) todayKey else stats.dailyGoalCompletedDate,
             lastUpdated = System.currentTimeMillis()
         )
 

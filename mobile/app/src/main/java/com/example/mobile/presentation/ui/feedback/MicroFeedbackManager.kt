@@ -15,8 +15,20 @@ class MicroFeedbackManager @Inject constructor() {
 
     val events: SharedFlow<MicroFeedbackEvent> = _events
 
-    fun triggerHabitCompleted(xp: Long, coins: Int) {
-        _events.tryEmit(MicroFeedbackEvent.HabitCompleted(xp = xp, coins = coins))
+    fun triggerHabitCompleted(
+        xp: Long,
+        coins: Int,
+        combo: Int = 0,
+        comboMultiplier: Float = 1f
+    ) {
+        _events.tryEmit(
+            MicroFeedbackEvent.HabitCompleted(
+                xp = xp,
+                coins = coins,
+                combo = combo,
+                comboMultiplier = comboMultiplier
+            )
+        )
     }
 
     fun triggerXpGained(amount: Long) {

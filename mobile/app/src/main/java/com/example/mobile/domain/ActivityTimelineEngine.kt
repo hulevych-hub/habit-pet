@@ -37,13 +37,35 @@ class ActivityTimelineEngine @Inject constructor(
         ensureFirstDailyLoginEvent()
     }
 
-    fun logHabitCompleted(habitName: String, xpEarned: Long, coinsEarned: Int) {
+    fun logHabitCompleted(
+        habitName: String,
+        xpEarned: Long,
+        coinsEarned: Int,
+        combo: Int = 0,
+        comboBonusXp: Long = 0L,
+        comboMultiplier: Float = 1f
+    ) {
         scope.launch {
             gameEventRepository.logEvent(
                 GameEventFactory.habitCompleted(
                     habitName = habitName,
                     xpEarned = xpEarned,
-                    coinsEarned = coinsEarned
+                    coinsEarned = coinsEarned,
+                    combo = combo,
+                    comboBonusXp = comboBonusXp,
+                    comboMultiplier = comboMultiplier
+                )
+            )
+        }
+    }
+
+    fun logComboMilestone(combo: Int, bonusXp: Long, multiplier: Float) {
+        scope.launch {
+            gameEventRepository.logEvent(
+                GameEventFactory.comboMilestone(
+                    combo = combo,
+                    bonusXp = bonusXp,
+                    multiplier = multiplier
                 )
             )
         }
@@ -103,6 +125,18 @@ class ActivityTimelineEngine @Inject constructor(
                 GameEventFactory.streakMilestone(
                     streak = streak,
                     chestType = chestType.name
+                )
+            )
+        }
+    }
+
+    fun logDailyGoalCompleted(goalXp: Long, bonusCoins: Int, bonusExp: Long) {
+        scope.launch {
+            gameEventRepository.logEvent(
+                GameEventFactory.dailyGoalCompleted(
+                    goalXp = goalXp,
+                    bonusCoins = bonusCoins,
+                    bonusExp = bonusExp
                 )
             )
         }

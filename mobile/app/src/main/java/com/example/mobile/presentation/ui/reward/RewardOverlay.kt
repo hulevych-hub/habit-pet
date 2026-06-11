@@ -116,6 +116,13 @@ private fun RewardDialog(
                         onConfirm = onDismiss
                     )
 
+                    is RewardUiEvent.DailyGoalReward -> DailyGoalRewardContent(
+                        goalXp = reward.goalXp,
+                        bonusCoins = reward.bonusCoins,
+                        bonusExp = reward.bonusExp,
+                        onConfirm = onDismiss
+                    )
+
                     is RewardUiEvent.AchievementReward -> AchievementRewardContent(
                         achievementName = reward.achievementName,
                         coinsEarned = reward.coins,
@@ -217,6 +224,31 @@ private fun StreakRewardContent(
 
         Text("$streak Day Streak")
         Text("+$coinsEarned coins")
+
+        Button(onClick = onConfirm) {
+            Text("Claim")
+        }
+    }
+}
+
+@Composable
+private fun DailyGoalRewardContent(
+    goalXp: Long,
+    bonusCoins: Int,
+    bonusExp: Long,
+    onConfirm: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = Icons.Default.LocalFireDepartment,
+            contentDescription = "Daily goal",
+            tint = Color(0xFFFFB74D),
+            modifier = Modifier.size(56.dp)
+        )
+
+        Text("Daily Goal Complete!")
+        Text("$goalXp XP gathered")
+        Text("+$bonusCoins coins  +$bonusExp XP")
 
         Button(onClick = onConfirm) {
             Text("Claim")

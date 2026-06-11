@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
@@ -61,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
     val habits: StateFlow<List<HabitEntity>> = habitRepository.getAllHabits()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Eagerly,
             initialValue = emptyList()
         )
 
@@ -92,19 +93,46 @@ class HomeScreenViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
+    private val todayXpProgress: StateFlow<Long> = habitRepository.getAllHabits()
+        .flatMapLatest { habits ->
+            if (habits.isEmpty()) {
+                flowOf(0L)
+            } else {
+                val today = getDayStart(System.currentTimeMillis())
+                combine(
+                    habits.map { habit ->
+                        habitCompletionRepository.getCompletionForHabitOnDate(habit.id, today)
+                            .map { completion -> completion?.xpEarned ?: 0L }
+                    }
+                ) { xpValues -> xpValues.sum() }
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0L
+        )
+
     // Combined state for easy access in UI
     val uiState: StateFlow<UiState> = combine(
         statistics,
         habits,
         pet,
-        todayCompletionStatuses
-    ) { stats, habList, petState, completionStatuses ->
+        todayCompletionStatuses,
+        todayXpProgress
+    ) { stats, habList, petState, completionStatuses, xpProgress ->
         UiState(
             globalStreak = stats.globalStreak,
             habits = habList,
             pet = petState,
             completedToday = completionStatuses,
-            totalCoins = stats.totalCoins
+            totalCoins = stats.totalCoins,
+            lastStreakDate = stats.lastStreakDate,
+            currentCombo = activeCombo(stats),
+            lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
+            dailyGoalXp = stats.dailyGoalXp,
+            dailyGoalProgressXp = if (stats.dailyGoalDate == getDayStart(System.currentTimeMillis()) / 86_400_000L) xpProgress else 0L,
+            dailyGoalCompleted = stats.dailyGoalCompletedDate == getDayStart(System.currentTimeMillis()) / 86_400_000L
         )
     }
     .stateIn(
@@ -115,7 +143,13 @@ class HomeScreenViewModel @Inject constructor(
             habits = emptyList(),
             pet = PetEntity(id = 1),
             completedToday = emptyMap(),
-            totalCoins = 0
+            totalCoins = 0,
+            lastStreakDate = 0L,
+            currentCombo = 0,
+            lastHabitCompletionTimestamp = 0L,
+            dailyGoalXp = 300,
+            dailyGoalProgressXp = 0L,
+            dailyGoalCompleted = false
         )
     )
 
@@ -124,8 +158,22 @@ class HomeScreenViewModel @Inject constructor(
         val habits: List<HabitEntity>,
         val pet: PetEntity,
         val completedToday: Map<Long, Boolean>,
-        val totalCoins: Int
+        val totalCoins: Int,
+        val lastStreakDate: Long,
+        val currentCombo: Int,
+        val lastHabitCompletionTimestamp: Long,
+        val dailyGoalXp: Int,
+        val dailyGoalProgressXp: Long,
+        val dailyGoalCompleted: Boolean
     )
+
+    private fun activeCombo(stats: StatisticsEntity): Int {
+        return if (ExpConfig.isComboActive(stats.lastHabitCompletionTimestamp, System.currentTimeMillis())) {
+            stats.currentCombo
+        } else {
+            0
+        }
+    }
 
     private fun getDayStart(timestamp: Long): Long {
         val calendar = Calendar.getInstance()

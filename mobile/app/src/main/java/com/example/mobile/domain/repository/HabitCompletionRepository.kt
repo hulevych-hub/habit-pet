@@ -3,6 +3,16 @@ package com.example.mobile.domain.repository
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import kotlinx.coroutines.flow.Flow
 
+data class HabitCompletionResult(
+    val completionId: Long,
+    val baseXpEarned: Long,
+    val comboBonusXp: Long,
+    val totalXpEarned: Long,
+    val combo: Int,
+    val comboMultiplier: Float,
+    val comboMilestoneReached: Boolean
+)
+
 interface HabitCompletionRepository {
 
     fun getCompletionsForHabit(
@@ -17,6 +27,8 @@ interface HabitCompletionRepository {
     ): Flow<HabitCompletionEntity?>
 
     suspend fun addCompletion(completion: HabitCompletionEntity): Long
+
+    suspend fun addCompletionWithCombo(completion: HabitCompletionEntity): HabitCompletionResult
 
     suspend fun updateCompletion(completion: HabitCompletionEntity): Int
 

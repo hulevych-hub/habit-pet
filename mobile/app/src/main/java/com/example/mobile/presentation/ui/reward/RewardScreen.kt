@@ -99,6 +99,12 @@ fun RewardScreen(
                     onConfirm = onRewardCompleted
                 )
 
+                is RewardUiEvent.DailyGoalReward -> DailyGoalRewardContent(
+                    goalXp = reward.goalXp,
+                    bonusCoins = reward.bonusCoins,
+                    bonusExp = reward.bonusExp
+                )
+
                 is RewardUiEvent.ChestReward -> ChestRewardContent(
                     rewardType = reward.rewardType,
                     amount = reward.amount,
@@ -156,6 +162,52 @@ private fun LevelUpRewardContent(
         Text(
             text = "+$coinsEarned coins",
             color = Color(0xFF34D399)
+        )
+    }
+}
+
+// Daily Goal Reward Screen
+@Composable
+private fun DailyGoalRewardContent(
+    goalXp: Long,
+    bonusCoins: Int,
+    bonusExp: Long
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "DAILY GOAL COMPLETE!",
+            style = MaterialTheme.typography.headlineLarge,
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Box(
+            modifier = Modifier
+                .size(120.dp)
+                .background(Color(0xFFFFB74D), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "$goalXp XP",
+                color = Color.White,
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "+$bonusCoins coins  +$bonusExp XP",
+            color = Color(0xFF34D399),
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Your dragon loved today's steady rhythm.",
+            color = Color.White
         )
     }
 }

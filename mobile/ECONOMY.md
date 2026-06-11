@@ -23,6 +23,7 @@ The economy consists of:
 - Reward-based income system
 - Shop-based spending system (customization items)
 - Low-probability surprise bonuses on habit completion
+- Daily goal completion bonus coins
 - **Centralized configuration: `EconomyConfig`**
 
 ---
@@ -36,7 +37,7 @@ Documented direct coin updates are allowed only in:
 - `HabitDetailViewModel.awardCoins()` for habit completion coins, level-up base coins, and surprise bonus coins from the detail-screen flow
 - `HabitsViewModel.awardCoins()` for one-tap checkbox habit completion coins, level-up base coins, and surprise bonus coins from the habit-list flow
 - `AchievementRewardProcessor.process(...)` for achievement coin rewards
-- `RewardManager.rewardCompleted()` for queued reward events
+- `RewardManager.rewardCompleted()` for queued reward events, including daily goal rewards
 
 All coin sources MUST be explicitly documented in this file.
 
@@ -94,7 +95,22 @@ Balance note: surprise rewards are intentionally low-frequency and rate-limited.
 
 ---
 
-## 3. Achievement Rewards
+## 3. Daily Goal Rewards
+
+Daily goal rewards are granted when the XP-based daily goal is completed.
+
+Rules:
+- Trigger: reaching `ExpConfig.DAILY_XP_GOAL` XP on the current date key
+- Coin bonus: `EconomyConfig.DAILY_GOAL_COIN_BONUS`
+- XP bonus: `ExpConfig.DAILY_GOAL_BONUS_XP`
+- Delivery: queued through `RewardUiEvent.DailyGoalReward` and processed by `RewardManager`
+- Timeline event: `GameEventType.DAILY_GOAL_COMPLETED`
+
+Balance note: the daily goal bonus is intentionally small so it feels rewarding without disrupting the long-term coin economy.
+
+---
+
+## 4. Achievement Rewards
 
 Achievement rewards are configured in `AchievementsConfig` and coin values reuse `EconomyConfig`:
 
@@ -113,7 +129,7 @@ Achievement coin rewards are applied by `AchievementRewardProcessor.process(...)
 
 ---
 
-## 4. Streak Milestone Chests
+## 5. Streak Milestone Chests
 
 Triggered on milestone streaks:
 
@@ -135,7 +151,7 @@ Delivered via the centralized reward queue and processed by `RewardManager`.
 
 ---
 
-## 5. Level Up Rewards
+## 6. Level Up Rewards
 
 Each level-up grants:
 
@@ -149,7 +165,7 @@ The `EconomyConfig.LEVEL_UP_CHEST_BONUS_COINS` constant is retained as a tuning 
 
 ---
 
-## 6. Chest Rewards
+## 7. Chest Rewards
 
 Chest rewards are awarded for:
 
@@ -173,7 +189,7 @@ Streak milestone chests do not randomize chest rarity. They use the milestone ma
 
 ---
 
-## 7. Micro-feedback UI Events
+## 8. Micro-feedback UI Events
 
 `MicroFeedbackManager` is a UI-only feedback system. It emits lightweight global feedback for habit completion, tab switches, XP gain events, and coin gain events. It does not award coins, modify `StatisticsEntity`, or change economy balance.
 
@@ -181,10 +197,10 @@ Coin feedback is triggered from existing coin award paths:
 
 - `HabitDetailViewModel.awardCoins()` triggers coin feedback for direct habit completion coins, direct level-up base coins, and surprise bonus coins from the detail-screen flow.
 - `HabitsViewModel.awardCoins()` triggers coin feedback for one-tap checkbox habit completion coins, direct level-up base coins, and surprise bonus coins from the habit-list flow.
-- `RewardManager.rewardCompleted()` triggers coin feedback for queued reward coins from `CoinReward`, `StreakReward`, and `ChestReward`.
+- `RewardManager.rewardCompleted()` triggers coin feedback for queued reward coins from `CoinReward`, `StreakReward`, `DailyGoalReward`, and `ChestReward`.
 - `RewardManager.rewardCompleted()` intentionally skips `LevelUpReward` coin feedback because those level-up base coins are already awarded directly by `HabitDetailViewModel.awardCoins()` or `HabitsViewModel.awardCoins()`.
 
-XP feedback is triggered when XP is added directly through habit completion or through queued chest rewards. The feedback overlay is non-blocking and does not affect EXP, level, or evolution calculations.
+XP feedback is triggered when XP is added directly through habit completion or through queued chest and daily goal rewards. The feedback overlay is non-blocking and does not affect EXP, level, or evolution calculations.
 
 ---
 

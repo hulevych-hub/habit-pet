@@ -15,6 +15,7 @@ import com.example.mobile.domain.EconomyConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
+import com.example.mobile.domain.repository.HabitCompletionResult
 import com.example.mobile.domain.repository.HabitProgressRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
@@ -176,26 +177,55 @@ class HabitDetailViewModel @Inject constructor(
 
                 val xpEarned = ExpConfig.CHECKBOX_HABIT_XP
                 val coinsEarned = EconomyConfig.CHECKBOX_HABIT_COINS
+                val today = getDayStart(System.currentTimeMillis())
+                val wasDailyGoalCompletedToday = statisticsRepository.getStatistics()
+                    .firstOrNull()
+                    ?.dailyGoalCompletedDate == today / 86_400_000L
 
-                val completion = HabitCompletionEntity(
-                    id = System.currentTimeMillis(),
-                    habitId = habitId,
-                    date = getDayStart(System.currentTimeMillis()),
-                    xpEarned = xpEarned
+                val completionResult = habitCompletionRepository.addCompletionWithCombo(
+                    HabitCompletionEntity(
+                        id = System.currentTimeMillis(),
+                        habitId = habitId,
+                        date = today,
+                        xpEarned = xpEarned
+                    )
                 )
 
-                habitCompletionRepository.addCompletion(completion)
+                if (completionResult.completionId == -1L) {
+                    _error.value = "Habit completion could not be saved"
+                    return@launch
+                }
+
+                val totalXpEarned = completionResult.totalXpEarned
                 activityTimelineEngine.logHabitCompleted(
                     habitName = _habit.value?.name ?: "Habit",
-                    xpEarned = xpEarned,
-                    coinsEarned = coinsEarned
+                    xpEarned = totalXpEarned,
+                    coinsEarned = coinsEarned,
+                    combo = completionResult.combo,
+                    comboBonusXp = completionResult.comboBonusXp,
+                    comboMultiplier = completionResult.comboMultiplier
                 )
+                if (completionResult.comboMilestoneReached) {
+                    activityTimelineEngine.logComboMilestone(
+                        combo = completionResult.combo,
+                        bonusXp = completionResult.comboBonusXp,
+                        multiplier = completionResult.comboMultiplier
+                    )
+                }
                 streakEngine.evaluateTodayStreak(System.currentTimeMillis())
+                if (dailyGoalCompletedAfterCompletion(today, wasDailyGoalCompletedToday)) {
+                    queueDailyGoalReward()
+                }
                 refreshCompletions(habitId)
 
-                awardPetXpAndCoins(xpEarned, coinsEarned)
+                awardPetXpAndCoins(totalXpEarned, coinsEarned)
                 maybeTriggerSurpriseReward()
-                microFeedbackManager.triggerHabitCompleted(xpEarned, coinsEarned)
+                microFeedbackManager.triggerHabitCompleted(
+                    xp = totalXpEarned,
+                    coins = coinsEarned,
+                    combo = completionResult.combo,
+                    comboMultiplier = completionResult.comboMultiplier
+                )
                 dragonMoodEngine.refreshMood()
 
                 _habitCompleted.emit(Unit)
@@ -264,26 +294,54 @@ class HabitDetailViewModel @Inject constructor(
 
                     val xpEarned = (ExpConfig.TIMER_HABIT_BASE_XP + total * ExpConfig.TIMER_HABIT_XP_PER_MINUTE).toLong()
                     val coinsEarned = EconomyConfig.TIMER_HABIT_BASE_COINS + sessionMinutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE
+                    val wasDailyGoalCompletedToday = statisticsRepository.getStatistics()
+                        .firstOrNull()
+                        ?.dailyGoalCompletedDate == today / 86_400_000L
 
-                    val completion = HabitCompletionEntity(
-                        id = System.currentTimeMillis(),
-                        habitId = habitId,
-                        date = today,
-                        xpEarned = xpEarned
+                    val completionResult = habitCompletionRepository.addCompletionWithCombo(
+                        HabitCompletionEntity(
+                            id = System.currentTimeMillis(),
+                            habitId = habitId,
+                            date = today,
+                            xpEarned = xpEarned
+                        )
                     )
 
-                    habitCompletionRepository.addCompletion(completion)
+                    if (completionResult.completionId == -1L) {
+                        _error.value = "Habit completion could not be saved"
+                        return@launch
+                    }
+
+                    val totalXpEarned = completionResult.totalXpEarned
                     activityTimelineEngine.logHabitCompleted(
                         habitName = _habit.value?.name ?: "Habit",
-                        xpEarned = xpEarned,
-                        coinsEarned = coinsEarned
+                        xpEarned = totalXpEarned,
+                        coinsEarned = coinsEarned,
+                        combo = completionResult.combo,
+                        comboBonusXp = completionResult.comboBonusXp,
+                        comboMultiplier = completionResult.comboMultiplier
                     )
+                    if (completionResult.comboMilestoneReached) {
+                        activityTimelineEngine.logComboMilestone(
+                            combo = completionResult.combo,
+                            bonusXp = completionResult.comboBonusXp,
+                            multiplier = completionResult.comboMultiplier
+                        )
+                    }
                     streakEngine.evaluateTodayStreak(System.currentTimeMillis())
+                    if (dailyGoalCompletedAfterCompletion(today, wasDailyGoalCompletedToday)) {
+                        queueDailyGoalReward()
+                    }
                     refreshCompletions(habitId)
 
-                    awardPetXpAndCoins(xpEarned, coinsEarned)
+                    awardPetXpAndCoins(totalXpEarned, coinsEarned)
                     maybeTriggerSurpriseReward()
-                    microFeedbackManager.triggerHabitCompleted(xpEarned, coinsEarned)
+                    microFeedbackManager.triggerHabitCompleted(
+                        xp = totalXpEarned,
+                        coins = coinsEarned,
+                        combo = completionResult.combo,
+                        comboMultiplier = completionResult.comboMultiplier
+                    )
                     dragonMoodEngine.refreshMood()
 
                     _habitCompleted.emit(Unit)
@@ -334,6 +392,30 @@ class HabitDetailViewModel @Inject constructor(
     // =========================
     // REWARDS
     // =========================
+
+    private suspend fun dailyGoalCompletedAfterCompletion(today: Long, wasCompletedToday: Boolean): Boolean {
+        val todayKey = today / 86_400_000L
+        val completedToday = statisticsRepository.getStatistics()
+            .firstOrNull()
+            ?.dailyGoalCompletedDate == todayKey
+
+        return completedToday && !wasCompletedToday
+    }
+
+    private fun queueDailyGoalReward() {
+        val reward = RewardUiEvent.DailyGoalReward(
+            goalXp = ExpConfig.DAILY_XP_GOAL,
+            bonusCoins = EconomyConfig.DAILY_GOAL_COIN_BONUS,
+            bonusExp = ExpConfig.DAILY_GOAL_BONUS_XP
+        )
+
+        rewardQueue.addReward(reward)
+        activityTimelineEngine.logDailyGoalCompleted(
+            goalXp = ExpConfig.DAILY_XP_GOAL,
+            bonusCoins = EconomyConfig.DAILY_GOAL_COIN_BONUS,
+            bonusExp = ExpConfig.DAILY_GOAL_BONUS_XP
+        )
+    }
 
     private fun awardPetXpAndCoins(xpToAdd: Long, coinsToAdd: Int) {
         viewModelScope.launch {

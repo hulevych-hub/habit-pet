@@ -95,7 +95,9 @@ fun ActivityTimelineScreen(
                     xp = progressUiState.pet.xp,
                     evolutionStage = progressUiState.pet.evolutionStage,
                     totalCoins = progressUiState.totalCoins,
-                    globalStreak = progressUiState.globalStreak
+                    globalStreak = progressUiState.globalStreak,
+                    currentCombo = progressUiState.currentCombo,
+                    lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
                 )
             )
 
@@ -190,7 +192,9 @@ private fun ActivityTimelineItem(event: GameEventEntity) {
     val isMilestone = event.type == GameEventType.DRAGON_EVOLUTION.name ||
         event.type == GameEventType.LEVEL_UP.name ||
         event.type == GameEventType.STREAK_MILESTONE.name ||
-        event.type == GameEventType.SURPRISE_REWARD.name
+        event.type == GameEventType.DAILY_GOAL_COMPLETED.name ||
+        event.type == GameEventType.SURPRISE_REWARD.name ||
+        event.type == GameEventType.COMBO_MILESTONE.name
 
     Box(
         modifier = Modifier
@@ -295,7 +299,9 @@ private fun rewardPreview(event: GameEventEntity): String = when (event.type) {
     GameEventType.DRAGON_EVOLUTION.name -> "Evolution moment"
     GameEventType.CHEST_OPENED.name -> "Chest reward"
     GameEventType.STREAK_MILESTONE.name -> "Streak chest"
+    GameEventType.DAILY_GOAL_COMPLETED.name -> "Daily goal reward"
     GameEventType.SURPRISE_REWARD.name -> "Surprise bonus"
+    GameEventType.COMBO_MILESTONE.name -> "Momentum bonus"
     GameEventType.FIRST_DAILY_LOGIN.name -> "Daily welcome"
     else -> "Progress memory"
 }
@@ -307,7 +313,9 @@ private fun iconForEvent(type: String) = when (type) {
     GameEventType.DRAGON_EVOLUTION.name -> Icons.Default.Pets
     GameEventType.CHEST_OPENED.name -> Icons.Default.CardGiftcard
     GameEventType.STREAK_MILESTONE.name -> Icons.Default.FavoriteBorder
+    GameEventType.DAILY_GOAL_COMPLETED.name -> Icons.Default.CheckCircle
     GameEventType.SURPRISE_REWARD.name -> Icons.Default.Star
+    GameEventType.COMBO_MILESTONE.name -> Icons.Default.Star
     GameEventType.FIRST_DAILY_LOGIN.name -> Icons.Default.Book
     else -> Icons.Default.Star
 }

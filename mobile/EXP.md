@@ -13,8 +13,10 @@ The EXP system is implemented across multiple components:
 - Level progression uses a formula where each level requires increasingly more XP
 - Evolution stages are determined by XP thresholds
 - XP observations trigger achievement unlocks (e.g. 1000 XP achievement)
+- Daily XP goal progress is tracked from completed habits and displayed on `HomeScreen`
 - **Centralized configuration: `ExpConfig`** (single source of truth)
-- **Progress is always visible through `ProgressHeader` and `EvolutionTeaser`** on major gameplay screens
+- **Progress is always visible through `ProgressHeader`, `DailyGoalCard`, and `EvolutionTeaser`** on major gameplay screens
+- **Short-term combo momentum** adds a small additive XP bonus for consecutive habit completions within the configured inactivity window
 
 ## Progress Always Visible
 
@@ -27,7 +29,7 @@ Current integration:
 - `RewardsScreen` shows the header above collection filters so currency progress remains visible while browsing unlocks.
 - `ActivityTimelineScreen` shows the header above the activity feed and empty/loading states.
 
-`ProgressHeader` and `EvolutionTeaser` use `ExpConfig` for XP and evolution calculations, so they stay aligned with the centralized progression rules. They receive progress values from existing screen state flows, so updates remain real-time when XP, coins, or streaks change.
+`ProgressHeader` and `EvolutionTeaser` use `ExpConfig` for XP and evolution calculations, so they stay aligned with the centralized progression rules. They receive progress values from existing screen state flows, so updates remain real-time when XP, coins, streaks, or combo momentum change.
 
 No new coin, XP, chest, or customization source was added by this system. The one-tap list completion path reuses the same `ExpConfig` values and reward queue as the detail-screen completion path.
 
@@ -41,6 +43,31 @@ No new coin, XP, chest, or customization source was added by this system. The on
 - XP is added to the pet's current XP total
 - Checkbox habit completion from the habit list is optimistic: the UI marks the habit complete immediately after the repository write succeeds, then the same reward pipeline updates pet XP, coins, streaks, activity timeline, micro-feedback, and any queued level-up/chest rewards
 - Reward overlays are reserved for major progression moments such as level-ups, evolutions, streak chests, achievements, and surprise chests; direct habit XP/coin feedback does not open a blocking reward screen
+
+### Combo / Momentum
+
+Consecutive habit completions within a short inactivity window create a short-term combo. The combo bonus is additive, small, and capped so it feels rewarding without overpowering normal XP progression.
+
+- Active window: 2 hours (`ExpConfig.COMBO_INACTIVITY_WINDOW_MS`)
+- Bonus: +5 XP per consecutive completion after the first (`ExpConfig.COMBO_BONUS_XP_PER_CONSECUTIVE_COMPLETION`)
+- Maximum bonus per habit: +20 XP (`ExpConfig.COMBO_MAX_BONUS_XP`)
+- Combo multiplier feedback is derived from the checkbox habit baseline and displayed as `Combo x1.05`, `Combo x1.10`, etc.
+- Combo state is stored on `StatisticsEntity`:
+  - `currentCombo`
+  - `bestCombo`
+  - `lastHabitCompletionTimestamp`
+- The combo resets visually when the inactivity window has passed and resets in storage on the next completion after the window.
+- Combo milestones at 3, 5, and 10 hits are logged in `ActivityTimelineEngine` through `GameEventType.COMBO_MILESTONE`.
+- Both list completion (`HabitsViewModel`) and detail completion (`HabitDetailViewModel`) use `HabitCompletionRepository.addCompletionWithCombo()`, so the same momentum rules apply across screens.
+
+### Daily XP Goal
+
+The daily goal is XP-based and resets by date key:
+- Target: 300 XP per day (`ExpConfig.DAILY_XP_GOAL`)
+- Progress source: completed habit XP from `HabitCompletionEntity.xpEarned`
+- Completion state: `StatisticsEntity.dailyGoalCompletedDate`
+- Bonus reward: +25 XP (`ExpConfig.DAILY_GOAL_BONUS_XP`) plus a queued `RewardUiEvent.DailyGoalReward`
+- UI: `HomeScreen.DailyGoalCard` shows progress, completion state, and the next-day reset behavior by comparing `StatisticsEntity.dailyGoalDate` with today's date key
 
 ### Level Calculation
 
@@ -85,6 +112,12 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 - Checkbox habit XP: 100 (`ExpConfig.CHECKBOX_HABIT_XP`)
 - Timer habit XP base: 10 (`ExpConfig.TIMER_HABIT_BASE_XP`)
 - Timer habit XP per minute: 5 (`ExpConfig.TIMER_HABIT_XP_PER_MINUTE`)
+- Combo inactivity window: 2 hours (`ExpConfig.COMBO_INACTIVITY_WINDOW_MS`)
+- Combo bonus XP per consecutive completion after the first: 5 XP (`ExpConfig.COMBO_BONUS_XP_PER_CONSECUTIVE_COMPLETION`)
+- Combo max bonus XP per habit: 20 XP (`ExpConfig.COMBO_MAX_BONUS_XP`)
+- Combo milestones: 3, 5, 10 hits (`ExpConfig.COMBO_MILESTONES`)
+- Daily XP goal: 300 XP (`ExpConfig.DAILY_XP_GOAL`)
+- Daily goal bonus XP: 25 XP (`ExpConfig.DAILY_GOAL_BONUS_XP`)
 - Level formula: 100 + (level * 50) (`ExpConfig.BASE_XP_FOR_LEVEL_1` + `ExpConfig.XP_PER_LEVEL_INCREMENT`)
 - Evolution stage thresholds: Defined in `ExpConfig.EVOLUTION_THRESHOLDS`
 - Level-up coin multiplier: 10 (`ExpConfig.LEVEL_UP_COIN_MULTIPLIER`)
@@ -93,24 +126,49 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 
 **PetEntity** (app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt):
 - `xp: Long` - stores total accumulated XP
+
 - `level: Int` - current pet level (derived from XP)
 - `evolution_stage: Int` - current evolution stage (0-4, derived from XP)
+
+**StatisticsEntity** daily goal fields:
+- `currentCombo: Int` - active consecutive completion count within the combo window
+- `bestCombo: Int` - highest consecutive completion count reached
+- `lastHabitCompletionTimestamp: Long` - timestamp used to evaluate combo inactivity
+- `dailyGoalXp: Int` - configured daily XP target
+- `dailyGoalProgressXp: Int` - XP progress for the stored `dailyGoalDate`
+- `dailyGoalDate: Long` - date key for the stored daily progress
+- `dailyGoalCompletedDate: Long` - date key when the daily goal bonus was awarded
 
 ## Source Files
 
 - app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
+- app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt
+- app/src/main/java/com/example/mobile/data/local/dao/StatisticsDao.kt
+- app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt
 - app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
+- app/src/main/java/com/example/mobile/domain/repository/HabitCompletionRepository.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitsViewModel.kt
 - app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
 - app/src/main/java/com/example/mobile/domain/ExpConfig.kt (centralized configuration)
+- app/src/main/java/com/example/mobile/domain/EconomyConfig.kt (daily goal coin bonus)
 - app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt (reusable progress indicator)
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt
+- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlay.kt
+- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt
+- app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt
+- app/src/main/java/com/example/mobile/domain/GameEventFactory.kt
+- app/src/main/java/com/example/mobile/domain/GameEventType.kt
+- app/src/main/java/com/example/mobile/presentation/ui/events/MicroFeedbackEvent.kt
+- app/src/main/java/com/example/mobile/presentation/ui/feedback/MicroFeedbackManager.kt
+- app/src/main/java/com/example/mobile/presentation/ui/feedback/MicroFeedbackOverlay.kt
 
 ## Known Gaps (RESOLVED)
 
@@ -119,6 +177,7 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 3. ✅ **FIXED: XP Awarding Inconsistency** - Both paths now use `ExpConfig` for calculations
 4. ✅ **FIXED: Progress Visibility Gaps** - Major habit, collection, and activity screens now show `ProgressHeader`
 5. ✅ **FIXED: One-Tap Habit Completion Friction** - Checkbox habits can now be completed directly from the habit list with immediate reward pipeline execution
+6. ✅ **FIXED: No Short-Term Momentum Feedback** - Consecutive completions now produce a capped additive XP bonus, visible combo multiplier feedback, and timeline milestones
 
 ## Progression Validation
 
@@ -145,6 +204,7 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 ## Balance Notes
 
 - Three checkbox habits per day produce 300 XP/day and 30 coins/day.
+- Short-term combo momentum can add at most +20 XP to a single habit, keeping the bonus additive and non-overpowering.
 - Timer habits accelerate XP and coin gain when completed for their configured minimum duration.
 - Level-up base coins are awarded directly with XP progression.
 - Level-up chests add additional coins, EXP, and occasional customization items, keeping early-game economy near the target of roughly 100 coins/day when recurring rewards are included.

@@ -1,6 +1,5 @@
 package com.example.mobile.presentation.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +47,7 @@ import com.example.mobile.presentation.ui.components.ProgressHeaderState
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun HabitsScreen(
     navController: NavHostController,
     habitsViewModel: HabitsViewModel = hiltViewModel(),
@@ -89,14 +88,16 @@ fun HabitsScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            stickyHeader {
+            item {
                 ProgressHeader(
                     state = ProgressHeaderState(
                         level = progressUiState.pet.level,
                         xp = progressUiState.pet.xp,
                         evolutionStage = progressUiState.pet.evolutionStage,
                         totalCoins = progressUiState.totalCoins,
-                        globalStreak = progressUiState.globalStreak
+                        globalStreak = progressUiState.globalStreak,
+                        currentCombo = progressUiState.currentCombo,
+                        lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
                     ),
                     modifier = Modifier.padding(8.dp)
                 )

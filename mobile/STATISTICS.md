@@ -6,7 +6,7 @@ The statistics system in Habit Pet tracks various player metrics and progress in
 
 ## Current Implementation
 
-Statistics are implemented as a Room database entity (StatisticsEntity) with a dedicated repository for access and modification. The system tracks both cumulative lifetime metrics and session-based progress indicators.
+Statistics are implemented as a Room database entity (StatisticsEntity) with a dedicated repository for access and modification. The system tracks both cumulative lifetime metrics and session-based progress indicators. The Home screen exposes the active streak to the shared `ProgressHeader`, where it is framed as an emotional rhythm indicator with state colors, milestone markers, and streak-protection messaging. It also exposes daily XP goal progress through `DailyGoalCard`.
 
 ## Rules
 
@@ -28,6 +28,10 @@ The StatisticsEntity tracks the following metrics:
 12. **lastUpdated: Long** - Timestamp of last statistics update
 13. **rewardChestsAvailable: Int** - Appears to be unused
 14. **lastStreakDate: Long** - Date (in days since epoch) of last streak counting
+15. **dailyGoalXp: Int** - Daily XP target, currently 300
+16. **dailyGoalProgressXp: Int** - XP progress stored for the current daily goal date
+17. **dailyGoalDate: Long** - Date key for the stored daily goal progress
+18. **dailyGoalCompletedDate: Long** - Date key when the daily goal bonus was awarded
 
 ### Statistics Updates
 
@@ -38,6 +42,9 @@ Statistics are updated through the following mechanisms:
 - totalHabitsCompleted += 1 (when new habit is created)
 - totalXp += XP earned from completion
 - daysActive = habitCompletionDao.getActiveDayCount() (count of days with activity)
+- dailyGoalDate = completion date key
+- dailyGoalProgressXp = previous same-day progress + completion XP, capped at dailyGoalXp
+- dailyGoalCompletedDate = completion date key when the daily goal is newly completed
 - lastUpdated = current timestamp
 
 **From Streak Engine** (StatisticsRepositoryImpl):
@@ -59,14 +66,15 @@ Statistics are used for:
 - **Streak Rewards**: StreakEngine uses milestone streaks to determine global streak celebration and chest reward eligibility
 - **Daily Welcome Event**: ActivityTimelineEngine reads `currentStreak` for the once-per-day `FIRST_DAILY_LOGIN` timeline entry
 - **Dragon Mood**: DragonMoodEngine reads `currentStreak` when recalculating the pet mood on app open, habit completion, and streak changes
-- **UI Display**: HomeScreenViewModel exposes statistics for display in home screen
+- **UI Display**: HomeScreenViewModel exposes statistics for display in home screen, including streak rhythm and daily XP goal progress
 - **Pet Progress**: XP statistics influence pet level and evolution stage
 - **Economy**: Coin statistics track purchasing power
 
 ### Displayed Statistics
 
 The following statistics are visible in the UI (Home Screen):
-- **Streak**: Displayed as "{globalStreak} Day Streak"
+- **Streak**: Displayed as an emotional rhythm indicator with low / stable / strong state colors, milestone markers at 3, 7, 14, 30, 60, and 100 days, a subtle pulse on streak increases, and protection messaging when the active streak has not been counted today
+- **Daily XP Goal**: Displayed in `DailyGoalCard` with progress, completion state, and date-key reset behavior
 - **Coins**: Displayed as "{totalCoins} Coins"
 - **Level & Evolution**: Derived from pet statistics (not directly from StatisticsEntity)
 - **XP Progress**: Shows current XP toward next level
@@ -74,16 +82,19 @@ The following statistics are visible in the UI (Home Screen):
 ## Configuration
 
 All statistics tracking values are hardcoded in the implementation:
-- Global streak milestones: 7, 14, 30, 60, and 100 days (StreakEngine.kt)
+- Streak UI milestone markers: 3, 7, 14, 30, 60, and 100 days (ProgressHeader.kt)
+- Global streak reward milestones: 7, 14, 30, 60, and 100 days (StreakEngine.kt)
 - Milestone chest mapping: 7 = Normal, 14 = Rare, 30/60 = Epic, 100 = Legendary
 - Chest reward amounts come from ChestRewardConfigProvider and EconomyConfig
+- Daily XP goal target: 300 XP (`ExpConfig.DAILY_XP_GOAL`)
+- Daily goal bonus: +25 XP (`ExpConfig.DAILY_GOAL_BONUS_XP`) and +25 coins (`EconomyConfig.DAILY_GOAL_COIN_BONUS`)
 - DaysActive calculation: handled by habitCompletionDao.getActiveDayCount()
 
 ## Data Model
 
 **StatisticsEntity** (app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt):
 - Table: `statistics`
-- Columns: id, currentStreak, bestStreak, globalStreak, totalCompletions, totalXp, daysActive, totalHabitsCompleted, petAgeDays, totalCoins, lastStreakAwardedAt, lastUpdated, rewardChestsAvailable, lastStreakDate
+- Columns: id, currentStreak, bestStreak, globalStreak, totalCompletions, totalXp, daysActive, totalHabitsCompleted, petAgeDays, totalCoins, lastStreakAwardedAt, lastUpdated, rewardChestsAvailable, lastStreakDate, dailyGoalXp, dailyGoalProgressXp, dailyGoalDate, dailyGoalCompletedDate
 
 ## Source Files
 
@@ -116,7 +127,7 @@ All statistics tracking values are hardcoded in the implementation:
 
 4. **Dragon Mood Storage**: Mood is calculated using `currentStreak` but is persisted in `PetEntity.mood`, not in `StatisticsEntity`.
 
-5. **Limited Statistics Exposure**: Only two statistics (streak and coins) are directly visible to players in the main UI.
+5. **Limited Statistics Exposure**: Streak and coins are directly visible in the main UI; streak now has richer emotional framing, but most other statistics still live behind progression and achievement systems.
 
 6. **Derived vs Stored**: Some valuable metrics like pet level and evolution stage are derived from XP rather than stored directly, requiring calculation each time.
 
