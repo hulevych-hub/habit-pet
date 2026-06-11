@@ -11,6 +11,9 @@ data class AchievementEntity(
     var icon: String = "",
     var targetValue: Int = 0,
     var rewardCoins: Int = 0,
+    var rewardExp: Int = 0,
+    var rewardChestType: String? = null,
     var isUnlocked: Boolean = false,
+    var isClaimed: Boolean = false,
     var unlockedDate: Long? = null // timestamp
 )

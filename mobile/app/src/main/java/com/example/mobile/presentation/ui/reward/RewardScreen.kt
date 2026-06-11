@@ -89,7 +89,9 @@ fun RewardScreen(
 
                 is RewardUiEvent.AchievementReward -> AchievementRewardContent(
                     achievementName = reward.achievementName,
-                    coinsEarned = reward.coins
+                    coinsEarned = reward.coins,
+                    expAmount = reward.expAmount,
+                    chestType = reward.chestType
                 )
 
                 is RewardUiEvent.CoinReward -> CoinRewardContent(
@@ -230,8 +232,21 @@ private fun StreakRewardContent(
 @Composable
 private fun AchievementRewardContent(
     achievementName: String,
-    coinsEarned: Int
+    coinsEarned: Int,
+    expAmount: Int = 0,
+    chestType: String? = null
 ) {
+    val rewardText = mutableListOf("+${coinsEarned} coins")
+
+    if (expAmount > 0) {
+        rewardText.add("+$expAmount EXP")
+    }
+
+    if (!chestType.isNullOrBlank()) {
+        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
+        rewardText.add("$label chest")
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Icon(
@@ -258,7 +273,7 @@ private fun AchievementRewardContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "+$coinsEarned coins",
+            text = rewardText.joinToString("\n"),
             color = Color(0xFF34D399)
         )
     }

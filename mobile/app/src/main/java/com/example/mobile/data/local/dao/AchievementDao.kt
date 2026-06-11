@@ -21,7 +21,7 @@ interface AchievementDao {
     @Update
     suspend fun updateAchievement(achievement: AchievementEntity): Int
 
-    @Query("UPDATE achievements SET isUnlocked = 0, unlockedDate = NULL")
+    @Query("UPDATE achievements SET isUnlocked = 0, isClaimed = 0, unlockedDate = NULL")
     suspend fun resetAll()
 
     @Query("SELECT * FROM achievements")

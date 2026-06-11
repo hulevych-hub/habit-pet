@@ -232,28 +232,28 @@ Update:
 
 ### System
 
-- [ ] Implement achievement tracking
-- [ ] Implement achievement completion logic
-- [ ] Implement achievement claiming flow
+- [x] Implement achievement tracking
+- [x] Implement achievement completion logic
+- [x] Implement achievement claiming flow
 
 ### Rewards
 
-- [ ] Coin rewards
-- [ ] EXP rewards
-- [ ] Chest rewards
+- [x] Coin rewards
+- [x] EXP rewards
+- [x] Chest rewards
 
 ### Content
 
-- [ ] Habit completion achievements
-- [ ] Streak achievements
-- [ ] Level achievements
-- [ ] Collection achievements
+- [x] Habit completion achievements
+- [x] Streak achievements
+- [x] Level achievements
+- [x] Collection achievements
 
 ### UI
 
-- [ ] Create achievements screen
-- [ ] Show progress indicators
-- [ ] Show rewards clearly
+- [x] Create achievements screen
+- [x] Show progress indicators
+- [x] Show rewards clearly
 
 ---
 

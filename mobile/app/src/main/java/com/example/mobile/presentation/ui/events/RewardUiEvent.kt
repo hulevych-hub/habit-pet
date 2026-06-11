@@ -9,11 +9,16 @@ sealed class RewardUiEvent {
     data class LevelUpReward(val level: Int, val coins: Int) : RewardUiEvent()
     data class DragonEvolutionReward(val fromStage: Int, val toStage: Int) : RewardUiEvent()
     data class StreakReward(val streak: Int, val coins: Int) : RewardUiEvent()
-    data class AchievementReward(val achievementName: String, val coins: Int) : RewardUiEvent()
+    data class AchievementReward(
+        val achievementName: String,
+        val coins: Int,
+        val expAmount: Int = 0,
+        val chestType: String? = null
+    ) : RewardUiEvent()
     data class ChestReward(
-    val rewardType: String,
-    val amount: Any,
-    val expAmount: Int = 0,
-    val accessoryId: Long? = null
-) : RewardUiEvent()
+        val rewardType: String,
+        val amount: Any,
+        val expAmount: Int = 0,
+        val accessoryId: Long? = null
+    ) : RewardUiEvent()
 }

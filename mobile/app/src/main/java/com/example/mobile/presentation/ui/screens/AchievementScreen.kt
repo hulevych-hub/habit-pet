@@ -1,6 +1,8 @@
 package com.example.mobile.presentation.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,99 +10,123 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobile.data.local.entities.AchievementEntity
+import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AchievementScreen(
-    viewModel: AchievementViewModel = hiltViewModel()
+    achievementViewModel: AchievementViewModel = hiltViewModel()
 ) {
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
-    val achievements by viewModel.achievements.collectAsState()
+    val achievements by achievementViewModel.achievements.collectAsState()
+    val isLoading by achievementViewModel.isLoading.collectAsState()
+    val error by achievementViewModel.error.collectAsState()
+    val stats by achievementViewModel.statistics.collectAsState()
+    val pet by achievementViewModel.pet.collectAsState()
+    val ownedAccessories by achievementViewModel.ownedAccessories.collectAsState()
+    val habitCount by achievementViewModel.habitCount.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Achievements",
-            style = MaterialTheme.typography.headlineMedium
-        )
+    val unlockedCount = achievements.count { it.isUnlocked }
+    val claimableCount = achievements.count { it.isUnlocked && !it.isClaimed }
+    val completionProgress = if (achievements.isEmpty()) 0f else {
+        unlockedCount.toFloat() / achievements.size.toFloat()
+    }
 
-        Spacer(modifier = Modifier.height(12.dp))
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Achievements") }
+            )
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when {
+                isLoading -> {
+                    Text(
+                        text = "Loading achievements...",
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                    )
+                }
 
-        when {
-            isLoading -> {
-                CircularProgressIndicator()
-            }
+                !error.isNullOrBlank() -> {
+                    Text(
+                        text = error!!,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                    )
+                }
 
-            error != null -> {
-                Text(
-                    text = error!!,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
+                achievements.isEmpty() -> {
+                    Text(
+                        text = "No achievements available",
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                    )
+                }
 
-            achievements.isEmpty() -> {
-                Text("No achievements yet")
-            }
-
-            else -> {
-                val unlocked = achievements.filter { it.isUnlocked }
-                val locked = achievements.filter { !it.isUnlocked }
-
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    // UNLOCKED SECTION
-                    if (unlocked.isNotEmpty()) {
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         item {
-                            Text(
-                                text = "Completed",
-                                style = MaterialTheme.typography.titleMedium
+                            AchievementSummary(
+                                unlockedCount = unlockedCount,
+                                totalCount = achievements.size,
+                                claimableCount = claimableCount,
+                                progress = completionProgress
                             )
-                            Divider()
                         }
 
-                        items(unlocked) { achievement ->
-                            AchievementItem(achievement)
-                        }
-                    }
-
-                    // LOCKED SECTION
-                    if (locked.isNotEmpty()) {
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "Locked",
-                                style = MaterialTheme.typography.titleMedium
+                        items(
+                            items = achievements,
+                            key = { it.id }
+                        ) { achievement ->
+                            AchievementItem(
+                                achievement = achievement,
+                                stats = stats,
+                                pet = pet,
+                                ownedAccessories = ownedAccessories,
+                                habitCount = habitCount,
+                                viewModel = achievementViewModel
                             )
-                            Divider()
-                        }
-
-                        items(locked) { achievement ->
-                            AchievementItem(achievement)
                         }
                     }
                 }
@@ -110,40 +136,150 @@ fun AchievementScreen(
 }
 
 @Composable
-fun AchievementItem(achievement: com.example.mobile.data.local.entities.AchievementEntity) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
+private fun AchievementSummary(
+    unlockedCount: Int,
+    totalCount: Int,
+    claimableCount: Int,
+    progress: Float
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant,
+                RoundedCornerShape(16.dp)
+            )
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Progress",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LinearProgressIndicator(
+            progress = { progress.coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "$unlockedCount / $totalCount unlocked",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Text(
+            text = "$claimableCount ready to claim",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+private fun AchievementItem(
+    achievement: AchievementEntity,
+    stats: StatisticsEntity,
+    pet: PetEntity,
+    ownedAccessories: Int,
+    habitCount: Int,
+    viewModel: AchievementViewModel
+) {
+    val currentValue = viewModel.progressFor(
+        achievement = achievement,
+        stats = stats,
+        petState = pet,
+        ownedAccessoryCount = ownedAccessories,
+        currentHabitCount = habitCount
+    )
+    val progress = viewModel.progressFraction(currentValue, achievement).coerceIn(0f, 1f)
+    val isClaimable = achievement.isUnlocked && !achievement.isClaimed
+    val isClaimed = achievement.isClaimed
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant,
+                RoundedCornerShape(16.dp)
+            )
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Icon(
-                imageVector = if (achievement.isUnlocked)
-                    Icons.Default.CheckCircle
-                else
-                    Icons.Default.Lock,
-                contentDescription = null
+                imageVector = if (achievement.isUnlocked) Icons.Default.CheckCircle else Icons.Default.Lock,
+                contentDescription = null,
+                tint = if (achievement.isUnlocked) Color(0xFF34D399) else Color.Gray,
+                modifier = Modifier.size(32.dp)
             )
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-
-                Text(text = achievement.description)
-
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text(
-                    text = "Reward: ${achievement.rewardCoins} coins",
-                    style = MaterialTheme.typography.bodySmall
+                    text = achievement.name,
+                    style = MaterialTheme.typography.titleMedium
                 )
 
-                if (achievement.isUnlocked && achievement.unlockedDate != null) {
-                    Text(
-                        text = "Unlocked: ${achievement.unlockedDate}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                Text(
+                    text = achievement.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            if (isClaimable) {
+                Icon(
+                    imageVector = Icons.Default.EmojiEvents,
+                    contentDescription = null,
+                    tint = Color(0xFFFFD700),
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+        }
+
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Text(
+            text = "$currentValue / ${achievement.targetValue}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Text(
+            text = "Reward: ${viewModel.rewardLabel(achievement)}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            if (isClaimable) {
+                Button(
+                    onClick = { viewModel.claimAchievement(achievement.id) }
+                ) {
+                    Text("Claim")
                 }
+            } else {
+                Text(
+                    text = if (isClaimed) "Claimed" else "Locked",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

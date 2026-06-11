@@ -120,6 +120,7 @@ object DatabaseModule {
         habitRepository: com.example.mobile.domain.repository.HabitRepository,
         petRepository: com.example.mobile.domain.repository.PetRepository,
         statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository,
+        inventoryItemRepository: com.example.mobile.domain.repository.InventoryItemRepository,
         rewardQueue: RewardQueue
     ): com.example.mobile.domain.AchievementEngine {
         return com.example.mobile.domain.AchievementEngine(
@@ -127,6 +128,7 @@ object DatabaseModule {
             habitRepository,
             petRepository,
             statisticsRepository,
+            inventoryItemRepository,
             rewardQueue
         )
     }

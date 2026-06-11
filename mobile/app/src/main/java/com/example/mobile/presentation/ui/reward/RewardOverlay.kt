@@ -118,6 +118,8 @@ private fun RewardDialog(
                     is RewardUiEvent.AchievementReward -> AchievementRewardContent(
                         achievementName = reward.achievementName,
                         coinsEarned = reward.coins,
+                        expAmount = reward.expAmount,
+                        chestType = reward.chestType,
                         onConfirm = onDismiss
                     )
 
@@ -224,8 +226,21 @@ private fun StreakRewardContent(
 private fun AchievementRewardContent(
     achievementName: String,
     coinsEarned: Int,
+    expAmount: Int = 0,
+    chestType: String? = null,
     onConfirm: () -> Unit
 ) {
+    val rewardText = mutableListOf("+${coinsEarned} coins")
+
+    if (expAmount > 0) {
+        rewardText.add("+$expAmount EXP")
+    }
+
+    if (!chestType.isNullOrBlank()) {
+        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
+        rewardText.add("$label chest")
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
             imageVector = Icons.Default.EmojiEvents,
@@ -241,7 +256,7 @@ private fun AchievementRewardContent(
             overflow = TextOverflow.Ellipsis
         )
 
-        Text("+$coinsEarned coins")
+        Text(rewardText.joinToString("\n"))
 
         Button(onClick = onConfirm) {
             Text("Claim")
@@ -282,7 +297,7 @@ private fun ChestRewardContent(
 
             // Add coin reward if present
             when (amount) {
-                is Int -> if ((amount as Int) > 0) rewardText.add("+$amount coins")
+                is Int -> if (amount > 0) rewardText.add("+$amount coins")
                 is String -> if (!amount.isEmpty()) rewardText.add(amount)
             }
 

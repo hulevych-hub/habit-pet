@@ -3,6 +3,8 @@ package com.example.mobile.presentation.ui.reward
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.ChestRewardConfigProvider
+import com.example.mobile.domain.ChestType
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
@@ -55,37 +57,76 @@ class RewardManager @Inject constructor(
                 is RewardUiEvent.ChestReward -> (current.amount as? Int) ?: 0
             }
 
-            // Add coins if any
             if (coinsToAdd > 0) {
                 statisticsRepository.addCoins(coinsToAdd)
             }
 
-            // Handle EXP and accessory rewards for ChestReward
-            if (current is RewardUiEvent.ChestReward) {
-                val chestReward = current
+            when (current) {
+                is RewardUiEvent.AchievementReward -> {
+                    if (current.expAmount > 0) {
+                        addPetExp(current.expAmount)
+                    }
 
-                // Add EXP if any
-                if (chestReward.expAmount > 0) {
-                    // Get current pet, add EXP, and update
-                    val currentPet = petRepository.getPet().firstOrNull() ?: PetEntity(id = 1)
-                    val updatedPet = currentPet.copy(xp = currentPet.xp + chestReward.expAmount)
-                    petRepository.updatePet(updatedPet)
+                    current.chestType?.let { chestType ->
+                        rewardQueue.addReward(buildChestReward(chestType))
+                    }
                 }
 
-                // Grant accessory if any
-                chestReward.accessoryId?.let { accessoryId ->
-                    val grantResult = inventoryItemRepository.grantItem(accessoryId)
-                    // Note: We don't handle the result here, but in a production app we might want to
-                    // log or handle cases where granting fails (e.g., item already owned)
+                is RewardUiEvent.ChestReward -> {
+                    if (current.expAmount > 0) {
+                        addPetExp(current.expAmount)
+                    }
+
+                    current.accessoryId?.let { accessoryId ->
+                        inventoryItemRepository.grantItem(accessoryId)
+                    }
                 }
+
+                else -> Unit
             }
 
-            // IMPORTANT: clear UI FIRST
             _currentReward.value = null
             _isDisplayingReward.value = false
 
-            // THEN advance queue AFTER UI is dismissed
             rewardQueue.rewardDismissed()
         }
+    }
+
+    private suspend fun addPetExp(expAmount: Int) {
+        val currentPet = petRepository.getPet().firstOrNull() ?: PetEntity(id = 1)
+        val updatedPet = currentPet.copy(xp = currentPet.xp + expAmount)
+        petRepository.updatePet(updatedPet)
+    }
+
+    private suspend fun buildChestReward(chestTypeValue: String): RewardUiEvent.ChestReward {
+        val chestType = ChestType.values()
+            .firstOrNull { it.name.equals(chestTypeValue, ignoreCase = true) }
+            ?: ChestType.NORMAL
+
+        val config = ChestRewardConfigProvider.getConfig(chestType)
+        var coinAmount = config.getRandomCoins()
+        var expAmount = config.getRandomExp()
+        var accessoryId: Long? = null
+
+        if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
+            val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
+                .firstOrNull()
+                ?.toList()
+                .orEmpty()
+
+            if (unownedItems.isNotEmpty()) {
+                val selectedItem = unownedItems.random()
+                if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
+                    accessoryId = selectedItem.id
+                }
+            }
+        }
+
+        return RewardUiEvent.ChestReward(
+            rewardType = "achievement_${chestType.name.lowercase()}",
+            amount = coinAmount,
+            expAmount = expAmount,
+            accessoryId = accessoryId
+        )
     }
 }

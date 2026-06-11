@@ -2,6 +2,7 @@ package com.example.mobile
 
 import android.app.Application
 import com.example.mobile.data.local.database.AchievementDatabaseInitializer
+import com.example.mobile.data.local.database.InventoryItemDatabaseInitializer
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.AchievementEngine
 import com.example.mobile.util.NotificationHelper
@@ -17,8 +18,9 @@ class HabitPetApp : Application() {
     @Inject
     lateinit var statisticsInitializer: StatisticsDatabaseInitializer
 
+    @Inject
+    lateinit var inventoryItemInitializer: InventoryItemDatabaseInitializer
 
-    // 🔥 ADD THIS
     @Inject
     lateinit var achievementEngine: AchievementEngine
 
@@ -29,8 +31,9 @@ class HabitPetApp : Application() {
 
         statisticsInitializer.initializeStatisticsAsync()
 
-        // 🔥 FORCE ENGINE TO INITIALIZE
-        achievementEngine // just accessing it is enough
+        inventoryItemInitializer.initializeAccessoriesAsync()
+
+        achievementEngine
 
         NotificationHelper(this).apply {
             createNotificationChannel()
