@@ -123,7 +123,7 @@ Visual asset mappings and animation behavior remain in:
 2. **Valueless Evolution**: DragonEvolutionReward provides 0 coins, making evolution stages progression-reward neutral.
 3. **Stage Names Hardcoded in UI**: Evolution stage names still duplicated in HomeScreen.kt, PetScreen.kt (should use `ExpConfig.evolutionStageName()`)
 4. **No Evolution Effects**: Beyond visual changes and journal entries, evolution stages don't affect gameplay mechanics (no stat boosts, special abilities, etc.).
-5. **Visual Inconsistency**: While pet images change with evolution, equipped items (hats, glasses, etc.) remain the same across all stages, which may look incongruous.
+5. **Visual Inconsistency**: While pet images change with evolution, equipped outfit and aura placeholders remain the same across all stages, which may look incongruous.
 6. **No Evolution Requirements**: No additional requirements beyond XP (e.g., specific habits, time periods, or items) needed to evolve.
 
 ## Progression Timeline
@@ -137,3 +137,17 @@ Visual asset mappings and animation behavior remain in:
 | Ancient Dragon (4) | 6,000 | 60 | ~20 |
 
 *Assumes 100 XP per checkbox habit completion*
+
+## Progression Timing Validation
+
+The evolution timeline is intentionally tied to the same EXP values used for level progression:
+
+| Stage | XP Threshold | Est. Checkbox Habits | Est. Days (3/day) | Balance Intent |
+|-------|-------------|---------------------|-------------------|----------------|
+| Egg (0) | 0 | 0 | 0 | Immediate onboarding form |
+| Hatchling (1) | 500 | 5 | ~1.7 | First visible evolution early enough to feel rewarding |
+| Young Dragon (2) | 1,500 | 15 | ~5 | Second evolution within the first week |
+| Adult Dragon (3) | 3,000 | 30 | ~10 | Mid-game milestone for consistent players |
+| Ancient Dragon (4) | 6,000 | 60 | ~20 | Long-term goal that remains reachable |
+
+Timer habits accelerate this timeline, while chest EXP can add small additional progression bumps. Evolution itself remains reward-neutral; it does not generate coins or change economy balance.

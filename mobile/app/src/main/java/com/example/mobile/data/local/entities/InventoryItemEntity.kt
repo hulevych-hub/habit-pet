@@ -1,9 +1,10 @@
 package com.example.mobile.data.local.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/** Rarity of an accessory */
+/** Rarity shared by all customization items. */
 enum class Rarity {
     NORMAL, RARE, EPIC, LEGENDARY
 }
@@ -11,6 +12,7 @@ enum class Rarity {
 @Entity(tableName = "inventory_items")
 data class InventoryItemEntity(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
+    @ColumnInfo(name = "item_id") var itemId: String = "",
     var name: String = "",
     var type: String = "",
     var imageUrl: String = "",
@@ -18,5 +20,6 @@ data class InventoryItemEntity(
     var isPurchased: Boolean = false,
     var isEquipped: Boolean = false,
     var price: Int = 0, // in coins
-    var rarity: Rarity = Rarity.NORMAL
+    var rarity: Rarity = Rarity.NORMAL,
+    @ColumnInfo(name = "unlock_source") var unlockSource: String = "SHOP"
 )

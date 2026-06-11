@@ -21,22 +21,24 @@ For every task below:
 ## Documentation
 
 Read:
-- DRAGON_PHASES.md
+
+* DRAGON_PHASES.md
 
 Update:
-- DRAGON_PHASES.md
+
+* DRAGON_PHASES.md
 
 ## Tasks
 
-- [x] Audit all dragon phases and available assets
-- [x] Implement idle animation for Egg
-- [x] Implement idle animation for Hatchling
-- [x] Implement idle animation for Young Dragon
-- [x] Implement idle animation for Adult Dragon
-- [x] Implement idle animation for Ancient Dragon
-- [x] Verify animations loop correctly
-- [x] Verify performance on mobile
-- [x] Update DRAGON_PHASES.md
+* [x] Audit all dragon phases and available assets
+* [x] Implement idle animation for Egg
+* [x] Implement idle animation for Hatchling
+* [x] Implement idle animation for Young Dragon
+* [x] Implement idle animation for Adult Dragon
+* [x] Implement idle animation for Ancient Dragon
+* [x] Verify animations loop correctly
+* [x] Verify performance on mobile
+* [x] Update DRAGON_PHASES.md
 
 ---
 
@@ -45,313 +47,173 @@ Update:
 ## Documentation
 
 Read:
-- DRAGON_PHASES.md
+
+* DRAGON_PHASES.md
 
 Update:
-- DRAGON_PHASES.md
+
+* DRAGON_PHASES.md
 
 ## Tasks
 
-- [x] Audit available phase assets
-- [x] Implement Egg → Hatchling transition
-- [x] Implement Hatchling → Young Dragon transition
-- [x] Implement Young Dragon → Adult Dragon transition
-- [x] Implement Adult Dragon → Ancient Dragon transition
-- [x] Trigger transitions automatically on phase change
-- [x] Ensure transitions only play once per unlock
-- [x] Update DRAGON_PHASES.md
+* [x] Audit available phase assets
+* [x] Implement Egg → Hatchling transition
+* [x] Implement Hatchling → Young Dragon transition
+* [x] Implement Young Dragon → Adult Dragon transition
+* [x] Implement Adult Dragon → Ancient Dragon transition
+* [x] Trigger transitions automatically on phase change
+* [x] Ensure transitions only play once per unlock
+* [x] Update DRAGON_PHASES.md
 
 ---
 
-# 3. ACCESSORIES SYSTEM
+# 3. CUSTOMIZATION SYSTEM (OUTFITS, BACKGROUNDS & AURAS)
 
 ## Documentation
 
 Read:
-- ACCESSORIES.md
+
+* CUSTOMIZATION.md
+* DATA_MODEL.md
+* CHEST_REWARDS.md
+* ECONOMY.md
 
 Update:
-- ACCESSORIES.md
-- DATA_MODEL.md
+
+* CUSTOMIZATION.md
+* DATA_MODEL.md
+* CHEST_REWARDS.md
+* ECONOMY.md
 
 ## Tasks
+
+### Migration
+
+* [x] Audit current accessory implementation
+* [x] Remove accessory slot system
+* [x] Remove accessory-specific rendering logic
+* [x] Remove accessory-specific UI
+* [x] Remove accessory-specific filters
+* [x] Migrate existing documentation
 
 ### Data Model
 
-- [x] Define accessory rarity system
-- [x] Define accessory slot system
-- [x] Add accessory ownership state
-- [x] Add accessory equipped state
-- [x] Add accessory unlock state
-- [x] Persist accessory data
+* [x] Define Outfit type
+* [x] Define Background type
+* [x] Define Aura type
+* [x] Define rarity system
+* [x] Define ownership state
+* [x] Define unlock state
+* [x] Define equipped state
+* [x] Persist customization data
 
-### Equipment System
+### Outfits
 
-- [x] Equip accessory
-- [x] Unequip accessory
-- [x] Prevent invalid slot combinations
-- [x] Apply accessories to dragon rendering
+* [x] Implement outfit ownership
+* [x] Implement outfit unlocks
+* [x] Implement outfit equipping
+* [x] Ensure only one outfit can be equipped
+* [x] Apply outfits to dragon rendering
 
-### Inventory UI
+### Backgrounds
 
-- [x] Create Inventory tab
-- [x] Create Locked tab
-- [x] Group accessories by slot
-- [x] Add rarity filter
-- [x] Add slot filter
-- [x] Display owned accessories
-- [x] Display locked accessories
+* [x] Implement background ownership
+* [x] Implement background unlocks
+* [x] Implement background equipping
+* [x] Ensure only one background can be equipped
+* [x] Apply backgrounds to dragon rendering
+
+### Auras
+
+* [x] Implement aura ownership
+* [x] Implement aura unlocks
+* [x] Implement aura equipping
+* [x] Ensure only one aura can be equipped
+* [x] Apply auras to dragon rendering
+
+### Collection UI
+
+* [x] Create Collection tab
+* [x] Create Locked tab
+* [x] Display owned items
+* [x] Display locked items
+* [x] Filter by type
+* [x] Filter by rarity
+* [x] Show equipped items
+* [x] Show unlock source
 
 ### Economy Integration
 
-- [x] Define accessory coin costs
-- [x] Link costs to accessory data
+* [x] Define outfit pricing
+* [x] Define background pricing
+* [x] Define aura pricing
+
+### Chest Integration
+
+* [x] Support outfit rewards
+* [x] Support background rewards
+* [x] Support aura rewards
+* [x] Prevent duplicate rewards when possible
+* [x] Prefer rewarding locked items
+
+### Asset System
+
+* [x] Define outfit asset naming convention
+* [x] Define background asset naming convention
+* [x] Define aura asset naming convention
+* [x] Support placeholder assets
 
 ### Documentation
 
-- [x] Update ACCESSORIES.md
-- [x] Update DATA_MODEL.md
+* [x] Update CUSTOMIZATION.md
+* [x] Update DATA_MODEL.md
+* [x] Update CHEST_REWARDS.md
+* [x] Update ECONOMY.md
 
 ---
 
-# 4. CHEST REWARD SYSTEM
+# 4. ECONOMY + PROGRESSION BALANCING
 
 ## Documentation
 
 Read:
-- CHEST_REWARDS.md
-- ACCESSORIES.md
-- EXP.md
-- ECONOMY.md
+
+* ECONOMY.md
+* EXP.md
+* CHEST_REWARDS.md
+* DRAGON_PHASES.md
 
 Update:
-- CHEST_REWARDS.md
-- DATA_MODEL.md
+
+* ECONOMY.md
+* EXP.md
+* CHEST_REWARDS.md
+* DRAGON_PHASES.md
 
 ## Tasks
 
-### Chest Types
+### Coins
 
-- [x] Implement Normal Chest
-- [x] Implement Rare Chest
-- [x] Implement Epic Chest
-- [x] Implement Legendary Chest
+* [x] Define coin rewards
+* [x] Define outfit pricing balance
+* [x] Define background pricing balance
+* [x] Define aura pricing balance
 
-### Reward Types
+### Chest Balance
 
-- [x] Coin rewards
-- [x] EXP rewards
-- [x] Accessory rewards
+* [x] Define outfit reward probabilities
+* [x] Define background reward probabilities
+* [x] Define aura reward probabilities
 
-### Accessory Logic
+### Validation
 
-- [x] Only reward accessories not yet unlocked
-- [x] Avoid duplicate accessory rewards when possible
-
-### Reward Configuration
-
-- [x] Make chest rewards configurable
-- [x] Support variable EXP rewards per chest
-- [x] Support variable coin rewards per chest
-- [x] Support special chest configurations
-
-### Opening Flow
-
-- [x] Implement chest opening logic
-- [x] Implement reward reveal flow
-- [x] Persist granted rewards
+* [x] Verify progression speed
+* [x] Verify reward balance
+* [x] Verify economy stability
 
 ### Documentation
 
-- [x] Update CHEST_REWARDS.md
-- [x] Update DATA_MODEL.md
-
----
-
-# 5. ECONOMY + PROGRESSION BALANCING
-
-## Documentation
-
-Read:
-- ECONOMY.md
-- EXP.md
-- CHEST_REWARDS.md
-- DRAGON_PHASES.md
-
-Update:
-- ECONOMY.md
-- EXP.md
-- CHEST_REWARDS.md
-- DRAGON_PHASES.md
-
-## Tasks
-
-### EXP SYSTEM
-
-- [x] Define normal habit EXP rewards
-- [x] Define timer habit EXP rewards
-- [x] Define chest EXP rewards
-- [x] Define level progression curve
-- [x] Define EXP required per level
-
-### COINS
-
-- [ ] Define coin rewards
-- [x] Define coin sinks
-- [x] Define accessory pricing balance
-
-### CHEST BALANCE
-
-- [x] Define level-up chest probabilities
-- [x] Define chest rarity probabilities
-- [x] Define accessory reward probabilities
-- [x] Define coin reward probabilities
-- [x] Define EXP reward probabilities
-
-### VALIDATION
-
-- [x] Verify progression speed
-- [x] Verify reward balance
-- [x] Verify economy stability
-
----
-
-# 6. ACHIEVEMENTS
-
-## Documentation
-
-Read:
-- ACHIEVEMENTS.md
-- ECONOMY.md
-- CHEST_REWARDS.md
-
-Update:
-- ACHIEVEMENTS.md
-
-## Tasks
-
-### System
-
-- [x] Implement achievement tracking
-- [x] Implement achievement completion logic
-- [x] Implement achievement claiming flow
-
-### Rewards
-
-- [x] Coin rewards
-- [x] EXP rewards
-- [x] Chest rewards
-
-### Content
-
-- [x] Habit completion achievements
-- [x] Streak achievements
-- [x] Level achievements
-- [x] Collection achievements
-
-### UI
-
-- [x] Create achievements screen
-- [x] Show progress indicators
-- [x] Show rewards clearly
-
----
-
-# 7. GLOBAL STREAK EVENT
-
-## Documentation
-
-Read:
-- ACHIEVEMENTS.md
-- STATISTICS.md
-
-Update:
-- ACHIEVEMENTS.md
-- STATISTICS.md
-
-## Tasks
-
-- [x] Define streak milestone triggers
-- [x] Detect milestone streaks
-- [x] Create celebration screen
-- [x] Implement heart animation (Duolingo-style)
-- [x] Display reward summary
-- [x] Prevent duplicate triggers
-- [x] Update documentation
-
----
-
-# 8. UI / LAYOUT POLISH
-
-## Documentation
-
-None required unless systems change.
-
-## Tasks
-
-- [ ] Review all major screens
-- [ ] Improve spacing consistency
-- [ ] Improve typography consistency
-- [ ] Improve component consistency
-- [ ] Improve animation flow
-- [ ] Improve inventory UX
-- [ ] Improve achievements UX
-- [ ] Improve chest UX
-- [ ] Improve dragon UX
-- [ ] Ensure mobile responsiveness
-
----
-
-# 9. PET RENAME
-
-## Documentation
-
-Read:
-- DATA_MODEL.md
-
-Update:
-- DATA_MODEL.md
-
-## Tasks
-
-- [x] Implement pet rename feature
-- [x] Persist pet name
-- [x] Validate input
-- [x] Display name across UI
-
----
-
-# 10. NOTIFICATIONS
-
-## Documentation
-
-Read:
-- NOTIFICATIONS.md
-
-Update:
-- NOTIFICATIONS.md
-
-## Tasks
-
-- [ ] Define notification types
-- [ ] Habit reminder notifications
-- [ ] Streak warning notifications
-- [ ] Level-up notifications
-- [ ] Chest notifications
-- [ ] Notification preferences
-- [ ] Persist settings
-- [ ] Update documentation
-
----
-
-# 🚧 FUTURE SYSTEMS (DO NOT IMPLEMENT)
-
-## QUESTS
-
-- [ ] Deferred until after MVP
-- Documentation: QUESTS.md
-
-## REBIRTH SYSTEM
-
-- [ ] Deferred until after MVP
-- Documentation: ENDGAME.md
+* [x] Update ECONOMY.md
+* [x] Update EXP.md
+* [x] Update CHEST_REWARDS.md
+* [x] Update DRAGON_PHASES.md

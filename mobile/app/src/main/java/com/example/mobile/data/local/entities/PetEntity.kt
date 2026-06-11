@@ -12,10 +12,9 @@ data class PetEntity(
     @ColumnInfo(name = "xp") var xp: Long = 0,
     @ColumnInfo(name = "coins") var coins: Int = 0,
     @ColumnInfo(name = "evolution_stage") var evolutionStage: Int = 0, // 0: Egg, 1: Hatchling, 2: Young Dragon, 3: Adult Dragon, 4: Ancient Dragon
-    @ColumnInfo(name = "equipped_hat") var equippedHat: String? = null,
-    @ColumnInfo(name = "equipped_glasses") var equippedGlasses: String? = null,
-    @ColumnInfo(name = "equipped_scarf") var equippedScarf: String? = null,
+    @ColumnInfo(name = "equipped_outfit") var equippedOutfit: String? = null,
     @ColumnInfo(name = "equipped_background") var equippedBackground: String? = null,
+    @ColumnInfo(name = "equipped_aura") var equippedAura: String? = null,
     @ColumnInfo(name = "mood") var mood: String = "Neutral",
     @ColumnInfo(name = "creation_date") var creationDate: Long = System.currentTimeMillis()
 )

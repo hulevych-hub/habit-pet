@@ -49,11 +49,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
+import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,10 +62,9 @@ class RewardsViewModel @Inject constructor(
     private val petRepository: PetRepository
 ) : ViewModel() {
 
-    val hats = inventoryItemRepository.getItemsByType("HAT")
-    val glasses = inventoryItemRepository.getItemsByType("GLASSES")
-    val scarves = inventoryItemRepository.getItemsByType("SCARF")
-    val backgrounds = inventoryItemRepository.getItemsByType("BACKGROUND")
+    val outfits = inventoryItemRepository.getItemsByType(CustomizationTypes.OUTFIT)
+    val backgrounds = inventoryItemRepository.getItemsByType(CustomizationTypes.BACKGROUND)
+    val auras = inventoryItemRepository.getItemsByType(CustomizationTypes.AURA)
 
     fun purchaseItem(itemId: Long) = viewModelScope.launch {
         val result = inventoryItemRepository.purchaseItem(itemId)
@@ -89,46 +88,43 @@ fun RewardsScreen(
     rewardsViewModel: RewardsViewModel = hiltViewModel()
 ) {
 
-    var selectedTab by rememberSaveable { mutableStateOf(Tab.Owned) }
+    var selectedTab by rememberSaveable { mutableStateOf(CollectionTab.Owned) }
     var selectedRarity by rememberSaveable { mutableStateOf<Rarity?>(null) }
-    var selectedSlot by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedType by rememberSaveable { mutableStateOf<String?>(null) }
 
     val allItems = remember {
         mutableStateListOf<InventoryItemEntity>()
     }
 
-    val hatsList by rewardsViewModel.hats.collectAsState(initial = emptyList())
-    val glassesList by rewardsViewModel.glasses.collectAsState(initial = emptyList())
-    val scarvesList by rewardsViewModel.scarves.collectAsState(initial = emptyList())
+    val outfitsList by rewardsViewModel.outfits.collectAsState(initial = emptyList())
     val backgroundsList by rewardsViewModel.backgrounds.collectAsState(initial = emptyList())
+    val aurasList by rewardsViewModel.auras.collectAsState(initial = emptyList())
 
     LaunchedEffect(
-        hatsList,
-        glassesList,
-        scarvesList,
-        backgroundsList
+        outfitsList,
+        backgroundsList,
+        aurasList
     ) {
         allItems.clear()
-        allItems.addAll(hatsList)
-        allItems.addAll(glassesList)
-        allItems.addAll(scarvesList)
+        allItems.addAll(outfitsList)
         allItems.addAll(backgroundsList)
+        allItems.addAll(aurasList)
     }
 
     val filteredItems = allItems.filter { item ->
 
         val ownedMatch = when (selectedTab) {
-            Tab.Owned -> item.isPurchased
-            Tab.Locked -> !item.isPurchased
+            CollectionTab.Owned -> item.isPurchased
+            CollectionTab.Locked -> !item.isPurchased
         }
 
         val rarityMatch =
             selectedRarity == null || item.rarity == selectedRarity
 
-        val slotMatch =
-            selectedSlot == null || item.type == selectedSlot
+        val typeMatch =
+            selectedType == null || item.type == selectedType
 
-        ownedMatch && rarityMatch && slotMatch
+        ownedMatch && rarityMatch && typeMatch
     }
 
     val groupedItems = filteredItems.groupBy { it.type }
@@ -136,7 +132,7 @@ fun RewardsScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Inventory") }
+                title = { Text("Collection") }
             )
         }
     ) { padding ->
@@ -154,14 +150,13 @@ fun RewardsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // Rarity Dropdown
                 Box {
 
                     var expanded by remember { mutableStateOf(false) }
 
                     Box(
                         modifier = Modifier
-                            .width(120.dp)
+                            .width(128.dp)
                             .height(36.dp)
                             .background(
                                 MaterialTheme.colorScheme.surfaceVariant,
@@ -171,7 +166,7 @@ fun RewardsScreen(
                             .padding(4.dp)
                     ) {
                         Text(
-                            text = selectedRarity?.name ?: "All",
+                            text = selectedRarity?.name ?: "All Rarities",
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.align(Alignment.CenterStart)
                         )
@@ -211,14 +206,13 @@ fun RewardsScreen(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Slot Dropdown
                 Box {
 
                     var expanded by remember { mutableStateOf(false) }
 
                     Box(
                         modifier = Modifier
-                            .width(120.dp)
+                            .width(128.dp)
                             .height(36.dp)
                             .background(
                                 MaterialTheme.colorScheme.surfaceVariant,
@@ -227,9 +221,8 @@ fun RewardsScreen(
                             .clickable { expanded = true }
                             .padding(4.dp)
                     ) {
-
                         Text(
-                            text = selectedSlot ?: "All",
+                            text = selectedType?.let(CustomizationTypes::displayName) ?: "All Types",
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.align(Alignment.CenterStart)
                         )
@@ -247,24 +240,19 @@ fun RewardsScreen(
                     ) {
 
                         DropdownMenuItem(
-                            text = { Text("All Slots") },
+                            text = { Text("All Types") },
                             onClick = {
-                                selectedSlot = null
+                                selectedType = null
                                 expanded = false
                             }
                         )
 
-                        listOf(
-                            "HAT",
-                            "GLASSES",
-                            "SCARF",
-                            "BACKGROUND"
-                        ).forEach { slot ->
+                        CustomizationTypes.TYPES.forEach { type ->
 
                             DropdownMenuItem(
-                                text = { Text(slot) },
+                                text = { Text(CustomizationTypes.displayName(type)) },
                                 onClick = {
-                                    selectedSlot = slot
+                                    selectedType = type
                                     expanded = false
                                 }
                             )
@@ -279,14 +267,14 @@ fun RewardsScreen(
                 ) {
 
                     Tab(
-                        selected = selectedTab == Tab.Owned,
-                        onClick = { selectedTab = Tab.Owned },
+                        selected = selectedTab == CollectionTab.Owned,
+                        onClick = { selectedTab = CollectionTab.Owned },
                         text = { Text("Owned") }
                     )
 
                     Tab(
-                        selected = selectedTab == Tab.Locked,
-                        onClick = { selectedTab = Tab.Locked },
+                        selected = selectedTab == CollectionTab.Locked,
+                        onClick = { selectedTab = CollectionTab.Locked },
                         text = { Text("Locked") }
                     )
                 }
@@ -297,7 +285,7 @@ fun RewardsScreen(
             if (groupedItems.isEmpty()) {
 
                 Text(
-                    text = "No items to display",
+                    text = "No customization items to display",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -311,12 +299,12 @@ fun RewardsScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    groupedItems.forEach { (slot, slotItems) ->
+                    groupedItems.forEach { (type, typeItems) ->
 
                         item {
 
                             Text(
-                                text = slot,
+                                text = CustomizationTypes.displayName(type),
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -328,7 +316,7 @@ fun RewardsScreen(
                             )
                         }
 
-                        items(slotItems) { item ->
+                        items(typeItems) { item ->
 
                             InventoryItemRow(
                                 item = item,
@@ -347,7 +335,7 @@ fun RewardsScreen(
 fun InventoryItemRow(
     item: InventoryItemEntity,
     viewModel: RewardsViewModel,
-    tab: Tab
+    tab: CollectionTab
 ) {
 
     Row(
@@ -359,15 +347,19 @@ fun InventoryItemRow(
 
         Box(
             modifier = Modifier
-                .size(40.dp)
-                .background(Color.LightGray),
+                .size(44.dp)
+                .background(
+                    rarityColor(item.rarity).copy(alpha = 0.18f),
+                    shape = RoundedCornerShape(12.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(26.dp)
                     .background(
-                        Color.LightGray.copy(alpha = 0.3f)
+                        rarityColor(item.rarity).copy(alpha = 0.22f),
+                        shape = RoundedCornerShape(8.dp)
                     )
             )
         }
@@ -378,45 +370,17 @@ fun InventoryItemRow(
 
             Text(item.name)
 
-            Row(
-                modifier = Modifier.height(4.dp)
-            ) {
+            Text(
+                text = "${CustomizationTypes.displayName(item.type).dropLast(1)} • ${item.rarity.name}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-                when (item.rarity) {
-
-                    Rarity.NORMAL -> {
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .background(Color.Gray)
-                        )
-                    }
-
-                    Rarity.RARE -> {
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .background(Color(0xFF0066FF))
-                        )
-                    }
-
-                    Rarity.EPIC -> {
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .background(Color.Magenta)
-                        )
-                    }
-
-                    Rarity.LEGENDARY -> {
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .background(Color(0xFFFF8C00))
-                        )
-                    }
-                }
-            }
+            Text(
+                text = "Source: ${item.unlockSource.ifBlank { "Shop" }}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             Text(
                 "${item.price} coins",
@@ -428,18 +392,13 @@ fun InventoryItemRow(
 
         when (tab) {
 
-            Tab.Owned -> {
+            CollectionTab.Owned -> {
 
                 if (item.isPurchased && !item.isEquipped) {
 
                     Button(
                         onClick = {
-                            viewModel.equipItem(
-                                item.type,
-                                item.name
-                                    .lowercase(Locale.getDefault())
-                                    .replace(" ", "_")
-                            )
+                            viewModel.equipItem(item.type, item.id.toString())
                         }
                     ) {
                         Text("Equip")
@@ -450,12 +409,12 @@ fun InventoryItemRow(
                     Text(
                         "Equipped",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Green
+                        color = Color(0xFF16A34A)
                     )
                 }
             }
 
-            Tab.Locked -> {
+            CollectionTab.Locked -> {
 
                 if (item.isUnlocked && !item.isPurchased) {
 
@@ -480,7 +439,14 @@ fun InventoryItemRow(
     }
 }
 
-enum class Tab {
+private fun rarityColor(rarity: Rarity): Color = when (rarity) {
+    Rarity.NORMAL -> Color.Gray
+    Rarity.RARE -> Color(0xFF0066FF)
+    Rarity.EPIC -> Color.Magenta
+    Rarity.LEGENDARY -> Color(0xFFFF8C00)
+}
+
+enum class CollectionTab {
     Owned,
     Locked
 }

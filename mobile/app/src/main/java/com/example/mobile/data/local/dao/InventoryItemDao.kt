@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.mobile.data.local.entities.InventoryItemEntity
+import com.example.mobile.data.local.entities.Rarity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,6 +16,15 @@ interface InventoryItemDao {
 
     @Query("SELECT * FROM inventory_items WHERE id = :itemId")
     fun getItemById(itemId: Long): Flow<InventoryItemEntity?>
+
+    @Query("SELECT * FROM inventory_items WHERE item_id = :itemId")
+    fun getItemByItemId(itemId: String): Flow<InventoryItemEntity?>
+
+    @Query("SELECT * FROM inventory_items WHERE rarity = :rarity ORDER BY type, name")
+    fun getItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>>
+
+    @Query("SELECT * FROM inventory_items WHERE rarity = :rarity AND isPurchased = 0 ORDER BY isUnlocked ASC, type, name")
+    fun getUnownedItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>>
 
     @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: InventoryItemEntity): Long

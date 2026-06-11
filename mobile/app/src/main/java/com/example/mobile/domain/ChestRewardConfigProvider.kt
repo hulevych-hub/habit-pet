@@ -19,32 +19,32 @@ object ChestRewardConfigProvider {
                 chestType = ChestType.NORMAL,
                 coinRange = EconomyConfig.NORMAL_CHEST_COIN_RANGE,
                 expRange = EconomyConfig.NORMAL_CHEST_EXP_RANGE,
-                accessoryRarity = null,
-                accessoryDropChance = 0.0,
+                customizationRarity = null,
+                customizationDropChance = 0.0,
                 guaranteedReward = true
             )
             ChestType.RARE -> ChestRewardConfig(
                 chestType = ChestType.RARE,
                 coinRange = EconomyConfig.RARE_CHEST_COIN_RANGE,
                 expRange = EconomyConfig.RARE_CHEST_EXP_RANGE,
-                accessoryRarity = Rarity.RARE,
-                accessoryDropChance = EconomyConfig.RARE_CHEST_ACCESSORY_DROP_CHANCE,
+                customizationRarity = Rarity.RARE,
+                customizationDropChance = EconomyConfig.RARE_CHEST_CUSTOMIZATION_DROP_CHANCE,
                 guaranteedReward = true
             )
             ChestType.EPIC -> ChestRewardConfig(
                 chestType = ChestType.EPIC,
                 coinRange = EconomyConfig.EPIC_CHEST_COIN_RANGE,
                 expRange = EconomyConfig.EPIC_CHEST_EXP_RANGE,
-                accessoryRarity = Rarity.EPIC,
-                accessoryDropChance = EconomyConfig.EPIC_CHEST_ACCESSORY_DROP_CHANCE,
+                customizationRarity = Rarity.EPIC,
+                customizationDropChance = EconomyConfig.EPIC_CHEST_CUSTOMIZATION_DROP_CHANCE,
                 guaranteedReward = true
             )
             ChestType.LEGENDARY -> ChestRewardConfig(
                 chestType = ChestType.LEGENDARY,
                 coinRange = EconomyConfig.LEGENDARY_CHEST_COIN_RANGE,
                 expRange = EconomyConfig.LEGENDARY_CHEST_EXP_RANGE,
-                accessoryRarity = Rarity.LEGENDARY,
-                accessoryDropChance = EconomyConfig.LEGENDARY_CHEST_ACCESSORY_DROP_CHANCE,
+                customizationRarity = Rarity.LEGENDARY,
+                customizationDropChance = EconomyConfig.LEGENDARY_CHEST_CUSTOMIZATION_DROP_CHANCE,
                 guaranteedReward = true
             )
         }

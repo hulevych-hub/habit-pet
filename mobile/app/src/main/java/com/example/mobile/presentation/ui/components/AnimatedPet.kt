@@ -52,19 +52,17 @@ fun AnimatedPet(
             .size(size.width.dp, size.height.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Layered rendering: Background -> Pet -> Scarf -> Glasses -> Hat
+        // Layered rendering: Aura -> Background -> Pet -> Outfit
+
+        AuraLayer(
+            equippedAura = pet.equippedAura,
+            modifier = Modifier.size(220.dp).align(Alignment.Center)
+        )
 
         // Background (if equipped)
         if (pet.equippedBackground != null) {
-            val backgroundImage = when (pet.equippedBackground) {
-                "background_forest" -> R.drawable.background_forest
-                "background_beach" -> R.drawable.background_beach
-                "background_mountains" -> R.drawable.background_mountains
-                "background_night_sky" -> R.drawable.background_night_sky
-                else -> R.drawable.background_forest // fallback
-            }
             Image(
-                painter = painterResource(backgroundImage),
+                painter = painterResource(backgroundImageForItemId(pet.equippedBackground)),
                 contentDescription = "Pet background",
                 modifier = Modifier
                     .size(180.dp)
@@ -287,48 +285,56 @@ private fun PetImageLayer(
         modifier = modifier
     )
 
-    // Scarf (if equipped)
-    if (pet.equippedScarf != null) {
-        val scarfImage = when (pet.equippedScarf) {
-            "red_scarf" -> R.drawable.red_scarf
-            "blue_scarf" -> R.drawable.blue_scarf
-            else -> R.drawable.red_scarf // fallback
-        }
-        Image(
-            painter = painterResource(scarfImage),
-            contentDescription = "Pet scarf",
-            modifier = modifier
-        )
-    }
+    OutfitLayer(
+        equippedOutfit = pet.equippedOutfit,
+        modifier = modifier
+    )
+}
 
-    // Glasses (if equipped)
-    if (pet.equippedGlasses != null) {
-        val glassesImage = when (pet.equippedGlasses) {
-            "round_glasses" -> R.drawable.round_glasses
-            "sunglasses" -> R.drawable.sunglasses
-            else -> R.drawable.round_glasses // fallback
-        }
-        Image(
-            painter = painterResource(glassesImage),
-            contentDescription = "Pet glasses",
-            modifier = modifier
-        )
-    }
+@Composable
+private fun AuraLayer(
+    equippedAura: String?,
+    modifier: Modifier = Modifier
+) {
+    if (equippedAura == null) return
 
-    // Hat (if equipped)
-    if (pet.equippedHat != null) {
-        val hatImage = when (pet.equippedHat) {
-            "top_hat" -> R.drawable.top_hat
-            "crown" -> R.drawable.crown
-            "wizard_hat" -> R.drawable.wizard_hat
-            else -> R.drawable.top_hat // fallback
-        }
-        Image(
-            painter = painterResource(hatImage),
-            contentDescription = "Pet hat",
-            modifier = modifier
-        )
-    }
+    Image(
+        painter = painterResource(auraImageForItemId(equippedAura)),
+        contentDescription = "Pet aura",
+        modifier = modifier.graphicsLayer(alpha = 0.38f)
+    )
+}
+
+@Composable
+private fun OutfitLayer(
+    equippedOutfit: String?,
+    modifier: Modifier = Modifier
+) {
+    if (equippedOutfit == null) return
+
+    Image(
+        painter = painterResource(outfitImageForItemId(equippedOutfit)),
+        contentDescription = "Pet outfit",
+        modifier = modifier.graphicsLayer(alpha = 0.62f)
+    )
+}
+
+private fun backgroundImageForItemId(itemId: String?): Int = when (itemId) {
+    "background_forest", "sunny_meadow" -> R.drawable.background_forest
+    "background_beach", "crystal_cave" -> R.drawable.background_beach
+    "background_mountains", "floating_islands" -> R.drawable.background_mountains
+    "background_night_sky", "celestial_realm" -> R.drawable.background_night_sky
+    else -> R.drawable.background_forest
+}
+
+private fun outfitImageForItemId(itemId: String?): Int = when (itemId) {
+    "royal_scarf", "crystal_crown", "mystic_cloak", "starlight_armor" -> R.drawable.outfit_placeholder
+    else -> R.drawable.outfit_placeholder
+}
+
+private fun auraImageForItemId(itemId: String?): Int = when (itemId) {
+    "soft_glow", "crystal_aura", "dragonfire_aura", "celestial_aura" -> R.drawable.aura_placeholder
+    else -> R.drawable.aura_placeholder
 }
 
 private fun petImageForStage(stage: Int): Int {

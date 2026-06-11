@@ -21,17 +21,19 @@ The economy consists of:
 - Coin storage in `StatisticsEntity.totalCoins`
 - Central repository: `StatisticsRepository`
 - Reward-based income system
-- Shop-based spending system (accessories)
+- Shop-based spending system (customization items)
 - **Centralized configuration: `EconomyConfig`**
 
 ---
 
 # ⚠️ SYSTEM AUTHORITY RULE
 
-The **RewardManager is the single source of truth for all coin rewards**.
+The **RewardManager is the single source of truth for queued reward processing**.
 
-Exceptions:
-- Direct `statisticsRepository.addCoins()` is only allowed for explicitly documented cases (e.g. timer habit rewards)
+Documented direct coin updates are allowed only in:
+
+- `HabitDetailViewModel.awardCoins()` for habit completion coins and level-up base coins
+- `RewardManager.rewardCompleted()` for queued reward events
 
 All coin sources MUST be explicitly documented in this file.
 
@@ -58,12 +60,12 @@ Coins can be earned from the following systems:
 
 ### Checkbox Habits
 - **Reward**: 10 coins per completion
-- **Source**: Direct reward via `HabitDetailViewModel.awardPetXpAndCoins()`
+- **Source**: Direct reward via `HabitDetailViewModel.awardCoins()`
 
 ### Timer Habits
-- **Formula**: 5 base coins + 2 coins per minute
+- **Formula**: 5 base coins + 2 coins per completed minute
 - **Example**: 30 min session → 5 + 60 = 65 coins
-- **Source**: Direct reward via `HabitDetailViewModel.awardPetXpAndCoins()`
+- **Source**: Direct reward via `HabitDetailViewModel.awardCoins()`
 
 ---
 
@@ -81,19 +83,25 @@ Each achievement grants a fixed reward:
 
 ---
 
-## 3. Streak Rewards
+## 3. Streak Milestone Chests
 
 Triggered on milestone streaks:
 
 Conditions:
 - currentStreak ≥ 7
-- currentStreak % 7 == 0
+- currentStreak is one of the configured milestones: 7, 14, 30, 60, 100
 - currentStreak > lastStreakAwardedAt
 
 Reward:
-- 50 coins per milestone (delivered via ChestReward system as part of streak chest)
+- No fixed 50-coin milestone payout
+- A `ChestReward` is queued through `StreakEngine`
+- Chest type is milestone-based:
+  - 7 days → Normal
+  - 14 days → Rare
+  - 30 or 60 days → Epic
+  - 100 days → Legendary
 
-Delivered via ChestReward system.
+Delivered via the centralized reward queue and processed by `RewardManager`.
 
 ---
 
@@ -101,49 +109,62 @@ Delivered via ChestReward system.
 
 Each level-up grants:
 
-- **Base reward**: level × 10 coins (defined in `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`)
-- **Additional chest reward**: 20 coins (defined in `EconomyConfig.LEVEL_UP_CHEST_BONUS_COINS`)
+- **Base reward**: level × 10 coins, defined in `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`
+- **Chest reward**: one randomized chest from `ChestRewardConfigProvider.getRandomChestType()`
 
 Example:
-- Level 5 → 50 coins + 20 coin chest bonus
+- Level 5 → 50 base coins + one random chest
+
+The `EconomyConfig.LEVEL_UP_CHEST_BONUS_COINS` constant is retained as a tuning reference but is not used by the current reward pipeline.
 
 ---
 
-## 5. Chest Rewards (Streak Milestones & Level-Ups)
+## 5. Chest Rewards
 
 Chest rewards are awarded for:
-- 7-day streak milestones
-- Every level-up
 
-Chest type is randomly determined with the following probabilities (from `EconomyConfig`):
-- **Normal (55%)**: 10-30 coins, no EXP, no accessory
-- **Rare (30%)**: 30-80 coins, 50-150 EXP, 15% chance for Rare accessory
-- **Epic (12%)**: 80-180 coins, 150-350 EXP, 30% chance for Epic accessory
-- **Legendary (3%)**: 180-400 coins, 350-800 EXP, 50% chance for Legendary accessory
+- Streak milestone rewards
+- Every level-up
+- Achievement chest rewards
+
+### Level-up and achievement chest type probabilities
+
+Chest type is randomly determined with these probabilities from `EconomyConfig`:
+
+- **Normal (55%)**: 10-30 coins, no EXP, no customization item
+- **Rare (30%)**: 30-80 coins, 50-150 EXP, 15% chance for Rare customization item
+- **Epic (12%)**: 80-180 coins, 150-350 EXP, 30% chance for Epic customization item
+- **Legendary (3%)**: 180-400 coins, 350-800 EXP, 50% chance for Legendary customization item
+
+### Streak milestone chest type mapping
+
+Streak milestone chests do not randomize chest rarity. They use the milestone mapping above.
 
 ---
 
 # 🧾 COIN SPENDING
 
-## Accessory Purchases
+## Customization Purchases
 
-Coins are spent only on accessories.
+Coins are spent only on customization items.
 
 Rules:
-- Each item has a fixed price (`InventoryItemEntity.price`) calculated from `EconomyConfig.accessoryPrice(rarity)`
+- Each item has a fixed price (`InventoryItemEntity.price`) calculated from `EconomyConfig.customizationPrice(rarity)`
 - Purchase requires: totalCoins ≥ price
 - On success:
   - Deduct coins
   - Mark item as purchased
 
-### Accessory Pricing (from `EconomyConfig`)
+### Customization Pricing (from `EconomyConfig`)
+
+Pricing is rarity-based and type-neutral: outfits, backgrounds, and auras use the same rarity price.
 
 | Rarity | Base Multiplier | Price | Target Save Time |
 |--------|----------------|-------|------------------|
-| Normal | 1.0x | 100 coins | ~1 day |
-| Rare | 3.0x | 300 coins | ~3 days |
-| Epic | 8.0x | 800 coins | ~8 days |
-| Legendary | 20.0x | 2000 coins | ~20 days |
+| Normal | 1.0x | 100 coins | ~1 day with recurring rewards; ~3.3 days from checkbox habit coins alone |
+| Rare | 3.0x | 300 coins | ~3 days with recurring rewards; ~10 days from checkbox habit coins alone |
+| Epic | 8.0x | 800 coins | ~8 days with recurring rewards; ~26.7 days from checkbox habit coins alone |
+| Legendary | 20.0x | 2000 coins | ~20 days with recurring rewards; ~66.7 days from checkbox habit coins alone |
 
 ---
 
@@ -158,12 +179,13 @@ Rules:
 
 # 🔄 COIN FLOW PIPELINE
 
-All rewards flow through:
+Habit completion coins and level-up base coins flow directly through `HabitDetailViewModel.awardCoins()`.
+
+Queued rewards flow through:
 
 RewardManager → RewardQueue → StatisticsRepository
 
 Processing rules:
-
 1. RewardManager receives reward events
 2. Extract coin value based on type:
    - CoinReward → amount
@@ -181,9 +203,10 @@ Processing rules:
 
 The economy is designed to:
 
-- Provide steady progression (~100 coins/day for active player)
-- Encourage daily engagement (streaks)
-- Make accessories feel valuable (1-20 days to save)
+- Provide steady progression (~30 coins/day from 3 checkbox habits)
+- Reach roughly ~100 coins/day early-game when recurring level-up and streak chests are included
+- Encourage daily engagement through streak milestone chests
+- Make customization items feel valuable without making Normal items feel unreachable
 - Avoid inflation spikes
 - Prevent passive farming loops
 
@@ -239,8 +262,8 @@ Any change to economy must:
 - HabitDetailViewModel.kt
 - RewardManager.kt
 - RewardQueue.kt
-- EconomyConfig.kt (NEW - centralized configuration)
-- ExpConfig.kt (NEW - centralized XP/level configuration)
+- EconomyConfig.kt (centralized configuration)
+- ExpConfig.kt (centralized XP/level configuration)
 
 ---
 
@@ -249,9 +272,9 @@ Any change to economy must:
 1. No coin cap (infinite accumulation possible)
 2. No inflation control system
 3. No dynamic pricing (static rarity-based)
-4. Limited spending mechanics (only accessories)
+4. Limited spending mechanics (only customization items)
 5. No reward multipliers or dynamic bonuses
-6. No economy sink systems beyond accessories
+6. No economy sink systems beyond customization items
 
 ---
 
@@ -259,20 +282,38 @@ Any change to economy must:
 
 ## Target Metrics (from `EconomyConfig`)
 
-- **Target daily coins** (3 habits/day): ~100 coins
-- **Normal accessory**: 100 coins (~1 day)
-- **Rare accessory**: 300 coins (~3 days)
-- **Epic accessory**: 800 coins (~8 days)
-- **Legendary accessory**: 2000 coins (~20 days)
+- **Base daily coins** (3 checkbox habits/day): 30 coins
+- **Target early-game daily coins** (base coins + recurring level-up/streak chests): ~100 coins/day
+- **Normal customization item**: 100 coins (~1 day with recurring rewards)
+- **Rare customization item**: 300 coins (~3 days with recurring rewards)
+- **Epic customization item**: 800 coins (~8 days with recurring rewards)
+- **Legendary customization item**: 2000 coins (~20 days with recurring rewards)
 
 ## Progression Validation
 
-| Level | Total XP | Coins from Level-Ups | Est. Days |
-|-------|----------|---------------------|-----------|
-| 1 | 100 | 10 | 0.1 |
-| 5 | 750 | 150 | 1.5 |
-| 10 | 3,250 | 550 | 5.5 |
-| 25 | 20,000 | 3,250 | 32.5 |
-| 50 | 65,250 | 12,750 | 127.5 |
+| Level | Total XP | Est. Habits (Checkbox) | Est. Days (3/day) | Coins from Level-Up Base Rewards |
+|-------|----------|------------------------|-------------------|----------------------------------|
+| 1 | 100 | 1 | 0.3 | 10 |
+| 5 | 1,000 | 10 | 3.3 | 150 |
+| 10 | 3,250 | 32.5 | 10.8 | 550 |
+| 15 | 6,750 | 67.5 | 22.5 | 1,200 |
+| 20 | 11,500 | 115 | 38.3 | 2,100 |
+| 25 | 17,500 | 175 | 58.3 | 3,250 |
+| 30 | 24,750 | 247.5 | 82.5 | 4,650 |
+| 40 | 43,000 | 430 | 143.3 | 8,200 |
+| 50 | 66,250 | 662.5 | 220.8 | 12,750 |
 
-*Assumes no spending. With spending, progression extends naturally.*
+*Assumes 100 XP per checkbox habit and no timer-habit bonus XP.*
+
+## Reward Balance Validation
+
+- Average randomized chest coin value: ~52 coins
+- Average randomized chest EXP value: ~77 EXP
+- Average randomized chest customization coin-equivalent value: ~72 coins
+- Combined randomized chest value: ~52 coins + ~77 EXP + ~72 coin-equivalent
+- Streak milestone chests are milestone-based rather than random, so their expected value depends on which milestone is reached.
+- Economy stability is maintained by:
+  - Fixed habit rewards
+  - Fixed rarity pricing
+  - Duplicate-preventing customization chest selection
+  - No coin generation from evolution rewards

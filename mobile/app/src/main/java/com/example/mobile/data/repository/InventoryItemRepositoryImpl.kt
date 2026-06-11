@@ -2,6 +2,7 @@ package com.example.mobile.data.repository
 
 import com.example.mobile.data.local.dao.InventoryItemDao
 import com.example.mobile.data.local.entities.InventoryItemEntity
+import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.repository.InventoryItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -17,6 +18,9 @@ class InventoryItemRepositoryImpl @Inject constructor(
 
     override fun getItemById(itemId: Long): Flow<InventoryItemEntity?> =
         inventoryItemDao.getItemById(itemId)
+
+    override fun getItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>> =
+        inventoryItemDao.getItemsByRarity(rarity)
 
     override suspend fun addItem(item: InventoryItemEntity): Long =
         inventoryItemDao.insertItem(item)
@@ -87,4 +91,7 @@ class InventoryItemRepositoryImpl @Inject constructor(
                 items.filter { !it.isPurchased }
             }
     }
+
+    override fun getUnownedItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>> =
+        inventoryItemDao.getUnownedItemsByRarity(rarity)
 }

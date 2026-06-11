@@ -2,6 +2,7 @@ package com.example.mobile.data.repository
 
 import com.example.mobile.data.local.dao.PetDao
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import kotlinx.coroutines.flow.Flow
@@ -31,23 +32,24 @@ class PetRepositoryImpl @Inject constructor(
     override suspend fun equipItem(itemType: String, itemId: String): Int {
         return try {
             val currentPet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)
+            val inventoryItemId = itemId.toLongOrNull() ?: return -1
+            val inventoryItem = inventoryItemRepository.getItemById(inventoryItemId).firstOrNull()
+                ?: return -1
+
+            if (!inventoryItem.isPurchased || inventoryItem.type != itemType) return -1
+
             val updatedPet = when (itemType) {
-                "HAT" -> currentPet.copy(equippedHat = itemId)
-                "GLASSES" -> currentPet.copy(equippedGlasses = itemId)
-                "SCARF" -> currentPet.copy(equippedScarf = itemId)
-                "BACKGROUND" -> currentPet.copy(equippedBackground = itemId)
-                else -> currentPet
-            }
-            petDao.updatePet(updatedPet.copy(id = 1))
-
-            // Update inventory item to mark as equipped
-            val inventoryItem = inventoryItemRepository.getItemById(itemId.toLong()).firstOrNull()
-            if (inventoryItem != null) {
-                val updatedInventoryItem = inventoryItem.copy(isEquipped = true)
-                inventoryItemRepository.updateItem(updatedInventoryItem)
+                CustomizationTypes.OUTFIT -> currentPet.copy(equippedOutfit = itemId)
+                CustomizationTypes.BACKGROUND -> currentPet.copy(equippedBackground = itemId)
+                CustomizationTypes.AURA -> currentPet.copy(equippedAura = itemId)
+                else -> return -1
             }
 
+            clearEquippedInventoryItem(currentPet, itemType)
+            val updatedInventoryItem = inventoryItem.copy(isEquipped = true)
+            inventoryItemRepository.updateItem(updatedInventoryItem)
             petDao.updatePet(updatedPet.copy(id = 1))
+            1
         } catch (e: Exception) {
             -1
         }
@@ -56,33 +58,43 @@ class PetRepositoryImpl @Inject constructor(
     override suspend fun unequipItem(itemType: String): Int {
         return try {
             val currentPet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)
-            val updatedPet = when (itemType) {
-                "HAT" -> currentPet.copy(equippedHat = null)
-                "GLASSES" -> currentPet.copy(equippedGlasses = null)
-                "SCARF" -> currentPet.copy(equippedScarf = null)
-                "BACKGROUND" -> currentPet.copy(equippedBackground = null)
-                else -> currentPet
-            }
-
-            // Update inventory item to mark as not equipped
             val equippedItemId = when (itemType) {
-                "HAT" -> currentPet.equippedHat
-                "GLASSES" -> currentPet.equippedGlasses
-                "SCARF" -> currentPet.equippedScarf
-                "BACKGROUND" -> currentPet.equippedBackground
+                CustomizationTypes.OUTFIT -> currentPet.equippedOutfit
+                CustomizationTypes.BACKGROUND -> currentPet.equippedBackground
+                CustomizationTypes.AURA -> currentPet.equippedAura
                 else -> null
             }
-            if (equippedItemId != null) {
-                val inventoryItem = inventoryItemRepository.getItemById(equippedItemId.toLong()).firstOrNull()
-                if (inventoryItem != null) {
-                    val updatedInventoryItem = inventoryItem.copy(isEquipped = false)
-                    inventoryItemRepository.updateItem(updatedInventoryItem)
-                }
+
+            val updatedPet = when (itemType) {
+                CustomizationTypes.OUTFIT -> currentPet.copy(equippedOutfit = null)
+                CustomizationTypes.BACKGROUND -> currentPet.copy(equippedBackground = null)
+                CustomizationTypes.AURA -> currentPet.copy(equippedAura = null)
+                else -> return -1
             }
 
+            clearEquippedInventoryItem(currentPet, itemType)
+            equippedItemId?.toLongOrNull()?.let { id ->
+                inventoryItemRepository.getItemById(id).firstOrNull()
+                    ?.let { inventoryItemRepository.updateItem(it.copy(isEquipped = false)) }
+            }
             petDao.updatePet(updatedPet.copy(id = 1))
+            1
         } catch (e: Exception) {
             -1
+        }
+    }
+
+    private suspend fun clearEquippedInventoryItem(pet: PetEntity, itemType: String) {
+        val equippedItemId = when (itemType) {
+            CustomizationTypes.OUTFIT -> pet.equippedOutfit
+            CustomizationTypes.BACKGROUND -> pet.equippedBackground
+            CustomizationTypes.AURA -> pet.equippedAura
+            else -> null
+        }
+
+        equippedItemId?.toLongOrNull()?.let { id ->
+            inventoryItemRepository.getItemById(id).firstOrNull()
+                ?.let { inventoryItemRepository.updateItem(it.copy(isEquipped = false)) }
         }
     }
 

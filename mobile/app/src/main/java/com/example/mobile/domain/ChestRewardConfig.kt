@@ -9,8 +9,8 @@ data class ChestRewardConfig(
     val chestType: ChestType,
     val coinRange: IntRange = 0..0,
     val expRange: IntRange = 0..0,
-    val accessoryRarity: Rarity? = null,
-    val accessoryDropChance: Double = 0.0, // 0.0 to 1.0
+    val customizationRarity: Rarity? = null,
+    val customizationDropChance: Double = 0.0, // 0.0 to 1.0
     val guaranteedReward: Boolean = false // if true, guarantees a reward of the specified type
 ) {
     /**

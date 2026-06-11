@@ -12,7 +12,7 @@ The data model includes 9 Room entities:
 3. HabitProgressEntity - Tracks timer habit progress
 4. PetEntity - Stores pet state (level, XP, equipped items)
 5. StatisticsEntity - Tracks player statistics and progress
-6. InventoryItemEntity - Manages collectible accessories
+6. InventoryItemEntity - Manages collectible customization items
 7. AchievementEntity - Tracks achievement progress and rewards
 8. JournalEntryEntity - Records game events and milestones
 9. (Implicit) Room database schema with relationships
@@ -50,10 +50,9 @@ The data model includes 9 Room entities:
 - `xp: Long` - Total experience points
 - `coins: Int` - Total coins owned
 - `evolutionStage: Int` - Evolution stage (0-4)
-- `equippedHat: String?` - Currently equipped hat item ID
-- `equippedGlasses: String?` - Currently equipped glasses item ID
-- `equippedScarf: String?` - Currently equipped scarf item ID
+- `equippedOutfit: String?` - Currently equipped outfit item ID
 - `equippedBackground: String?` - Currently equipped background item ID
+- `equippedAura: String?` - Currently equipped aura item ID
 - `mood: String` - Pet's current mood
 - `creationDate: Long` - Timestamp when pet was created
 
@@ -75,21 +74,23 @@ The data model includes 9 Room entities:
 
 **InventoryItemEntity** (table: `inventory_items`)
 - `id: Long` - Primary key (auto-generated)
+- `itemId: String` - Stable item identifier used by rendering and migrations
 - `name: String` - Item display name
-- `type: String` - Category: "HAT", "GLASSES", "SCARF", or "BACKGROUND"
-- `imageUrl: String` - Reference to image asset (currently unused)
-- `isUnlocked: Boolean` - Whether item is available for purchase
-- `isPurchased: Boolean` - Whether player has bought the item
-- `isEquipped: Boolean` - Whether item is currently equipped
+- `type: String` - Category: `OUTFIT`, `BACKGROUND`, or `AURA`
+- `imageUrl: String` - Expected asset path
+- `isUnlocked: Boolean` - Whether item is visible/purchasable in the shop
+- `isPurchased: Boolean` - Whether player owns the item
+- `isEquipped: Boolean` - Cached equipped state
 - `price: Int` - Cost in coins to purchase the item
-    - `rarity: String` - Rarity of the item (NORMAL, RARE, EPIC, LEGENDARY)
+- `rarity: Rarity` - Rarity of the item (`NORMAL`, `RARE`, `EPIC`, `LEGENDARY`)
+- `unlockSource: String` - `SHOP` or `CHEST`
 
 **Chest Reward Integration**
 The chest reward system interacts with InventoryItemEntity through the InventoryItemRepository:
-- `grantItem(itemId: Long)`: Marks an item as purchased (isPurchased = true) when awarded from a chest
-- `getUnownedItemsByType(type: String)`: Returns items not yet purchased, used to avoid duplicate chest rewards
-- Chest rewards only grant accessories that are not already owned, preventing duplicates
-- When all accessories of a rarity are owned, the chest reward falls back to coin and EXP rewards only
+- `grantItem(itemId: Long)`: Marks an item as purchased (`isPurchased = true`) when awarded from a chest
+- `getUnownedItemsByRarity(rarity: Rarity)`: Returns unpurchased items, preferring locked items first, to avoid duplicate chest rewards
+- Chest rewards only grant customization items that are not already owned, preventing duplicates
+- When all customization items of a rarity are owned, the chest reward falls back to coin and EXP rewards only
 
 **AchievementEntity** (table: `achievements`)
 - `id: Long` - Primary key (auto-generated)

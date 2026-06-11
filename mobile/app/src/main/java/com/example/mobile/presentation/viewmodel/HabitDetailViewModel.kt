@@ -344,29 +344,19 @@ class HabitDetailViewModel @Inject constructor(
                 // Initialize reward values
                 var coinAmount = config.getRandomCoins()
                 var expAmount = config.getRandomExp()
-                var accessoryId: Long? = null
+                var customizationId: Long? = null
 
-                // Determine if we should grant an accessory based on drop chance
-                if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
-                    // Try to get an unowned accessory of the specified rarity
-                    val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
+                if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
+                    val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
                         .firstOrNull()?.toList() ?: emptyList()
 
                     if (unownedItems.isNotEmpty()) {
-                        // Select a random unowned accessory
                         val selectedItem = unownedItems.random()
-                        // Grant the accessory (mark as purchased)
                         val grantResult = inventoryItemRepository.grantItem(selectedItem.id)
                         if (grantResult == 1) {
-                            // Successfully granted, set the accessory ID
-                            accessoryId = selectedItem.id
-                        } else {
-                            // Failed to grant accessory (already owned?), fall back to standard rewards
-                            // (coinAmount and expAmount are already set above)
+                            customizationId = selectedItem.id
                         }
                     }
-                    // If no unowned items available, we fall back to standard rewards
-                    // (coinAmount and expAmount are already set above)
                 }
 
                 rewardQueue.addReward(
@@ -374,7 +364,7 @@ class HabitDetailViewModel @Inject constructor(
                         rewardType = "level_up_${chestType.name.lowercase()}",
                         amount = coinAmount,
                         expAmount = expAmount,
-                        accessoryId = accessoryId
+                        customizationId = customizationId
                     )
                 )
             }

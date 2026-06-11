@@ -109,9 +109,9 @@ All event systems use hardcoded values:
 - StreakEngine global streak milestones: 7, 14, 30, 60, and 100 days
 - StreakEngine chest reward amounts come from ChestRewardConfigProvider and EconomyConfig
 - HabitDetailViewModel level-up coins: level × 10
-- HabitDetailViewModel level-up chest: 20 coins
-- HabitDetailViewModel timer habit coins: (10 + sessionMinutes)
-- HabitDetailViewModel checkbox habit coins: 1 (commented out in favor of XP-only)
+- HabitDetailViewModel level-up chest: randomized coins, EXP, and possible customization item from `ChestRewardConfigProvider`
+- HabitDetailViewModel timer habit coins: 5 base coins + 2 coins per minute
+- HabitDetailViewModel checkbox habit coins: 10 coins
 
 ## Data Model
 

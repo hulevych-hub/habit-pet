@@ -124,16 +124,16 @@ class StreakEngine(
 
         var coinAmount = config.getRandomCoins()
         var expAmount = config.getRandomExp()
-        var accessoryId: Long? = null
+        var customizationId: Long? = null
 
-        if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
-            val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
+        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
+            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
                 .firstOrNull()?.toList() ?: emptyList()
 
             if (unownedItems.isNotEmpty()) {
                 val selectedItem = unownedItems.random()
                 if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
-                    accessoryId = selectedItem.id
+                    customizationId = selectedItem.id
                 }
             }
         }
@@ -143,7 +143,7 @@ class StreakEngine(
             rewardType = rewardType,
             amount = coinAmount,
             expAmount = expAmount,
-            accessoryId = accessoryId
+            customizationId = customizationId
         )
 
         val summary = buildRewardSummary(
@@ -151,8 +151,8 @@ class StreakEngine(
             chestType = chestType,
             coinAmount = coinAmount,
             expAmount = expAmount,
-            accessoryId = accessoryId,
-            hasAccessoryChance = config.accessoryRarity != null
+            customizationId = customizationId,
+            hasCustomizationChance = config.customizationRarity != null
         )
 
         return StreakChestReward(event, summary)
@@ -163,8 +163,8 @@ class StreakEngine(
         chestType: ChestType,
         coinAmount: Int,
         expAmount: Int,
-        accessoryId: Long?,
-        hasAccessoryChance: Boolean
+        customizationId: Long?,
+        hasCustomizationChance: Boolean
     ): List<String> {
         val summary = mutableListOf(
             "$streak Day Streak Milestone",
@@ -179,10 +179,10 @@ class StreakEngine(
             summary.add("+$expAmount EXP")
         }
 
-        if (accessoryId != null) {
-            summary.add("Accessory unlocked")
-        } else if (hasAccessoryChance) {
-            summary.add("Accessory chance")
+        if (customizationId != null) {
+            summary.add("Customization unlocked")
+        } else if (hasCustomizationChance) {
+            summary.add("Customization chance")
         }
 
         return summary

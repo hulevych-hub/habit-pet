@@ -50,7 +50,7 @@ fun AchievementScreen(
     val error by achievementViewModel.error.collectAsState()
     val stats by achievementViewModel.statistics.collectAsState()
     val pet by achievementViewModel.pet.collectAsState()
-    val ownedAccessories by achievementViewModel.ownedAccessories.collectAsState()
+    val ownedCustomizations by achievementViewModel.ownedCustomizations.collectAsState()
     val habitCount by achievementViewModel.habitCount.collectAsState()
 
     val unlockedCount = achievements.count { it.isUnlocked }
@@ -123,7 +123,7 @@ fun AchievementScreen(
                                 achievement = achievement,
                                 stats = stats,
                                 pet = pet,
-                                ownedAccessories = ownedAccessories,
+                                ownedCustomizations = ownedCustomizations,
                                 habitCount = habitCount,
                                 viewModel = achievementViewModel
                             )
@@ -183,7 +183,7 @@ private fun AchievementItem(
     achievement: AchievementEntity,
     stats: StatisticsEntity,
     pet: PetEntity,
-    ownedAccessories: Int,
+    ownedCustomizations: Int,
     habitCount: Int,
     viewModel: AchievementViewModel
 ) {
@@ -191,7 +191,7 @@ private fun AchievementItem(
         achievement = achievement,
         stats = stats,
         petState = pet,
-        ownedAccessoryCount = ownedAccessories,
+        ownedCustomizationCount = ownedCustomizations,
         currentHabitCount = habitCount
     )
     val progress = viewModel.progressFraction(currentValue, achievement).coerceIn(0f, 1f)

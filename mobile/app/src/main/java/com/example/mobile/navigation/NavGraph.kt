@@ -117,7 +117,7 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
                     )
                 }
                 composable("pet") { PetScreen() }
-                composable("rewards") { RewardsScreen() }
+                composable("collection") { RewardsScreen() }
                 composable("statistics") { StatisticsScreen() }
                 composable("achievements") { AchievementScreen() }
                 composable("journal") { JournalScreen() }
@@ -144,7 +144,7 @@ private fun HabitPetBottomBar(
         BottomDestination("home", "Home", Icons.Default.Home),
         BottomDestination("habits", "Habits", Icons.Default.Checklist),
         BottomDestination("pet", "Pet", Icons.Default.Pets),
-        BottomDestination("rewards", "Rewards", Icons.Default.CardGiftcard),
+        BottomDestination("collection", "Collection", Icons.Default.CardGiftcard),
         BottomDestination("statistics", "Stats", Icons.Default.BarChart),
         BottomDestination(
             route = "achievements",

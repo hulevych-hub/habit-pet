@@ -31,7 +31,7 @@ class HabitPetApp : Application() {
 
         statisticsInitializer.initializeStatisticsAsync()
 
-        inventoryItemInitializer.initializeAccessoriesAsync()
+        inventoryItemInitializer.initializeCustomizationItemsAsync()
 
         achievementEngine
 

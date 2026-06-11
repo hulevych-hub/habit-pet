@@ -13,19 +13,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.data.local.entities.PetEntity
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -34,14 +30,6 @@ class PetViewModel @Inject constructor(
     private val petRepository: PetRepository
 ) : ViewModel() {
     val pet = petRepository.getPet()
-
-    fun equipItem(itemType: String, itemId: String) = viewModelScope.launch {
-        petRepository.equipItem(itemType, itemId)
-    }
-
-    fun unequipItem(itemType: String) = viewModelScope.launch {
-        petRepository.unequipItem(itemType)
-    }
 
     fun renamePet(name: String, currentPet: PetEntity) = viewModelScope.launch {
         petRepository.updatePet(currentPet.copy(id = 1, name = name))
@@ -152,40 +140,13 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Equipment Section
-            Text("Equipment", style = MaterialTheme.typography.titleLarge)
+            Text("Customization", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                EquipmentSlot(
-                    label = "Hat",
-                    equippedItem = pet.equippedHat,
-                    onUnequipClick = { petViewModel.unequipItem("HAT") }
-                )
-                EquipmentSlot(
-                    label = "Glasses",
-                    equippedItem = pet.equippedGlasses,
-                    onUnequipClick = { petViewModel.unequipItem("GLASSES") }
-                )
-                EquipmentSlot(
-                    label = "Scarf",
-                    equippedItem = pet.equippedScarf,
-                    onUnequipClick = { petViewModel.unequipItem("SCARF") }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            EquipmentSlot(
-                label = "Background",
-                equippedItem = pet.equippedBackground,
-                onUnequipClick = { petViewModel.unequipItem("BACKGROUND") }
+            CustomizationSummary(
+                outfit = pet.equippedOutfit,
+                background = pet.equippedBackground,
+                aura = pet.equippedAura
             )
         }
     }
@@ -289,29 +250,43 @@ private fun calculateXpForNextLevel(level: Int): Int {
 }
 
 @Composable
-private fun EquipmentSlot(
-    label: String,
-    equippedItem: String?,
-    onUnequipClick: (() -> Unit)? = null
+private fun CustomizationSummary(
+    outfit: String?,
+    background: String?,
+    aura: String?
 ) {
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp)
             .background(
-                if (equippedItem != null) Color.Green.copy(alpha = 0.2f) else Color.Gray.copy(alpha = 0.2f),
+                MaterialTheme.colorScheme.surfaceVariant,
                 shape = MaterialTheme.shapes.medium
             )
-            .clickable { if (equippedItem != null) onUnequipClick?.invoke() }
-        ,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        Icon(
-            imageVector = if (equippedItem != null) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-            contentDescription = if (equippedItem != null) "$label equipped" else "No $label",
-            tint = if (equippedItem != null) Color.Green else Color.Gray,
-            modifier = Modifier.size(24.dp)
+        SummaryLine("Outfit", outfit)
+        SummaryLine("Background", background)
+        SummaryLine("Aura", aura)
+    }
+}
+
+@Composable
+private fun SummaryLine(
+    label: String,
+    value: String?
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            value ?: "None",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Text(label)
-        Text(equippedItem ?: "None", style = MaterialTheme.typography.bodySmall)
     }
 }

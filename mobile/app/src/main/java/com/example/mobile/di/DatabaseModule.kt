@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.mobile.data.local.database.AppDatabase
 import com.example.mobile.data.local.database.InventoryItemDatabaseInitializer
+import com.example.mobile.data.local.database.MIGRATION_12_13
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
@@ -33,6 +34,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "habit_pet_database"
         )
+        .addMigrations(MIGRATION_12_13)
         .fallbackToDestructiveMigration()
         .build()
     }

@@ -86,8 +86,8 @@ class RewardManager @Inject constructor(
                         addPetExp(current.expAmount)
                     }
 
-                    current.accessoryId?.let { accessoryId ->
-                        inventoryItemRepository.grantItem(accessoryId)
+                    current.customizationId?.let { customizationId ->
+                        inventoryItemRepository.grantItem(customizationId)
                     }
                 }
 
@@ -115,10 +115,10 @@ class RewardManager @Inject constructor(
         val config = ChestRewardConfigProvider.getConfig(chestType)
         var coinAmount = config.getRandomCoins()
         var expAmount = config.getRandomExp()
-        var accessoryId: Long? = null
+        var customizationId: Long? = null
 
-        if (config.accessoryRarity != null && Math.random() < config.accessoryDropChance) {
-            val unownedItems = inventoryItemRepository.getUnownedItemsByType(config.accessoryRarity.name)
+        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
+            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
                 .firstOrNull()
                 ?.toList()
                 .orEmpty()
@@ -126,7 +126,7 @@ class RewardManager @Inject constructor(
             if (unownedItems.isNotEmpty()) {
                 val selectedItem = unownedItems.random()
                 if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
-                    accessoryId = selectedItem.id
+                    customizationId = selectedItem.id
                 }
             }
         }
@@ -135,7 +135,7 @@ class RewardManager @Inject constructor(
             rewardType = "achievement_${chestType.name.lowercase()}",
             amount = coinAmount,
             expAmount = expAmount,
-            accessoryId = accessoryId
+            customizationId = customizationId
         )
     }
 }

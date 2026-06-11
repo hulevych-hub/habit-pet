@@ -119,22 +119,20 @@ class AchievementEngine @Inject constructor(
     private fun observeCollectionAchievements() {
         scope.launch {
             combine(
-                inventoryItemRepository.getItemsByType("HAT"),
-                inventoryItemRepository.getItemsByType("GLASSES"),
-                inventoryItemRepository.getItemsByType("SCARF"),
-                inventoryItemRepository.getItemsByType("BACKGROUND")
-            ) { hats, glasses, scarves, backgrounds ->
-                hats.count { it.isPurchased } +
-                    glasses.count { it.isPurchased } +
-                    scarves.count { it.isPurchased } +
-                    backgrounds.count { it.isPurchased }
+                inventoryItemRepository.getItemsByType(CustomizationTypes.OUTFIT),
+                inventoryItemRepository.getItemsByType(CustomizationTypes.BACKGROUND),
+                inventoryItemRepository.getItemsByType(CustomizationTypes.AURA)
+            ) { outfits, backgrounds, auras ->
+                outfits.count { it.isPurchased } +
+                    backgrounds.count { it.isPurchased } +
+                    auras.count { it.isPurchased }
             }
                 .distinctUntilChanged()
                 .collectLatest { ownedCount ->
-                    Log.d("AchievementEngine", "Owned accessories = $ownedCount")
+                    Log.d("AchievementEngine", "Owned customization items = $ownedCount")
 
-                    if (ownedCount >= 1) unlockAchievement("First Accessory")
-                    if (ownedCount >= 5) unlockAchievement("Accessory Collector")
+                    if (ownedCount >= 1) unlockAchievement("First Customization")
+                    if (ownedCount >= 5) unlockAchievement("Customization Collector")
                 }
         }
     }

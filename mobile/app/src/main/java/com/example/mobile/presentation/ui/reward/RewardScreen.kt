@@ -102,7 +102,7 @@ fun RewardScreen(
                     rewardType = reward.rewardType,
                     amount = reward.amount,
                     expAmount = reward.expAmount,
-                    accessoryId = reward.accessoryId
+                    customizationId = reward.customizationId
                 )
 
                 is RewardUiEvent.AchievementReward -> AchievementRewardContent(
@@ -164,7 +164,7 @@ private fun ChestRewardContent(
     rewardType: String,
     amount: Any,
     expAmount: Int = 0,
-    accessoryId: Long? = null
+    customizationId: Long? = null
 ) {
     var isOpen by remember { mutableStateOf(false) }
 
@@ -200,10 +200,9 @@ private fun ChestRewardContent(
                 rewardText.add("+$expAmount EXP")
             }
 
-            // Note: Accessory rewards would require accessing the inventory to get the name
-            // For now, we'll show a generic message if an accessory is included
-            if (accessoryId != null) {
-                rewardText.add("Accessory!")
+            // Note: customization names would require loading the inventory item.
+            if (customizationId != null) {
+                rewardText.add("Customization unlocked!")
             }
 
             // Display all rewards

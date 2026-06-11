@@ -2,13 +2,13 @@
 
 ## Overview
 
-The achievements system gives players long-term goals across habit creation, habit completion, streaks, XP, pet levels, and accessory collection. Achievements unlock automatically when tracked game milestones are reached, then appear as claimable rewards in the Achievements screen.
+The achievements system gives players long-term goals across habit creation, habit completion, streaks, XP, pet levels, and customization collection. Achievements unlock automatically when tracked game milestones are reached, then appear as claimable rewards in the Achievements screen.
 
 ## Current Implementation
 
 Achievements are persisted in Room and monitored by `AchievementEngine`. The flow is:
 
-1. `AchievementEngine` observes habit, streak, completion, XP, level, and accessory collection state.
+1. `AchievementEngine` observes habit, streak, completion, XP, level, and customization collection state.
 2. `StreakEngine` observes daily all-habits completion and emits global streak milestone events.
 3. When a threshold is reached, the matching achievement is marked unlocked.
 4. The player opens the Achievements screen and claims unlocked rewards.
@@ -89,15 +89,15 @@ The game initializes with predefined achievements:
    - Reward: 500 coins
    - Unlock condition: pet level >= 25
 
-10. **First Accessory**
-    - Target: unlock 1 accessory
+10. **First Customization**
+    - Target: unlock 1 customization item
     - Reward: 75 coins
-    - Unlock condition: purchased accessory count >= 1
+    - Unlock condition: purchased customization count >= 1
 
-11. **Accessory Collector**
-    - Target: unlock 5 accessories
+11. **Customization Collector**
+    - Target: unlock 5 customization items
     - Reward: Rare chest
-    - Unlock condition: purchased accessory count >= 5
+    - Unlock condition: purchased customization count >= 5
 
 ## Achievement Unlocking
 
@@ -108,7 +108,7 @@ The game initializes with predefined achievements:
 - Total habit completions
 - Pet XP
 - Pet level
-- Purchased accessory count across hats, glasses, scarves, and backgrounds
+- Purchased customization count across outfits, backgrounds, and auras
 
 When a condition is met, the engine:
 
@@ -136,7 +136,7 @@ When the player taps **Claim**:
 - `rewardCoins` are added with `statisticsRepository.addCoins(...)`.
 - `expAmount` is added to the current pet.
 - `chestType` creates a follow-up `RewardUiEvent.ChestReward`.
-- Chest rewards use `ChestRewardConfigProvider` and may grant coins, EXP, and accessories through `InventoryItemRepository`.
+- Chest rewards use `ChestRewardConfigProvider` and may grant coins, EXP, and customization items through `InventoryItemRepository`.
 
 This keeps achievement rewards inside the same reward flow used by streaks, level-ups, evolutions, and chest openings.
 

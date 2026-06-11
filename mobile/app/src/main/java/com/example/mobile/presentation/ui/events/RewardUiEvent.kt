@@ -23,6 +23,6 @@ sealed class RewardUiEvent {
         val rewardType: String,
         val amount: Any,
         val expAmount: Int = 0,
-        val accessoryId: Long? = null
+        val customizationId: Long? = null
     ) : RewardUiEvent()
 }

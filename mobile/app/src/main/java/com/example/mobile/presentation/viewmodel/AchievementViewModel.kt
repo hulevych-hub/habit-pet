@@ -6,6 +6,7 @@ import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.AchievementEngine
+import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
@@ -71,16 +72,14 @@ class AchievementViewModel @Inject constructor(
             initialValue = 0
         )
 
-    val ownedAccessories: StateFlow<Int> = combine(
-        inventoryItemRepository.getItemsByType("HAT"),
-        inventoryItemRepository.getItemsByType("GLASSES"),
-        inventoryItemRepository.getItemsByType("SCARF"),
-        inventoryItemRepository.getItemsByType("BACKGROUND")
-    ) { hats, glasses, scarves, backgrounds ->
-        hats.count { it.isPurchased } +
-            glasses.count { it.isPurchased } +
-            scarves.count { it.isPurchased } +
-            backgrounds.count { it.isPurchased }
+    val ownedCustomizations: StateFlow<Int> = combine(
+        inventoryItemRepository.getItemsByType(CustomizationTypes.OUTFIT),
+        inventoryItemRepository.getItemsByType(CustomizationTypes.BACKGROUND),
+        inventoryItemRepository.getItemsByType(CustomizationTypes.AURA)
+    ) { outfits, backgrounds, auras ->
+        outfits.count { it.isPurchased } +
+            backgrounds.count { it.isPurchased } +
+            auras.count { it.isPurchased }
     }
         .stateIn(
             scope = viewModelScope,
@@ -119,7 +118,7 @@ class AchievementViewModel @Inject constructor(
         achievement: AchievementEntity,
         stats: StatisticsEntity,
         petState: PetEntity,
-        ownedAccessoryCount: Int,
+        ownedCustomizationCount: Int,
         currentHabitCount: Int
     ): Int {
         if (achievement.isUnlocked) return achievement.targetValue
@@ -130,7 +129,7 @@ class AchievementViewModel @Inject constructor(
             "100 Completions" -> stats.totalCompletions
             "1000 XP", "5000 XP" -> petState.xp.toInt()
             "Level 10", "Level 25" -> petState.level
-            "First Accessory", "Accessory Collector" -> ownedAccessoryCount
+            "First Customization", "Customization Collector" -> ownedCustomizationCount
             else -> 0
         }.coerceAtLeast(0)
     }

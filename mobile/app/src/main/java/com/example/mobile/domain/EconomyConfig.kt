@@ -99,17 +99,17 @@ object EconomyConfig {
     val LEGENDARY_CHEST_EXP_RANGE = 350..800
 
     // =========================
-    // CHEST REWARDS - ACCESSORY DROP CHANCES
+    // CHEST REWARDS - CUSTOMIZATION DROP CHANCES
     // =========================
 
-    /** Rare chest accessory drop chance */
-    const val RARE_CHEST_ACCESSORY_DROP_CHANCE: Double = 0.15  // 15%
+    /** Rare chest customization drop chance */
+    const val RARE_CHEST_CUSTOMIZATION_DROP_CHANCE: Double = 0.15  // 15%
 
-    /** Epic chest accessory drop chance */
-    const val EPIC_CHEST_ACCESSORY_DROP_CHANCE: Double = 0.30  // 30%
+    /** Epic chest customization drop chance */
+    const val EPIC_CHEST_CUSTOMIZATION_DROP_CHANCE: Double = 0.30  // 30%
 
-    /** Legendary chest accessory drop chance */
-    const val LEGENDARY_CHEST_ACCESSORY_DROP_CHANCE: Double = 0.50  // 50%
+    /** Legendary chest customization drop chance */
+    const val LEGENDARY_CHEST_CUSTOMIZATION_DROP_CHANCE: Double = 0.50  // 50%
 
     // =========================
     // CHEST TYPE PROBABILITIES
@@ -122,11 +122,11 @@ object EconomyConfig {
     const val CHEST_LEGENDARY_PROBABILITY: Double = 0.03  // 3%
 
     // =========================
-    // ACCESSORY PRICING
+    // CUSTOMIZATION PRICING
     // =========================
 
-    /** Base price multiplier for accessory rarity */
-    const val ACCESSORY_BASE_PRICE: Int = 100
+    /** Base price multiplier for customization rarity */
+    const val CUSTOMIZATION_BASE_PRICE: Int = 100
 
     /** Price multipliers by rarity */
     val RARITY_PRICE_MULTIPLIER = mapOf(
@@ -137,41 +137,41 @@ object EconomyConfig {
     )
 
     /**
-     * Calculates the price for an accessory based on its rarity.
+     * Calculates the price for a customization item based on its rarity.
      */
-    fun accessoryPrice(rarity: Rarity): Int {
+    fun customizationPrice(rarity: Rarity): Int {
         val multiplier = RARITY_PRICE_MULTIPLIER[rarity] ?: 1.0
-        return (ACCESSORY_BASE_PRICE * multiplier).toInt()
+        return (CUSTOMIZATION_BASE_PRICE * multiplier).toInt()
     }
 
     // =========================
     // ECONOMY BALANCE TARGETS
     // =========================
 
-    /** Target coins earned per day (active player completing ~3 habits) */
+    /** Target coins earned per day for an active player completing ~3 habits plus recurring chest rewards */
     const val TARGET_DAILY_COINS: Int = 100
 
-    /** Target coins needed to buy one Normal accessory */
-    const val TARGET_NORMAL_ACCESSORY_COST: Int = 100
+    /** Target coins needed to buy one Normal customization item */
+    const val TARGET_NORMAL_CUSTOMIZATION_COST: Int = 100
 
-    /** Target coins needed to buy one Rare accessory */
-    const val TARGET_RARE_ACCESSORY_COST: Int = 300
+    /** Target coins needed to buy one Rare customization item */
+    const val TARGET_RARE_CUSTOMIZATION_COST: Int = 300
 
-    /** Target coins needed to buy one Epic accessory */
-    const val TARGET_EPIC_ACCESSORY_COST: Int = 800
+    /** Target coins needed to buy one Epic customization item */
+    const val TARGET_EPIC_CUSTOMIZATION_COST: Int = 800
 
-    /** Target coins needed to buy one Legendary accessory */
-    const val TARGET_LEGENDARY_ACCESSORY_COST: Int = 2000
+    /** Target coins needed to buy one Legendary customization item */
+    const val TARGET_LEGENDARY_CUSTOMIZATION_COST: Int = 2000
 
-    /** Approximate days to save for a Normal accessory (no spending) */
-    const val DAYS_FOR_NORMAL_ACCESSORY: Int = TARGET_NORMAL_ACCESSORY_COST / TARGET_DAILY_COINS
+    /** Approximate days to save for a Normal customization item (no spending) */
+    const val DAYS_FOR_NORMAL_CUSTOMIZATION: Int = TARGET_NORMAL_CUSTOMIZATION_COST / TARGET_DAILY_COINS
 
-    /** Approximate days to save for a Rare accessory (no spending) */
-    const val DAYS_FOR_RARE_ACCESSORY: Int = TARGET_RARE_ACCESSORY_COST / TARGET_DAILY_COINS
+    /** Approximate days to save for a Rare customization item (no spending) */
+    const val DAYS_FOR_RARE_CUSTOMIZATION: Int = TARGET_RARE_CUSTOMIZATION_COST / TARGET_DAILY_COINS
 
-    /** Approximate days to save for an Epic accessory (no spending) */
-    const val DAYS_FOR_EPIC_ACCESSORY: Int = TARGET_EPIC_ACCESSORY_COST / TARGET_DAILY_COINS
+    /** Approximate days to save for an Epic customization item (no spending) */
+    const val DAYS_FOR_EPIC_CUSTOMIZATION: Int = TARGET_EPIC_CUSTOMIZATION_COST / TARGET_DAILY_COINS
 
-    /** Approximate days to save for a Legendary accessory (no spending) */
-    const val DAYS_FOR_LEGENDARY_ACCESSORY: Int = TARGET_LEGENDARY_ACCESSORY_COST / TARGET_DAILY_COINS
+    /** Approximate days to save for a Legendary customization item (no spending) */
+    const val DAYS_FOR_LEGENDARY_CUSTOMIZATION: Int = TARGET_LEGENDARY_CUSTOMIZATION_COST / TARGET_DAILY_COINS
 }

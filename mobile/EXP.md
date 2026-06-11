@@ -12,7 +12,7 @@ The EXP system is implemented across multiple components:
 - XP determines pet level and evolution stage
 - Level progression uses a formula where each level requires increasingly more XP
 - Evolution stages are determined by XP thresholds
-- XP observations trigger achievement unlocks (e.g., 1000 XP achievement)
+- XP observations trigger achievement unlocks (e.g. 1000 XP achievement)
 - **Centralized configuration: `ExpConfig`** (single source of truth)
 
 ## Rules
@@ -54,6 +54,7 @@ Pet evolution stages are determined by XP thresholds (**NOW CONSISTENT - single 
 
 - **Coins**: level × 10 (from `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`)
 - **Chest**: Random chest reward (Normal 55%, Rare 30%, Epic 12%, Legendary 3%)
+- Chest rewards may include coins, EXP, and a chance for customization items based on `EconomyConfig` and `ChestRewardConfigProvider`
 
 ## Configuration
 
@@ -80,7 +81,7 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
-- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (NEW - centralized configuration)
+- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (centralized configuration)
 
 ## Known Gaps (RESOLVED)
 
@@ -93,17 +94,27 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 | Level | Total XP Required | Est. Habits (Checkbox) | Est. Days (3/day) |
 |-------|-------------------|------------------------|-------------------|
 | 1 | 100 | 1 | 0.3 |
-| 5 | 750 | 8 | 2.5 |
-| 10 | 3,250 | 33 | 11 |
-| 15 | 8,000 | 80 | 27 |
-| 20 | 15,750 | 158 | 53 |
-| 25 | 26,500 | 265 | 88 |
-| 30 | 40,250 | 403 | 134 |
-| 40 | 75,750 | 758 | 253 |
-| 50 | 121,250 | 1,213 | 404 |
+| 5 | 1,000 | 10 | 3.3 |
+| 10 | 3,250 | 32.5 | 10.8 |
+| 15 | 6,750 | 67.5 | 22.5 |
+| 20 | 11,500 | 115 | 38.3 |
+| 25 | 17,500 | 175 | 58.3 |
+| 30 | 24,750 | 247.5 | 82.5 |
+| 40 | 43,000 | 430 | 143.3 |
+| 50 | 66,250 | 662.5 | 220.8 |
 
 **Evolution Milestones:**
-- Hatchling (Stage 1): 500 XP → ~5 habits → ~1.5 days
+- Hatchling (Stage 1): 500 XP → ~5 habits → ~1.7 days
 - Young Dragon (Stage 2): 1,500 XP → ~15 habits → ~5 days
 - Adult Dragon (Stage 3): 3,000 XP → ~30 habits → ~10 days
 - Ancient Dragon (Stage 4): 6,000 XP → ~60 habits → ~20 days
+
+*Assumes 100 XP per checkbox habit and no timer-habit bonus XP.*
+
+## Balance Notes
+
+- Three checkbox habits per day produce 300 XP/day and 30 coins/day.
+- Timer habits accelerate XP and coin gain when completed for their configured minimum duration.
+- Level-up base coins are awarded directly with XP progression.
+- Level-up chests add additional coins, EXP, and occasional customization items, keeping early-game economy near the target of roughly 100 coins/day when recurring rewards are included.
+- Evolution remains progression-gated by XP only, with no additional item or streak requirements.

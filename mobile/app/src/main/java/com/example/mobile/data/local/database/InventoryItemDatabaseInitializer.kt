@@ -1,10 +1,10 @@
 package com.example.mobile.data.local.database
 
-import android.content.Context
 import com.example.mobile.data.local.database.AppDatabase
 import com.example.mobile.data.local.dao.InventoryItemDao
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
+import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.EconomyConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,239 +12,177 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
- * Initializes the database with default accessories on first launch.
+ * Initializes the database with default customization items on first launch.
  * Prices are balanced according to EconomyConfig.
  */
 class InventoryItemDatabaseInitializer(private val database: AppDatabase) {
 
-    suspend fun initializeAccessories() {
+    suspend fun initializeCustomizationItems() {
         val inventoryItemDao = database.inventoryItemDao()
 
-        // Check if accessories are already populated
         val existingCount = inventoryItemDao.getAllItems().first().size
 
         if (existingCount == 0) {
-            val defaultAccessories = buildDefaultAccessories()
-            for (accessory in defaultAccessories) {
-                inventoryItemDao.insertItem(accessory)
+            val defaultItems = buildDefaultCustomizationItems()
+            for (item in defaultItems) {
+                inventoryItemDao.insertItem(item)
             }
         }
     }
 
-    fun initializeAccessoriesAsync() {
+    fun initializeCustomizationItemsAsync() {
         CoroutineScope(Dispatchers.IO).launch {
-            initializeAccessories()
+            initializeCustomizationItems()
         }
     }
 
-    private fun buildDefaultAccessories(): List<InventoryItemEntity> {
+    private fun buildDefaultCustomizationItems(): List<InventoryItemEntity> {
         return listOf(
-            // =========================
-            // HATS (4 items)
-            // =========================
-
-            // Normal Hat - 100 coins
             InventoryItemEntity(
-                name = "Simple Cap",
-                type = "HAT",
-                imageUrl = "accessories/hat/simple_cap.png",
+                itemId = "royal_scarf",
+                name = "Royal Scarf",
+                type = CustomizationTypes.OUTFIT,
+                imageUrl = "outfits/royal_scarf.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.NORMAL),
-                rarity = Rarity.NORMAL
+                price = EconomyConfig.customizationPrice(Rarity.NORMAL),
+                rarity = Rarity.NORMAL,
+                unlockSource = "SHOP"
             ),
-
-            // Rare Hat - 300 coins
             InventoryItemEntity(
-                name = "Top Hat",
-                type = "HAT",
-                imageUrl = "accessories/hat/top_hat.png",
+                itemId = "crystal_crown",
+                name = "Crystal Crown",
+                type = CustomizationTypes.OUTFIT,
+                imageUrl = "outfits/crystal_crown.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.RARE),
-                rarity = Rarity.RARE
+                price = EconomyConfig.customizationPrice(Rarity.RARE),
+                rarity = Rarity.RARE,
+                unlockSource = "SHOP"
             ),
-
-            // Epic Hat - 800 coins
             InventoryItemEntity(
-                name = "Wizard Hat",
-                type = "HAT",
-                imageUrl = "accessories/hat/wizard_hat.png",
+                itemId = "mystic_cloak",
+                name = "Mystic Cloak",
+                type = CustomizationTypes.OUTFIT,
+                imageUrl = "outfits/mystic_cloak.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.EPIC),
-                rarity = Rarity.EPIC
+                price = EconomyConfig.customizationPrice(Rarity.EPIC),
+                rarity = Rarity.EPIC,
+                unlockSource = "SHOP"
             ),
-
-            // Legendary Hat - 2000 coins
             InventoryItemEntity(
-                name = "Crown of Stars",
-                type = "HAT",
-                imageUrl = "accessories/hat/crown_of_stars.png",
-                isUnlocked = true,
+                itemId = "starlight_armor",
+                name = "Starlight Armor",
+                type = CustomizationTypes.OUTFIT,
+                imageUrl = "outfits/starlight_armor.png",
+                isUnlocked = false,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.LEGENDARY),
-                rarity = Rarity.LEGENDARY
+                price = EconomyConfig.customizationPrice(Rarity.LEGENDARY),
+                rarity = Rarity.LEGENDARY,
+                unlockSource = "CHEST"
             ),
 
-            // =========================
-            // GLASSES (4 items)
-            // =========================
-
-            // Normal Glasses - 100 coins
             InventoryItemEntity(
-                name = "Round Glasses",
-                type = "GLASSES",
-                imageUrl = "accessories/glasses/round_glasses.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.NORMAL),
-                rarity = Rarity.NORMAL
-            ),
-
-            // Rare Glasses - 300 coins
-            InventoryItemEntity(
-                name = "Aviator Shades",
-                type = "GLASSES",
-                imageUrl = "accessories/glasses/aviator_shades.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.RARE),
-                rarity = Rarity.RARE
-            ),
-
-            // Epic Glasses - 800 coins
-            InventoryItemEntity(
-                name = "Neon Visor",
-                type = "GLASSES",
-                imageUrl = "accessories/glasses/neon_visor.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.EPIC),
-                rarity = Rarity.EPIC
-            ),
-
-            // Legendary Glasses - 2000 coins
-            InventoryItemEntity(
-                name = "Ethereal Lens",
-                type = "GLASSES",
-                imageUrl = "accessories/glasses/ethereal_lens.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.LEGENDARY),
-                rarity = Rarity.LEGENDARY
-            ),
-
-            // =========================
-            // SCARVES (4 items)
-            // =========================
-
-            // Normal Scarf - 100 coins
-            InventoryItemEntity(
-                name = "Red Scarf",
-                type = "SCARF",
-                imageUrl = "accessories/scarf/red_scarf.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.NORMAL),
-                rarity = Rarity.NORMAL
-            ),
-
-            // Rare Scarf - 300 coins
-            InventoryItemEntity(
-                name = "Silk Scarf",
-                type = "SCARF",
-                imageUrl = "accessories/scarf/silk_scarf.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.RARE),
-                rarity = Rarity.RARE
-            ),
-
-            // Epic Scarf - 800 coins
-            InventoryItemEntity(
-                name = "Mystic Shawl",
-                type = "SCARF",
-                imageUrl = "accessories/scarf/mystic_shawl.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.EPIC),
-                rarity = Rarity.EPIC
-            ),
-
-            // Legendary Scarf - 2000 coins
-            InventoryItemEntity(
-                name = "Dragon's Breath",
-                type = "SCARF",
-                imageUrl = "accessories/scarf/dragons_breath.png",
-                isUnlocked = true,
-                isPurchased = false,
-                isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.LEGENDARY),
-                rarity = Rarity.LEGENDARY
-            ),
-
-            // =========================
-            // BACKGROUNDS (4 items)
-            // =========================
-
-            // Normal Background - 100 coins
-            InventoryItemEntity(
+                itemId = "background_forest",
                 name = "Sunny Meadow",
-                type = "BACKGROUND",
-                imageUrl = "accessories/background/sunny_meadow.png",
+                type = CustomizationTypes.BACKGROUND,
+                imageUrl = "background_forest.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.NORMAL),
-                rarity = Rarity.NORMAL
+                price = EconomyConfig.customizationPrice(Rarity.NORMAL),
+                rarity = Rarity.NORMAL,
+                unlockSource = "SHOP"
             ),
-
-            // Rare Background - 300 coins
             InventoryItemEntity(
+                itemId = "background_beach",
                 name = "Crystal Cave",
-                type = "BACKGROUND",
-                imageUrl = "accessories/background/crystal_cave.png",
+                type = CustomizationTypes.BACKGROUND,
+                imageUrl = "background_beach.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.RARE),
-                rarity = Rarity.RARE
+                price = EconomyConfig.customizationPrice(Rarity.RARE),
+                rarity = Rarity.RARE,
+                unlockSource = "SHOP"
             ),
-
-            // Epic Background - 800 coins
             InventoryItemEntity(
+                itemId = "background_mountains",
                 name = "Floating Islands",
-                type = "BACKGROUND",
-                imageUrl = "accessories/background/floating_islands.png",
+                type = CustomizationTypes.BACKGROUND,
+                imageUrl = "background_mountains.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.EPIC),
-                rarity = Rarity.EPIC
+                price = EconomyConfig.customizationPrice(Rarity.EPIC),
+                rarity = Rarity.EPIC,
+                unlockSource = "SHOP"
+            ),
+            InventoryItemEntity(
+                itemId = "background_night_sky",
+                name = "Celestial Realm",
+                type = CustomizationTypes.BACKGROUND,
+                imageUrl = "background_night_sky.png",
+                isUnlocked = false,
+                isPurchased = false,
+                isEquipped = false,
+                price = EconomyConfig.customizationPrice(Rarity.LEGENDARY),
+                rarity = Rarity.LEGENDARY,
+                unlockSource = "CHEST"
             ),
 
-            // Legendary Background - 2000 coins
             InventoryItemEntity(
-                name = "Celestial Realm",
-                type = "BACKGROUND",
-                imageUrl = "accessories/background/celestial_realm.png",
+                itemId = "soft_glow",
+                name = "Soft Glow",
+                type = CustomizationTypes.AURA,
+                imageUrl = "auras/soft_glow.png",
                 isUnlocked = true,
                 isPurchased = false,
                 isEquipped = false,
-                price = EconomyConfig.accessoryPrice(Rarity.LEGENDARY),
-                rarity = Rarity.LEGENDARY
+                price = EconomyConfig.customizationPrice(Rarity.NORMAL),
+                rarity = Rarity.NORMAL,
+                unlockSource = "SHOP"
+            ),
+            InventoryItemEntity(
+                itemId = "crystal_aura",
+                name = "Crystal Aura",
+                type = CustomizationTypes.AURA,
+                imageUrl = "auras/crystal_aura.png",
+                isUnlocked = true,
+                isPurchased = false,
+                isEquipped = false,
+                price = EconomyConfig.customizationPrice(Rarity.RARE),
+                rarity = Rarity.RARE,
+                unlockSource = "SHOP"
+            ),
+            InventoryItemEntity(
+                itemId = "dragonfire_aura",
+                name = "Dragonfire Aura",
+                type = CustomizationTypes.AURA,
+                imageUrl = "auras/dragonfire_aura.png",
+                isUnlocked = true,
+                isPurchased = false,
+                isEquipped = false,
+                price = EconomyConfig.customizationPrice(Rarity.EPIC),
+                rarity = Rarity.EPIC,
+                unlockSource = "SHOP"
+            ),
+            InventoryItemEntity(
+                itemId = "celestial_aura",
+                name = "Celestial Aura",
+                type = CustomizationTypes.AURA,
+                imageUrl = "auras/celestial_aura.png",
+                isUnlocked = false,
+                isPurchased = false,
+                isEquipped = false,
+                price = EconomyConfig.customizationPrice(Rarity.LEGENDARY),
+                rarity = Rarity.LEGENDARY,
+                unlockSource = "CHEST"
             )
         )
     }

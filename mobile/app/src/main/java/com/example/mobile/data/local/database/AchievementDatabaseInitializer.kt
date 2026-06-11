@@ -107,17 +107,17 @@ class AchievementDatabaseInitializer(private val database: AppDatabase) {
                 isUnlocked = false
             ),
             AchievementEntity(
-                name = "First Accessory",
-                description = "Unlock your first accessory",
-                icon = "accessory_first",
+                name = "First Customization",
+                description = "Unlock your first customization item",
+                icon = "customization_first",
                 targetValue = 1,
                 rewardCoins = 75,
                 isUnlocked = false
             ),
             AchievementEntity(
-                name = "Accessory Collector",
-                description = "Unlock 5 accessories",
-                icon = "accessory_collector",
+                name = "Customization Collector",
+                description = "Unlock 5 customization items",
+                icon = "customization_collector",
                 targetValue = 5,
                 rewardChestType = ChestType.RARE.name.lowercase(),
                 isUnlocked = false
