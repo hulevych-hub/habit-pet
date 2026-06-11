@@ -1,5 +1,6 @@
 package com.example.mobile.presentation.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,10 +17,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,69 +40,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.mobile.data.local.entities.HabitEntity
-import com.example.mobile.domain.StreakEngine
-import com.example.mobile.domain.repository.HabitCompletionRepository
-import com.example.mobile.domain.repository.HabitRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-@OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class HabitsViewModel @Inject constructor(
-    private val habitRepository: HabitRepository,
-    private val habitCompletionRepository: HabitCompletionRepository,
-    private val streakEngine: StreakEngine
-) : ViewModel() {
-    val habits = habitRepository.getAllHabits()
-
-    val completedToday: StateFlow<Map<Long, Boolean>> = habitRepository.getAllHabits()
-        .flatMapLatest { habits ->
-            val today = getDayStart(System.currentTimeMillis())
-
-            if (habits.isEmpty()) {
-                flowOf(emptyMap())
-            } else {
-                combine(
-                    habits.map { habit ->
-                        habitCompletionRepository.getCompletionForHabitOnDate(habit.id, today)
-                            .map { completion -> habit.id to (completion != null) }
-                    }
-                ) { pairs ->
-                    pairs.toList().toMap()
-                }
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
-
-    fun deleteHabit(habit: HabitEntity) {
-        viewModelScope.launch {
-            habitRepository.deleteHabit(habit)
-            streakEngine.recalculateTodayStreak(System.currentTimeMillis())
-        }
-    }
-}
+import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ProgressHeader
+import com.example.mobile.presentation.ui.components.ProgressHeaderState
+import com.example.mobile.presentation.viewmodel.HabitsViewModel
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 fun HabitsScreen(
     navController: NavHostController,
-    habitsViewModel: HabitsViewModel = hiltViewModel()
+    habitsViewModel: HabitsViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val habits by habitsViewModel.habits.collectAsState(initial = emptyList())
     val completedToday by habitsViewModel.completedToday.collectAsState()
+    val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState()
+    val progressUiState by homeScreenViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -133,11 +89,37 @@ fun HabitsScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            stickyHeader {
+                ProgressHeader(
+                    state = ProgressHeaderState(
+                        level = progressUiState.pet.level,
+                        xp = progressUiState.pet.xp,
+                        evolutionStage = progressUiState.pet.evolutionStage,
+                        totalCoins = progressUiState.totalCoins,
+                        globalStreak = progressUiState.globalStreak
+                    ),
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+            if (habits.isEmpty()) {
+                item {
+                    EmptyStateCard(
+                        title = "Your dragon is ready for its first tiny quest.",
+                        message = "Create one small habit and give your dragon a simple win to celebrate.",
+                        hint = "Start with something easy enough to finish today.",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
             items(habits) { habit ->
                 HabitItem(
                     habit = habit,
                     completed = completedToday[habit.id] == true,
+                    isCompleting = habit.id in completingHabitIds,
                     navController = navController,
+                    onComplete = { habitsViewModel.completeCheckboxHabit(habit) },
                     onDelete = { habitsViewModel.deleteHabit(habit) }
                 )
             }
@@ -149,7 +131,9 @@ fun HabitsScreen(
 private fun HabitItem(
     habit: HabitEntity,
     completed: Boolean,
+    isCompleting: Boolean,
     navController: NavHostController,
+    onComplete: () -> Unit,
     onDelete: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -163,12 +147,25 @@ private fun HabitItem(
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-            contentDescription = if (completed) "Completed" else "Not completed",
-            tint = if (completed) Color.Green else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
+        IconButton(
+            onClick = onComplete,
+            enabled = !completed && habit.type == "CHECKBOX" && !isCompleting,
+            modifier = Modifier.size(40.dp)
+        ) {
+            if (isCompleting) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Icon(
+                    imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.CheckCircle,
+                    contentDescription = if (completed) "Completed" else "Complete habit",
+                    tint = if (completed) Color.Green else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
         Column {
             Text(habit.name)
             Text("Type: ${habit.type}", style = MaterialTheme.typography.bodySmall)
@@ -232,14 +229,4 @@ private fun HabitItem(
             }
         )
     }
-}
-
-private fun getDayStart(time: Long): Long {
-    val calendar = java.util.Calendar.getInstance()
-    calendar.timeInMillis = time
-    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
-    calendar.set(java.util.Calendar.MINUTE, 0)
-    calendar.set(java.util.Calendar.SECOND, 0)
-    calendar.set(java.util.Calendar.MILLISECOND, 0)
-    return calendar.timeInMillis
 }

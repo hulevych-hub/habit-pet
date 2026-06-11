@@ -1,48 +1,149 @@
-Complete task 9 (PET RENAME) from TODO.md.
+Complete tasks from TODO.md. Start from the Task 8
+
+Follow TODO.md as the source of truth.
+
+## TASK EXECUTION RULES
+
+1. Complete tasks strictly in order.
+2. Do not start a later section until the current section is fully completed.
+3. Ignore tasks already marked as completed.
+4. Read all documentation files listed in a section before implementation.
+5. Update all documentation files listed in a section immediately after implementation.
+6. Mark completed tasks in TODO.md.
+7. Do not leave documentation outdated.
+8. Documentation must reflect the actual implementation, not planned behavior.
+9. If implementation decisions are required, first inspect existing documentation and implementation.
+
+## GRAPHIFY RULE
+
+- Use existing Graphify data when available.
+- Do NOT run graphify update, graph rebuild, graph regeneration, project-wide indexing, or architecture regeneration unless explicitly requested.
+- Do NOT regenerate project summaries or dependency reports.
+- Only inspect graph nodes directly related to the current task.
+- Prefer localized analysis over project-wide analysis.
+- Treat the existing graph as valid unless the user explicitly requests a graph update.
+
+## PROJECT ANALYSIS RULE
+
+- Do NOT re-analyze the entire project.
+- Do NOT scan unrelated modules.
+- Only inspect files directly required for the current task.
+- Assume working systems are correct unless evidence indicates otherwise.
 
 ## CRITICAL RULES (NON-NEGOTIABLE)
 
-- Do NOT invent APIs, classes, composables, imports, or packages.
-- Do NOT assume a symbol exists unless it is shown in provided code or official AndroidX APIs.
-- The code must compile exactly as written.
+* Do NOT invent APIs, classes, composables, imports, packages, repositories, events, managers, DTOs, models, or ViewModels.
+* Do NOT assume a symbol exists unless it exists in the codebase or official AndroidX APIs.
+* Reuse existing implementations whenever possible.
+* The code must compile exactly as written.
+* Do not create alternative implementations of existing systems.
 
 ## IMPORT AND PACKAGE CONSISTENCY RULE
 
 Before creating or modifying any file:
 
-1. Always first inspect the provided codebase context for existing implementations:
-   Entity, Repository, Event, UseCase, Model, DTO, State, Action, ViewModel, Mapper, Manager, or Service.
+1. Search the project for existing usages of the same:
 
-2. Prefer reusing existing packages, files, and imports over creating new ones.
+   * Entity
+   * Repository
+   * Event
+   * UseCase
+   * Model
+   * DTO
+   * State
+   * Action
+   * ViewModel
+   * Mapper
+   * Manager
+   * Service
 
-3. Never guess package names or file locations.
+2. Reuse existing package structures.
 
-4. Match existing project structure:
-   - data.local.entities
-   - domain.repository
-   - presentation.ui.*
-   (only if already used in the project)
+3. Never guess package names.
 
-5. If multiple versions of a class exist:
-   - Use the one already used in the project
-   - Do NOT create duplicates
+4. Match existing project conventions.
+
+5. If a class already exists:
+
+   * Reuse it.
+   * Use the same import path.
+   * Do not create duplicates.
+
+6. Verify package declarations match file locations.
 
 ## BUILD VERIFICATION RULE
 
 A task is NOT complete unless:
 
-- Code compiles successfully
-- Imports and packages are correct
-- No duplicate or conflicting types exist
+* Code compiles successfully.
+* Imports are correct.
+* Package declarations are correct.
+* No duplicate classes exist.
+* No unresolved references exist.
+* No IDE/compiler errors remain.
+* Documentation matches implementation.
 
-If any of these fail → fix before proceeding.
+If any verification fails:
+
+* Fix the issue before proceeding.
+* Do not mark the task complete.
+
+## ASSET RULE
+
+If images, animations, sounds, icons, outfit artwork, background artwork, aura artwork, or other assets are missing:
+
+* Continue implementation using clearly named placeholders.
+* Document expected asset names.
+* Document expected paths.
+* Document expected formats.
+* Do not block implementation because art assets are missing.
+
+## UI DESIGN GOAL
+
+The UI must feel:
+
+* Simple and readable at first glance
+* Emotionally rewarding on interaction
+* Light and uncluttered
+* Smooth and responsive
+* Playful but not noisy
+* Premium mobile-game quality
+
+## VISUAL RULES
+
+* Strong visual hierarchy
+* One clear focal point per screen
+* Minimal text density
+* Generous spacing
+* Consistent rounded components
+* Consistent typography
+* Consistent color usage
+* Avoid visual clutter
+* Avoid crowded layouts
+
+## INTERACTION RULES
+
+* Every tap should provide immediate feedback
+* Important actions should be visible
+* Reward moments should feel satisfying
+* Animations should feel smooth and intentional
+* Transitions should never feel abrupt
+
+## GAME FEEL RULES
+
+* Progress should always feel visible
+* Rewards should feel meaningful
+* Unlocks should feel exciting
+* Collection systems should encourage completion
+* Screens should feel intuitive without explanation
 
 ## FINAL REPORT REQUIREMENTS
 
-After completion, provide:
+After completion provide:
 
-- Files changed
-- Files created
-- Documentation updated
-- TODO.md progress update
-- Remaining issues (if any)
+* Files changed
+* Files created
+* Documentation updated
+* TODO.md progress update
+* Remaining issues (if any)
+* Any placeholders that still require final assets

@@ -3,12 +3,16 @@ package com.example.mobile.presentation.ui.reward
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.ActivityTimelineEngine
 import com.example.mobile.domain.ChestRewardConfigProvider
 import com.example.mobile.domain.ChestType
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
+import com.example.mobile.presentation.ui.reward.RewardEventBus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -21,7 +25,10 @@ class RewardManager @Inject constructor(
     private val rewardQueue: RewardQueue,
     private val statisticsRepository: StatisticsRepository,
     private val petRepository: PetRepository,
-    private val inventoryItemRepository: InventoryItemRepository
+    private val inventoryItemRepository: InventoryItemRepository,
+    private val rewardEventBus: RewardEventBus,
+    private val activityTimelineEngine: ActivityTimelineEngine,
+    private val microFeedbackManager: MicroFeedbackManager
 ) : ViewModel() {
 
     private val _currentReward = MutableStateFlow<RewardUiEvent?>(null)
@@ -62,28 +69,47 @@ class RewardManager @Inject constructor(
                 is RewardUiEvent.LevelUpReward -> current.coins
                 is RewardUiEvent.DragonEvolutionReward -> 0
                 is RewardUiEvent.StreakReward -> current.coins
-                is RewardUiEvent.AchievementReward -> current.coins
+                is RewardUiEvent.AchievementReward -> 0
                 is RewardUiEvent.ChestReward -> (current.amount as? Int) ?: 0
             }
 
             if (coinsToAdd > 0) {
                 statisticsRepository.addCoins(coinsToAdd)
+                if (current !is RewardUiEvent.LevelUpReward) {
+                    microFeedbackManager.triggerCoinGained(coinsToAdd)
+                }
             }
 
             when (current) {
-                is RewardUiEvent.AchievementReward -> {
-                    if (current.expAmount > 0) {
-                        addPetExp(current.expAmount)
-                    }
-
-                    current.chestType?.let { chestType ->
-                        rewardQueue.addReward(buildChestReward(chestType))
-                    }
-                }
+                is RewardUiEvent.AchievementReward -> Unit
 
                 is RewardUiEvent.ChestReward -> {
+                    rewardEventBus.emit(current)
+
                     if (current.expAmount > 0) {
-                        addPetExp(current.expAmount)
+                        microFeedbackManager.triggerXpGained(current.expAmount.toLong())
+                        val (previousPet, updatedPet) = addPetExp(current.expAmount)
+                        val newLevel = ExpConfig.calculateLevelFromXp(updatedPet.xp)
+                        val newEvolutionStage = ExpConfig.calculateEvolutionStageFromXp(updatedPet.xp)
+
+                        if (newLevel > previousPet.level) {
+                            activityTimelineEngine.logLevelUp(newLevel, ExpConfig.levelUpCoins(newLevel))
+                        }
+
+                        val nextEvolutionStage = (newEvolutionStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
+                        if (nextEvolutionStage > newEvolutionStage) {
+                            activityTimelineEngine.logEvolutionMilestoneNearing(
+                                toStage = nextEvolutionStage,
+                                xp = updatedPet.xp
+                            )
+                        }
+
+                        if (newEvolutionStage > previousPet.evolutionStage) {
+                            activityTimelineEngine.logDragonEvolution(
+                                fromStage = previousPet.evolutionStage,
+                                toStage = newEvolutionStage
+                            )
+                        }
                     }
 
                     current.customizationId?.let { customizationId ->
@@ -101,10 +127,11 @@ class RewardManager @Inject constructor(
         }
     }
 
-    private suspend fun addPetExp(expAmount: Int) {
+    private suspend fun addPetExp(expAmount: Int): Pair<PetEntity, PetEntity> {
         val currentPet = petRepository.getPet().firstOrNull() ?: PetEntity(id = 1)
         val updatedPet = currentPet.copy(xp = currentPet.xp + expAmount)
         petRepository.updatePet(updatedPet)
+        return currentPet to updatedPet
     }
 
     private suspend fun buildChestReward(chestTypeValue: String): RewardUiEvent.ChestReward {

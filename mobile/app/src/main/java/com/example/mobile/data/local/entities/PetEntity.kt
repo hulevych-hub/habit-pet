@@ -15,6 +15,6 @@ data class PetEntity(
     @ColumnInfo(name = "equipped_outfit") var equippedOutfit: String? = null,
     @ColumnInfo(name = "equipped_background") var equippedBackground: String? = null,
     @ColumnInfo(name = "equipped_aura") var equippedAura: String? = null,
-    @ColumnInfo(name = "mood") var mood: String = "Neutral",
+    @ColumnInfo(name = "mood") var mood: String = "Calm",
     @ColumnInfo(name = "creation_date") var creationDate: Long = System.currentTimeMillis()
 )

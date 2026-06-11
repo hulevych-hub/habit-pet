@@ -8,6 +8,7 @@ import com.example.mobile.data.repository.HabitRepositoryImpl
 import com.example.mobile.data.repository.InventoryItemRepositoryImpl
 import com.example.mobile.data.repository.JournalEntryRepositoryImpl
 import com.example.mobile.data.repository.PetRepositoryImpl
+import com.example.mobile.data.repository.GameEventRepositoryImpl
 import com.example.mobile.data.repository.StatisticsRepositoryImpl
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
@@ -15,6 +16,7 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.JournalEntryRepository
 import com.example.mobile.domain.repository.PetRepository
+import com.example.mobile.domain.repository.GameEventRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import dagger.Binds
 import dagger.Module
@@ -39,6 +41,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindJournalEntryRepository(repository: JournalEntryRepositoryImpl): JournalEntryRepository
+
+    @Binds
+    abstract fun bindGameEventRepository(repository: GameEventRepositoryImpl): GameEventRepository
 
     @Binds
     abstract fun bindPetRepository(repository: PetRepositoryImpl): PetRepository

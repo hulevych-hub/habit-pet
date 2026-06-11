@@ -168,7 +168,7 @@ fun PetPhaseTransition(
         targetValue = 1f + petIdleScaleAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = petIdleBreathingDuration(normalizedToStage),
+                durationMillis = petIdleBreathingDuration(normalizedToStage, pet.mood),
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
@@ -181,7 +181,7 @@ fun PetPhaseTransition(
         targetValue = petIdleVerticalAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = petIdleBreathingDuration(normalizedToStage),
+                durationMillis = petIdleBreathingDuration(normalizedToStage, pet.mood),
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
@@ -194,7 +194,7 @@ fun PetPhaseTransition(
         targetValue = petIdleRotationAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = petIdleSwayDuration(normalizedToStage),
+                durationMillis = petIdleSwayDuration(normalizedToStage, pet.mood),
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
@@ -207,7 +207,7 @@ fun PetPhaseTransition(
         targetValue = petIdleBounceAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = petIdleBounceDuration(normalizedToStage),
+                durationMillis = petIdleBounceDuration(normalizedToStage, pet.mood),
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
@@ -282,7 +282,7 @@ private fun PetImageLayer(
     Image(
         painter = painterResource(petImageForStage(evolutionStage)),
         contentDescription = "Pet image",
-        modifier = modifier
+        modifier = modifier.graphicsLayer(alpha = PetAnimations.moodIntensity(pet.mood))
     )
 
     OutfitLayer(
@@ -396,8 +396,8 @@ private fun petIdleBounceAmplitude(stage: Int, mood: String): Float {
     return moodAdjusted(base, mood)
 }
 
-private fun petIdleBreathingDuration(stage: Int): Int {
-    return when (stage) {
+private fun petIdleBreathingDuration(stage: Int, mood: String): Int {
+    val base = when (stage) {
         0 -> 2600
         1 -> 3000
         2 -> 3400
@@ -405,10 +405,11 @@ private fun petIdleBreathingDuration(stage: Int): Int {
         4 -> 4200
         else -> 3000
     }
+    return (base * PetAnimations.moodDurationMultiplier(mood)).toInt().coerceAtLeast(1200)
 }
 
-private fun petIdleSwayDuration(stage: Int): Int {
-    return when (stage) {
+private fun petIdleSwayDuration(stage: Int, mood: String): Int {
+    val base = when (stage) {
         0 -> 4600
         1 -> 5600
         2 -> 6400
@@ -416,10 +417,11 @@ private fun petIdleSwayDuration(stage: Int): Int {
         4 -> 8000
         else -> 5600
     }
+    return (base * PetAnimations.moodDurationMultiplier(mood)).toInt().coerceAtLeast(1800)
 }
 
-private fun petIdleBounceDuration(stage: Int): Int {
-    return when (stage) {
+private fun petIdleBounceDuration(stage: Int, mood: String): Int {
+    val base = when (stage) {
         0 -> 3600
         1 -> 4800
         2 -> 5600
@@ -427,8 +429,9 @@ private fun petIdleBounceDuration(stage: Int): Int {
         4 -> 7200
         else -> 4800
     }
+    return (base * PetAnimations.moodDurationMultiplier(mood)).toInt().coerceAtLeast(1600)
 }
 
 private fun moodAdjusted(value: Float, mood: String): Float {
-    return PetAnimations.applyMoodModifier(value, mood).coerceIn(value * 0.7f, value * 1.2f)
+    return PetAnimations.applyMoodModifier(value, mood).coerceIn(value * 0.65f, value * 1.35f)
 }

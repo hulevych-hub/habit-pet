@@ -1,5 +1,7 @@
 package com.example.mobile.presentation.ui.events
 
+import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
+
 /**
  * UI events for reward popups and dialogs
  * These events are emitted by ViewModels and collected in Compose UI layer
@@ -15,9 +17,19 @@ sealed class RewardUiEvent {
     ) : RewardUiEvent()
     data class AchievementReward(
         val achievementName: String,
-        val coins: Int,
-        val expAmount: Int = 0,
-        val chestType: String? = null
+        val rewards: List<ConfigAchievementReward> = emptyList(),
+        val coins: Int = rewards.sumOf { reward ->
+            (reward as? ConfigAchievementReward.CoinReward)?.amount ?: 0
+        },
+        val expAmount: Int = rewards.sumOf { reward ->
+            (reward as? ConfigAchievementReward.ExpReward)?.amount ?: 0
+        },
+        val chestType: String? = rewards
+            .filterIsInstance<ConfigAchievementReward.ChestReward>()
+            .firstOrNull()
+            ?.chestType
+            ?.name
+            ?.lowercase()
     ) : RewardUiEvent()
     data class ChestReward(
         val rewardType: String,

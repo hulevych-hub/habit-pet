@@ -4,14 +4,18 @@ import android.content.Context
 import androidx.room.Room
 import com.example.mobile.data.local.database.AppDatabase
 import com.example.mobile.data.local.database.InventoryItemDatabaseInitializer
+import com.example.mobile.data.local.database.MIGRATION_14_15
 import com.example.mobile.data.local.database.MIGRATION_12_13
+import com.example.mobile.data.local.database.MIGRATION_13_14
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
+import com.example.mobile.domain.DragonMoodEngine
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardEventBus
 import com.example.mobile.presentation.ui.reward.RewardManager
 import com.example.mobile.presentation.ui.reward.RewardQueue
@@ -34,7 +38,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "habit_pet_database"
         )
-        .addMigrations(MIGRATION_12_13)
+        .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
         .fallbackToDestructiveMigration()
         .build()
     }
@@ -71,6 +75,12 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun provideGameEventDao(database: AppDatabase): com.example.mobile.data.local.dao.GameEventDao {
+        return database.gameEventDao()
+    }
+
+    @Provides
+    @Singleton
     fun provideJournalEntryDao(database: AppDatabase): com.example.mobile.data.local.dao.JournalEntryDao {
         return database.journalEntryDao()
     }
@@ -91,6 +101,12 @@ object DatabaseModule {
     @Singleton
     fun provideRewardEventBus(): RewardEventBus {
         return RewardEventBus()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMicroFeedbackManager(): MicroFeedbackManager {
+        return MicroFeedbackManager()
     }
 
     @Provides
@@ -123,7 +139,8 @@ object DatabaseModule {
         petRepository: com.example.mobile.domain.repository.PetRepository,
         statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository,
         inventoryItemRepository: com.example.mobile.domain.repository.InventoryItemRepository,
-        rewardQueue: RewardQueue
+        achievementRewardProcessor: com.example.mobile.domain.AchievementRewardProcessor,
+        activityTimelineEngine: com.example.mobile.domain.ActivityTimelineEngine
     ): com.example.mobile.domain.AchievementEngine {
         return com.example.mobile.domain.AchievementEngine(
             achievementRepository,
@@ -131,7 +148,24 @@ object DatabaseModule {
             petRepository,
             statisticsRepository,
             inventoryItemRepository,
-            rewardQueue
+            achievementRewardProcessor,
+            activityTimelineEngine
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideDragonMoodEngine(
+        petRepository: PetRepository,
+        statisticsRepository: StatisticsRepository,
+        habitRepository: HabitRepository,
+        habitCompletionRepository: HabitCompletionRepository
+    ): DragonMoodEngine {
+        return DragonMoodEngine(
+            petRepository,
+            statisticsRepository,
+            habitRepository,
+            habitCompletionRepository
         )
     }
 
@@ -142,14 +176,36 @@ object DatabaseModule {
         habitCompletionRepository: HabitCompletionRepository,
         statisticsRepository: StatisticsRepository,
         rewardQueue: RewardQueue,
-        inventoryItemRepository: InventoryItemRepository
+        inventoryItemRepository: InventoryItemRepository,
+        activityTimelineEngine: com.example.mobile.domain.ActivityTimelineEngine,
+        dragonMoodEngine: DragonMoodEngine
     ): StreakEngine {
         return StreakEngine(
             habitRepository,
             habitCompletionRepository,
             statisticsRepository,
             rewardQueue,
-            inventoryItemRepository
+            inventoryItemRepository,
+            activityTimelineEngine,
+            dragonMoodEngine
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideActivityTimelineEngine(
+        gameEventRepository: com.example.mobile.domain.repository.GameEventRepository,
+        rewardEventBus: RewardEventBus,
+        petRepository: PetRepository,
+        statisticsRepository: StatisticsRepository,
+        @ApplicationContext appContext: Context
+    ): com.example.mobile.domain.ActivityTimelineEngine {
+        return com.example.mobile.domain.ActivityTimelineEngine(
+            gameEventRepository,
+            rewardEventBus,
+            petRepository,
+            statisticsRepository,
+            appContext
         )
     }
 
@@ -179,13 +235,19 @@ object DatabaseModule {
         rewardQueue: RewardQueue,
         statisticsRepository: StatisticsRepository,
         petRepository: PetRepository,
-        inventoryItemRepository: InventoryItemRepository
+        inventoryItemRepository: InventoryItemRepository,
+        rewardEventBus: RewardEventBus,
+        activityTimelineEngine: com.example.mobile.domain.ActivityTimelineEngine,
+        microFeedbackManager: MicroFeedbackManager
     ): RewardManager {
         return RewardManager(
             rewardQueue,
             statisticsRepository,
             petRepository,
-            inventoryItemRepository
+            inventoryItemRepository,
+            rewardEventBus,
+            activityTimelineEngine,
+            microFeedbackManager
         )
     }
 }

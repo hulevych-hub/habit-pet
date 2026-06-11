@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile.R
+import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 
 @Composable
@@ -120,6 +121,7 @@ private fun RewardDialog(
                         coinsEarned = reward.coins,
                         expAmount = reward.expAmount,
                         chestType = reward.chestType,
+                        rewards = reward.rewards,
                         onConfirm = onDismiss
                     )
 
@@ -228,17 +230,13 @@ private fun AchievementRewardContent(
     coinsEarned: Int,
     expAmount: Int = 0,
     chestType: String? = null,
+    rewards: List<ConfigAchievementReward> = emptyList(),
     onConfirm: () -> Unit
 ) {
-    val rewardText = mutableListOf("+${coinsEarned} coins")
-
-    if (expAmount > 0) {
-        rewardText.add("+$expAmount EXP")
-    }
-
-    if (!chestType.isNullOrBlank()) {
-        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
-        rewardText.add("$label chest")
+    val rewardText = if (rewards.isNotEmpty()) {
+        rewards.map { it.rewardLabel() }
+    } else {
+        buildLegacyRewardText(coinsEarned, expAmount, chestType)
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -262,6 +260,35 @@ private fun AchievementRewardContent(
             Text("Claim")
         }
     }
+}
+
+private fun buildLegacyRewardText(
+    coinsEarned: Int,
+    expAmount: Int,
+    chestType: String?
+): List<String> {
+    val rewardText = mutableListOf("+${coinsEarned} coins")
+
+    if (expAmount > 0) {
+        rewardText.add("+$expAmount EXP")
+    }
+
+    if (!chestType.isNullOrBlank()) {
+        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
+        rewardText.add("$label chest")
+    }
+
+    return rewardText
+}
+
+private fun ConfigAchievementReward.rewardLabel(): String = when (this) {
+    is ConfigAchievementReward.CoinReward -> "+$amount coins"
+    is ConfigAchievementReward.ExpReward -> "+$amount EXP"
+    is ConfigAchievementReward.ChestReward -> {
+        val label = chestType.name.replaceFirstChar { it.uppercase() }
+        "$label chest"
+    }
+    is ConfigAchievementReward.CustomizationReward -> "Customization"
 }
 
 @Composable

@@ -2,97 +2,132 @@
 
 ## Overview
 
-The notification system in Habit Pet provides reminders to help users maintain their habit tracking streaks and remember to care for their pet. The system uses Android's AlarmManager to schedule recurring notifications and includes user-configurable preferences for each reminder type.
+The notification system in Habit Pet provides soft, emotional re-entry nudges that help users return to their habits and feel connected to their dragon. The system uses Android's `AlarmManager` to schedule recurring notifications and stores user preferences in `SharedPreferences`.
+
+Notification content is template-driven instead of purely functional. Messages are selected from the current player context, including streak strength and recent app activity, so reminders feel supportive rather than demanding.
 
 ## Current Implementation
 
 The notification system consists of:
-- NotificationHelper: Main class for scheduling, canceling, and showing notifications
-- NotificationPrefs: Helper for storing and retrieving user notification preferences
-- NotificationPublisher: BroadcastReceiver that handles displaying notifications when alarms fire
-- BootCompletedReceiver: BroadcastReceiver that reschedules notifications after device reboot
-- Integration with HabitPetApp to initialize the notification system on app startup
+- `NotificationHelper`: schedules, cancels, and shows reminders with emotional templates
+- `NotificationPrefs`: stores reminder preferences, last known streak, last active session, and notification frequency state
+- `NotificationPublisher`: receives scheduled alarms and shows notifications when frequency rules allow
+- `BootCompletedReceiver`: reschedules reminders after device reboot
+- `MainActivity`: records the current streak and active session so scheduled reminders can use player context
+- Integration with `HabitPetApp` to create the notification channel and schedule reminders on startup
 
 ## Rules
 
 ### Notification Types
-The system supports three types of recurring reminders:
-1. **Daily Reminder**: Prompts users to check their habits each day
-2. **Streak Reminder**: Encourages users to maintain their habit completion streaks
-3. **Pet Reminder**: Reminds users to care for their virtual pet
+
+The system supports three recurring reminder types:
+1. **Dragon Waiting**: a daily re-entry nudge
+2. **Streak Encouragement**: a streak-focused reminder that adapts to low or high streak context
+3. **Pet Bond Reminder**: a warm pet-care reminder that adapts to recent user activity
+
+### Emotional Template System
+
+Reminder titles and messages are selected from emotional templates. The implemented templates include:
+- “Your dragon is waiting 🐉”
+- “Something grew while you were away”
+- “You’re close to a reward”
+
+The previous harsh or commanding tone has been removed. Notifications no longer use messages like “Don’t break your streak” or “Your pet needs attention.” Instead, they use supportive language such as:
+- “A small habit today is enough to keep your spark warm.”
+- “Your dragon saved a little room for your next beginning.”
+- “Your streak is shining. Your dragon is proud of the rhythm you’re building.”
+
+### Context-Based Selection
+
+Reminder content is selected at schedule time using the latest context stored in `NotificationPrefs`.
+
+Streak context:
+- `currentStreak >= 7`: reinforcement message, e.g. “You’re close to a reward”
+- `currentStreak > 0`: gentle encouragement for maintaining momentum
+- `currentStreak == 0`: low-streak encouragement and fresh-start language
+
+Activity-frequency context:
+- Pet reminders check the last active session timestamp.
+- If the user has been inactive for more than 48 hours, the message becomes more patient and welcoming.
+- If the user was recently active, the message reinforces existing progress instead of repeating a generic reminder.
+
+### Frequency Respect
+
+The notification publisher checks `NotificationPrefs.shouldShowNotification()` before showing a scheduled reminder.
+
+Default behavior:
+- A reminder is skipped if the same notification was shown within the last 3 hours.
+- Skipped reminders remain scheduled for the next daily alarm.
+- The first notification after install or reset is always allowed.
+
+This prevents repetitive reminders when the user has recently opened the app.
 
 ### Scheduling
-- All reminders use `AlarmManager.setRepeating()` with `INTERVAL_DAY` (24 hours)
-- Default times (configurable via parameters):
-  * Daily Reminder: 9:00 AM
-  * Streak Reminder: 8:00 PM
-  * Pet Reminder: 12:00 PM (noon)
-- If the scheduled time has already passed today, the reminder is set for tomorrow
-- Reminders are canceled and rescheduled when updated to prevent duplicates
+
+- All reminders use `AlarmManager.setRepeating()` with `INTERVAL_DAY` (24 hours).
+- Default times:
+  * Dragon Waiting / Daily Reminder: 9:00 AM
+  * Streak Encouragement / Streak Reminder: 8:00 PM
+  * Pet Bond Reminder: 12:00 PM (noon)
+- If the scheduled time has already passed today, the reminder is set for tomorrow.
+- Reminders are canceled and rescheduled when updated to prevent duplicates.
 
 ### User Preferences
-Each reminder type has an associated user preference stored in SharedPreferences:
-- Default state: All reminders enabled (true)
+
+Each reminder type has an associated user preference stored in `SharedPreferences`:
+- Default state: All reminders enabled (`true`)
 - Preferences persist across app sessions
-- Users can enable/disable each reminder type independently via settings UI
+- Users can enable/disable each reminder type independently via the settings UI
 - Preferences are initialized with default values on first app launch
-
-### Notification Content
-When a reminder triggers:
-- NotificationPublisher receives the broadcast via AlarmManager
-- Extracts title and message from Intent extras
-- Shows notification via NotificationHelper.showNotification()
-- Notification includes:
-  * Small icon (app launcher icon)
-  * Custom title and message
-  * Tap-to-open MainActivity action
-  * Auto-cancel when tapped
-
-### Device Reboot Handling
-- BootCompletedReceiver listens for `Intent.ACTION_BOOT_COMPLETED`
-- On device boot, reschedules all three reminder types with default times
-- Ensures reminders persist after device restart/power cycle
 
 ## Configuration
 
 Notification system configuration values:
-- **Channel ID**: "habit_pet_reminders"
-- **Channel Name**: "Habit Pet Reminders"
-- **Channel Description**: "Reminders for habits, streaks, and pet care"
+- **Channel ID**: `habit_pet_reminders`
+- **Channel Name**: `Habit Pet Reminders`
+- **Channel Description**: `Reminders for habits, streaks, and pet care`
 - **Request Codes**:
-  * DAILY_REMINDER_REQUEST_CODE: 1001
-  * STREAK_REMINDER_REQUEST_CODE: 1002
-  * PET_REMINDER_REQUEST_CODE: 1003
+  * `DAILY_REMINDER_REQUEST_CODE`: 1001
+  * `STREAK_REMINDER_REQUEST_CODE`: 1002
+  * `PET_REMINDER_REQUEST_CODE`: 1003
 - **Default Times** (hours:minutes in 24-hour format):
-  * Daily: 09:00
-  * Streak: 20:00 (8:00 PM)
-  * Pet: 12:00 (noon)
-- **Default Preference State**: All reminders enabled (true)
-- **Shared Preferences File**: "habit_pet_notification_prefs"
+  * Daily / Dragon Waiting: 09:00
+  * Streak Encouragement: 20:00 (8:00 PM)
+  * Pet Bond Reminder: 12:00 (noon)
+- **Default Preference State**: All reminders enabled (`true`)
+- **Shared Preferences File**: `habit_pet_notification_prefs`
+- **Default Minimum Notification Interval**: 3 hours
 
 ## Data Model
 
-**Shared Preferences** (NotificationPrefs):
-- File: `habit_pet_notification_prefs`
-- Keys:
-  * `daily_reminder_enabled`: Boolean
-  * `streak_reminder_enabled`: Boolean
-  * `pet_reminder_enabled`: Boolean
+### Shared Preferences (`habit_pet_notification_prefs`)
+
+Keys:
+- `daily_reminder_enabled`: Boolean
+- `streak_reminder_enabled`: Boolean
+- `pet_reminder_enabled`: Boolean
+- `last_streak`: Int
+- `last_notification_at`: Long
+- `last_active_session_timestamp`: Long
+
+### Fallback Activity Timestamp
+
+`NotificationPrefs.getLastActiveSessionTimestamp()` also reads `last_active_session_timestamp` from `activity_timeline_engine` preferences when the notification preferences do not yet contain a local active-session timestamp.
 
 ## Source Files
 
-- app/src/main/java/com/example/mobile/util/NotificationHelper.kt
-- app/src/main/java/com/example/mobile/util/NotificationPrefs.kt
-- app/src/main/java/com/example/mobile/util/BootCompletedReceiver.kt
-- app/src/main/java/com/example/mobile/HabitPetApp.kt (initialization)
-- app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt (UI)
-- app/src/main/java/com/example/mobile/presentation/viewmodel/NotificationSettingsViewModel.kt (UI logic)
+- `app/src/main/java/com/example/mobile/util/NotificationHelper.kt`
+- `app/src/main/java/com/example/mobile/util/NotificationPrefs.kt`
+- `app/src/main/java/com/example/mobile/util/BootCompletedReceiver.kt`
+- `app/src/main/java/com/example/mobile/HabitPetApp.kt`
+- `app/src/main/java/com/example/mobile/MainActivity.kt`
+- `app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt`
+- `app/src/main/java/com/example/mobile/presentation/viewmodel/NotificationSettingsViewModel.kt`
 
 ## Known Gaps
 
-1. **Fixed Notification Content**: Reminder titles and messages are hardcoded in the scheduling methods; no customization available per reminder instance.
-2. **Limited Scheduling Flexibility**: While times can be passed as parameters, the UI currently only uses default times; no time picker in settings.
-3. **No Advanced Scheduling Options**: No support for weekday-specific reminders, interval customization, or complex recurrence patterns.
-4. **Preference Initialization**: Default preferences are only set on first launch; no mechanism to update defaults in future app versions.
-5. **Notification Importance**: Uses `IMPORTANCE_DEFAULT`; no user configuration for notification priority/bypass settings.
-6. **Action Limitations**: Notifications only open the main app; no quick-action buttons for habit completion or pet care from the notification itself.
+1. Reminder content is selected when the alarm is scheduled. If streak changes after scheduling, the next scheduling cycle will use the updated streak.
+2. The settings UI exposes reminder types, but not custom scheduling times.
+3. Notifications open `MainActivity`; they do not include quick-action buttons for habit completion or pet care.
+4. Notification importance remains `IMPORTANCE_DEFAULT`; users cannot configure bypass or priority behavior.
+5. Activity-frequency suppression is local to the device and does not coordinate across multiple installed devices.

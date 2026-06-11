@@ -19,6 +19,6 @@ interface PetDao {
     @Update
     suspend fun updatePet(pet: PetEntity): Int
 
-    @Query("UPDATE pet SET xp = 0, level = 0, coins = 0, evolution_stage = 0 WHERE id = 1")
+    @Query("UPDATE pet SET xp = 0, level = 0, coins = 0, evolution_stage = 0, mood = 'Calm' WHERE id = 1")
     suspend fun resetPet()
 }

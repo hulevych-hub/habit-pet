@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.AchievementsConfig
+import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,11 +95,13 @@ fun AchievementScreen(
                 }
 
                 achievements.isEmpty() -> {
-                    Text(
-                        text = "No achievements available",
+                    EmptyStateCard(
+                        title = "Your first milestone is close",
+                        message = "Finish a habit, earn XP, or grow your streak to awaken the first achievement.",
+                        hint = "Every small win moves your dragon closer to its first badge.",
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(24.dp)
+                            .padding(16.dp)
                     )
                 }
 
@@ -195,8 +201,22 @@ private fun AchievementItem(
         currentHabitCount = habitCount
     )
     val progress = viewModel.progressFraction(currentValue, achievement).coerceIn(0f, 1f)
+    val definition = AchievementsConfig.achievementById(achievement.id)
     val isClaimable = achievement.isUnlocked && !achievement.isClaimed
     val isClaimed = achievement.isClaimed
+    val statusText = when {
+        isClaimed -> "Claimed"
+        isClaimable -> "Ready to claim"
+        achievement.isUnlocked -> "Unlocked"
+        else -> "Locked"
+    }
+    val statusColor = when {
+        isClaimed -> MaterialTheme.colorScheme.onSurfaceVariant
+        isClaimable -> Color(0xFFFFD700)
+        achievement.isUnlocked -> Color(0xFF34D399)
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    val progressText = viewModel.progressLabel(currentValue, achievement)
 
     Column(
         modifier = Modifier
@@ -226,14 +246,20 @@ private fun AchievementItem(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = achievement.name,
+                    text = definition?.name ?: achievement.id,
                     style = MaterialTheme.typography.titleMedium
                 )
 
                 Text(
-                    text = achievement.description,
+                    text = definition?.description ?: "Milestone progress",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Text(
+                    text = progressText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -252,35 +278,69 @@ private fun AchievementItem(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Text(
-            text = "$currentValue / ${achievement.targetValue}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Text(
-            text = "Reward: ${viewModel.rewardLabel(achievement)}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary
-        )
+        RewardChips(viewModel.rewardLabels(achievement))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.bodySmall,
+                color = statusColor
+            )
+
             if (isClaimable) {
                 Button(
                     onClick = { viewModel.claimAchievement(achievement.id) }
                 ) {
                     Text("Claim")
                 }
-            } else {
-                Text(
-                    text = if (isClaimed) "Claimed" else "Locked",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
+    }
+}
+
+@Composable
+private fun RewardChips(rewards: List<String>) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        rewards.forEach { reward ->
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = rewardIcon(reward),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = reward,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun rewardIcon(reward: String): androidx.compose.ui.graphics.vector.ImageVector {
+    return when {
+        reward.contains("coins", ignoreCase = true) -> Icons.Default.Star
+        reward.contains("EXP", ignoreCase = true) -> Icons.Default.Star
+        reward.contains("chest", ignoreCase = true) -> Icons.Default.EmojiEvents
+        else -> Icons.Default.CheckCircle
     }
 }

@@ -11,11 +11,15 @@ The dragon phase system consists of:
 - Stage determination based on XP thresholds (**NOW CONSISTENT - single source in `ExpConfig`**)
 - Visual representation through different pet images for each stage
 - Lightweight idle animations for each stage using subtle scale, rotation, and vertical translation
+- Dragon mood state persisted in `PetEntity.mood` with values: `Happy`, `Calm`, `Excited`, `Proud`, and `Lonely`
+- Mood-driven idle intensity, alpha, and speed adjustments in `AnimatedPet.kt`
 - One-time phase transition animations for adjacent evolution stages using crossfade, scale, and vertical shift
+- ActivityTimeline logging of evolution and evolution milestone nearing events
 - Reward-overlay phase transition screen that appears after level-up rewards for evolution events
-- Journal logging of evolution events
 - Evolution stage rewards (DragonEvolutionReward - currently 0 coins)
 - Display in UI showing stage name alongside level
+- Evolution teasing UI through `EvolutionTeaser`, showing the next stage name and XP needed to reach it
+- Evolution milestone timeline events through `ActivityTimelineEngine.logEvolutionMilestoneNearing()` when progress reaches 80% toward a locked stage
 - **Centralized configuration: `ExpConfig`** (single source of truth)
 
 ## Rules
@@ -70,17 +74,51 @@ Evolution stage increases when:
 
 ### Evolution Events
 When evolution stage increases:
-1. **Journal Entry**: JournalEngine creates a log entry "[Pet Name] evolved to [Stage Name]."
-2. **Reward**: A DragonEvolutionReward event is added to the reward queue (currently provides 0 coins)
-3. **Visual Update**: The reward overlay shows a phase transition screen after level-up rewards, then the pet settles into the new idle animation
-4. **UI Update**: Display shows new stage name (e.g., "Level 5 Ancient Dragon")
+1. **Reward**: A DragonEvolutionReward event is added to the reward queue (currently provides 0 coins)
+2. **Timeline Event**: ActivityTimelineEngine logs a dragon evolution event with the previous stage, reached stage, and current XP
+3. **Milestone Nearing Event**: XP reward paths call `ActivityTimelineEngine.logEvolutionMilestoneNearing()` for the next locked stage; it records one event when that stage reaches 80% progress
+4. **Visual Update**: The reward overlay shows a phase transition screen after level-up rewards, then the pet settles into the new idle animation
+5. **UI Update**: Display shows new stage name (e.g., "Level 5 Ancient Dragon")
 
 ### Display Format
 In the home screen and pet screen, the pet is displayed as:
 "{pet.name} Lv. {pet.level} {evolution stage name}"
 Example: "Luna Lv. 5 Ancient Dragon"
 
-Stage names sourced from `ExpConfig.EVOLUTION_STAGE_NAMES`
+Stage names are sourced from `ExpConfig.EVOLUTION_STAGE_NAMES`. `ProgressHeader` shows a compact next evolution label and evolution percentage, while `EvolutionTeaser` shows the next stage name, a progress bar, and the XP needed to reach it.
+
+### Dragon Mood
+`DragonMood` defines the current mood state used by the dragon rendering system:
+
+- `HAPPY` / `Happy`
+- `CALM` / `Calm`
+- `EXCITED` / `Excited`
+- `PROUD` / `Proud`
+- `LONELY` / `Lonely`
+
+Mood is calculated by `DragonMoodEngine` from three inputs:
+
+1. `currentStreak` from `StatisticsRepository`
+2. Last activity timestamp from recent habit completions
+3. Recent habit completion count within the last 72 hours
+
+Calculation priority:
+
+- `Lonely`: last activity is older than 36 hours
+- `Proud`: current streak is at least 7 days
+- `Excited`: 3 or more habit completions occurred in the last 72 hours
+- `Happy`: current streak is greater than 0
+- `Calm`: default state when no stronger mood applies
+
+Mood is persisted in `PetEntity.mood`. `DragonMoodEngine.refreshMood()` is called on app open, habit completion, and streak changes. `PetDao.resetPet()` resets the stored mood to `Calm`.
+
+### Mood Rendering
+`AnimatedPet.kt` applies mood to the dragon rendering system without changing evolution logic:
+
+- `PetAnimations.applyMoodModifier()` adjusts idle scale, vertical motion, rotation, and bounce amplitude.
+- `PetAnimations.moodDurationMultiplier()` adjusts idle animation speed.
+- `PetAnimations.moodIntensity()` applies a subtle alpha/brightness-style intensity modifier to the pet image.
+- Home and Pet screens display the current mood label from `DragonMood.from(pet.mood).displayName`.
 
 ## Configuration
 
@@ -89,6 +127,7 @@ Evolution stage thresholds are now centralized in `ExpConfig`:
 - `ExpConfig.EVOLUTION_STAGE_NAMES` - Display names for each stage
 - `ExpConfig.calculateEvolutionStageFromXp()` - Single calculation function
 - `ExpConfig.evolutionStageName()` - Single name lookup function
+- `ExpConfig.xpThresholdForStage()` - Single XP threshold lookup function used by evolution teasing UI and timeline milestone events
 
 Visual asset mappings and animation behavior remain in:
 - AnimatedPet.kt (pet images, backgrounds, equipped items, stage-specific idle animations, and shared phase transitions)
@@ -100,6 +139,7 @@ Visual asset mappings and animation behavior remain in:
 
 **PetEntity** (app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt):
 - `evolutionStage: Int` - current evolution stage (0-4)
+- `mood: String` - current dragon mood (`Happy`, `Calm`, `Excited`, `Proud`, or `Lonely`)
 - Comments indicate mapping: 0: Egg, 1: Hatchling, 2: Young Dragon, 3: Adult Dragon, 4: Ancient Dragon
 
 ## Source Files
@@ -108,23 +148,34 @@ Visual asset mappings and animation behavior remain in:
 - app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt
+- app/src/main/java/com/example/mobile/presentation/ui/animations/PetAnimations.kt
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlayHost.kt
+- app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt
 - app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt
 - app/src/main/java/com/example/mobile/domain/JournalEngine.kt
+- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (NEW - centralized configuration)
+- app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt
+- app/src/main/java/com/example/mobile/domain/GameEventFactory.kt
+- app/src/main/java/com/example/mobile/domain/DragonMood.kt
+- app/src/main/java/com/example/mobile/domain/DragonMoodEngine.kt
+- app/src/main/java/com/example/mobile/domain/StreakEngine.kt
+- app/src/main/java/com/example/mobile/MainActivity.kt
+- app/src/main/java/com/example/mobile/data/local/dao/PetDao.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
-- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (NEW - centralized configuration)
 
 ## Known Gaps (UPDATED)
 
 1. ✅ **FIXED: Inconsistent Evolution Calculation** - Now single source in `ExpConfig.calculateEvolutionStageFromXp()`
 2. **Valueless Evolution**: DragonEvolutionReward provides 0 coins, making evolution stages progression-reward neutral.
-3. **Stage Names Hardcoded in UI**: Evolution stage names still duplicated in HomeScreen.kt, PetScreen.kt (should use `ExpConfig.evolutionStageName()`)
+3. ✅ **FIXED: Stage Names Hardcoded in UI** - Stage names now use `ExpConfig.evolutionStageName()`, and `EvolutionTeaser` uses the same centralized stage names.
 4. **No Evolution Effects**: Beyond visual changes and journal entries, evolution stages don't affect gameplay mechanics (no stat boosts, special abilities, etc.).
-5. **Visual Inconsistency**: While pet images change with evolution, equipped outfit and aura placeholders remain the same across all stages, which may look incongruous.
-6. **No Evolution Requirements**: No additional requirements beyond XP (e.g., specific habits, time periods, or items) needed to evolve.
+5. ✅ **FIXED: Evolution Teasing Visibility** - Home, pet, and progress header surfaces now show the next evolution stage and XP needed to reach it.
+6. ✅ **FIXED: Evolution Milestone Timeline Visibility** - XP reward paths now create activity timeline events when a locked evolution stage reaches 80% progress.
+7. **Visual Inconsistency**: While pet images change with evolution, equipped outfit and aura placeholders remain the same across all stages, which may look incongruous.
+8. **No Evolution Requirements**: No additional requirements beyond XP (e.g., specific habits, time periods, or items) needed to evolve.
 
 ## Progression Timeline
 

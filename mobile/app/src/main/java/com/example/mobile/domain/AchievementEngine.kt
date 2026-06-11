@@ -6,8 +6,6 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
-import com.example.mobile.presentation.ui.events.RewardUiEvent
-import com.example.mobile.presentation.ui.reward.RewardQueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,6 +16,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,10 +28,12 @@ class AchievementEngine @Inject constructor(
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
     private val inventoryItemRepository: InventoryItemRepository,
-    private val rewardQueue: RewardQueue
+    private val achievementRewardProcessor: AchievementRewardProcessor,
+    private val activityTimelineEngine: ActivityTimelineEngine
 ) {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val claimMutex = Mutex()
 
     init {
         Log.d("AchievementEngine", "Engine initialized")
@@ -54,9 +56,7 @@ class AchievementEngine @Inject constructor(
                 .distinctUntilChanged()
                 .collectLatest { count ->
                     Log.d("AchievementEngine", "Habit count = $count")
-
-                    if (count >= 1) unlockAchievement("First Habit")
-                    if (count >= 3) unlockAchievement("3 Habit Builder")
+                    updateAchievementProgress(AchievementProgressSource.HABIT_COUNT, count)
                 }
         }
     }
@@ -68,9 +68,7 @@ class AchievementEngine @Inject constructor(
                 .distinctUntilChanged()
                 .collectLatest { streak ->
                     Log.d("AchievementEngine", "Streak = $streak")
-
-                    if (streak >= 7) unlockAchievement("7 Day Streak")
-                    if (streak >= 30) unlockAchievement("30 Day Streak")
+                    updateAchievementProgress(AchievementProgressSource.CURRENT_STREAK, streak)
                 }
         }
     }
@@ -82,8 +80,7 @@ class AchievementEngine @Inject constructor(
                 .distinctUntilChanged()
                 .collectLatest { total ->
                     Log.d("AchievementEngine", "Completions = $total")
-
-                    if (total >= 100) unlockAchievement("100 Completions")
+                    updateAchievementProgress(AchievementProgressSource.TOTAL_COMPLETIONS, total)
                 }
         }
     }
@@ -95,9 +92,7 @@ class AchievementEngine @Inject constructor(
                 .distinctUntilChanged()
                 .collectLatest { xp ->
                     Log.d("AchievementEngine", "XP = $xp")
-
-                    if (xp >= 1000) unlockAchievement("1000 XP")
-                    if (xp >= 5000) unlockAchievement("5000 XP")
+                    updateAchievementProgress(AchievementProgressSource.TOTAL_XP, xp.toInt())
                 }
         }
     }
@@ -109,9 +104,7 @@ class AchievementEngine @Inject constructor(
                 .distinctUntilChanged()
                 .collectLatest { level ->
                     Log.d("AchievementEngine", "Level = $level")
-
-                    if (level >= 10) unlockAchievement("Level 10")
-                    if (level >= 25) unlockAchievement("Level 25")
+                    updateAchievementProgress(AchievementProgressSource.PET_LEVEL, level)
                 }
         }
     }
@@ -130,45 +123,54 @@ class AchievementEngine @Inject constructor(
                 .distinctUntilChanged()
                 .collectLatest { ownedCount ->
                     Log.d("AchievementEngine", "Owned customization items = $ownedCount")
-
-                    if (ownedCount >= 1) unlockAchievement("First Customization")
-                    if (ownedCount >= 5) unlockAchievement("Customization Collector")
+                    updateAchievementProgress(AchievementProgressSource.OWNED_CUSTOMIZATIONS, ownedCount)
                 }
         }
     }
 
-    suspend fun claimAchievement(achievementId: Long) {
-        val achievement = achievementRepository.getAchievementById(achievementId).first() ?: return
+    private suspend fun updateAchievementProgress(
+        source: AchievementProgressSource,
+        progress: Int
+    ) {
+        val safeProgress = progress.coerceAtLeast(0)
 
-        if (!achievement.isUnlocked || achievement.isClaimed) return
+        AchievementsConfig.achievements
+            .filter { it.progressSource == source }
+            .forEach { definition ->
+                val currentAchievement = achievementRepository
+                    .getAchievementById(definition.id)
+                    .firstOrNull()
 
-        achievementRepository.updateAchievement(achievement.copy(isClaimed = true))
+                val shouldUnlock = currentAchievement?.isUnlocked == true ||
+                    (definition.targetValue?.let { safeProgress >= it } ?: true)
 
-        rewardQueue.addReward(
-            RewardUiEvent.AchievementReward(
-                achievementName = achievement.name,
-                coins = achievement.rewardCoins,
-                expAmount = achievement.rewardExp,
-                chestType = achievement.rewardChestType
-            )
-        )
+                achievementRepository.updateProgress(
+                    achievementId = definition.id,
+                    progress = safeProgress,
+                    isUnlocked = shouldUnlock
+                )
+
+                if (currentAchievement != null && !currentAchievement.isUnlocked && shouldUnlock) {
+                    activityTimelineEngine.logAchievementUnlocked(definition.name)
+                }
+            }
     }
 
-    private suspend fun unlockAchievement(name: String) {
-        val achievement = achievementRepository.getAllAchievements()
-            .first()
-            .firstOrNull { it.name == name } ?: return
+    suspend fun claimAchievement(achievementId: String) {
+        claimMutex.withLock {
+            val achievement = achievementRepository.getAchievementById(achievementId).first() ?: return
+            val definition = AchievementsConfig.achievementById(achievement.id) ?: return
 
-        if (achievement.isUnlocked) return
+            val targetReached = definition.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
+            if (!achievement.isUnlocked || !targetReached || achievement.isClaimed) return
 
-        achievementRepository.updateAchievement(
-            achievement.copy(
-                isUnlocked = true,
-                isClaimed = false,
-                unlockedDate = System.currentTimeMillis()
+            val processed = achievementRewardProcessor.process(
+                definition = definition,
+                achievementId = achievement.id
             )
-        )
+            if (!processed) return
 
-        Log.d("ACHIEVEMENT", "Unlocked: $name")
+            Log.d("ACHIEVEMENT", "Claimed: ${definition.name}")
+        }
     }
 }

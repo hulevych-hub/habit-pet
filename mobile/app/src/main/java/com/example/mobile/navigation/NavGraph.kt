@@ -42,17 +42,21 @@ import com.example.mobile.presentation.ui.screens.HabitCreationScreen
 import com.example.mobile.presentation.ui.screens.HabitDetailScreen
 import com.example.mobile.presentation.ui.screens.HabitEditScreen
 import com.example.mobile.presentation.ui.screens.HabitsScreen
+import com.example.mobile.presentation.ui.screens.ActivityTimelineScreen
 import com.example.mobile.presentation.ui.screens.HomeScreen
-import com.example.mobile.presentation.ui.screens.JournalScreen
 import com.example.mobile.presentation.ui.screens.NotificationSettingsScreen
 import com.example.mobile.presentation.ui.screens.PetScreen
 import com.example.mobile.presentation.ui.screens.RewardsScreen
 import com.example.mobile.presentation.ui.screens.StatisticsScreen
+import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
 import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
-fun HabitPetNavGraph(navController: NavHostController = rememberNavController()) {
+fun HabitPetNavGraph(
+    navController: NavHostController = rememberNavController(),
+    microFeedbackManager: MicroFeedbackManager? = null
+) {
     HabitPetTheme {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
@@ -65,6 +69,7 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
                     currentRoute = currentRoute,
                     claimableAchievementCount = claimableAchievementCount,
                     onNavigate = { route ->
+                        microFeedbackManager?.triggerTabSwitched()
                         navController.navigate(route) {
                             popUpTo("home") { saveState = true }
                             launchSingleTop = true
@@ -120,7 +125,7 @@ fun HabitPetNavGraph(navController: NavHostController = rememberNavController())
                 composable("collection") { RewardsScreen() }
                 composable("statistics") { StatisticsScreen() }
                 composable("achievements") { AchievementScreen() }
-                composable("journal") { JournalScreen() }
+                composable("activity") { ActivityTimelineScreen() }
                 composable("notification_settings") { NotificationSettingsScreen() }
             }
         }
@@ -152,7 +157,7 @@ private fun HabitPetBottomBar(
             icon = Icons.Default.FavoriteBorder,
             badgeCount = claimableAchievementCount
         ),
-        BottomDestination("journal", "Journal", Icons.Default.Book),
+        BottomDestination("activity", "Activity", Icons.Default.Book),
         BottomDestination("notification_settings", "Notifications", Icons.Default.Notifications)
     )
 

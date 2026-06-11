@@ -13,9 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.mobile.domain.DragonMood
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.EvolutionTeaser
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.data.local.entities.PetEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +49,8 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
         nameDraft = pet.name
     }
 
-    val xpForNextLevel = remember { calculateXpForNextLevel(pet.level) }
+    val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
+    val xpForNextLevel = ExpConfig.xpRequiredForNextLevel(pet.xp).coerceAtLeast(1L)
 
     Scaffold(
         topBar = {
@@ -90,17 +93,19 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
                         text = "Level ${pet.level}",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    // Evolution stage text
                     Text(
-                        text = when (pet.evolutionStage) {
-                            0 -> "Egg"
-                            1 -> "Hatchling"
-                            2 -> "Young Dragon"
-                            3 -> "Adult Dragon"
-                            4 -> "Ancient Dragon"
-                            else -> "Unknown"
-                        },
+                        text = ExpConfig.evolutionStageName(pet.evolutionStage),
                         style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    EvolutionTeaser(
+                        totalXp = pet.xp,
+                        currentStage = pet.evolutionStage,
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
+                    Text(
+                        text = "Mood: ${DragonMood.from(pet.mood).displayName}",
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
                     // XP Progress Bar
@@ -109,11 +114,11 @@ fun PetScreen(petViewModel: PetViewModel = hiltViewModel()) {
                             .fillMaxWidth()
                             .height(12.dp)
                             .padding(top = 8.dp),
-                        progress = if (xpForNextLevel > 0) pet.xp % xpForNextLevel.toFloat() / xpForNextLevel else 0f,
+                        progress = { (currentLevelXp.toFloat() / xpForNextLevel.toFloat()).coerceIn(0f, 1f) },
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "XP: ${pet.xp % xpForNextLevel.toLong()} / ${xpForNextLevel}",
+                        text = "XP: $currentLevelXp / $xpForNextLevel",
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -241,12 +246,6 @@ internal fun PetRenameDialog(
             }
         }
     )
-}
-
-// Helper function to calculate XP needed for next level
-private fun calculateXpForNextLevel(level: Int): Int {
-    // Same formula as in ViewModel: level 0 -> 100, level 1 -> 150, level 2 -> 200, etc.
-    return 100 + (level * 50)
 }
 
 @Composable

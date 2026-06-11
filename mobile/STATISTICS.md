@@ -57,6 +57,8 @@ Statistics are updated through the following mechanisms:
 Statistics are used for:
 - **Achievement Unlocking**: AchievementEngine monitors statistics for milestone triggers
 - **Streak Rewards**: StreakEngine uses milestone streaks to determine global streak celebration and chest reward eligibility
+- **Daily Welcome Event**: ActivityTimelineEngine reads `currentStreak` for the once-per-day `FIRST_DAILY_LOGIN` timeline entry
+- **Dragon Mood**: DragonMoodEngine reads `currentStreak` when recalculating the pet mood on app open, habit completion, and streak changes
 - **UI Display**: HomeScreenViewModel exposes statistics for display in home screen
 - **Pet Progress**: XP statistics influence pet level and evolution stage
 - **Economy**: Coin statistics track purchasing power
@@ -92,6 +94,7 @@ All statistics tracking values are hardcoded in the implementation:
 - app/src/main/java/com/example/mobile/domain/repository/StatisticsRepository.kt
 - app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
 - app/src/main/java/com/example/mobile/domain/StreakEngine.kt
+- app/src/main/java/com/example/mobile/domain/DragonMoodEngine.kt
 - app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
@@ -109,10 +112,14 @@ All statistics tracking values are hardcoded in the implementation:
 
 2. **Stored vs Derived Metrics**: `currentStreak` is the persisted source of truth while `globalStreak` mirrors it for UI display.
 
-3. **Limited Statistics Exposure**: Only two statistics (streak and coins) are directly visible to players in the main UI.
+3. **Daily Welcome Event Storage**: The daily first-touch system uses local preferences for `last_login_day` and `last_active_session_timestamp`; it does not add new columns to `StatisticsEntity`.
 
-4. **Derived vs Stored**: Some valuable metrics like pet level and evolution stage are derived from XP rather than stored directly, requiring calculation each time.
+4. **Dragon Mood Storage**: Mood is calculated using `currentStreak` but is persisted in `PetEntity.mood`, not in `StatisticsEntity`.
 
-5. **No Statistics History**: The system only tracks current values; no historical progression or milestones are recorded beyond achievements.
+5. **Limited Statistics Exposure**: Only two statistics (streak and coins) are directly visible to players in the main UI.
 
-6. **Streak Definition**: Streaks require completing ALL habits each day, which becomes increasingly difficult as players add more habits.
+6. **Derived vs Stored**: Some valuable metrics like pet level and evolution stage are derived from XP rather than stored directly, requiring calculation each time.
+
+7. **No Statistics History**: The system only tracks current values; no historical progression or milestones are recorded beyond achievements.
+
+8. **Streak Definition**: Streaks require completing ALL habits each day, which becomes increasingly difficult as players add more habits.

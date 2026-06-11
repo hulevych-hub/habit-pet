@@ -6,6 +6,9 @@ import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.AchievementEngine
+import com.example.mobile.domain.AchievementProgressSource
+import com.example.mobile.domain.AchievementReward
+import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitRepository
@@ -108,7 +111,7 @@ class AchievementViewModel @Inject constructor(
         }
     }
 
-    fun claimAchievement(achievementId: Long) {
+    fun claimAchievement(achievementId: String) {
         viewModelScope.launch {
             achievementEngine.claimAchievement(achievementId)
         }
@@ -121,40 +124,53 @@ class AchievementViewModel @Inject constructor(
         ownedCustomizationCount: Int,
         currentHabitCount: Int
     ): Int {
-        if (achievement.isUnlocked) return achievement.targetValue
+        val definition = AchievementsConfig.achievementById(achievement.id)
+        if (achievement.isUnlocked && definition?.targetValue != null) {
+            return definition.targetValue
+        }
 
-        return when (achievement.name) {
-            "First Habit", "3 Habit Builder" -> currentHabitCount
-            "7 Day Streak", "30 Day Streak" -> stats.currentStreak
-            "100 Completions" -> stats.totalCompletions
-            "1000 XP", "5000 XP" -> petState.xp.toInt()
-            "Level 10", "Level 25" -> petState.level
-            "First Customization", "Customization Collector" -> ownedCustomizationCount
-            else -> 0
+        return when (definition?.progressSource) {
+            AchievementProgressSource.HABIT_COUNT -> currentHabitCount
+            AchievementProgressSource.CURRENT_STREAK -> stats.currentStreak
+            AchievementProgressSource.TOTAL_COMPLETIONS -> stats.totalCompletions
+            AchievementProgressSource.TOTAL_XP -> petState.xp.toInt().coerceAtMost(Int.MAX_VALUE)
+            AchievementProgressSource.PET_LEVEL -> petState.level
+            AchievementProgressSource.OWNED_CUSTOMIZATIONS -> ownedCustomizationCount
+            null -> 0
         }.coerceAtLeast(0)
     }
 
     fun progressFraction(current: Int, achievement: AchievementEntity): Float {
-        val target = achievement.targetValue.coerceAtLeast(1)
-        return current.coerceAtMost(target).toFloat() / target.toFloat()
+        val target = AchievementsConfig.achievementById(achievement.id)?.targetValue
+        return if (target == null) {
+            if (achievement.isUnlocked) 1f else 0f
+        } else {
+            current.coerceAtMost(target).toFloat() / target.toFloat()
+        }
     }
 
-    fun rewardLabel(achievement: AchievementEntity): String {
-        val rewards = mutableListOf<String>()
-
-        if (achievement.rewardCoins > 0) {
-            rewards.add("${achievement.rewardCoins} coins")
+    fun progressLabel(current: Int, achievement: AchievementEntity): String {
+        val target = AchievementsConfig.achievementById(achievement.id)?.targetValue
+        return if (target == null) {
+            "Instant reward"
+        } else {
+            "$current / $target"
         }
+    }
 
-        if (achievement.rewardExp > 0) {
-            rewards.add("${achievement.rewardExp} EXP")
+    fun rewardLabels(achievement: AchievementEntity): List<String> {
+        val rewards = AchievementsConfig.achievementById(achievement.id)?.rewards.orEmpty()
+        return if (rewards.isEmpty()) {
+            listOf("No reward")
+        } else {
+            rewards.map { it.rewardLabel() }
         }
+    }
 
-        if (!achievement.rewardChestType.isNullOrBlank()) {
-            val chestType = achievement.rewardChestType!!
-            rewards.add("${chestType.substring(0, 1).uppercase()}${chestType.substring(1)} chest")
-        }
-
-        return if (rewards.isEmpty()) "No reward" else rewards.joinToString(", ")
+    private fun AchievementReward.rewardLabel(): String = when (this) {
+        is AchievementReward.CoinReward -> "+$amount coins"
+        is AchievementReward.ExpReward -> "+$amount EXP"
+        is AchievementReward.ChestReward -> "${chestType.name.replaceFirstChar { it.uppercase() }} chest"
+        is AchievementReward.CustomizationReward -> CustomizationTypes.displayName(type)
     }
 }

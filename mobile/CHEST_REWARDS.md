@@ -15,6 +15,7 @@ The chest reward system consists of:
   - Streak milestone rewards
   - Level-up bonuses
   - Achievement chest rewards
+  - Surprise habit reward chests
 - Four chest types: Normal, Rare, Epic, and Legendary
 - **Centralized configuration: `EconomyConfig` + `ChestRewardConfigProvider`**
 
@@ -46,11 +47,21 @@ The chest reward system consists of:
    - Reward type: `"level_up_{chest_type}"`
    - Rewards are based on the selected chest type configuration
 
-3. **Achievement Chests** (`RewardManager.kt`):
-   - Awarded when an achievement grants a chest reward
-   - Chest type is read from `AchievementEntity.rewardChestType`
+3. **Achievement Chests** (`AchievementRewardProcessor.kt`):
+   - Awarded when an achievement grants an `AchievementReward.ChestReward`
+   - Chest type is read from `AchievementsConfig`
    - Reward type: `"achievement_{chest_type}"`
    - Rewards are based on the selected chest type configuration
+   - The achievement reward popup is queued after the chest reward is prepared
+
+4. **Surprise Habit Reward Chests** (`HabitDetailViewModel.kt`):
+  - Awarded only when the surprise reward trigger succeeds after a successful habit completion
+  - Trigger requires at least 3 successful habit completions since the previous surprise
+  - Trigger chance is 8%
+  - Surprise chests are always Rare, Epic, or Legendary
+  - Reward type: `"surprise_{chest_type}"`
+  - Rewards are based on the selected chest type configuration
+  - The surprise chest is queued through `RewardQueue` and never blocks the habit completion flow
 
 ### Reward Queue Priority
 Chest rewards have priority level 4 in the RewardQueue:
@@ -112,7 +123,7 @@ Chest reward values are configured through `ChestRewardConfigProvider`, which so
 
 ### Chest Type Probabilities (from `EconomyConfig`)
 
-Used by level-up and achievement chests:
+Used by level-up and achievement-configured chests:
 
 - **Normal**: 55%
 - **Rare**: 30%
@@ -137,6 +148,8 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 - app/src/main/java/com/example/mobile/domain/ChestRewardConfigProvider.kt
 - app/src/main/java/com/example/mobile/domain/EconomyConfig.kt (centralized economy values)
 - app/src/main/java/com/example/mobile/domain/StreakEngine.kt
+- app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt
+- app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/domain/repository/InventoryItemRepository.kt
 - app/src/main/java/com/example/mobile/data/repository/InventoryItemRepositoryImpl.kt
@@ -145,6 +158,10 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 - app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlay.kt
+- app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt
+- app/src/main/java/com/example/mobile/domain/GameEventFactory.kt
+- app/src/main/java/com/example/mobile/domain/GameEventType.kt
+- app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt
 
 ## Known Gaps
 
@@ -173,6 +190,20 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 - **Weighted avg EXP per randomized chest**: ~77 EXP
 - **Weighted customization item value per randomized chest**: ~72 coin-equivalent
 - **Combined randomized chest value**: ~52 coins + ~77 EXP + ~72 coin-equivalent
+
+### Surprise Chest Expected Value
+
+Surprise chests use a special rarity distribution:
+- Rare: 80%
+- Epic: 18%
+- Legendary: 2%
+
+Approximate surprise chest EV:
+- Coins: ~73 coins
+- EXP: ~137 EXP
+- Customization EV: ~99 coin-equivalent
+
+Because surprise chests require a 3-completion cooldown and an 8% chance roll, their long-term economy impact stays small.
 
 ### Progression Impact
 

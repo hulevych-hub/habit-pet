@@ -6,16 +6,17 @@ Habit Pet uses a Room database to persist game state, player progress, and vario
 
 ## Current Implementation
 
-The data model includes 9 Room entities:
+The data model includes 10 Room entities:
 1. HabitEntity - Tracks habit definitions and streaks
 2. HabitCompletionEntity - Records individual habit completions
 3. HabitProgressEntity - Tracks timer habit progress
 4. PetEntity - Stores pet state (level, XP, equipped items)
 5. StatisticsEntity - Tracks player statistics and progress
 6. InventoryItemEntity - Manages collectible customization items
-7. AchievementEntity - Tracks achievement progress and rewards
-8. JournalEntryEntity - Records game events and milestones
-9. (Implicit) Room database schema with relationships
+7. AchievementEntity - Tracks achievement progress and claim state
+8. GameEventEntity - Records persistent activity timeline events
+9. JournalEntryEntity - Legacy journal entry text
+10. (Implicit) Room database schema with relationships
 
 ## Rules
 
@@ -93,14 +94,25 @@ The chest reward system interacts with InventoryItemEntity through the Inventory
 - When all customization items of a rarity are owned, the chest reward falls back to coin and EXP rewards only
 
 **AchievementEntity** (table: `achievements`)
-- `id: Long` - Primary key (auto-generated)
-- `name: String` - Achievement title
-- `description: String` - Detailed requirement description
-- `icon: String` - Icon identifier (currently unused in UI)
-- `targetValue: Int` - Value needed to unlock achievement
-- `rewardCoins: Int` - Coins awarded upon unlocking
+- `id: String` - Stable achievement identifier from `AchievementsConfig`
+- `progress: Int` - Latest persisted progress for the configured source
 - `isUnlocked: Boolean` - Current unlock status
+- `isClaimed: Boolean` - Whether the player has claimed the reward
 - `unlockedDate: Long?` - Timestamp when achievement was unlocked
+
+Achievement metadata and reward definitions are not stored in this table. They are loaded from `AchievementsConfig`.
+
+**GameEventEntity** (table: `game_events`)
+- `id: Long` - Primary key, auto-generated
+- `type: String` - Extensible `GameEventType` name
+- `timestamp: Long` - Event creation time in milliseconds
+- `title: String` - Short event title for timeline cards
+- `description: String` - Human-readable event description
+- `icon: String` - Icon identifier used by UI mapping
+- `rarity: String` - `COMMON`, `RARE`, `EPIC`, or `LEGENDARY`
+- `payload: String?` - Optional JSON-style payload for future structured data
+
+Game events are append-only. The timeline DAO exposes reverse-chronological queries with `LIMIT` and `OFFSET` for lazy loading.
 
 **JournalEntryEntity** (table: `journal_entries`)
 - `id: Long` - Primary key
@@ -118,8 +130,9 @@ The chest reward system interacts with InventoryItemEntity through the Inventory
    - HabitProgressEntity tracks timer habit accumulation
 4. **Pet Rename**: PetEntity.name is updated through PetRepository.updatePet from the Pet screen and displayed on the Home and Pet screens
 5. **Achievement Tracking**: AchievementEntity records are updated when milestones are reached
-6. **Journal Generation**: JournalEntryEntity records are created for significant events
-7. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items
+6. **Activity Timeline**: GameEventEntity records are appended for habit completions, achievements, level-ups, evolutions, chests, streak milestones, and daily welcomes
+7. **Legacy Journal Generation**: JournalEntryEntity records may still be created by the legacy journal system
+8. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items
 
 ## Configuration
 
@@ -137,6 +150,7 @@ All entities are configured with Room annotations:
 - app/src/main/java/com/example/mobile/data/local/entities/HabitEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/HabitProgressEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/InventoryItemEntity.kt
+- app/src/main/java/com/example/mobile/data/local/entities/GameEventEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/JournalEntryEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt
@@ -150,7 +164,6 @@ All entities are configured with Room annotations:
    - StatisticsEntity.globalStreak (appears redundant)
    - StatisticsEntity.petAgeDays (never updated or displayed)
    - StatisticsEntity.rewardChestsAvailable (tracked but never used)
-   - AchievementEntity.icon (stored but not referenced in UI)
    - InventoryItemEntity.imageUrl (stored but not used in UI)
    - PetEntity.mood (tracked but not visually represented)
 

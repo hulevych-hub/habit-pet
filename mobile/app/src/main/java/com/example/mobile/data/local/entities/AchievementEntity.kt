@@ -5,15 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "achievements")
 data class AchievementEntity(
-    @PrimaryKey(autoGenerate = true) var id: Long = 0,
-    var name: String = "",
-    var description: String = "",
-    var icon: String = "",
-    var targetValue: Int = 0,
-    var rewardCoins: Int = 0,
-    var rewardExp: Int = 0,
-    var rewardChestType: String? = null,
+    @PrimaryKey var id: String = "",
+    var progress: Int = 0,
     var isUnlocked: Boolean = false,
     var isClaimed: Boolean = false,
-    var unlockedDate: Long? = null // timestamp
+    var unlockedDate: Long? = null
 )

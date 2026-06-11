@@ -6,6 +6,7 @@ import com.example.mobile.data.local.dao.HabitProgressDao
 import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.data.local.entities.GameEventEntity
 import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.JournalEntryEntity
@@ -19,11 +20,12 @@ import com.example.mobile.data.local.entities.StatisticsEntity
         PetEntity::class,
         InventoryItemEntity::class,
         AchievementEntity::class,
+        GameEventEntity::class,
         JournalEntryEntity::class,
         StatisticsEntity::class,
         HabitProgressEntity::class
     ],
-    version = 13,
+    version = 15,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun petDao(): com.example.mobile.data.local.dao.PetDao
     abstract fun inventoryItemDao(): com.example.mobile.data.local.dao.InventoryItemDao
     abstract fun achievementDao(): com.example.mobile.data.local.dao.AchievementDao
+    abstract fun gameEventDao(): com.example.mobile.data.local.dao.GameEventDao
     abstract fun journalEntryDao(): com.example.mobile.data.local.dao.JournalEntryDao
     abstract fun statisticsDao(): com.example.mobile.data.local.dao.StatisticsDao
     abstract fun habitProgressDao(): HabitProgressDao

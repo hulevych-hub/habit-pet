@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,7 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.domain.DragonMood
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.EvolutionTeaser
+import com.example.mobile.presentation.ui.components.ProgressHeader
+import com.example.mobile.presentation.ui.components.ProgressHeaderState
 
 @Composable
 fun HomeScreen(
@@ -59,9 +62,6 @@ fun HomeScreen(
     LaunchedEffect(pet.name) {
         petNameDraft = pet.name
     }
-
-    val nextLevelXp = xpRequiredForNextLevel(pet.level)
-    val currentLevelXp = xpIntoCurrentLevel(pet.xp)
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -111,19 +111,25 @@ fun HomeScreen(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text("${uiState.globalStreak} Day Streak", style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Level ${pet.level} ${getEvolutionStageName(pet.evolutionStage)}",
-                style = MaterialTheme.typography.titleMedium
+            ProgressHeader(
+                state = ProgressHeaderState(
+                    level = pet.level,
+                    xp = pet.xp,
+                    evolutionStage = pet.evolutionStage,
+                    totalCoins = uiState.totalCoins,
+                    globalStreak = uiState.globalStreak
+                )
+            )
+            EvolutionTeaser(
+                totalXp = pet.xp,
+                currentStage = pet.evolutionStage,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("XP: $currentLevelXp / $nextLevelXp", style = MaterialTheme.typography.bodyLarge)
-            LinearProgressIndicator(
-                progress = { (currentLevelXp.toFloat() / nextLevelXp.toFloat()).coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
+            Text(
+                text = "Mood: ${DragonMood.from(pet.mood).displayName}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -140,8 +146,20 @@ fun HomeScreen(
             }
 
             if (uiState.habits.isEmpty()) {
-                Button(onClick = onNavigateToHabits) {
-                    Text("Create your first habit")
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Your dragon is ready for its first tiny quest.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                    Button(onClick = onNavigateToHabits) {
+                        Text("Create your first habit")
+                    }
                 }
             } else {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -204,26 +222,4 @@ private fun HomeHabitItem(
             )
         }
     }
-}
-
-
-private fun getEvolutionStageName(stage: Int): String = when (stage) {
-    0 -> "Egg"
-    1 -> "Hatchling"
-    2 -> "Young Dragon"
-    3 -> "Adult Dragon"
-    4 -> "Ancient Dragon"
-    else -> "Unknown"
-}
-
-private fun xpRequiredForNextLevel(level: Int): Long = 100L + (level * 50L)
-
-private fun xpIntoCurrentLevel(totalXp: Long): Long {
-    var level = 0
-    var remainingXp = totalXp
-    while (remainingXp >= xpRequiredForNextLevel(level)) {
-        remainingXp -= xpRequiredForNextLevel(level)
-        level++
-    }
-    return remainingXp
 }

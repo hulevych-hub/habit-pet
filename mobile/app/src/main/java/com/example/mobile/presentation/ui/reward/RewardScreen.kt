@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 import com.example.mobile.presentation.ui.components.PetPhaseTransition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import kotlin.math.cos
@@ -109,7 +110,8 @@ fun RewardScreen(
                     achievementName = reward.achievementName,
                     coinsEarned = reward.coins,
                     expAmount = reward.expAmount,
-                    chestType = reward.chestType
+                    chestType = reward.chestType,
+                    rewards = reward.rewards
                 )
 
                 is RewardUiEvent.CoinReward -> CoinRewardContent(
@@ -355,17 +357,13 @@ private fun AchievementRewardContent(
     achievementName: String,
     coinsEarned: Int,
     expAmount: Int = 0,
-    chestType: String? = null
+    chestType: String? = null,
+    rewards: List<ConfigAchievementReward> = emptyList()
 ) {
-    val rewardText = mutableListOf("+${coinsEarned} coins")
-
-    if (expAmount > 0) {
-        rewardText.add("+$expAmount EXP")
-    }
-
-    if (!chestType.isNullOrBlank()) {
-        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
-        rewardText.add("$label chest")
+    val rewardText = if (rewards.isNotEmpty()) {
+        rewards.map { it.rewardLabel() }
+    } else {
+        buildLegacyRewardText(coinsEarned, expAmount, chestType)
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -398,6 +396,35 @@ private fun AchievementRewardContent(
             color = Color(0xFF34D399)
         )
     }
+}
+
+private fun buildLegacyRewardText(
+    coinsEarned: Int,
+    expAmount: Int,
+    chestType: String?
+): List<String> {
+    val rewardText = mutableListOf("+${coinsEarned} coins")
+
+    if (expAmount > 0) {
+        rewardText.add("+$expAmount EXP")
+    }
+
+    if (!chestType.isNullOrBlank()) {
+        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
+        rewardText.add("$label chest")
+    }
+
+    return rewardText
+}
+
+private fun ConfigAchievementReward.rewardLabel(): String = when (this) {
+    is ConfigAchievementReward.CoinReward -> "+$amount coins"
+    is ConfigAchievementReward.ExpReward -> "+$amount EXP"
+    is ConfigAchievementReward.ChestReward -> {
+        val label = chestType.name.replaceFirstChar { it.uppercase() }
+        "$label chest"
+    }
+    is ConfigAchievementReward.CustomizationReward -> "Customization"
 }
 
 // Coin Reward Screen

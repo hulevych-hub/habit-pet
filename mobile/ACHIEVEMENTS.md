@@ -2,43 +2,47 @@
 
 ## Overview
 
-The achievements system gives players long-term goals across habit creation, habit completion, streaks, XP, pet levels, and customization collection. Achievements unlock automatically when tracked game milestones are reached, then appear as claimable rewards in the Achievements screen.
+The achievements system gives players long-term goals across habit creation, habit completion, streaks, XP, pet levels, and customization collection. Achievement definitions are centralized in `AchievementsConfig`; the Room table stores only player progress and claim state.
 
 ## Current Implementation
 
 Achievements are persisted in Room and monitored by `AchievementEngine`. The flow is:
 
-1. `AchievementEngine` observes habit, streak, completion, XP, level, and customization collection state.
-2. `StreakEngine` observes daily all-habits completion and emits global streak milestone events.
-3. When a threshold is reached, the matching achievement is marked unlocked.
+1. `AchievementDatabaseInitializer` syncs config-defined achievement rows with persisted progress rows on startup.
+2. `AchievementEngine` observes habit, streak, completion, XP, level, and customization collection state.
+3. When a configured threshold is reached, the matching achievement row is marked unlocked while remaining unclaimed.
 4. The player opens the Achievements screen and claims unlocked rewards.
-5. `AchievementViewModel` calls `AchievementEngine.claimAchievement(...)`.
-6. The engine queues a `RewardUiEvent.AchievementReward`.
-7. `RewardManager` processes the reward through the centralized reward system.
+5. `AchievementViewModel.claimAchievement(...)` calls `AchievementEngine.claimAchievement(...)`.
+6. `AchievementRewardProcessor` processes the configured reward list for that achievement.
+7. Reward UI is queued through `RewardQueue` and also emitted through `RewardEventBus`.
 
 Achievement rewards can be:
 - Coins
 - EXP
 - Chest rewards
-- Coin + chest follow-up rewards
+- Customization item grants
+- Multiple reward types on the same achievement
 
 Global streak milestones are separate from claimable achievements. They trigger immediately through `StreakEngine`, display an immersive celebration screen, and then flow into the centralized chest reward pipeline.
 
-## Achievement Entity Structure
+## Achievement Configuration
 
-Each achievement has the following properties:
+`AchievementsConfig` is the source of truth for achievement metadata and rewards. Each definition includes:
 
-- `id: Long` - unique identifier
+- `id: String` - stable config identifier
 - `name: String` - achievement title
 - `description: String` - requirement description
 - `icon: String` - icon identifier
-- `targetValue: Int` - milestone value that must be reached or exceeded
-- `rewardCoins: Int` - coin reward
-- `rewardExp: Int` - EXP reward
-- `rewardChestType: String?` - optional chest type, such as `rare`
-- `isUnlocked: Boolean` - milestone completion status
-- `isClaimed: Boolean` - whether the player has claimed the reward
-- `unlockedDate: Long?` - timestamp when the achievement was unlocked
+- `progressSource: AchievementProgressSource` - tracked milestone source
+- `targetValue: Int?` - threshold, nullable for instant-reward achievements
+- `rewards: List<AchievementReward>` - configured reward list
+
+Reward types are modeled as `AchievementReward`:
+
+- `AchievementReward.CoinReward(amount)`
+- `AchievementReward.ExpReward(amount)`
+- `AchievementReward.ChestReward(chestType)`
+- `AchievementReward.CustomizationReward(itemId, type)`
 
 ## Default Achievements
 
@@ -96,7 +100,7 @@ The game initializes with predefined achievements:
 
 11. **Customization Collector**
     - Target: unlock 5 customization items
-    - Reward: Rare chest
+    - Reward: Rare chest + 50 coins
     - Unlock condition: purchased customization count >= 5
 
 ## Achievement Unlocking
@@ -112,9 +116,12 @@ The game initializes with predefined achievements:
 
 When a condition is met, the engine:
 
-1. Checks if the corresponding achievement is already unlocked.
-2. If not, updates the achievement record with `isUnlocked = true` and `unlockedDate`.
-3. Leaves `isClaimed = false` so the reward can be claimed from the Achievements screen.
+1. Finds the config definition by stable achievement ID.
+2. Updates the persisted row with the latest progress.
+3. Marks the achievement unlocked once progress reaches the configured target.
+4. Leaves `isClaimed = false` so the reward can be claimed from the Achievements screen.
+
+Once unlocked, an achievement remains unlocked even if the current live value later drops below the target.
 
 ## Claiming Flow
 
@@ -124,21 +131,25 @@ When the player taps **Claim**:
 
 1. `AchievementViewModel.claimAchievement(...)` calls `AchievementEngine.claimAchievement(...)`.
 2. The engine verifies that the achievement is unlocked and not already claimed.
-3. The achievement is marked `isClaimed = true`.
-4. A reward event is queued:
-   - Coins and/or EXP are shown directly in the achievement reward popup.
-   - If the achievement has `rewardChestType`, claiming also queues a chest reward after the achievement popup completes.
+3. `AchievementRewardProcessor` processes all configured rewards for the achievement inside one Room transaction.
+4. The same transaction marks the achievement row `isClaimed = true`, so rewards and claim state succeed or fail together.
+5. A configured `RewardUiEvent.AchievementReward` is queued for display and emitted through `RewardEventBus`.
+
+Claims are serialized with a mutex to prevent duplicate processing from rapid taps.
 
 ## Reward Processing
 
-`RewardManager` processes achievement rewards through the centralized reward pipeline:
+`AchievementRewardProcessor` owns achievement reward execution:
 
-- `rewardCoins` are added with `statisticsRepository.addCoins(...)`.
-- `expAmount` is added to the current pet.
-- `chestType` creates a follow-up `RewardUiEvent.ChestReward`.
-- Chest rewards use `ChestRewardConfigProvider` and may grant coins, EXP, and customization items through `InventoryItemRepository`.
+- Coin rewards are added with `statisticsRepository.addCoins(...)`.
+- EXP rewards are added to the current pet.
+- Chest rewards are built through `ChestRewardConfigProvider` and queued as `RewardUiEvent.ChestReward`.
+- Customization rewards are granted by stable `itemId` through `InventoryItemRepository`.
+- Reward UI is queued through `RewardQueue` and emitted through `RewardEventBus`.
 
-This keeps achievement rewards inside the same reward flow used by streaks, level-ups, evolutions, and chest openings.
+`RewardManager` remains the centralized processor for queued non-achievement reward events and does not double-process achievement reward coins or EXP.
+
+This keeps achievement rewards inside the same reward flow used by streaks, level-ups, evolutions, and chest openings while allowing achievement reward definitions to contain multiple reward types.
 
 ## UI
 
@@ -147,38 +158,53 @@ This keeps achievement rewards inside the same reward flow used by streaks, leve
 - Total unlocked progress
 - Number of achievements ready to claim
 - Per-achievement progress bars
-- Current value vs target value
-- Reward preview
+- Current value vs target value under each achievement
+- Multiple reward preview chips
 - Claim button for unlocked, unclaimed achievements
-- Claimed or locked status for non-claimable achievements
+- Claimed, unlocked, or locked status for non-claimable achievements
 
 ## Configuration
 
 Achievement definitions are initialized in:
 
-- `app/src/main/java/com/example/mobile/data/local/database/AchievementDatabaseInitializer.kt`
+- `app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt`
 
-Coin values reuse `EconomyConfig` where defined. Chest rewards use `ChestType` and `ChestRewardConfigProvider`.
+Coin values reuse `EconomyConfig`. Chest rewards use `ChestType` and `ChestRewardConfigProvider`. Customization rewards use stable `InventoryItemEntity.itemId` values.
 
 ## Data Model
 
 **AchievementEntity** (`app/src/main/java/com/example/mobile/data/local/entities/AchievementEntity.kt`):
 
 - Table: `achievements`
-- Columns: `id`, `name`, `description`, `icon`, `targetValue`, `rewardCoins`, `rewardExp`, `rewardChestType`, `isUnlocked`, `isClaimed`, `unlockedDate`
+- Columns:
+  - `id: String` - stable achievement identifier from `AchievementsConfig`
+  - `progress: Int` - latest persisted progress for the configured source
+  - `isUnlocked: Boolean` - milestone completion status
+  - `isClaimed: Boolean` - whether the player has claimed the reward
+  - `unlockedDate: Long?` - timestamp when the achievement was unlocked
+
+Achievement metadata and reward definitions are not stored in the database. They are loaded from `AchievementsConfig`, which allows new achievements to be added without changing the Room schema.
+
+Database version was increased from 13 to 14 with `MIGRATION_13_14`, which preserves existing achievement progress by legacy achievement name and maps it to stable config IDs.
 
 ## Source Files
 
 - `app/src/main/java/com/example/mobile/data/local/entities/AchievementEntity.kt`
-- `app/src/main/java/com/example/mobile/data/local/database/AchievementDatabaseInitializer.kt`
 - `app/src/main/java/com/example/mobile/data/local/dao/AchievementDao.kt`
+- `app/src/main/java/com/example/mobile/data/local/database/AchievementDatabaseInitializer.kt`
+- `app/src/main/java/com/example/mobile/data/local/database/AchievementMetadataMigration.kt`
 - `app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt`
 - `app/src/main/java/com/example/mobile/data/repository/AchievementRepositoryImpl.kt`
-- `app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt`
 - `app/src/main/java/com/example/mobile/domain/AchievementEngine.kt`
+- `app/src/main/java/com/example/mobile/domain/AchievementProgressSource.kt`
+- `app/src/main/java/com/example/mobile/domain/AchievementReward.kt`
+- `app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt`
+- `app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt`
+- `app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt`
 - `app/src/main/java/com/example/mobile/domain/StreakEngine.kt`
 - `app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt`
+- `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlay.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt`
 - `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt`
@@ -188,8 +214,7 @@ Coin values reuse `EconomyConfig` where defined. Chest rewards use `ChestType` a
 
 ## Known Gaps
 
-1. Achievement definitions are still static and initialized locally.
-2. Achievement conditions use simple thresholds rather than compound rules.
-3. Achievement icons are stored but the UI currently uses generic check/lock/trophy icons.
-4. Achievements are shown as one list rather than grouped by type or difficulty.
-5. Unlock feedback uses the standard reward popup rather than a dedicated achievement animation or notification.
+1. Achievement conditions use simple thresholds rather than compound rules.
+2. Achievement icons are stored but the UI currently uses generic check/lock/trophy icons.
+3. Achievements are shown as one list rather than grouped by type or difficulty.
+4. Unlock feedback uses the standard reward popup rather than a dedicated achievement animation or notification.

@@ -42,11 +42,36 @@ object EconomyConfig {
     const val LEVEL_UP_CHEST_BONUS_COINS: Int = 20
 
     // =========================
+    // COIN REWARDS - SURPRISE BONUSES
+    // =========================
+
+    /** Low-probability surprise bonus chance after a successful habit completion */
+    const val SURPRISE_REWARD_CHANCE: Double = 0.08 // 8%
+
+    /** Minimum successful habit completions required before another surprise can trigger */
+    const val SURPRISE_MIN_COMPLETIONS_BETWEEN: Int = 3
+
+    /** Bonus XP awarded by a surprise reward */
+    const val SURPRISE_BONUS_XP: Long = 25L
+
+    /** Bonus coins awarded by a surprise reward */
+    const val SURPRISE_BONUS_COINS: Int = 15
+
+    /** Rare chest probability inside surprise chest rewards */
+    const val SURPRISE_RARE_CHEST_PROBABILITY: Double = 0.80
+
+    /** Epic chest probability inside surprise chest rewards */
+    const val SURPRISE_EPIC_CHEST_PROBABILITY: Double = 0.18
+
+    // =========================
     // COIN REWARDS - ACHIEVEMENTS
     // =========================
 
     /** Achievement: First Habit */
     const val ACHIEVEMENT_FIRST_HABIT_COINS: Int = 50
+
+    /** Achievement: 3 Habit Builder */
+    const val ACHIEVEMENT_3_HABIT_BUILDER_COINS: Int = 100
 
     /** Achievement: 7 Day Streak */
     const val ACHIEVEMENT_7_DAY_STREAK_COINS: Int = 100
@@ -65,6 +90,12 @@ object EconomyConfig {
 
     /** Achievement: Level 25 */
     const val ACHIEVEMENT_LEVEL_25_COINS: Int = 500
+
+    /** Achievement: First Customization */
+    const val ACHIEVEMENT_FIRST_CUSTOMIZATION_COINS: Int = 75
+
+    /** Achievement: Customization Collector bonus coins */
+    const val ACHIEVEMENT_CUSTOMIZATION_COLLECTOR_COINS: Int = 50
 
     // =========================
     // CHEST REWARDS - COIN RANGES
@@ -142,6 +173,20 @@ object EconomyConfig {
     fun customizationPrice(rarity: Rarity): Int {
         val multiplier = RARITY_PRICE_MULTIPLIER[rarity] ?: 1.0
         return (CUSTOMIZATION_BASE_PRICE * multiplier).toInt()
+    }
+
+    fun shouldTriggerSurpriseReward(completionsSinceLastSurprise: Int): Boolean {
+        if (completionsSinceLastSurprise < SURPRISE_MIN_COMPLETIONS_BETWEEN) return false
+        return Math.random() < SURPRISE_REWARD_CHANCE
+    }
+
+    fun getRandomSurpriseChestType(): ChestType {
+        val roll = Math.random()
+        return when {
+            roll < SURPRISE_RARE_CHEST_PROBABILITY -> ChestType.RARE
+            roll < SURPRISE_RARE_CHEST_PROBABILITY + SURPRISE_EPIC_CHEST_PROBABILITY -> ChestType.EPIC
+            else -> ChestType.LEGENDARY
+        }
     }
 
     // =========================

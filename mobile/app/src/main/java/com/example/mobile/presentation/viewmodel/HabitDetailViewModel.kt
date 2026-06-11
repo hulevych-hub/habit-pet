@@ -7,7 +7,10 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.ActivityTimelineEngine
 import com.example.mobile.domain.ChestRewardConfigProvider
+import com.example.mobile.domain.ChestType
+import com.example.mobile.domain.DragonMoodEngine
 import com.example.mobile.domain.EconomyConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.StreakEngine
@@ -18,6 +21,7 @@ import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -46,7 +50,10 @@ class HabitDetailViewModel @Inject constructor(
     private val habitProgressRepository: HabitProgressRepository,
     private val streakEngine: StreakEngine,
     private val rewardQueue: RewardQueue,
-    private val inventoryItemRepository: InventoryItemRepository
+    private val inventoryItemRepository: InventoryItemRepository,
+    private val activityTimelineEngine: ActivityTimelineEngine,
+    private val microFeedbackManager: MicroFeedbackManager,
+    private val dragonMoodEngine: DragonMoodEngine
 ) : ViewModel() {
 
     // UI State
@@ -72,6 +79,8 @@ class HabitDetailViewModel @Inject constructor(
 
     private val _elapsedSeconds = MutableStateFlow(0)
     val elapsedSeconds: StateFlow<Int> = _elapsedSeconds
+
+    private var completionsSinceLastSurprise = 0
 
     // =========================
     // EVENTS (FIXED)
@@ -176,11 +185,18 @@ class HabitDetailViewModel @Inject constructor(
                 )
 
                 habitCompletionRepository.addCompletion(completion)
-                val today = getDayStart(System.currentTimeMillis())
+                activityTimelineEngine.logHabitCompleted(
+                    habitName = _habit.value?.name ?: "Habit",
+                    xpEarned = xpEarned,
+                    coinsEarned = coinsEarned
+                )
                 streakEngine.evaluateTodayStreak(System.currentTimeMillis())
                 refreshCompletions(habitId)
 
                 awardPetXpAndCoins(xpEarned, coinsEarned)
+                maybeTriggerSurpriseReward()
+                microFeedbackManager.triggerHabitCompleted(xpEarned, coinsEarned)
+                dragonMoodEngine.refreshMood()
 
                 _habitCompleted.emit(Unit)
 
@@ -257,11 +273,18 @@ class HabitDetailViewModel @Inject constructor(
                     )
 
                     habitCompletionRepository.addCompletion(completion)
-                    val today = getDayStart(System.currentTimeMillis())
+                    activityTimelineEngine.logHabitCompleted(
+                        habitName = _habit.value?.name ?: "Habit",
+                        xpEarned = xpEarned,
+                        coinsEarned = coinsEarned
+                    )
                     streakEngine.evaluateTodayStreak(System.currentTimeMillis())
                     refreshCompletions(habitId)
 
                     awardPetXpAndCoins(xpEarned, coinsEarned)
+                    maybeTriggerSurpriseReward()
+                    microFeedbackManager.triggerHabitCompleted(xpEarned, coinsEarned)
+                    dragonMoodEngine.refreshMood()
 
                     _habitCompleted.emit(Unit)
 
@@ -326,6 +349,7 @@ class HabitDetailViewModel @Inject constructor(
 
             petRepository.updatePet(evolved)
             _pet.value = evolved
+            microFeedbackManager.triggerXpGained(xpToAdd)
 
             awardCoins(coinsToAdd)
 
@@ -336,52 +360,95 @@ class HabitDetailViewModel @Inject constructor(
                 rewardQueue.addReward(
                     RewardUiEvent.LevelUpReward(newLevel, bonus)
                 )
+                activityTimelineEngine.logLevelUp(newLevel, bonus)
 
-                // Determine chest type (mostly normal, with chances for better chests)
                 val chestType = ChestRewardConfigProvider.getRandomChestType()
-                val config = ChestRewardConfigProvider.getConfig(chestType)
-
-                // Initialize reward values
-                var coinAmount = config.getRandomCoins()
-                var expAmount = config.getRandomExp()
-                var customizationId: Long? = null
-
-                if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
-                    val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
-                        .firstOrNull()?.toList() ?: emptyList()
-
-                    if (unownedItems.isNotEmpty()) {
-                        val selectedItem = unownedItems.random()
-                        val grantResult = inventoryItemRepository.grantItem(selectedItem.id)
-                        if (grantResult == 1) {
-                            customizationId = selectedItem.id
-                        }
-                    }
-                }
-
                 rewardQueue.addReward(
-                    RewardUiEvent.ChestReward(
+                    buildChestReward(
                         rewardType = "level_up_${chestType.name.lowercase()}",
-                        amount = coinAmount,
-                        expAmount = expAmount,
-                        customizationId = customizationId
+                        chestType = chestType
                     )
                 )
             }
 
-            // Check for evolution stage change and emit DragonEvolutionReward
+            // Tease the next evolution and emit DragonEvolutionReward when a stage changes
+            val nextEvolutionStage = (newEvolutionStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
+            if (nextEvolutionStage > newEvolutionStage) {
+                activityTimelineEngine.logEvolutionMilestoneNearing(
+                    toStage = nextEvolutionStage,
+                    xp = updated.xp
+                )
+            }
+
             if (newEvolutionStage > current.evolutionStage) {
                 rewardQueue.addReward(
                     RewardUiEvent.DragonEvolutionReward(current.evolutionStage, newEvolutionStage)
                 )
+                activityTimelineEngine.logDragonEvolution(
+                    fromStage = current.evolutionStage,
+                    toStage = newEvolutionStage
+                )
             }
         }
+    }
+
+    private fun maybeTriggerSurpriseReward() {
+        completionsSinceLastSurprise += 1
+        if (!EconomyConfig.shouldTriggerSurpriseReward(completionsSinceLastSurprise)) return
+
+        completionsSinceLastSurprise = 0
+        viewModelScope.launch {
+            val chestType = EconomyConfig.getRandomSurpriseChestType()
+            val surpriseChest = buildChestReward(
+                rewardType = "surprise_${chestType.name.lowercase()}",
+                chestType = chestType
+            )
+
+            awardPetXpAndCoins(EconomyConfig.SURPRISE_BONUS_XP, EconomyConfig.SURPRISE_BONUS_COINS)
+            activityTimelineEngine.logSurpriseReward(
+                coins = EconomyConfig.SURPRISE_BONUS_COINS,
+                xp = EconomyConfig.SURPRISE_BONUS_XP,
+                chestType = chestType.name.lowercase(),
+                hasCustomization = surpriseChest.customizationId != null
+            )
+            rewardQueue.addReward(surpriseChest)
+        }
+    }
+
+    private suspend fun buildChestReward(
+        rewardType: String,
+        chestType: ChestType
+    ): RewardUiEvent.ChestReward {
+        val config = ChestRewardConfigProvider.getConfig(chestType)
+        var customizationId: Long? = null
+
+        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
+            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
+                .firstOrNull()?.toList() ?: emptyList()
+
+            if (unownedItems.isNotEmpty()) {
+                val selectedItem = unownedItems.random()
+                val grantResult = inventoryItemRepository.grantItem(selectedItem.id)
+                if (grantResult == 1) {
+                    customizationId = selectedItem.id
+                }
+            }
+        }
+
+        return RewardUiEvent.ChestReward(
+            rewardType = rewardType,
+            amount = config.getRandomCoins(),
+            expAmount = config.getRandomExp(),
+            customizationId = customizationId
+        )
     }
 
     private fun awardCoins(coins: Int) {
         viewModelScope.launch {
             val stats = statisticsRepository.getStatistics().firstOrNull()
                 ?: StatisticsEntity()
+
+            microFeedbackManager.triggerCoinGained(coins)
 
             statisticsRepository.updateStatistics(
                 stats.copy(

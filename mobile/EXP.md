@@ -8,12 +8,28 @@ EXP (Experience Points) is a core progression system in Habit Pet. Players earn 
 
 The EXP system is implemented across multiple components:
 - XP is stored in the PetEntity database table
-- XP is awarded when habits are completed (both checkbox and timer habits)
+- XP is awarded when habits are completed (checkbox habits can be completed from the list or detail screen; timer habits complete from the detail screen)
 - XP determines pet level and evolution stage
 - Level progression uses a formula where each level requires increasingly more XP
 - Evolution stages are determined by XP thresholds
 - XP observations trigger achievement unlocks (e.g. 1000 XP achievement)
 - **Centralized configuration: `ExpConfig`** (single source of truth)
+- **Progress is always visible through `ProgressHeader` and `EvolutionTeaser`** on major gameplay screens
+
+## Progress Always Visible
+
+The reusable `ProgressHeader` component displays the player's current XP level progress, evolution progress, next evolution stage, streak, and coin balance in one compact card. `EvolutionTeaser` shows the next stage name, a progress bar, and the XP needed to reach it.
+
+Current integration:
+- `HomeScreen` shows the header near the pet summary.
+- `HabitsScreen` pins the header as a sticky header above the habit list.
+- `HabitDetailScreen` shows the header above the selected habit's completion controls.
+- `RewardsScreen` shows the header above collection filters so currency progress remains visible while browsing unlocks.
+- `ActivityTimelineScreen` shows the header above the activity feed and empty/loading states.
+
+`ProgressHeader` and `EvolutionTeaser` use `ExpConfig` for XP and evolution calculations, so they stay aligned with the centralized progression rules. They receive progress values from existing screen state flows, so updates remain real-time when XP, coins, or streaks change.
+
+No new coin, XP, chest, or customization source was added by this system. The one-tap list completion path reuses the same `ExpConfig` values and reward queue as the detail-screen completion path.
 
 ## Rules
 
@@ -23,6 +39,8 @@ The EXP system is implemented across multiple components:
 - **Timer habit completion**: 10 base XP + 5 XP per minute (from `ExpConfig.TIMER_HABIT_BASE_XP` + `ExpConfig.TIMER_HABIT_XP_PER_MINUTE`)
   - Example: 30 min session → 10 + 150 = 160 XP
 - XP is added to the pet's current XP total
+- Checkbox habit completion from the habit list is optimistic: the UI marks the habit complete immediately after the repository write succeeds, then the same reward pipeline updates pet XP, coins, streaks, activity timeline, micro-feedback, and any queued level-up/chest rewards
+- Reward overlays are reserved for major progression moments such as level-ups, evolutions, streak chests, achievements, and surprise chests; direct habit XP/coin feedback does not open a blocking reward screen
 
 ### Level Calculation
 
@@ -46,9 +64,13 @@ Pet evolution stages are determined by XP thresholds (**NOW CONSISTENT - single 
 
 **Thresholds defined in `ExpConfig.EVOLUTION_THRESHOLDS`**
 
+### Evolution Teasing and Milestone Nearing
+The UI surfaces the next evolution stage through `ProgressHeader` and `EvolutionTeaser`, both powered by `ExpConfig.evolutionStageName()` and `ExpConfig.xpThresholdForStage()`. Habit completion and chest reward paths call `ActivityTimelineEngine.logEvolutionMilestoneNearing()` for the next locked stage, recording one timeline event when the stage reaches 80% progress.
+
 ### Achievement Integration
 
-- Reaching 1000 XP unlocks the "1000 XP" achievement (observed via AchievementEngine.observeXp())
+- Reaching 1000 XP unlocks the "1000 XP" achievement (observed via `AchievementEngine`)
+- Reaching 5000 XP unlocks the "5000 XP" achievement and grants 300 EXP as a configured achievement reward
 
 ### Level-Up Rewards
 
@@ -79,15 +101,24 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 - app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
 - app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
+- app/src/main/java/com/example/mobile/presentation/viewmodel/HabitsViewModel.kt
 - app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
 - app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
 - app/src/main/java/com/example/mobile/domain/ExpConfig.kt (centralized configuration)
+- app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt (reusable progress indicator)
+- app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt
+- app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt
 
 ## Known Gaps (RESOLVED)
 
 1. ✅ **FIXED: Inconsistent Evolution Stage Calculation** - Now single source in `ExpConfig.calculateEvolutionStageFromXp()`
 2. ✅ **FIXED: Redundant Level Calculation** - Now centralized in `ExpConfig.calculateLevelFromXp()`
 3. ✅ **FIXED: XP Awarding Inconsistency** - Both paths now use `ExpConfig` for calculations
+4. ✅ **FIXED: Progress Visibility Gaps** - Major habit, collection, and activity screens now show `ProgressHeader`
+5. ✅ **FIXED: One-Tap Habit Completion Friction** - Checkbox habits can now be completed directly from the habit list with immediate reward pipeline execution
 
 ## Progression Validation
 

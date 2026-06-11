@@ -19,6 +19,9 @@ class InventoryItemRepositoryImpl @Inject constructor(
     override fun getItemById(itemId: Long): Flow<InventoryItemEntity?> =
         inventoryItemDao.getItemById(itemId)
 
+    override fun getItemByItemId(itemId: String): Flow<InventoryItemEntity?> =
+        inventoryItemDao.getItemByItemId(itemId)
+
     override fun getItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>> =
         inventoryItemDao.getItemsByRarity(rarity)
 

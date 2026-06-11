@@ -62,87 +62,87 @@ Replace current hardcoded achievement system with a fully data-driven system whe
 
 ## 📦 ACHIEVEMENT CONFIG SYSTEM
 
-- [ ] Create `AchievementsConfig`
-- [ ] Define achievement model:
+- [x] Create `AchievementsConfig`
+- [x] Define achievement model:
   - id
   - name
   - description
   - icon
   - targetValue (nullable for non-progress achievements)
   - reward list (generic structure)
-- [ ] Support multiple reward types per achievement:
+- [x] Support multiple reward types per achievement:
   - CoinReward
   - ExpReward
   - ChestReward (with rarity)
   - CustomizationReward (outfit/background/aura)
-- [ ] Ensure config is the SINGLE source of truth for achievement definitions
+- [x] Ensure config is the SINGLE source of truth for achievement definitions
 
 ---
 
 ## 🗃️ DATABASE REFACTOR
 
-- [ ] Remove achievement metadata from DB (name, description, rewards, icon)
-- [ ] Keep only:
+- [x] Remove achievement metadata from DB (name, description, rewards, icon)
+- [x] Keep only:
   - id
   - progress
   - isUnlocked
   - isClaimed
-- [ ] Ensure backward compatibility for existing player data
-- [ ] Implement migration or safe mapping layer
+- [x] Ensure backward compatibility for existing player data
+- [x] Implement migration or safe mapping layer
 
 ---
 
 ## 📊 PROGRESS SYSTEM
 
-- [ ] Implement generic progress tracking per achievement
-- [ ] Support incremental updates (e.g. +1 habit, +XP gained, +streak updated)
-- [ ] Ensure progress is persisted in DB
-- [ ] Ensure config targetValue is used for comparison
+- [x] Implement generic progress tracking per achievement
+- [x] Support incremental updates (e.g. +1 habit, +XP gained, +streak updated)
+- [x] Ensure progress is persisted in DB
+- [x] Ensure config targetValue is used for comparison
 
 ---
 
 ## 📈 UI REQUIREMENTS (IMPORTANT)
 
-- [ ] Show achievement progress when not completed:
+- [x] Show achievement progress when not completed:
   - Example: "2 / 3"
   - Show under achievement name and description
-- [ ] Show progress bar or visual indicator
-- [ ] Clearly indicate locked vs unlocked vs claimable state
-- [ ] Ensure reward preview is visible before claiming
-- [ ] Support multiple reward icons in UI
+- [x] Show progress bar or visual indicator
+- [x] Clearly indicate locked vs unlocked vs claimable state
+- [x] Ensure reward preview is visible before claiming
+- [x] Support multiple reward icons in UI
 
 ---
 
 ## 🎁 REWARD SYSTEM (GENERIC ENGINE)
 
-- [ ] Create generic `AchievementRewardProcessor`
-- [ ] Support reward types:
+- [x] Create generic `AchievementRewardProcessor`
+- [x] Support reward types:
   - CoinReward → adds coins
   - ExpReward → adds XP
   - ChestReward → grants chest with rarity
   - CustomizationReward → unlocks cosmetic item (outfit/background/aura)
-- [ ] Support multiple rewards per achievement
-- [ ] Ensure reward execution is atomic (all or nothing)
-- [ ] Ensure rewards are triggered ONLY on claim
+- [x] Support multiple rewards per achievement
+- [x] Ensure reward execution is atomic (all or nothing)
+- [x] Ensure rewards are triggered ONLY on claim
 
 ---
 
 ## 🔁 ACHIEVEMENT SYNC SYSTEM
 
-- [ ] On app startup:
+- [x] On app startup:
   - Load `AchievementsConfig`
   - Merge with DB entries
   - Insert missing achievements automatically
-- [ ] Do NOT delete existing progress when config changes
-- [ ] Allow new achievements to be added safely over time
+- [x] Do NOT delete existing progress when config changes
+- [x] Allow new achievements to be added safely over time
 
 ---
 
 ## 🧾 CLAIM LOGIC
 
-- [ ] Allow claiming only when progress ≥ targetValue
-- [ ] Prevent double claiming
-- [ ] On claim:
+- [x] Allow claiming only when progress ≥ targetValue
+- [x] Prevent double claiming
+- [x] On claim:
   - Mark achievement as claimed
   - Process all configured rewards
   - Trigger reward UI via RewardEventBus
@@ -151,19 +151,19 @@ Replace current hardcoded achievement system with a fully data-driven system whe
 
 ## 🧪 EDGE CASES
 
-- [ ] Handle achievements without progress (instant unlock type)
-- [ ] Handle missing reward types gracefully
-- [ ] Handle config changes without breaking DB state
-- [ ] Handle partial reward failures safely
+- [x] Handle achievements without progress (instant unlock type)
+- [x] Handle missing reward types gracefully
+- [x] Handle config changes without breaking DB state
+- [x] Handle partial reward failures safely
 
 ---
 
 ## 📄 DOCUMENTATION
 
-- [ ] Fully rewrite ACHIEVEMENTS.md to reflect config-based system
-- [ ] Document reward types and structure
-- [ ] Document progress tracking rules
-- [ ] Document sync behavior between config and DB
+- [x] Fully rewrite ACHIEVEMENTS.md to reflect config-based system
+- [x] Document reward types and structure
+- [x] Document progress tracking rules
+- [x] Document sync behavior between config and DB
 
 ---
 
@@ -186,9 +186,9 @@ Update:
 
 ### Core System
 
-- [ ] Replace JournalScreen with ActivityTimelineScreen
-- [ ] Implement persistent GameEventEntity table
-- [ ] Define event types:
+- [x] Replace JournalScreen with ActivityTimelineScreen
+- [x] Implement persistent GameEventEntity table
+- [x] Define event types:
   - HABIT_COMPLETED
   - ACHIEVEMENT_UNLOCKED
   - LEVEL_UP
@@ -196,25 +196,25 @@ Update:
   - CHEST_OPENED
   - STREAK_MILESTONE
   - FIRST_DAILY_LOGIN
-- [ ] Ensure all event types are extensible for future systems
+- [x] Ensure all event types are extensible for future systems
 
 ---
 
 ### Event Generation Integration
 
-- [ ] Hook Habit completion flow → emit HABIT_COMPLETED event
-- [ ] Hook AchievementEngine → emit ACHIEVEMENT_UNLOCKED event
-- [ ] Hook Level system → emit LEVEL_UP event
-- [ ] Hook Dragon evolution system → emit DRAGON_EVOLUTION event
-- [ ] Hook RewardEventBus → emit CHEST_OPENED event
-- [ ] Hook StreakEngine → emit STREAK_MILESTONE event
-- [ ] Implement FIRST_DAILY_LOGIN event tracking system
+- [x] Hook Habit completion flow → emit HABIT_COMPLETED event
+- [x] Hook AchievementEngine → emit ACHIEVEMENT_UNLOCKED event
+- [x] Hook Level system → emit LEVEL_UP event
+- [x] Hook Dragon evolution system → emit DRAGON_EVOLUTION event
+- [x] Hook RewardEventBus → emit CHEST_OPENED event
+- [x] Hook StreakEngine → emit STREAK_MILESTONE event
+- [x] Implement FIRST_DAILY_LOGIN event tracking system
 
 ---
 
 ### Data Model
 
-- [ ] Create GameEventEntity with:
+- [x] Create GameEventEntity with:
   - id
   - type
   - timestamp
@@ -223,55 +223,55 @@ Update:
   - icon
   - rarity (COMMON / RARE / EPIC / LEGENDARY)
   - payload (optional JSON for extensibility)
-- [ ] Implement Room DAO for event insertion and querying
-- [ ] Implement repository for event logging and retrieval
+- [x] Implement Room DAO for event insertion and querying
+- [x] Implement repository for event logging and retrieval
 
 ---
 
 ### UI / UX Implementation
 
-- [ ] Build ActivityTimelineScreen (replace JournalScreen)
-- [ ] Display events in reverse chronological order
-- [ ] Group events by:
+- [x] Build ActivityTimelineScreen (replace JournalScreen)
+- [x] Display events in reverse chronological order
+- [x] Group events by:
   - Today
   - Yesterday
   - Earlier
-- [ ] Implement event cards with:
+- [x] Implement event cards with:
   - Icon
   - Title
   - Time ago label
   - Optional reward preview (XP / coins / chest)
-- [ ] Auto-scroll to latest event on open
+- [x] Auto-scroll to latest event on open
 
 ---
 
 ### Addictive Game Feel Enhancements
 
-- [ ] Implement special FIRST_DAILY_LOGIN welcome event
+- [x] Implement special FIRST_DAILY_LOGIN welcome event
   - Example: "Welcome back. Your dragon missed you 🐉"
-- [ ] Highlight LEVEL_UP events with enhanced visual styling
-- [ ] Highlight DRAGON_EVOLUTION events as full-width “milestone cards”
-- [ ] Add streak milestone visual reinforcement in timeline
-- [ ] Ensure emotional / game-like text for all system messages
+- [x] Highlight LEVEL_UP events with enhanced visual styling
+- [x] Highlight DRAGON_EVOLUTION events as full-width “milestone cards”
+- [x] Add streak milestone visual reinforcement in timeline
+- [x] Ensure emotional / game-like text for all system messages
 
 ---
 
 ### Performance & Storage
 
-- [ ] Store events append-only (no deletion)
-- [ ] Load latest 50–100 events by default
-- [ ] Implement lazy loading for older events
-- [ ] Ensure timeline retrieval is optimized for mobile performance
+- [x] Store events append-only (no deletion)
+- [x] Load latest 50–100 events by default
+- [x] Implement lazy loading for older events
+- [x] Ensure timeline retrieval is optimized for mobile performance
 
 ---
 
 ### System Rules
 
-- [ ] Every major gameplay action MUST generate a timeline event
-- [ ] No silent progression events allowed
-- [ ] Events must never block gameplay flow
-- [ ] Event logging must be asynchronous
-- [ ] Ensure consistency across all game systems
+- [x] Every major gameplay action MUST generate a timeline event
+- [x] No silent progression events allowed
+- [x] Events must never block gameplay flow
+- [x] Event logging must be asynchronous
+- [x] Ensure consistency across all game systems
 
 ---
 
@@ -292,16 +292,16 @@ Update:
 
 ## Tasks
 
-- [ ] Detect first app open of the day (FIRST_DAILY_LOGIN event)
-- [ ] Store last active session timestamp
-- [ ] Implement Daily Welcome Event trigger
-- [ ] Show “Welcome Back” entry in ActivityTimelineScreen
-- [ ] Include:
+- [x] Detect first app open of the day (FIRST_DAILY_LOGIN event)
+- [x] Store last active session timestamp
+- [x] Implement Daily Welcome Event trigger
+- [x] Show “Welcome Back” entry in ActivityTimelineScreen
+- [x] Include:
   - streak status
   - last session time difference
   - short motivational message
-- [ ] Ensure event triggers only once per day
-- [ ] Log FIRST_DAILY_LOGIN into Activity Log system
+- [x] Ensure event triggers only once per day
+- [x] Log FIRST_DAILY_LOGIN into Activity Log system
 
 ---
 
@@ -318,18 +318,18 @@ Update:
 
 ## Tasks
 
-- [ ] Add global micro-feedback trigger system for UI actions
-- [ ] Trigger subtle feedback on:
+- [x] Add global micro-feedback trigger system for UI actions
+- [x] Trigger subtle feedback on:
   - habit completion
   - tab switches (optional lightweight)
   - XP gain events
   - coin gain events
-- [ ] Implement lightweight UI feedback hooks:
+- [x] Implement lightweight UI feedback hooks:
   - small pulse animation trigger (no asset dependency)
   - subtle glow state toggle
   - XP bar smooth update animation trigger
-- [ ] Ensure feedback system is non-blocking and async
-- [ ] Centralize feedback calls to avoid duplication
+- [x] Ensure feedback system is non-blocking and async
+- [x] Centralize feedback calls to avoid duplication
 
 ---
 
@@ -346,22 +346,22 @@ Update:
 
 ## Tasks
 
-- [ ] Define DragonMood state model:
+- [x] Define DragonMood state model:
   - HAPPY
   - CALM
   - EXCITED
   - PROUD
   - LONELY
-- [ ] Calculate mood based on:
+- [x] Calculate mood based on:
   - streak status
   - last activity time
   - recent habit completions
-- [ ] Persist current mood in local state
-- [ ] Expose mood state to UI rendering system
-- [ ] Modify existing dragon rendering logic to slightly adjust:
+- [x] Persist current mood in local state
+- [x] Expose mood state to UI rendering system
+- [x] Modify existing dragon rendering logic to slightly adjust:
   - intensity (visual scaling / brightness factor)
   - idle behavior speed multiplier
-- [ ] Ensure mood updates happen on:
+- [x] Ensure mood updates happen on:
   - habit completion
   - app open
   - streak changes
@@ -381,18 +381,18 @@ Update:
 
 ## Tasks
 
-- [ ] Ensure ALL major screens display at least one persistent progress indicator:
+- [x] Ensure ALL major screens display at least one persistent progress indicator:
   - XP progress bar OR
   - streak indicator OR
   - next reward progress
-- [ ] Add unified ProgressHeader component (reusable)
-- [ ] Integrate ProgressHeader into:
+- [x] Add unified ProgressHeader component (reusable)
+- [x] Integrate ProgressHeader into:
   - Home screen
   - Habit screen
   - Inventory screen
   - Journal/Timeline screen
-- [ ] Ensure progress updates are real-time
-- [ ] Avoid screens with “no feedback state”
+- [x] Ensure progress updates are real-time
+- [x] Avoid screens with “no feedback state”
 
 ---
 
@@ -403,24 +403,27 @@ Update:
 Read:
 - ECONOMY.md
 - CHEST_REWARDS.md
+- ACTIVITY_LOG.md
 
 Update:
 - ECONOMY.md
+- CHEST_REWARDS.md
+- ACTIVITY_LOG.md
 
 ## Tasks
 
-- [ ] Implement rare bonus trigger system:
+- [x] Implement rare bonus trigger system:
   - low probability reward override on habit completion
-- [ ] Possible surprise events:
+- [x] Possible surprise events:
   - bonus coins
   - bonus XP
   - extra chest trigger
-- [ ] Ensure system is:
+- [x] Ensure system is:
   - non-predictable
   - non-intrusive
   - rate-limited (no spam)
-- [ ] Log surprise events into ActivityTimeline
-- [ ] Ensure surprises never block reward flow
+- [x] Log surprise events into ActivityTimeline
+- [x] Ensure surprises never block reward flow
 
 ---
 
@@ -436,16 +439,16 @@ Update:
 
 ## Tasks
 
-- [ ] Redesign notification messages to be emotional instead of functional
-- [ ] Implement notification templates:
+- [x] Redesign notification messages to be emotional instead of functional
+- [x] Implement notification templates:
   - “Your dragon is waiting 🐉”
   - “Something grew while you were away”
   - “You’re close to a reward”
-- [ ] Remove harsh/commanding tone notifications
-- [ ] Add logic for context-based notification selection:
+- [x] Remove harsh/commanding tone notifications
+- [x] Add logic for context-based notification selection:
   - streak low → encouragement message
   - streak high → reinforcement message
-- [ ] Ensure notification system respects user activity frequency
+- [x] Ensure notification system respects user activity frequency
 
 ---
 
@@ -459,18 +462,19 @@ Read:
 
 Update:
 - EXP.md
+- ECONOMY.md
 
 ## Tasks
 
-- [ ] Reduce habit completion friction to single action
-- [ ] Ensure immediate reward pipeline execution:
+- [x] Reduce habit completion friction to single action
+- [x] Ensure immediate reward pipeline execution:
   - XP gain
   - coin gain
   - event log creation
   - micro-feedback trigger
-- [ ] Remove unnecessary confirmation steps
-- [ ] Ensure reward screen does NOT block flow unless required by system rules
-- [ ] Optimize flow so completion feels instant and satisfying
+- [x] Remove unnecessary confirmation steps
+- [x] Ensure reward screen does NOT block flow unless required by system rules
+- [x] Optimize flow so completion feels instant and satisfying
 
 ---
 
@@ -487,13 +491,13 @@ Update:
 
 ## Tasks
 
-- [ ] Display next evolution stage name in UI:
+- [x] Display next evolution stage name in UI:
   - “Next: Hatchling”
   - “Next: Young Dragon”
-- [ ] Show progress toward next evolution threshold
-- [ ] Add “locked preview text” (no image required)
-- [ ] Ensure evolution progress is always visible somewhere in UI
-- [ ] Trigger timeline event when nearing evolution milestone (e.g. 80%)
+- [x] Show progress toward next evolution threshold
+- [x] Add “locked preview text” (no image required)
+- [x] Ensure evolution progress is always visible somewhere in UI
+- [x] Trigger timeline event when nearing evolution milestone (e.g. 80%)
 
 ---
 
@@ -509,13 +513,13 @@ Update:
 
 ## Tasks
 
-- [ ] Replace all empty screens with emotional messages:
+- [x] Replace all empty screens with emotional messages:
   - Journal empty → “Your story begins here”
   - No achievements → “Your first milestone is close”
   - No items → “New discoveries await you”
-- [ ] Ensure empty states feel encouraging, not neutral
-- [ ] Keep tone consistent with game world narrative
-- [ ] Add subtle progression hint in every empty state
+- [x] Ensure empty states feel encouraging, not neutral
+- [x] Keep tone consistent with game world narrative
+- [x] Add subtle progression hint in every empty state
 
 ---
 

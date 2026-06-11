@@ -50,6 +50,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
+import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ProgressHeader
+import com.example.mobile.presentation.ui.components.ProgressHeaderState
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -89,7 +92,8 @@ class RewardsViewModel @Inject constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RewardsScreen(
-    rewardsViewModel: RewardsViewModel = hiltViewModel()
+    rewardsViewModel: RewardsViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
 
     var selectedTab by rememberSaveable { mutableStateOf(CollectionTab.Owned) }
@@ -103,6 +107,7 @@ fun RewardsScreen(
     val outfitsList by rewardsViewModel.outfits.collectAsState(initial = emptyList())
     val backgroundsList by rewardsViewModel.backgrounds.collectAsState(initial = emptyList())
     val aurasList by rewardsViewModel.auras.collectAsState(initial = emptyList())
+    val progressUiState by homeScreenViewModel.uiState.collectAsState()
 
     LaunchedEffect(
         outfitsList,
@@ -148,6 +153,16 @@ fun RewardsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
+            ProgressHeader(
+                state = ProgressHeaderState(
+                    level = progressUiState.pet.level,
+                    xp = progressUiState.pet.xp,
+                    evolutionStage = progressUiState.pet.evolutionStage,
+                    totalCoins = progressUiState.totalCoins,
+                    globalStreak = progressUiState.globalStreak
+                )
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -288,13 +303,13 @@ fun RewardsScreen(
 
             if (groupedItems.isEmpty()) {
 
-                Text(
-                    text = "No customization items to display",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                EmptyStateCard(
+                    title = "New discoveries await you",
+                    message = "Complete habits, open chests, and claim achievements to fill your collection.",
+                    hint = "Locked items are future rewards waiting for the right moment.",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(24.dp)
+                        .padding(16.dp)
                 )
 
             } else {

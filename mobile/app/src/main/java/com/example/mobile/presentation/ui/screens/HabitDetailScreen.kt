@@ -43,6 +43,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ProgressHeader
+import com.example.mobile.presentation.ui.components.ProgressHeaderState
 import com.example.mobile.presentation.viewmodel.HabitDetailViewModel
 import com.example.mobile.ui.theme.HabitPetTheme
 import java.text.SimpleDateFormat
@@ -54,6 +57,7 @@ import java.util.Locale
 fun HabitDetailScreen(
     habitId: Long,
     viewModel: HabitDetailViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit
 ) {
     LaunchedEffect(habitId) {
@@ -84,6 +88,7 @@ fun HabitDetailScreen(
                 ) {
                     HabitDetailContent(
                         viewModel = viewModel,
+                        homeScreenViewModel = homeScreenViewModel,
                         habitId = habitId
                     )
                 }
@@ -95,6 +100,7 @@ fun HabitDetailScreen(
 @Composable
 private fun HabitDetailContent(
     viewModel: HabitDetailViewModel,
+    homeScreenViewModel: HomeScreenViewModel,
     habitId: Long
 ) {
     val habit by viewModel.habit.collectAsState(initial = null)
@@ -104,6 +110,7 @@ private fun HabitDetailContent(
     val isCompletedToday by viewModel.isCompletedToday(habitId).collectAsState(initial = false)
     val isTimerRunning by viewModel.isTimerRunning.collectAsState(initial = false)
     val elapsedSeconds by viewModel.elapsedSeconds.collectAsState(initial = 0)
+    val progressUiState by homeScreenViewModel.uiState.collectAsState()
 
     val currentError = error
     val currentHabit = habit
@@ -113,7 +120,12 @@ private fun HabitDetailContent(
     } else if (currentError != null) {
         ErrorMessage(currentError)
     } else if (currentHabit == null) {
-        EmptyState("Habit not found")
+        EmptyStateCard(
+            title = "This habit has gone quiet",
+            message = "This path is no longer available, but your dragon is ready for the next small win.",
+            hint = "Return to your habit list and choose a quest that still belongs to you.",
+            modifier = Modifier.padding(16.dp)
+        )
     } else {
         Column(
             modifier = Modifier
@@ -123,6 +135,16 @@ private fun HabitDetailContent(
         ) {
             // Habit Header
             HabitHeader(habit = currentHabit)
+
+            ProgressHeader(
+                state = ProgressHeaderState(
+                    level = progressUiState.pet.level,
+                    xp = progressUiState.pet.xp,
+                    evolutionStage = progressUiState.pet.evolutionStage,
+                    totalCoins = progressUiState.totalCoins,
+                    globalStreak = progressUiState.globalStreak
+                )
+            )
 
             // Completion Status
             CompletionStatus(
@@ -144,7 +166,12 @@ private fun HabitDetailContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             if (completions.isEmpty()) {
-                Text("No completions yet", style = MaterialTheme.typography.bodyLarge, color = Color.Gray)
+                EmptyStateCard(
+                    title = "This habit's first chapter is unwritten",
+                    message = "Complete it once and the story of your consistency will begin here.",
+                    hint = "One completion today is enough to start the memory trail.",
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
             } else {
                 CompletionHistoryList(completions = completions)
             }
@@ -439,23 +466,6 @@ private fun ErrorMessage(message: String) {
         Text(
             text = message,
             color = Color.Red,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun EmptyState(message: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
     }

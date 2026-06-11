@@ -32,7 +32,7 @@ fun NotificationSettingsScreen(
             .padding(24.dp)
     ) {
         Text(
-            text = "Notification Settings",
+            text = "Gentle Notification Nudges",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -66,24 +66,24 @@ private data class SettingItem(
 private fun settingsItems(context: Context): List<SettingItem> {
     return listOf(
         SettingItem(
-            title = "Daily Reminder",
-            description = "Receive a daily reminder to check your habits",
+            title = "Dragon Waiting",
+            description = "A soft daily nudge when your dragon is ready for you",
             isChecked = NotificationPrefs.isDailyReminderEnabled(context),
             onCheckedChange = { checked ->
                 NotificationPrefs.setDailyReminderEnabled(context, checked)
             }
         ),
         SettingItem(
-            title = "Streak Reminder",
-            description = "Receive a reminder to maintain your streaks",
+            title = "Streak Encouragement",
+            description = "Supportive streak messages that celebrate your rhythm",
             isChecked = NotificationPrefs.isStreakReminderEnabled(context),
             onCheckedChange = { checked ->
                 NotificationPrefs.setStreakReminderEnabled(context, checked)
             }
         ),
         SettingItem(
-            title = "Pet Reminder",
-            description = "Receive a reminder to care for your pet",
+            title = "Pet Bond Reminder",
+            description = "Warm reminders that your dragon has a welcome ready",
             isChecked = NotificationPrefs.isPetReminderEnabled(context),
             onCheckedChange = { checked ->
                 NotificationPrefs.setPetReminderEnabled(context, checked)

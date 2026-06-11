@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface InventoryItemRepository {
     fun getItemsByType(type: String): Flow<List<InventoryItemEntity>>
     fun getItemById(itemId: Long): Flow<InventoryItemEntity?>
+    fun getItemByItemId(itemId: String): Flow<InventoryItemEntity?>
     fun getItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>>
     suspend fun addItem(item: InventoryItemEntity): Long
     suspend fun updateItem(item: InventoryItemEntity): Int

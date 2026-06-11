@@ -14,7 +14,9 @@ class StreakEngine(
     private val habitCompletionRepository: HabitCompletionRepository,
     private val statisticsRepository: StatisticsRepository,
     private val rewardQueue: RewardQueue,
-    private val inventoryItemRepository: InventoryItemRepository
+    private val inventoryItemRepository: InventoryItemRepository,
+    private val activityTimelineEngine: ActivityTimelineEngine,
+    private val dragonMoodEngine: DragonMoodEngine
 ) {
 
     private data class StreakChestReward(
@@ -62,6 +64,7 @@ class StreakEngine(
         if (allCompleted) {
             statisticsRepository.incrementStreak()
             statisticsRepository.markStreakUpdatedToday()
+            dragonMoodEngine.refreshMood()
 
             val stats = statisticsRepository.getStatistics().firstOrNull()
             val currentStreak = stats?.currentStreak ?: 0
@@ -71,6 +74,7 @@ class StreakEngine(
                 .lastOrNull()
 
             if (milestone != null) {
+                val milestoneChestType = getChestTypeForMilestone(milestone)
                 val streakChestReward = buildStreakChestReward(milestone)
 
                 rewardQueue.addReward(
@@ -81,6 +85,7 @@ class StreakEngine(
                     )
                 )
                 rewardQueue.addReward(streakChestReward.event)
+                activityTimelineEngine.logStreakMilestone(currentStreak, milestoneChestType)
 
                 statisticsRepository.updateStatistics(
                     stats?.copy(lastStreakAwardedAt = milestone)
