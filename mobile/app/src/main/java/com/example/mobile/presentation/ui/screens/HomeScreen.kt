@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -69,6 +70,7 @@ fun HomeScreen(
 
     Scaffold(
         containerColor = Color(0xFFFAFAFC),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             GamifiedFixedHeader(
                 streak = uiState.globalStreak,
@@ -78,20 +80,14 @@ fun HomeScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            // 1. HERO: Fixed size (or aspect ratio) at the top
             DragonHero(
                 pet = pet,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(500.dp) // Set a fixed height that works for most screens
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // 2. LIST: Scrollable area for everything else
-            // We use weight(1f) here so it fills the remaining screen space
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -128,24 +124,19 @@ private fun DragonHero(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f), Color.Transparent)
-                )
-            )
-            // Adding top padding to create a balanced gap from the header
-            .padding(top = 24.dp, bottom = 24.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // We keep the height at 260.dp or 280.dp for that immersive feel
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Fills available space, but stays within parent bounds
-                .padding(horizontal = 20.dp), // Add breathing room
-            contentAlignment = Alignment.BottomCenter
+                .height(320.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f), Color.Transparent)
+                    )
+                ),
+            contentAlignment = Alignment.Center
         ) {
             AnimatedPet(
                 pet = pet,
@@ -154,23 +145,30 @@ private fun DragonHero(
             )
         }
 
-        Text(
-            text = pet.name.ifBlank { "Meet My Pet" },
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
-            color = ColorPaletteHome.Ink
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = pet.name.ifBlank { "Meet My Pet" },
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
+                color = ColorPaletteHome.Ink
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-            LevelBadge(pet.level)
-            Surface(shape = RoundedCornerShape(999.dp), color = ColorPaletteHome.Mint.copy(alpha = 0.15f)) {
-                Text(
-                    text = DragonMood.from(pet.mood).displayName,
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = ColorPaletteHome.Green,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                )
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                LevelBadge(pet.level)
+                Surface(shape = RoundedCornerShape(999.dp), color = ColorPaletteHome.Mint.copy(alpha = 0.15f)) {
+                    Text(
+                        text = DragonMood.from(pet.mood).displayName,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = ColorPaletteHome.Green,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                    )
+                }
             }
         }
     }
