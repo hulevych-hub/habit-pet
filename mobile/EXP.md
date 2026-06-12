@@ -76,6 +76,7 @@ The daily goal is XP-based and resets by date key:
 - To reach level L+1 from level L: `BASE_XP_FOR_LEVEL_1 + L * XP_PER_LEVEL_INCREMENT` (50 more XP per level)
 - This creates an arithmetic progression where each level requires 50 more XP than the previous level
 - **Centralized in `ExpConfig.calculateLevelFromXp()`** - single source of truth
+- Level progress bars use the XP required for the next level, not remaining XP to the next level, so progress never appears overfilled
 
 ### Evolution Stages
 

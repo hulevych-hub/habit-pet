@@ -138,6 +138,14 @@ object ExpConfig {
         return totalForNextLevel - totalXp
     }
 
+    /**
+     * Calculates XP required for the current level's progress bar.
+     */
+    fun xpRequiredForCurrentLevelProgress(totalXp: Long): Long {
+        val currentLevel = calculateLevelFromXp(totalXp)
+        return xpRequiredForLevel(currentLevel + 1).coerceAtLeast(1L)
+    }
+
     // =========================
     // EVOLUTION STAGES
     // =========================

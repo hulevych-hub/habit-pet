@@ -25,8 +25,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -80,18 +80,21 @@ fun PetScreen(
     petViewModel: PetViewModel = hiltViewModel(),
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val pet by petViewModel.pet.collectAsState(initial = PetEntity())
+    // 1. Get the unified UI state from the HomeScreenViewModel
     val uiState by homeScreenViewModel.uiState.collectAsState()
+
+    // 2. Extract the safe, fully-loaded pet data (ID = 1)
+    val pet = uiState.pet
+
     var showRenameDialog by remember { mutableStateOf(false) }
 
     val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
-    val xpForNextLevel = ExpConfig.xpRequiredForNextLevel(pet.xp).coerceAtLeast(1L)
-    val progressFraction = (currentLevelXp.toFloat() / xpForNextLevel.toFloat()).coerceIn(0f, 1f)
+    val xpRequiredForNextLevel = ExpConfig.xpRequiredForCurrentLevelProgress(pet.xp)
+    val progressFraction = (currentLevelXp.toFloat() / xpRequiredForNextLevel.toFloat()).coerceIn(0f, 1f)
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC), // Premium light background
+        containerColor = ColorPalettePet.BackgroundColor,
         topBar = {
-            // Reuses the identical fixed currency header bar from your Home layout
             GamifiedFixedHeader(
                 streak = uiState.globalStreak,
                 coins = uiState.totalCoins,
@@ -136,7 +139,7 @@ fun PetScreen(
                 }
             }
 
-            // 2. CENTER SECTION: Ultimate Showcase Hero Area for backgrounds, outfits, and auras
+            // 2. CENTER SECTION: Ultimate Showcase Hero Area (Isolated Alpha Layers)
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -144,21 +147,22 @@ fun PetScreen(
                     .padding(vertical = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Background Radial Glow representing potential aura slots
+                // Background Radial Glow layer isolated away from drawing context of pet model
                 Box(
                     modifier = Modifier
                         .size(280.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    ColorPalettePet.Violet.copy(alpha = 0.18f),
-                                    Color.Transparent
+                                    ColorPalettePet.Violet.copy(alpha = 0.15f),
+                                    ColorPalettePet.BackgroundColor.copy(alpha = 0.0f)
                                 )
                             ),
                             shape = RoundedCornerShape(999.dp)
                         )
                 )
 
+                // High fidelity fully opaque character layout
                 AnimatedPet(
                     pet = pet,
                     modifier = Modifier.size(340.dp)
@@ -225,14 +229,14 @@ fun PetScreen(
                                 color = ColorPalettePet.Muted
                             )
                             Text(
-                                text = "$currentLevelXp / $xpForNextLevel XP",
+                                text = "$currentLevelXp / $xpRequiredForNextLevel XP",
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                 color = ColorPalettePet.Ink
                             )
                         }
 
                         LinearProgressIndicator(
-                            progress = progressFraction,
+                            progress = { progressFraction },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(10.dp)
@@ -242,7 +246,10 @@ fun PetScreen(
                         )
                     }
 
-                    Divider(color = ColorPalettePet.Ink.copy(alpha = 0.06f), thickness = 1.dp)
+                    HorizontalDivider(
+                        color = ColorPalettePet.Ink.copy(alpha = 0.06f),
+                        thickness = 1.dp
+                    )
 
                     // Equipping Layout Cosmetics Feed Summaries
                     CustomizationSummary(
@@ -480,6 +487,7 @@ internal fun PetRenameDialog(
 }
 
 private object ColorPalettePet {
+    val BackgroundColor = Color(0xFFFAFAFC)
     val CardBackground = Color(0xFFFFFFFF)
     val ProgressTrack = Color(0xFFEBE6FC)
     val Violet = Color(0xFF8A76F9)

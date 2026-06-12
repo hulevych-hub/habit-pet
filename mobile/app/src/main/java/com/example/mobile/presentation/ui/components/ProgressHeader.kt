@@ -50,7 +50,7 @@ fun ProgressHeader(
     modifier: Modifier = Modifier
 ) {
     val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(state.xp)
-    val nextLevelXp = ExpConfig.xpRequiredForNextLevel(state.xp).coerceAtLeast(1L)
+    val nextLevelXp = ExpConfig.xpRequiredForCurrentLevelProgress(state.xp)
     val levelProgress = (currentLevelXp.toFloat() / nextLevelXp.toFloat()).coerceIn(0f, 1f)
     val evolutionProgress = evolutionProgressFraction(state.xp, state.evolutionStage)
     val nextEvolutionText = nextEvolutionText(state.xp, state.evolutionStage)

@@ -214,8 +214,8 @@ private fun DragonHero(
 ) {
     // Exact mapping from your PetScreen implementation
     val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
-    val xpForNextLevel = ExpConfig.xpRequiredForNextLevel(pet.xp).coerceAtLeast(1L)
-    val progressFraction = (currentLevelXp.toFloat() / xpForNextLevel.toFloat()).coerceIn(0f, 1f)
+    val xpRequiredForNextLevel = ExpConfig.xpRequiredForCurrentLevelProgress(pet.xp)
+    val progressFraction = (currentLevelXp.toFloat() / xpRequiredForNextLevel.toFloat()).coerceIn(0f, 1f)
 
     val currentStageName = ExpConfig.evolutionStageName(pet.evolutionStage)
     val nextStageName = ExpConfig.evolutionStageName(pet.evolutionStage + 1).ifBlank { "Max Tier reached" }
@@ -309,7 +309,7 @@ private fun DragonHero(
                         color = ColorPaletteHome.Ink.copy(alpha = 0.8f)
                     )
                     Text(
-                        text = "$currentLevelXp / ${xpForNextLevel} XP",
+                        text = "$currentLevelXp / ${xpRequiredForNextLevel} XP",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         color = ColorPaletteHome.Violet
                     )

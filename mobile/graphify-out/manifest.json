@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt": {
-    "mtime": 1781216330.6122763,
-    "ast_hash": "c9a3d09ae5852ddb45a084bc8b5ffac3",
+    "mtime": 1781260759.7549267,
+    "ast_hash": "4df582dd1adc52704320afb8408882ac",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitEditScreen.kt": {
-    "mtime": 1780604115.7353358,
-    "ast_hash": "744e9dd1668b39221d968758a1aefd77",
+    "mtime": 1781260699.5834734,
+    "ast_hash": "3bc1d827ba6f7c2d3dc2fa88237ef92e",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt": {
@@ -315,8 +315,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1781260013.0472462,
-    "ast_hash": "1b61d33d3043891c551103fdcf42a8ed",
+    "mtime": 1781261078.7816336,
+    "ast_hash": "2e2e380830c1f2b28a672f8b6ebc875b",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781254245.74864,
-    "ast_hash": "0ea00a5f35a14237fefaa628bc6b8c7a",
+    "mtime": 1781261189.2446415,
+    "ast_hash": "536bd3f73c63af1f6d37f9c58036b500",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
@@ -620,8 +620,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/ExpConfig.kt": {
-    "mtime": 1781214427.4237556,
-    "ast_hash": "927d718353579317eba3c2fdc82e5f1e",
+    "mtime": 1781261051.078629,
+    "ast_hash": "ab0af0b9acc064cf448d769b2de16cf0",
     "semantic_hash": ""
   },
   "ACHIEVEMENTS.md": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "EXP.md": {
-    "mtime": 1781215146.7697535,
-    "ast_hash": "a75ddcfb7e803011bf0caf34b7b49356",
+    "mtime": 1781261118.5551167,
+    "ast_hash": "054d7c7dfa62a8f40c37aa3bf4aebf7f",
     "semantic_hash": ""
   },
   "NOTIFICATIONS.md": {
@@ -820,8 +820,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt": {
-    "mtime": 1781216621.96129,
-    "ast_hash": "28bb0ab7a4028d88b7cfa579c367a697",
+    "mtime": 1781261107.1558104,
+    "ast_hash": "7a8f3c8eb28615e2c50faca92040870b",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/MicroFeedbackEvent.kt": {

@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -47,10 +48,9 @@ fun AnimatedPet(
 ) {
     val evolutionStage = pet.evolutionStage.takeIf { it in 0..4 } ?: 0
 
-    // Container with proper sizing
+    // Set background to transparent to prevent layer-blend bleeding on screens
     Box(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.background(Color.Transparent)
     ) {
         // Layered rendering: Aura -> Background -> Pet -> Outfit
 
@@ -117,7 +117,7 @@ fun PetPhaseTransition(
     val transition = rememberInfiniteTransition(label = "pet idle")
 
     val hasPlayedTransition = normalizedToStage > 0 &&
-        PetTransitionPrefs.hasPlayedTransition(context, normalizedToStage - 1, normalizedToStage)
+            PetTransitionPrefs.hasPlayedTransition(context, normalizedToStage - 1, normalizedToStage)
     val shouldTransition = normalizedToStage > 0 && !hasPlayedTransition
 
     var transitionFinished by remember { mutableStateOf(false) }
@@ -281,10 +281,11 @@ private fun PetImageLayer(
     evolutionStage: Int,
     modifier: Modifier = Modifier
 ) {
+    // FIXED: Removed the dynamic mood intensity alpha modifier to force crisp 100% solid rendering
     Image(
         painter = painterResource(petImageForStage(evolutionStage)),
         contentDescription = "Pet image",
-        modifier = modifier.graphicsLayer(alpha = PetAnimations.moodIntensity(pet.mood))
+        modifier = modifier
     )
 
     OutfitLayer(
@@ -346,7 +347,7 @@ private fun petImageForStage(stage: Int): Int {
         2 -> R.drawable.young_dragon
         3 -> R.drawable.adult_dragon
         4 -> R.drawable.ancient_dragon
-        else -> R.drawable.egg // fallback
+        else -> R.drawable.egg
     }
 }
 
