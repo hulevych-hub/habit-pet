@@ -197,7 +197,7 @@ private fun HabitCreationForm(
                                 .border(1.dp, ColorPaletteCreate.Line, RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(icon.ifBlank { "🎯" }, fontSize = 24.sp)
+                            Text(icon.ifBlank { HabitCreationViewModel.DEFAULT_ICON }, fontSize = 24.sp)
                         }
                         Column {
                             Text(
@@ -206,7 +206,7 @@ private fun HabitCreationForm(
                                 color = ColorPaletteCreate.Ink
                             )
                             Text(
-                                text = "Tap to view full library",
+                                text = "Default target icon ready • tap to change",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = ColorPaletteCreate.Muted
                             )

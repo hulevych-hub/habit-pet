@@ -23,11 +23,15 @@ class HabitCreationViewModel @Inject constructor(
     private val habitRepository: HabitRepository
 ) : ViewModel() {
 
+    companion object {
+        const val DEFAULT_ICON = "🎯"
+    }
+
     // UI State
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
 
-    private val _icon = MutableStateFlow("")
+    private val _icon = MutableStateFlow(DEFAULT_ICON)
     val icon: StateFlow<String> = _icon
 
     private val _type = MutableStateFlow("CHECKBOX")
@@ -135,10 +139,6 @@ class HabitCreationViewModel @Inject constructor(
             return "Habit name is required"
         }
 
-        if (_icon.value.isBlank()) {
-            return "Please select an icon"
-        }
-
         if (_type.value !in listOf("CHECKBOX", "TIMER")) {
             return "Invalid habit type"
         }
@@ -152,7 +152,7 @@ class HabitCreationViewModel @Inject constructor(
 
     fun resetForm() {
         _name.value = ""
-        _icon.value = ""
+        _icon.value = DEFAULT_ICON
         _type.value = "CHECKBOX"
         _minimumDuration.value = 0
         _error.value = null

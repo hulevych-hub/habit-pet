@@ -80,7 +80,7 @@ fun HabitsScreen(
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
     val sortedHabits = habits.sortedWith(
-        compareBy<HabitEntity> { completedToday[it.id] != true }
+        compareBy<HabitEntity> { completedToday[it.id] == true }
             .thenBy { it.name.lowercase() }
     )
 

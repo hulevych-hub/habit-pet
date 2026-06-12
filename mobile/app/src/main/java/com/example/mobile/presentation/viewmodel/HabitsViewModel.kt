@@ -57,7 +57,6 @@ class HabitsViewModel @Inject constructor(
     private val _optimisticCompletedHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _completingHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _error = MutableStateFlow<String?>(null)
-    private var completionsSinceLastSurprise = 0
 
     val error: StateFlow<String?> = _error
     val completingHabitIds: StateFlow<Set<Long>> = _completingHabitIds
@@ -152,7 +151,7 @@ class HabitsViewModel @Inject constructor(
                     queueDailyGoalReward()
                 }
                 awardPetXpAndCoins(totalXpEarned, coinsEarned)
-                maybeTriggerSurpriseReward()
+                maybeTriggerHabitCompletionChest()
                 microFeedbackManager.triggerHabitCompleted(
                     xp = totalXpEarned,
                     coins = coinsEarned,
@@ -279,11 +278,9 @@ class HabitsViewModel @Inject constructor(
         }
     }
 
-    private fun maybeTriggerSurpriseReward() {
-        completionsSinceLastSurprise += 1
-        if (!EconomyConfig.shouldTriggerSurpriseReward(completionsSinceLastSurprise)) return
+    private fun maybeTriggerHabitCompletionChest() {
+        if (!EconomyConfig.shouldTriggerHabitCompletionChest()) return
 
-        completionsSinceLastSurprise = 0
         viewModelScope.launch {
             val chestType = EconomyConfig.getRandomSurpriseChestType()
             val surpriseChest = buildChestReward(

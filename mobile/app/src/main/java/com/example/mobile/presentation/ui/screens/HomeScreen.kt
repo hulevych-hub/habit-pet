@@ -104,6 +104,10 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                ResetGameButton(
+                    onResetClick = { homeScreenViewModel.resetAllGameData() }
+                )
+
                 TodayNourishmentSection(
                     habits = uiState.habits,
                     completedToday = uiState.completedToday,
@@ -347,6 +351,26 @@ private fun DragonHero(
 }
 
 @Composable
+private fun ResetGameButton(
+    onResetClick: () -> Unit
+) {
+    Button(
+        onClick = onResetClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFFFF6B6B),
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(18.dp)
+    ) {
+        Text(
+            text = "Reset Game",
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+        )
+    }
+}
+
+@Composable
 private fun TodayNourishmentSection(
     habits: List<HabitEntity>,
     completedToday: Map<Long, Boolean>,
@@ -354,7 +378,7 @@ private fun TodayNourishmentSection(
     onNavigateToHabitDetail: (Long) -> Unit
 ) {
     val sortedHabits = habits.sortedWith(
-        compareBy<HabitEntity> { completedToday[it.id] != true }
+        compareBy<HabitEntity> { completedToday[it.id] == true }
             .thenBy { it.name.lowercase() }
     )
 

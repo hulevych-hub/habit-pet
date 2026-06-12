@@ -52,11 +52,8 @@ object EconomyConfig {
     // COIN REWARDS - SURPRISE BONUSES
     // =========================
 
-    /** Low-probability surprise bonus chance after a successful habit completion */
-    const val SURPRISE_REWARD_CHANCE: Double = 0.08 // 8%
-
-    /** Minimum successful habit completions required before another surprise can trigger */
-    const val SURPRISE_MIN_COMPLETIONS_BETWEEN: Int = 3
+    /** Chance to show a surprise chest after a successful habit completion */
+    const val HABIT_COMPLETION_CHEST_CHANCE: Double = 0.10 // 10%
 
     /** Bonus XP awarded by a surprise reward */
     const val SURPRISE_BONUS_XP: Long = 25L
@@ -182,9 +179,8 @@ object EconomyConfig {
         return (CUSTOMIZATION_BASE_PRICE * multiplier).toInt()
     }
 
-    fun shouldTriggerSurpriseReward(completionsSinceLastSurprise: Int): Boolean {
-        if (completionsSinceLastSurprise < SURPRISE_MIN_COMPLETIONS_BETWEEN) return false
-        return Math.random() < SURPRISE_REWARD_CHANCE
+    fun shouldTriggerHabitCompletionChest(): Boolean {
+        return Math.random() < HABIT_COMPLETION_CHEST_CHANCE
     }
 
     fun getRandomSurpriseChestType(): ChestType {

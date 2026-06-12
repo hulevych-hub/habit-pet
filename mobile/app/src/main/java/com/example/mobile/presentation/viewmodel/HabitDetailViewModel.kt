@@ -81,7 +81,6 @@ class HabitDetailViewModel @Inject constructor(
     private val _elapsedSeconds = MutableStateFlow(0)
     val elapsedSeconds: StateFlow<Int> = _elapsedSeconds
 
-    private var completionsSinceLastSurprise = 0
 
     // =========================
     // EVENTS (FIXED)
@@ -219,7 +218,7 @@ class HabitDetailViewModel @Inject constructor(
                 refreshCompletions(habitId)
 
                 awardPetXpAndCoins(totalXpEarned, coinsEarned)
-                maybeTriggerSurpriseReward()
+                maybeTriggerHabitCompletionChest()
                 microFeedbackManager.triggerHabitCompleted(
                     xp = totalXpEarned,
                     coins = coinsEarned,
@@ -335,7 +334,7 @@ class HabitDetailViewModel @Inject constructor(
                     refreshCompletions(habitId)
 
                     awardPetXpAndCoins(totalXpEarned, coinsEarned)
-                    maybeTriggerSurpriseReward()
+                    maybeTriggerHabitCompletionChest()
                     microFeedbackManager.triggerHabitCompleted(
                         xp = totalXpEarned,
                         coins = coinsEarned,
@@ -474,11 +473,9 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    private fun maybeTriggerSurpriseReward() {
-        completionsSinceLastSurprise += 1
-        if (!EconomyConfig.shouldTriggerSurpriseReward(completionsSinceLastSurprise)) return
+    private fun maybeTriggerHabitCompletionChest() {
+        if (!EconomyConfig.shouldTriggerHabitCompletionChest()) return
 
-        completionsSinceLastSurprise = 0
         viewModelScope.launch {
             val chestType = EconomyConfig.getRandomSurpriseChestType()
             val surpriseChest = buildChestReward(
