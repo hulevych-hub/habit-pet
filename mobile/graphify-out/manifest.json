@@ -225,8 +225,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt": {
-    "mtime": 1781274523.5148952,
-    "ast_hash": "cb1695e3bfaf0552c8cd9e4ab63ab06c",
+    "mtime": 1781284204.6276438,
+    "ast_hash": "3d75b61cf53fa3673276df6265e76941",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt": {
-    "mtime": 1781246121.0771077,
-    "ast_hash": "4bdb1b6d23a6f5c5fa0c5bd595cf58fd",
+    "mtime": 1781284460.6097884,
+    "ast_hash": "c43d85c3bbbb05952068d37958266905",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt": {
@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1781266189.409935,
-    "ast_hash": "99da11cd070f91e23a239025e565bea8",
+    "mtime": 1781291107.5096095,
+    "ast_hash": "1d698cffb152b7c6aa517a2970a4aee7",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
@@ -320,8 +320,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt": {
-    "mtime": 1781258738.53481,
-    "ast_hash": "fe877c57ca37f0a67a130d088a110e3e",
+    "mtime": 1781294393.5772793,
+    "ast_hash": "7b6f205a733d33d8ed9799c04df20549",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitCreationViewModel.kt": {
@@ -620,8 +620,8 @@
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781279609.7259173,
-    "ast_hash": "2834225896e2839ab8d9e8750ed8575f",
+    "mtime": 1781280155.102504,
+    "ast_hash": "1e32384318fce26be4c84e3df4488e04",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt": {
@@ -690,8 +690,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt": {
-    "mtime": 1781191203.4747515,
-    "ast_hash": "5cdf71c93b3fb686eda1e6ce5289af55",
+    "mtime": 1781294315.273323,
+    "ast_hash": "bd31a16592984790b4649954c1882c9e",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt": {

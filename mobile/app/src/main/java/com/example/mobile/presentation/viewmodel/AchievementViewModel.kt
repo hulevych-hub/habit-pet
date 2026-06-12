@@ -106,9 +106,10 @@ class AchievementViewModel @Inject constructor(
                 }
                 .collect { list ->
                     _achievements.value = list.sortedWith(
-                        compareByDescending<AchievementEntity> { it.isClaimed }
-                            .thenByDescending { it.isUnlocked }
-                            .thenBy { it.id }
+                        compareBy<AchievementEntity> { achievement ->
+                            AchievementsConfig.achievementById(achievement.id)?.difficultyRank ?: Int.MAX_VALUE
+                        }.thenByDescending { it.isUnlocked }
+                            .thenByDescending { it.isClaimed }
                     )
                     _isLoading.value = false
                 }

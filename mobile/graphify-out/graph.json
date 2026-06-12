@@ -4177,7 +4177,7 @@
       "label": "AchievementDefinition",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt",
-      "source_location": "L19",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "domain_achievementsconfig_achievementdefinition",
       "community": 111,
@@ -4187,7 +4187,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt",
-      "source_location": "L29",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementsconfig_kt_list",
       "community": 111,
@@ -4197,7 +4197,7 @@
       "label": ".achievementById()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt",
-      "source_location": "L134",
+      "source_location": "L590",
       "_origin": "ast",
       "id": "domain_achievementsconfig_achievementsconfig_achievementbyid",
       "community": 111,
@@ -4207,7 +4207,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt",
-      "source_location": "L134",
+      "source_location": "L590",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementsconfig_kt_string",
       "community": 111,
@@ -4217,7 +4217,7 @@
       "label": ".toEntity()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt",
-      "source_location": "L136",
+      "source_location": "L592",
       "_origin": "ast",
       "id": "domain_achievementsconfig_achievementsconfig_toentity",
       "community": 111,
@@ -4227,7 +4227,7 @@
       "label": "AchievementEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt",
-      "source_location": "L136",
+      "source_location": "L592",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementsconfig_kt_achievemententity",
       "community": 111,
@@ -6987,7 +6987,7 @@
       "label": "AnimatedPet()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L42",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "components_animatedpet_animatedpet",
       "community": 89,
@@ -6997,7 +6997,7 @@
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L42",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_petentity",
       "community": 89,
@@ -7007,7 +7007,7 @@
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L42",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_modifier",
       "community": 89,
@@ -7017,7 +7017,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L42",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_boolean",
       "community": 89,
@@ -7027,7 +7027,7 @@
       "label": "PetPhaseTransition()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L101",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "components_animatedpet_petphasetransition",
       "community": 89,
@@ -7037,27 +7037,17 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L101",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int",
       "community": 89,
       "norm_label": "int"
     },
     {
-      "label": "IntSize",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L101",
-      "_origin": "ast",
-      "id": "intsize",
-      "community": 89,
-      "norm_label": "intsize"
-    },
-    {
       "label": "Unit",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L101",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_unit",
       "community": 89,
@@ -7067,7 +7057,7 @@
       "label": "PetImageLayer()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L277",
+      "source_location": "L211",
       "_origin": "ast",
       "id": "components_animatedpet_petimagelayer",
       "community": 89,
@@ -7077,7 +7067,7 @@
       "label": "AuraLayer()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L296",
+      "source_location": "L222",
       "_origin": "ast",
       "id": "components_animatedpet_auralayer",
       "community": 89,
@@ -7087,7 +7077,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L296",
+      "source_location": "L222",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_string",
       "community": 89,
@@ -7097,7 +7087,7 @@
       "label": "OutfitLayer()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L310",
+      "source_location": "L228",
       "_origin": "ast",
       "id": "components_animatedpet_outfitlayer",
       "community": 89,
@@ -7107,7 +7097,7 @@
       "label": "backgroundImageForItemId()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L324",
+      "source_location": "L236",
       "_origin": "ast",
       "id": "components_animatedpet_backgroundimageforitemid",
       "community": 89,
@@ -7117,7 +7107,7 @@
       "label": "outfitImageForItemId()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L332",
+      "source_location": "L244",
       "_origin": "ast",
       "id": "components_animatedpet_outfitimageforitemid",
       "community": 89,
@@ -7127,7 +7117,7 @@
       "label": "auraImageForItemId()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L337",
+      "source_location": "L249",
       "_origin": "ast",
       "id": "components_animatedpet_auraimageforitemid",
       "community": 89,
@@ -7137,7 +7127,7 @@
       "label": "petImageForStage()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L342",
+      "source_location": "L254",
       "_origin": "ast",
       "id": "components_animatedpet_petimageforstage",
       "community": 89,
@@ -7147,7 +7137,7 @@
       "label": "petIdleScaleAmplitude()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L353",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "components_animatedpet_petidlescaleamplitude",
       "community": 89,
@@ -7157,7 +7147,7 @@
       "label": "Float",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L353",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_float",
       "community": 89,
@@ -7167,7 +7157,7 @@
       "label": "petIdleVerticalAmplitude()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L365",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "components_animatedpet_petidleverticalamplitude",
       "community": 89,
@@ -7177,7 +7167,7 @@
       "label": "petIdleRotationAmplitude()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L377",
+      "source_location": "L289",
       "_origin": "ast",
       "id": "components_animatedpet_petidlerotationamplitude",
       "community": 89,
@@ -7187,7 +7177,7 @@
       "label": "petIdleBounceAmplitude()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L389",
+      "source_location": "L301",
       "_origin": "ast",
       "id": "components_animatedpet_petidlebounceamplitude",
       "community": 89,
@@ -7197,7 +7187,7 @@
       "label": "petIdleBreathingDuration()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L401",
+      "source_location": "L313",
       "_origin": "ast",
       "id": "components_animatedpet_petidlebreathingduration",
       "community": 89,
@@ -7207,7 +7197,7 @@
       "label": "petIdleSwayDuration()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L413",
+      "source_location": "L325",
       "_origin": "ast",
       "id": "components_animatedpet_petidleswayduration",
       "community": 89,
@@ -7217,7 +7207,7 @@
       "label": "petIdleBounceDuration()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L425",
+      "source_location": "L337",
       "_origin": "ast",
       "id": "components_animatedpet_petidlebounceduration",
       "community": 89,
@@ -7227,7 +7217,7 @@
       "label": "moodAdjusted()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L437",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "components_animatedpet_moodadjusted",
       "community": 89,
@@ -7990,7 +7980,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "reward_rewardmanager",
-      "community": 87,
+      "community": 4,
       "norm_label": "rewardmanager.kt"
     },
     {
@@ -8000,7 +7990,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager",
-      "community": 87,
+      "community": 4,
       "norm_label": "rewardmanager"
     },
     {
@@ -8010,7 +8000,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "viewmodel",
-      "community": 87,
+      "community": 4,
       "norm_label": "viewmodel"
     },
     {
@@ -8020,7 +8010,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_stateflow",
-      "community": 87,
+      "community": 4,
       "norm_label": "stateflow"
     },
     {
@@ -8030,7 +8020,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_rewarduievent",
-      "community": 87,
+      "community": 4,
       "norm_label": "rewarduievent"
     },
     {
@@ -8040,7 +8030,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_petentity",
-      "community": 87,
+      "community": 4,
       "norm_label": "petentity"
     },
     {
@@ -8050,7 +8040,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_boolean",
-      "community": 87,
+      "community": 4,
       "norm_label": "boolean"
     },
     {
@@ -8060,7 +8050,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_addreward",
-      "community": 87,
+      "community": 4,
       "norm_label": ".addreward()"
     },
     {
@@ -8070,7 +8060,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_rewardcompleted",
-      "community": 87,
+      "community": 4,
       "norm_label": ".rewardcompleted()"
     },
     {
@@ -8080,7 +8070,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_addpetexp",
-      "community": 87,
+      "community": 4,
       "norm_label": ".addpetexp()"
     },
     {
@@ -8090,7 +8080,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_int",
-      "community": 87,
+      "community": 4,
       "norm_label": "int"
     },
     {
@@ -8100,7 +8090,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_pair",
-      "community": 87,
+      "community": 4,
       "norm_label": "pair"
     },
     {
@@ -8407,7 +8397,7 @@
       "label": "RewardScreen()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L63",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardscreen",
       "community": 17,
@@ -8417,7 +8407,7 @@
       "label": "RewardUiEvent",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L63",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_rewarduievent",
       "community": 17,
@@ -8427,7 +8417,7 @@
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L63",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_petentity",
       "community": 17,
@@ -8437,7 +8427,7 @@
       "label": "LevelUpRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L163",
+      "source_location": "L162",
       "_origin": "ast",
       "id": "reward_rewardscreen_leveluprewardcontent",
       "community": 17,
@@ -8447,7 +8437,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L163",
+      "source_location": "L162",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_int",
       "community": 17,
@@ -8457,7 +8447,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L163",
+      "source_location": "L162",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string",
       "community": 17,
@@ -8467,7 +8457,7 @@
       "label": "RewardEmphasisTier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L163",
+      "source_location": "L162",
       "_origin": "ast",
       "id": "rewardemphasistier",
       "community": 17,
@@ -8477,7 +8467,7 @@
       "label": "DailyGoalRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L207",
+      "source_location": "L206",
       "_origin": "ast",
       "id": "reward_rewardscreen_dailygoalrewardcontent",
       "community": 17,
@@ -8487,7 +8477,7 @@
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L207",
+      "source_location": "L206",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long",
       "community": 17,
@@ -8497,7 +8487,7 @@
       "label": "ChestRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L254",
+      "source_location": "L253",
       "_origin": "ast",
       "id": "reward_rewardscreen_chestrewardcontent",
       "community": 17,
@@ -8507,7 +8497,7 @@
       "label": "Any",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L254",
+      "source_location": "L253",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any",
       "community": 17,
@@ -8517,7 +8507,7 @@
       "label": "StreakRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L321",
+      "source_location": "L320",
       "_origin": "ast",
       "id": "reward_rewardscreen_streakrewardcontent",
       "community": 17,
@@ -8527,7 +8517,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L321",
+      "source_location": "L320",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_list",
       "community": 17,
@@ -8537,7 +8527,7 @@
       "label": "HeartOrbit()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L410",
+      "source_location": "L409",
       "_origin": "ast",
       "id": "reward_rewardscreen_heartorbit",
       "community": 17,
@@ -8547,7 +8537,7 @@
       "label": "InfiniteTransition",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L410",
+      "source_location": "L409",
       "_origin": "ast",
       "id": "infinitetransition",
       "community": 17,
@@ -8557,7 +8547,7 @@
       "label": "AchievementRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L450",
+      "source_location": "L449",
       "_origin": "ast",
       "id": "reward_rewardscreen_achievementrewardcontent",
       "community": 17,
@@ -8567,7 +8557,7 @@
       "label": "ConfigAchievementReward",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L450",
+      "source_location": "L449",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_configachievementreward",
       "community": 17,
@@ -8577,7 +8567,7 @@
       "label": "buildLegacyRewardText()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L502",
+      "source_location": "L501",
       "_origin": "ast",
       "id": "reward_rewardscreen_buildlegacyrewardtext",
       "community": 17,
@@ -8587,7 +8577,7 @@
       "label": "rewardLabel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L521",
+      "source_location": "L520",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardlabel",
       "community": 17,
@@ -8597,7 +8587,7 @@
       "label": "RewardEmphasisTier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L531",
+      "source_location": "L530",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardemphasistier",
       "community": 17,
@@ -8607,7 +8597,7 @@
       "label": "emphasisTier()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L565",
+      "source_location": "L564",
       "_origin": "ast",
       "id": "reward_rewardscreen_emphasistier",
       "community": 17,
@@ -8617,7 +8607,7 @@
       "label": "chestEmphasisTier()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L587",
+      "source_location": "L586",
       "_origin": "ast",
       "id": "reward_rewardscreen_chestemphasistier",
       "community": 17,
@@ -8627,7 +8617,7 @@
       "label": "RewardEmphasisFrame()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L613",
+      "source_location": "L612",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardemphasisframe",
       "community": 17,
@@ -8637,7 +8627,7 @@
       "label": "ReinforcementMessage()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L663",
+      "source_location": "L662",
       "_origin": "ast",
       "id": "reward_rewardscreen_reinforcementmessage",
       "community": 17,
@@ -8647,7 +8637,7 @@
       "label": "CoinRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L684",
+      "source_location": "L683",
       "_origin": "ast",
       "id": "reward_rewardscreen_coinrewardcontent",
       "community": 17,
@@ -8657,7 +8647,7 @@
       "label": "DragonEvolutionRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L719",
+      "source_location": "L718",
       "_origin": "ast",
       "id": "reward_rewardscreen_dragonevolutionrewardcontent",
       "community": 17,
@@ -9730,207 +9720,207 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_homescreen",
-      "community": 124,
+      "community": 89,
       "norm_label": "homescreen.kt"
     },
     {
       "label": "HomeScreen()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L59",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "screens_homescreen_homescreen",
-      "community": 124,
+      "community": 89,
       "norm_label": "homescreen()"
     },
     {
       "label": "HomeScreenViewModel",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L59",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_homescreenviewmodel",
-      "community": 124,
+      "community": 89,
       "norm_label": "homescreenviewmodel"
-    },
-    {
-      "label": "GamifiedFixedHeader()",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L135",
-      "_origin": "ast",
-      "id": "screens_homescreen_gamifiedfixedheader",
-      "community": 124,
-      "norm_label": "gamifiedfixedheader()"
-    },
-    {
-      "label": "Int",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L135",
-      "_origin": "ast",
-      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int",
-      "community": 124,
-      "norm_label": "int"
-    },
-    {
-      "label": "String",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L135",
-      "_origin": "ast",
-      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_string",
-      "community": 124,
-      "norm_label": "string"
     },
     {
       "label": "DragonHero()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L214",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "screens_homescreen_dragonhero",
-      "community": 124,
+      "community": 89,
       "norm_label": "dragonhero()"
     },
     {
       "label": "com",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L214",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_com",
-      "community": 124,
+      "community": 89,
       "norm_label": "com"
     },
     {
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L214",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_modifier",
-      "community": 124,
+      "community": 89,
       "norm_label": "modifier"
+    },
+    {
+      "label": "GamifiedFixedHeader()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
+      "source_location": "L177",
+      "_origin": "ast",
+      "id": "screens_homescreen_gamifiedfixedheader",
+      "community": 89,
+      "norm_label": "gamifiedfixedheader()"
+    },
+    {
+      "label": "Int",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
+      "source_location": "L177",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int",
+      "community": 89,
+      "norm_label": "int"
+    },
+    {
+      "label": "String",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
+      "source_location": "L177",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_string",
+      "community": 89,
+      "norm_label": "string"
     },
     {
       "label": "ResetGameButton()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L353",
+      "source_location": "L257",
       "_origin": "ast",
       "id": "screens_homescreen_resetgamebutton",
-      "community": 124,
+      "community": 89,
       "norm_label": "resetgamebutton()"
     },
     {
       "label": "TodayNourishmentSection()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L373",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "screens_homescreen_todaynourishmentsection",
-      "community": 124,
+      "community": 89,
       "norm_label": "todaynourishmentsection()"
     },
     {
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L373",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_list",
-      "community": 124,
+      "community": 89,
       "norm_label": "list"
     },
     {
       "label": "HabitEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L373",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_habitentity",
-      "community": 124,
+      "community": 89,
       "norm_label": "habitentity"
     },
     {
       "label": "Map",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L373",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_map",
-      "community": 124,
+      "community": 89,
       "norm_label": "map"
     },
     {
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L373",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_long",
-      "community": 124,
+      "community": 89,
       "norm_label": "long"
     },
     {
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L373",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_boolean",
-      "community": 124,
+      "community": 89,
       "norm_label": "boolean"
     },
     {
       "label": "EmptyHomeQuest()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L431",
+      "source_location": "L335",
       "_origin": "ast",
       "id": "screens_homescreen_emptyhomequest",
-      "community": 124,
+      "community": 89,
       "norm_label": "emptyhomequest()"
     },
     {
       "label": "HomeHabitItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L464",
+      "source_location": "L368",
       "_origin": "ast",
       "id": "screens_homescreen_homehabititem",
-      "community": 124,
+      "community": 89,
       "norm_label": "homehabititem()"
     },
     {
       "label": "LevelBadge()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L524",
+      "source_location": "L428",
       "_origin": "ast",
       "id": "screens_homescreen_levelbadge",
-      "community": 124,
+      "community": 89,
       "norm_label": "levelbadge()"
     },
     {
       "label": "habitIcon()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L539",
+      "source_location": "L443",
       "_origin": "ast",
       "id": "screens_homescreen_habiticon",
-      "community": 124,
+      "community": 89,
       "norm_label": "habiticon()"
     },
     {
       "label": "ColorPaletteHome",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L546",
+      "source_location": "L450",
       "_origin": "ast",
       "id": "screens_homescreen_colorpalettehome",
-      "community": 124,
+      "community": 89,
       "norm_label": "colorpalettehome"
     },
     {
@@ -10120,7 +10110,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen",
-      "community": 130,
+      "community": 23,
       "norm_label": "notificationsettingsscreen.kt"
     },
     {
@@ -10130,7 +10120,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_notificationsettingsscreen",
-      "community": 130,
+      "community": 23,
       "norm_label": "notificationsettingsscreen()"
     },
     {
@@ -10140,7 +10130,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_homescreenviewmodel",
-      "community": 130,
+      "community": 23,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -10150,7 +10140,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_gamifiedfixedheader",
-      "community": 130,
+      "community": 23,
       "norm_label": "gamifiedfixedheader()"
     },
     {
@@ -10160,7 +10150,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_int",
-      "community": 130,
+      "community": 23,
       "norm_label": "int"
     },
     {
@@ -10170,7 +10160,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_string",
-      "community": 130,
+      "community": 23,
       "norm_label": "string"
     },
     {
@@ -10180,7 +10170,7 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_settingshero",
-      "community": 130,
+      "community": 23,
       "norm_label": "settingshero()"
     },
     {
@@ -10190,7 +10180,7 @@
       "source_location": "L265",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_settingrow",
-      "community": 130,
+      "community": 23,
       "norm_label": "settingrow()"
     },
     {
@@ -10200,7 +10190,7 @@
       "source_location": "L265",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_androidx",
-      "community": 130,
+      "community": 23,
       "norm_label": "androidx"
     },
     {
@@ -10210,7 +10200,7 @@
       "source_location": "L265",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_boolean",
-      "community": 130,
+      "community": 23,
       "norm_label": "boolean"
     },
     {
@@ -10220,7 +10210,7 @@
       "source_location": "L265",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_modifier",
-      "community": 130,
+      "community": 23,
       "norm_label": "modifier"
     },
     {
@@ -10230,7 +10220,7 @@
       "source_location": "L334",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_colorpalettesettings",
-      "community": 130,
+      "community": 23,
       "norm_label": "colorpalettesettings"
     },
     {
@@ -10907,7 +10897,7 @@
       "label": ".claimAchievement()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L118",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "viewmodel_achievementviewmodel_achievementviewmodel_claimachievement",
       "community": 73,
@@ -10917,7 +10907,7 @@
       "label": ".progressFor()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L124",
+      "source_location": "L125",
       "_origin": "ast",
       "id": "viewmodel_achievementviewmodel_achievementviewmodel_progressfor",
       "community": 73,
@@ -10927,7 +10917,7 @@
       "label": ".progressFraction()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L147",
+      "source_location": "L148",
       "_origin": "ast",
       "id": "viewmodel_achievementviewmodel_achievementviewmodel_progressfraction",
       "community": 73,
@@ -10937,7 +10927,7 @@
       "label": "Float",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L147",
+      "source_location": "L148",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_achievementviewmodel_kt_float",
       "community": 73,
@@ -10947,7 +10937,7 @@
       "label": ".progressLabel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L156",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "viewmodel_achievementviewmodel_achievementviewmodel_progresslabel",
       "community": 73,
@@ -10957,7 +10947,7 @@
       "label": ".rewardLabels()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L165",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "viewmodel_achievementviewmodel_achievementviewmodel_rewardlabels",
       "community": 73,
@@ -10967,7 +10957,7 @@
       "label": ".rewardLabel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt",
-      "source_location": "L174",
+      "source_location": "L175",
       "_origin": "ast",
       "id": "viewmodel_achievementviewmodel_achievementviewmodel_rewardlabel",
       "community": 73,
@@ -10980,7 +10970,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel",
-      "community": 87,
+      "community": 4,
       "norm_label": "activitytimelineviewmodel.kt"
     },
     {
@@ -10990,7 +10980,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel",
-      "community": 87,
+      "community": 4,
       "norm_label": "activitytimelineviewmodel"
     },
     {
@@ -11000,7 +10990,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_stateflow",
-      "community": 87,
+      "community": 4,
       "norm_label": "stateflow"
     },
     {
@@ -11010,7 +11000,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_list",
-      "community": 87,
+      "community": 4,
       "norm_label": "list"
     },
     {
@@ -11020,7 +11010,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_gameevententity",
-      "community": 87,
+      "community": 4,
       "norm_label": "gameevententity"
     },
     {
@@ -11030,7 +11020,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_boolean",
-      "community": 87,
+      "community": 4,
       "norm_label": "boolean"
     },
     {
@@ -11040,7 +11030,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_string",
-      "community": 87,
+      "community": 4,
       "norm_label": "string"
     },
     {
@@ -11050,7 +11040,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel_loadmore",
-      "community": 87,
+      "community": 4,
       "norm_label": ".loadmore()"
     },
     {
@@ -11920,7 +11910,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel",
-      "community": 87,
+      "community": 4,
       "norm_label": "notificationsettingsviewmodel.kt"
     },
     {
@@ -11930,7 +11920,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel",
-      "community": 87,
+      "community": 4,
       "norm_label": "notificationsettingsviewmodel"
     },
     {
@@ -11940,7 +11930,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_stateflow",
-      "community": 87,
+      "community": 4,
       "norm_label": "stateflow"
     },
     {
@@ -11950,7 +11940,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_boolean",
-      "community": 87,
+      "community": 4,
       "norm_label": "boolean"
     },
     {
@@ -11960,7 +11950,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setdailyreminderenabled",
-      "community": 87,
+      "community": 4,
       "norm_label": ".setdailyreminderenabled()"
     },
     {
@@ -11970,7 +11960,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setstreakreminderenabled",
-      "community": 87,
+      "community": 4,
       "norm_label": ".setstreakreminderenabled()"
     },
     {
@@ -11980,7 +11970,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setpetreminderenabled",
-      "community": 87,
+      "community": 4,
       "norm_label": ".setpetreminderenabled()"
     },
     {
@@ -15727,7 +15717,7 @@
       "label": "Pending",
       "file_type": "document",
       "source_file": "TODO.md",
-      "source_location": "L27",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "todo_pending",
       "community": 83,
@@ -16186,9 +16176,9 @@
       "source_location": "L44",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "mobile_mainactivity_mainactivity",
-      "target": "onbackpressedcallback",
-      "confidence_score": 1.0
+      "target": "onbackpressedcallback"
     },
     {
       "relation": "references",
@@ -23164,9 +23154,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/ChestRewardConfigProvider.kt",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_chestrewardconfigprovider_chestrewardconfigprovider_getconfig",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardconfigprovider_kt_chestrewardconfig",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardconfigprovider_kt_chestrewardconfig"
     },
     {
       "relation": "references",
@@ -23196,9 +23186,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory",
-      "target": "domain_chestrewardfactory_chestrewardfactory",
-      "confidence_score": 1.0
+      "target": "domain_chestrewardfactory_chestrewardfactory"
     },
     {
       "relation": "method",
@@ -23206,9 +23196,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory",
-      "target": "domain_chestrewardfactory_chestrewardfactory_buildchestreward",
-      "confidence_score": 1.0
+      "target": "domain_chestrewardfactory_chestrewardfactory_buildchestreward"
     },
     {
       "relation": "method",
@@ -23216,9 +23206,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory",
-      "target": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded",
-      "confidence_score": 1.0
+      "target": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded"
     },
     {
       "relation": "references",
@@ -23227,9 +23217,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_buildchestreward",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_chesttype",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_chesttype"
     },
     {
       "relation": "references",
@@ -23238,9 +23228,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_buildchestreward",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_inventoryitemrepository",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_inventoryitemrepository"
     },
     {
       "relation": "references",
@@ -23249,9 +23239,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_buildchestreward",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_rewarduievent",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_rewarduievent"
     },
     {
       "relation": "references",
@@ -23260,9 +23250,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_buildchestreward",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_string",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_string"
     },
     {
       "relation": "calls",
@@ -23271,9 +23261,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_buildchestreward",
-      "target": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded",
-      "confidence_score": 1.0
+      "target": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded"
     },
     {
       "relation": "references",
@@ -23282,9 +23272,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_inventoryitemrepository",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_inventoryitemrepository"
     },
     {
       "relation": "references",
@@ -23293,9 +23283,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_chestrewardconfig",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_chestrewardconfig"
     },
     {
       "relation": "references",
@@ -23304,9 +23294,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "domain_chestrewardfactory_chestrewardfactory_grantrandomcustomizationifneeded",
-      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_long",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_domain_chestrewardfactory_kt_long"
     },
     {
       "relation": "contains",
@@ -25218,9 +25208,9 @@
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L80",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_evaluatetodaystreak",
-      "target": "domain_streakengine_streakengine_buildrewardsummary",
-      "confidence_score": 1.0
+      "target": "domain_streakengine_streakengine_buildrewardsummary"
     },
     {
       "relation": "calls",
@@ -27916,17 +27906,6 @@
       "target": "components_animatedpet_petphasetransition"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L25",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "components_animatedpet_animatedpet",
-      "target": "intsize"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -28136,17 +28115,6 @@
       "target": "components_animatedpet_petimagelayer"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
-      "source_location": "L102",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "components_animatedpet_petphasetransition",
-      "target": "intsize"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -28288,17 +28256,6 @@
       "confidence_score": 1.0,
       "source": "components_animatedpet_petimagelayer",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_components_animatedpet_kt_int"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L459",
-      "weight": 1.0,
-      "source": "reward_rewardscreen_dragonevolutionrewardcontent",
-      "target": "intsize"
     },
     {
       "relation": "calls",
@@ -32145,9 +32102,9 @@
       "source_location": "L69",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "screens_activitytimelinescreen_activitytimelinescreen",
-      "target": "activitytimelineviewmodel",
-      "confidence_score": 1.0
+      "target": "activitytimelineviewmodel"
     },
     {
       "relation": "calls",
@@ -34013,39 +33970,6 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L131",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_homescreen_gamifiedfixedheader",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L131",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_homescreen_gamifiedfixedheader",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_string"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L559",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_homescreen_levelbadge",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
       "source_location": "L176",
       "weight": 1.0,
       "context": "parameter_type",
@@ -34074,6 +33998,39 @@
       "confidence_score": 1.0,
       "source": "screens_homescreen_dragonhero",
       "target": "screens_homescreen_levelbadge"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
+      "source_location": "L131",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "confidence_score": 1.0,
+      "source": "screens_homescreen_gamifiedfixedheader",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
+      "source_location": "L131",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "confidence_score": 1.0,
+      "source": "screens_homescreen_gamifiedfixedheader",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_string"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
+      "source_location": "L559",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "confidence_score": 1.0,
+      "source": "screens_homescreen_levelbadge",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int"
     },
     {
       "relation": "references",
@@ -41751,9 +41708,9 @@
       "source_file": "ENDGAME.md",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "endgame_rules",
-      "target": "endgame_activity_timeline",
-      "confidence_score": 1.0
+      "target": "endgame_activity_timeline"
     },
     {
       "relation": "contains",
@@ -41911,9 +41868,9 @@
       "source_file": "EVENTS.md",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "events_rules",
-      "target": "events_legacy_journal_data",
-      "confidence_score": 1.0
+      "target": "events_legacy_journal_data"
     },
     {
       "relation": "contains",
@@ -42701,9 +42658,9 @@
       "source_file": "TODO.md",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "todo_implementation_queue",
-      "target": "todo_completed",
-      "confidence_score": 1.0
+      "target": "todo_completed"
     },
     {
       "relation": "contains",
@@ -42711,9 +42668,9 @@
       "source_file": "TODO.md",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "todo_implementation_queue",
-      "target": "todo_pending",
-      "confidence_score": 1.0
+      "target": "todo_pending"
     },
     {
       "relation": "contains",
@@ -42867,5 +42824,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b25916ee25a0f9a7a37b8f150936b6fe5896e473"
+  "built_at_commit": "d02342d984d9d97c512e7edb14b791e2f5feda2b"
 }

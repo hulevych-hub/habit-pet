@@ -5,19 +5,59 @@ import com.example.mobile.data.local.entities.AchievementEntity
 object AchievementsConfig {
 
     const val FIRST_HABIT = "first_habit"
+    const val FIRST_CUSTOMIZATION = "first_customization"
+    const val FIRST_AURA_GLOW = "first_aura_glow"
     const val THREE_HABIT_BUILDER = "three_habit_builder"
+    const val COZY_OUTFIT = "cozy_outfit"
+    const val FIVE_HABIT_BUILDER = "five_habit_builder"
+    const val FOREST_BACKGROUND = "forest_background"
+    const val THREE_CUSTOMIZATIONS = "three_customizations"
+    const val TWENTY_FIVE_COMPLETIONS = "twenty_five_completions"
+    const val LEVEL_FIVE = "level_five"
     const val SEVEN_DAY_STREAK = "seven_day_streak"
-    const val THIRTY_DAY_STREAK = "thirty_day_streak"
+    const val FOURTEEN_DAY_STREAK = "fourteen_day_streak"
+    const val TWO_THOUSAND_FIVE_HUNDRED_XP = "two_thousand_five_hundred_xp"
     const val ONE_HUNDRED_COMPLETIONS = "one_hundred_completions"
     const val ONE_THOUSAND_XP = "one_thousand_xp"
-    const val FIVE_THOUSAND_XP = "five_thousand_xp"
+    const val TEN_HABIT_BUILDER = "ten_habit_builder"
+    const val FIFTEEN_HABIT_BUILDER = "fifteen_habit_builder"
+    const val TWO_HUNDRED_FIFTY_COMPLETIONS = "two_hundred_fifty_completions"
     const val LEVEL_TEN = "level_ten"
-    const val LEVEL_TWENTY_FIVE = "level_twenty_five"
-    const val FIRST_CUSTOMIZATION = "first_customization"
+    const val LEVEL_FIFTEEN = "level_fifteen"
+    const val THREE_THOUSAND_XP = "three_thousand_xp"
+    const val THIRTY_DAY_STREAK = "thirty_day_streak"
+    const val CRYSTAL_AURA = "crystal_aura"
     const val CUSTOMIZATION_COLLECTOR = "customization_collector"
+    const val CRYSTAL_CROWN = "crystal_crown"
+    const val CRYSTAL_CAVE = "crystal_cave"
+    const val EIGHT_CUSTOMIZATIONS = "eight_customizations"
+    const val FIVE_THOUSAND_XP = "five_thousand_xp"
+    const val TWENTY_HABIT_BUILDER = "twenty_habit_builder"
+    const val FIVE_HUNDRED_COMPLETIONS = "five_hundred_completions"
+    const val LEVEL_TWENTY_FIVE = "level_twenty_five"
+    const val LEVEL_FORTY = "level_forty"
+    const val LEVEL_FIFTY = "level_fifty"
+    const val SEVEN_THOUSAND_FIVE_HUNDRED_XP = "seven_thousand_five_hundred_xp"
+    const val TEN_THOUSAND_XP = "ten_thousand_xp"
+    const val FIFTEEN_THOUSAND_XP = "fifteen_thousand_xp"
+    const val SIXTY_DAY_STREAK = "sixty_day_streak"
+    const val DRAGONFIRE_AURA = "dragonfire_aura"
+    const val MYSTIC_CLOAK = "mystic_cloak"
+    const val TEN_CUSTOMIZATIONS = "ten_customizations"
+    const val ELEVEN_CUSTOMIZATIONS = "eleven_customizations"
+    const val FLOATING_ISLANDS = "floating_islands"
+    const val ONE_THOUSAND_COMPLETIONS = "one_thousand_completions"
+    const val TWENTY_FIVE_THOUSAND_XP = "twenty_five_thousand_xp"
+    const val ONE_HUNDRED_DAY_STREAK = "one_hundred_day_streak"
+    const val TWELVE_CUSTOMIZATIONS = "twelve_customizations"
+    const val STARLIGHT_ARMOR = "starlight_armor"
+    const val CELESTIAL_REALM = "celestial_realm"
+    const val CELESTIAL_AURA = "celestial_aura"
+    const val LEVEL_SIXTY = "level_sixty"
 
     data class AchievementDefinition(
         val id: String,
+        val difficultyRank: Int = 0,
         val name: String,
         val description: String,
         val icon: String,
@@ -37,6 +77,26 @@ object AchievementsConfig {
             rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_FIRST_HABIT_COINS))
         ),
         AchievementDefinition(
+            id = FIRST_CUSTOMIZATION,
+            name = "First Customization",
+            description = "Unlock your first customization item",
+            icon = "customization_first",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 1,
+            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_FIRST_CUSTOMIZATION_COINS))
+        ),
+        AchievementDefinition(
+            id = FIRST_AURA_GLOW,
+            name = "First Aura Glow",
+            description = "Unlock the Soft Glow aura",
+            icon = "aura_soft_glow",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 1,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("soft_glow", CustomizationTypes.AURA)
+            )
+        ),
+        AchievementDefinition(
             id = THREE_HABIT_BUILDER,
             name = "3 Habit Builder",
             description = "Create 3 habits",
@@ -44,6 +104,64 @@ object AchievementsConfig {
             progressSource = AchievementProgressSource.HABIT_COUNT,
             targetValue = 3,
             rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3_HABIT_BUILDER_COINS))
+        ),
+        AchievementDefinition(
+            id = COZY_OUTFIT,
+            name = "Cozy Outfit",
+            description = "Unlock the Royal Scarf outfit",
+            icon = "outfit_royal_scarf",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 2,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("royal_scarf", CustomizationTypes.OUTFIT)
+            )
+        ),
+        AchievementDefinition(
+            id = FIVE_HABIT_BUILDER,
+            name = "5 Habit Builder",
+            description = "Create 5 habits",
+            icon = "habit_builder_5",
+            progressSource = AchievementProgressSource.HABIT_COUNT,
+            targetValue = 5,
+            rewards = listOf(AchievementReward.CoinReward(150))
+        ),
+        AchievementDefinition(
+            id = FOREST_BACKGROUND,
+            name = "Forest Background",
+            description = "Unlock the Sunny Meadow background",
+            icon = "background_forest",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 3,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("background_forest", CustomizationTypes.BACKGROUND)
+            )
+        ),
+        AchievementDefinition(
+            id = THREE_CUSTOMIZATIONS,
+            name = "3 Customizations",
+            description = "Unlock 3 customization items",
+            icon = "customization_3",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 3,
+            rewards = listOf(AchievementReward.CoinReward(150))
+        ),
+        AchievementDefinition(
+            id = TWENTY_FIVE_COMPLETIONS,
+            name = "25 Completions",
+            description = "Complete 25 habits",
+            icon = "completions_25",
+            progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
+            targetValue = 25,
+            rewards = listOf(AchievementReward.CoinReward(100))
+        ),
+        AchievementDefinition(
+            id = LEVEL_FIVE,
+            name = "Level 5",
+            description = "Reach level 5",
+            icon = "level_5",
+            progressSource = AchievementProgressSource.PET_LEVEL,
+            targetValue = 5,
+            rewards = listOf(AchievementReward.CoinReward(100))
         ),
         AchievementDefinition(
             id = SEVEN_DAY_STREAK,
@@ -55,13 +173,22 @@ object AchievementsConfig {
             rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_7_DAY_STREAK_COINS))
         ),
         AchievementDefinition(
-            id = THIRTY_DAY_STREAK,
-            name = "30 Day Streak",
-            description = "Maintain a 30-day streak",
-            icon = "streak_30",
+            id = FOURTEEN_DAY_STREAK,
+            name = "14 Day Streak",
+            description = "Maintain a 14-day streak",
+            icon = "streak_14",
             progressSource = AchievementProgressSource.CURRENT_STREAK,
-            targetValue = 30,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_30_DAY_STREAK_COINS))
+            targetValue = 14,
+            rewards = listOf(AchievementReward.CoinReward(150))
+        ),
+        AchievementDefinition(
+            id = TWO_THOUSAND_FIVE_HUNDRED_XP,
+            name = "2500 XP",
+            description = "Earn 2500 XP",
+            icon = "xp_2500",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 2500,
+            rewards = listOf(AchievementReward.CoinReward(200))
         ),
         AchievementDefinition(
             id = ONE_HUNDRED_COMPLETIONS,
@@ -82,13 +209,31 @@ object AchievementsConfig {
             rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_1000_XP_COINS))
         ),
         AchievementDefinition(
-            id = FIVE_THOUSAND_XP,
-            name = "5000 XP",
-            description = "Earn 5000 XP",
-            icon = "xp_5000",
-            progressSource = AchievementProgressSource.TOTAL_XP,
-            targetValue = 5000,
-            rewards = listOf(AchievementReward.ExpReward(300))
+            id = TEN_HABIT_BUILDER,
+            name = "10 Habit Builder",
+            description = "Create 10 habits",
+            icon = "habit_builder_10",
+            progressSource = AchievementProgressSource.HABIT_COUNT,
+            targetValue = 10,
+            rewards = listOf(AchievementReward.CoinReward(300))
+        ),
+        AchievementDefinition(
+            id = FIFTEEN_HABIT_BUILDER,
+            name = "15 Habit Builder",
+            description = "Create 15 habits",
+            icon = "habit_builder_15",
+            progressSource = AchievementProgressSource.HABIT_COUNT,
+            targetValue = 15,
+            rewards = listOf(AchievementReward.CoinReward(400))
+        ),
+        AchievementDefinition(
+            id = TWO_HUNDRED_FIFTY_COMPLETIONS,
+            name = "250 Completions",
+            description = "Complete 250 habits",
+            icon = "completions_250",
+            progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
+            targetValue = 250,
+            rewards = listOf(AchievementReward.CoinReward(300))
         ),
         AchievementDefinition(
             id = LEVEL_TEN,
@@ -100,22 +245,42 @@ object AchievementsConfig {
             rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_10_COINS))
         ),
         AchievementDefinition(
-            id = LEVEL_TWENTY_FIVE,
-            name = "Level 25",
-            description = "Reach level 25",
-            icon = "level_25",
+            id = LEVEL_FIFTEEN,
+            name = "Level 15",
+            description = "Reach level 15",
+            icon = "level_15",
             progressSource = AchievementProgressSource.PET_LEVEL,
-            targetValue = 25,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_25_COINS))
+            targetValue = 15,
+            rewards = listOf(AchievementReward.CoinReward(300))
         ),
         AchievementDefinition(
-            id = FIRST_CUSTOMIZATION,
-            name = "First Customization",
-            description = "Unlock your first customization item",
-            icon = "customization_first",
+            id = THREE_THOUSAND_XP,
+            name = "3000 XP",
+            description = "Earn 3000 XP",
+            icon = "xp_3000",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 3000,
+            rewards = listOf(AchievementReward.ExpReward(150))
+        ),
+        AchievementDefinition(
+            id = THIRTY_DAY_STREAK,
+            name = "30 Day Streak",
+            description = "Maintain a 30-day streak",
+            icon = "streak_30",
+            progressSource = AchievementProgressSource.CURRENT_STREAK,
+            targetValue = 30,
+            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_30_DAY_STREAK_COINS))
+        ),
+        AchievementDefinition(
+            id = CRYSTAL_AURA,
+            name = "Crystal Aura",
+            description = "Unlock the Crystal Aura",
+            icon = "aura_crystal",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
-            targetValue = 1,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_FIRST_CUSTOMIZATION_COINS))
+            targetValue = 5,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("crystal_aura", CustomizationTypes.AURA)
+            )
         ),
         AchievementDefinition(
             id = CUSTOMIZATION_COLLECTOR,
@@ -128,8 +293,299 @@ object AchievementsConfig {
                 AchievementReward.ChestReward(ChestType.RARE),
                 AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_CUSTOMIZATION_COLLECTOR_COINS)
             )
+        ),
+        AchievementDefinition(
+            id = CRYSTAL_CROWN,
+            name = "Crystal Crown",
+            description = "Unlock the Crystal Crown outfit",
+            icon = "outfit_crystal_crown",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 7,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("crystal_crown", CustomizationTypes.OUTFIT)
+            )
+        ),
+        AchievementDefinition(
+            id = CRYSTAL_CAVE,
+            name = "Crystal Cave",
+            description = "Unlock the Crystal Cave background",
+            icon = "background_beach",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 8,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("background_beach", CustomizationTypes.BACKGROUND)
+            )
+        ),
+        AchievementDefinition(
+            id = EIGHT_CUSTOMIZATIONS,
+            name = "8 Customizations",
+            description = "Unlock 8 customization items",
+            icon = "customization_8",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 8,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(200)
+            )
+        ),
+        AchievementDefinition(
+            id = FIVE_THOUSAND_XP,
+            name = "5000 XP",
+            description = "Earn 5000 XP",
+            icon = "xp_5000",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 5000,
+            rewards = listOf(AchievementReward.ExpReward(300))
+        ),
+        AchievementDefinition(
+            id = TWENTY_HABIT_BUILDER,
+            name = "20 Habit Builder",
+            description = "Create 20 habits",
+            icon = "habit_builder_20",
+            progressSource = AchievementProgressSource.HABIT_COUNT,
+            targetValue = 20,
+            rewards = listOf(AchievementReward.CoinReward(600))
+        ),
+        AchievementDefinition(
+            id = FIVE_HUNDRED_COMPLETIONS,
+            name = "500 Completions",
+            description = "Complete 500 habits",
+            icon = "completions_500",
+            progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
+            targetValue = 500,
+            rewards = listOf(AchievementReward.CoinReward(600))
+        ),
+        AchievementDefinition(
+            id = LEVEL_TWENTY_FIVE,
+            name = "Level 25",
+            description = "Reach level 25",
+            icon = "level_25",
+            progressSource = AchievementProgressSource.PET_LEVEL,
+            targetValue = 25,
+            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_25_COINS))
+        ),
+        AchievementDefinition(
+            id = LEVEL_FORTY,
+            name = "Level 40",
+            description = "Reach level 40",
+            icon = "level_40",
+            progressSource = AchievementProgressSource.PET_LEVEL,
+            targetValue = 40,
+            rewards = listOf(AchievementReward.CoinReward(800))
+        ),
+        AchievementDefinition(
+            id = LEVEL_FIFTY,
+            name = "Level 50",
+            description = "Reach level 50",
+            icon = "level_50",
+            progressSource = AchievementProgressSource.PET_LEVEL,
+            targetValue = 50,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(1000)
+            )
+        ),
+        AchievementDefinition(
+            id = SEVEN_THOUSAND_FIVE_HUNDRED_XP,
+            name = "7500 XP",
+            description = "Earn 7500 XP",
+            icon = "xp_7500",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 7500,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(500)
+            )
+        ),
+        AchievementDefinition(
+            id = TEN_THOUSAND_XP,
+            name = "10000 XP",
+            description = "Earn 10000 XP",
+            icon = "xp_10000",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 10000,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(600)
+            )
+        ),
+        AchievementDefinition(
+            id = FIFTEEN_THOUSAND_XP,
+            name = "15000 XP",
+            description = "Earn 15000 XP",
+            icon = "xp_15000",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 15000,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(800)
+            )
+        ),
+        AchievementDefinition(
+            id = SIXTY_DAY_STREAK,
+            name = "60 Day Streak",
+            description = "Maintain a 60-day streak",
+            icon = "streak_60",
+            progressSource = AchievementProgressSource.CURRENT_STREAK,
+            targetValue = 60,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(600)
+            )
+        ),
+        AchievementDefinition(
+            id = DRAGONFIRE_AURA,
+            name = "Dragonfire Aura",
+            description = "Unlock the Dragonfire Aura",
+            icon = "aura_dragonfire",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 10,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("dragonfire_aura", CustomizationTypes.AURA)
+            )
+        ),
+        AchievementDefinition(
+            id = MYSTIC_CLOAK,
+            name = "Mystic Cloak",
+            description = "Unlock the Mystic Cloak outfit",
+            icon = "outfit_mystic_cloak",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 11,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("mystic_cloak", CustomizationTypes.OUTFIT)
+            )
+        ),
+        AchievementDefinition(
+            id = TEN_CUSTOMIZATIONS,
+            name = "10 Customizations",
+            description = "Unlock 10 customization items",
+            icon = "customization_10",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 10,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(300)
+            )
+        ),
+        AchievementDefinition(
+            id = ELEVEN_CUSTOMIZATIONS,
+            name = "11 Customizations",
+            description = "Unlock 11 customization items",
+            icon = "customization_11",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 11,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(250)
+            )
+        ),
+        AchievementDefinition(
+            id = FLOATING_ISLANDS,
+            name = "Floating Islands",
+            description = "Unlock the Floating Islands background",
+            icon = "background_mountains",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 12,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("background_mountains", CustomizationTypes.BACKGROUND)
+            )
+        ),
+        AchievementDefinition(
+            id = ONE_THOUSAND_COMPLETIONS,
+            name = "1000 Completions",
+            description = "Complete 1000 habits",
+            icon = "completions_1000",
+            progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
+            targetValue = 1000,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(1000)
+            )
+        ),
+        AchievementDefinition(
+            id = TWENTY_FIVE_THOUSAND_XP,
+            name = "25000 XP",
+            description = "Earn 25000 XP",
+            icon = "xp_25000",
+            progressSource = AchievementProgressSource.TOTAL_XP,
+            targetValue = 25000,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(1000)
+            )
+        ),
+        AchievementDefinition(
+            id = ONE_HUNDRED_DAY_STREAK,
+            name = "100 Day Streak",
+            description = "Maintain a 100-day streak",
+            icon = "streak_100",
+            progressSource = AchievementProgressSource.CURRENT_STREAK,
+            targetValue = 100,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(1000)
+            )
+        ),
+        AchievementDefinition(
+            id = TWELVE_CUSTOMIZATIONS,
+            name = "12 Customizations",
+            description = "Unlock all 12 customization items",
+            icon = "customization_12",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 12,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(300)
+            )
+        ),
+        AchievementDefinition(
+            id = STARLIGHT_ARMOR,
+            name = "Starlight Armor",
+            description = "Unlock the Starlight Armor outfit",
+            icon = "outfit_starlight_armor",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 12,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("starlight_armor", CustomizationTypes.OUTFIT)
+            )
+        ),
+        AchievementDefinition(
+            id = CELESTIAL_REALM,
+            name = "Celestial Realm",
+            description = "Unlock the Celestial Realm background",
+            icon = "background_night_sky",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 12,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("background_night_sky", CustomizationTypes.BACKGROUND)
+            )
+        ),
+        AchievementDefinition(
+            id = CELESTIAL_AURA,
+            name = "Celestial Aura",
+            description = "Unlock the Celestial Aura",
+            icon = "aura_celestial",
+            progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
+            targetValue = 12,
+            rewards = listOf(
+                AchievementReward.CustomizationReward("celestial_aura", CustomizationTypes.AURA)
+            )
+        ),
+        AchievementDefinition(
+            id = LEVEL_SIXTY,
+            name = "Level 60",
+            description = "Reach level 60",
+            icon = "level_60",
+            progressSource = AchievementProgressSource.PET_LEVEL,
+            targetValue = 60,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(1200)
+            )
         )
-    )
+    ).mapIndexed { index, achievement ->
+        achievement.copy(difficultyRank = index + 1)
+    }
 
     fun achievementById(id: String): AchievementDefinition? = achievements.firstOrNull { it.id == id }
 
