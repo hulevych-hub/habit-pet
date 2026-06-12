@@ -1,25 +1,31 @@
 package com.example.mobile.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,10 +35,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,8 +46,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -49,15 +57,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
+import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.EmptyStateCard
-import com.example.mobile.presentation.ui.components.ProgressHeader
-import com.example.mobile.presentation.ui.components.ProgressHeaderState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.compose.foundation.lazy.grid.items as gridItems
 
 @HiltViewModel
 class RewardsViewModel @Inject constructor(
@@ -91,9 +99,11 @@ fun RewardsScreen(
     var selectedTypeTab by rememberSaveable { mutableStateOf(CollectionTypeTab.Outfits) }
     var selectedRarity by rememberSaveable { mutableStateOf<Rarity?>(null) }
     var selectedCollection by rememberSaveable { mutableStateOf(CollectionTab.Owned) }
+    var activeInspectItem by remember { mutableStateOf<InventoryItemEntity?>(null) }
 
     val items by selectedTypeTab.itemsFlow(rewardsViewModel).collectAsState(initial = emptyList())
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+
     val filteredItems = items.filter { item ->
         val collectionMatch = when (selectedCollection) {
             CollectionTab.Owned -> item.isPurchased
@@ -104,134 +114,290 @@ fun RewardsScreen(
     }
 
     Scaffold(
+        containerColor = Color(0xFFFAFAFC),
         topBar = {
-            androidx.compose.material3.CenterAlignedTopAppBar(
-                title = { Text("Collection", color = ColorPaletteRewards.Ink) }
+            GamifiedFixedHeader(
+                streak = progressUiState.globalStreak,
+                coins = progressUiState.totalCoins,
+                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage)
             )
         }
     ) { padding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                CollectionHeader(
-                    totalCoins = progressUiState.totalCoins,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 14.dp)
-                )
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                ProgressHeader(
-                    state = ProgressHeaderState(
-                        level = progressUiState.pet.level,
-                        xp = progressUiState.pet.xp,
-                        evolutionStage = progressUiState.pet.evolutionStage,
-                        totalCoins = progressUiState.totalCoins,
-                        globalStreak = progressUiState.globalStreak,
-                        currentCombo = progressUiState.currentCombo,
-                        lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                CollectionTypeTabs(
-                    selectedTypeTab = selectedTypeTab,
-                    onTypeSelected = { selectedTypeTab = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 14.dp)
-                )
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                RarityFilter(
-                    selectedRarity = selectedRarity,
-                    onRaritySelected = { selectedRarity = it },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                CollectionToggle(
-                    selectedCollection = selectedCollection,
-                    onSelected = { selectedCollection = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 14.dp)
-                )
-            }
-
-            if (filteredItems.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp)
+            ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    EmptyStateCard(
-                        title = when (selectedCollection) {
-                            CollectionTab.Owned -> "No items equipped yet"
-                            CollectionTab.Locked -> "New discoveries await"
-                        },
-                        message = when (selectedCollection) {
-                            CollectionTab.Owned -> "Purchase or claim items to decorate your dragon's journey."
-                            CollectionTab.Locked -> "Complete habits, open chests, and claim achievements to reveal more."
-                        },
-                        hint = "Locked items are future rewards waiting for the right moment.",
-                        modifier = Modifier.fillMaxWidth()
+                    CollectionTypeTabs(
+                        selectedTypeTab = selectedTypeTab,
+                        onTypeSelected = {
+                            selectedTypeTab = it
+                            activeInspectItem = null
+                        }
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    CollectionToggle(
+                        selectedCollection = selectedCollection,
+                        onSelected = {
+                            selectedCollection = it
+                            activeInspectItem = null
+                        }
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    RarityFilter(
+                        selectedRarity = selectedRarity,
+                        onRaritySelected = { selectedRarity = it }
+                    )
+                }
+
+                if (filteredItems.isEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Box(modifier = Modifier.padding(top = 24.dp)) {
+                            EmptyStateCard(
+                                title = when (selectedCollection) {
+                                    CollectionTab.Owned -> "Vault is Empty"
+                                    CollectionTab.Locked -> "All Items Discovered"
+                                },
+                                message = when (selectedCollection) {
+                                    CollectionTab.Owned -> "Acquire rare customizable content from the locked items catalog tab."
+                                    CollectionTab.Locked -> "Check back later as your dragon grows into newer evolutionary tiers."
+                                },
+                                hint = "Earn gold by maintaining your daily task streaks.",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+
+                gridItems(
+                    items = filteredItems,
+                    key = { it.id }
+                ) { item ->
+                    InventoryItemGridSquare(
+                        item = item,
+                        isSelected = activeInspectItem?.id == item.id,
+                        onClick = { activeInspectItem = item }
                     )
                 }
             }
 
-            gridItems(
-                items = filteredItems,
-                key = { filteredItem -> filteredItem.id }
-            ) { item ->
-                InventoryItemGridCard(
-                    item = item,
-                    selectedCollection = selectedCollection,
-                    onPurchase = { rewardsViewModel.purchaseItem(item.id) },
-                    onEquip = { rewardsViewModel.equipItem(item.type, item.id.toString()) },
-                    onUnequip = { rewardsViewModel.unequipItem(item.type) }
-                )
+            activeInspectItem?.let { item ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    ItemInspectDrawer(
+                        item = item,
+                        currentWalletBalance = progressUiState.totalCoins,
+                        onClose = { activeInspectItem = null },
+                        onActionExecute = {
+                            when {
+                                item.isEquipped -> rewardsViewModel.unequipItem(item.type)
+                                item.isPurchased -> rewardsViewModel.equipItem(item.type, item.itemId)
+                                else -> rewardsViewModel.purchaseItem(item.id)
+                            }
+                            activeInspectItem = null
+                        }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun CollectionHeader(
-    totalCoins: Int,
-    modifier: Modifier = Modifier
+private fun InventoryItemGridSquare(
+    item: InventoryItemEntity,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
+    val tierColor = rarityColor(item.rarity)
+
     Card(
-        modifier = modifier,
+        modifier = Modifier
+            .aspectRatio(1f)
+            .fillMaxWidth()
+            .border(
+                width = if (isSelected) 3.dp else if (item.isEquipped) 2.dp else 0.dp,
+                color = if (isSelected) ColorPaletteRewards.Violet else if (item.isEquipped) ColorPaletteRewards.Mint else Color.Transparent,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = ColorPaletteRewards.Card),
-        shape = RoundedCornerShape(30.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased && !isSelected) 1.dp else 0.dp)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(ColorPaletteRewards.LavenderSoft)
-                .padding(18.dp)
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Box(
+                modifier = Modifier
+                    .size(54.dp)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(tierColor.copy(alpha = 0.2f), Color.Transparent)
+                        ),
+                        shape = CircleShape
+                    )
+            )
+
+            // ✅ Uses the updated entity item parameter references
+            AssetPreview(
+                itemType = item.type,
+                itemId = item.itemId,
+                imageUrl = item.imageUrl,
+                tintColor = tierColor,
+                modifier = Modifier.fillMaxSize().padding(14.dp)
+            )
+
+            if (!item.isPurchased) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(ColorPaletteRewards.Ink.copy(alpha = 0.08f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Locked",
+                        tint = Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            } else if (item.isEquipped) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(16.dp)
+                        .background(ColorPaletteRewards.Mint, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(10.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ItemInspectDrawer(
+    item: InventoryItemEntity,
+    currentWalletBalance: Int,
+    onClose: () -> Unit,
+    onActionExecute: () -> Unit
+) {
+    val tierColor = rarityColor(item.rarity)
+    val canAfford = currentWalletBalance >= item.price
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        colors = CardDefaults.cardColors(containerColor = ColorPaletteRewards.Card),
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = tierColor.copy(alpha = 0.12f)
+                    ) {
+                        Text(
+                            text = item.rarity.name,
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = tierColor,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        )
+                    }
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteRewards.Ink
+                    )
+                }
+
+                TextButton(onClick = onClose) {
+                    Text("Close", color = ColorPaletteRewards.Muted)
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text("Source", style = MaterialTheme.typography.labelMedium, color = ColorPaletteRewards.Muted)
+                    Text(
+                        text = item.unlockSource.ifBlank { "Standard Shop Asset" },
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = ColorPaletteRewards.Ink
+                    )
+                }
+
+                if (!item.isPurchased) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(Icons.Default.AccountBalanceWallet, null, tint = ColorPaletteRewards.Amber, modifier = Modifier.size(18.dp))
+                        Text(
+                            text = "${item.price}g",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ColorPaletteRewards.Amber
+                        )
+                    }
+                }
+            }
+
+            Button(
+                onClick = onActionExecute,
+                enabled = item.isPurchased || canAfford,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = when {
+                        item.isEquipped -> ColorPaletteRewards.Ink.copy(alpha = 0.08f)
+                        item.isPurchased -> ColorPaletteRewards.Violet
+                        else -> ColorPaletteRewards.Amber
+                    },
+                    contentColor = if (item.isEquipped) ColorPaletteRewards.Ink else Color.White
+                ),
+                shape = RoundedCornerShape(999.dp),
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) {
                 Text(
-                    text = "Dragon wardrobe",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = ColorPaletteRewards.Ink
-                )
-                Text(
-                    text = "$totalCoins coins",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = ColorPaletteRewards.Amber
-                )
-                Text(
-                    text = "Outfits, backgrounds, and auras make every growth milestone feel personal.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = when {
+                        item.isEquipped -> "Unequip Item"
+                        item.isPurchased -> "Equip Customization"
+                        canAfford -> "Unlock Reward"
+                        else -> "Insufficient Gold Balance"
+                    },
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -241,26 +407,64 @@ private fun CollectionHeader(
 @Composable
 private fun CollectionTypeTabs(
     selectedTypeTab: CollectionTypeTab,
-    onTypeSelected: (CollectionTypeTab) -> Unit,
-    modifier: Modifier = Modifier
+    onTypeSelected: (CollectionTypeTab) -> Unit
 ) {
-    TabRow(
-        selectedTabIndex = selectedTypeTab.ordinal,
-        modifier = modifier,
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        divider = {}
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(ColorPaletteRewards.Ink.copy(alpha = 0.04f), RoundedCornerShape(999.dp))
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         CollectionTypeTab.values().forEach { tab ->
-            Tab(
-                selected = selectedTypeTab == tab,
-                onClick = { onTypeSelected(tab) },
-                text = { Text(tab.label) },
-                modifier = Modifier.background(
-                    if (selectedTypeTab == tab) ColorPaletteRewards.Violet else ColorPaletteRewards.SoftSurface,
-                    RoundedCornerShape(999.dp)
+            val isSelected = selectedTypeTab == tab
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(38.dp)
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(if (isSelected) ColorPaletteRewards.Violet else Color.Transparent)
+                    .clickable { onTypeSelected(tab) },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = tab.label,
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (isSelected) Color.White else ColorPaletteRewards.Muted
                 )
-            )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CollectionToggle(
+    selectedCollection: CollectionTab,
+    onSelected: (CollectionTab) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        CollectionTab.values().forEach { tab ->
+            val isSelected = selectedCollection == tab
+            Surface(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(44.dp)
+                    .clickable { onSelected(tab) },
+                shape = RoundedCornerShape(16.dp),
+                color = if (isSelected) ColorPaletteRewards.Violet.copy(alpha = 0.12f) else ColorPaletteRewards.Card,
+                border = borderStrokeFix(isSelected)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "${tab.label} Inventory",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = if (isSelected) ColorPaletteRewards.Violet else ColorPaletteRewards.Muted
+                    )
+                }
+            }
         }
     }
 }
@@ -268,25 +472,24 @@ private fun CollectionTypeTabs(
 @Composable
 private fun RarityFilter(
     selectedRarity: Rarity?,
-    onRaritySelected: (Rarity?) -> Unit,
-    modifier: Modifier = Modifier
+    onRaritySelected: (Rarity?) -> Unit
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         RarityChip(
             label = "All",
-            color = ColorPaletteRewards.Muted,
-            selected = selectedRarity == null,
+            chipColor = ColorPaletteRewards.Muted,
+            isSelected = selectedRarity == null,
             onClick = { onRaritySelected(null) },
             modifier = Modifier.weight(1f)
         )
         Rarity.values().forEach { rarity ->
             RarityChip(
                 label = rarity.name.lowercase(),
-                color = rarityColor(rarity),
-                selected = selectedRarity == rarity,
+                chipColor = rarityColor(rarity),
+                isSelected = selectedRarity == rarity,
                 onClick = { onRaritySelected(rarity) },
                 modifier = Modifier.weight(1f)
             )
@@ -297,200 +500,110 @@ private fun RarityFilter(
 @Composable
 private fun RarityChip(
     label: String,
-    color: Color,
-    selected: Boolean,
+    chipColor: Color,
+    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier
-            .height(42.dp)
+            .height(34.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(999.dp),
-        color = if (selected) color.copy(alpha = 0.22f) else ColorPaletteRewards.SoftSurface
+        color = if (isSelected) chipColor.copy(alpha = 0.15f) else Color.Transparent,
+        border = borderStrokeFix(isSelected, chipColor)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = label.replaceFirstChar { it.uppercase() },
-                style = MaterialTheme.typography.labelMedium,
-                color = if (selected) color else MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                color = if (isSelected) chipColor else ColorPaletteRewards.Muted.copy(alpha = 0.7f)
             )
         }
     }
 }
 
 @Composable
-private fun CollectionToggle(
-    selectedCollection: CollectionTab,
-    onSelected: (CollectionTab) -> Unit,
-    modifier: Modifier = Modifier
+private fun GamifiedFixedHeader(
+    streak: Int,
+    coins: Int,
+    stageName: String
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(999.dp),
-        color = ColorPaletteRewards.SoftSurface
+        modifier = Modifier.fillMaxWidth(),
+        color = Color(0xFFFFFFFF),
+        shadowElevation = 1.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            CollectionTab.values().forEach { tab ->
-                Surface(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(42.dp)
-                        .clickable { onSelected(tab) },
-                    shape = RoundedCornerShape(999.dp),
-                    color = if (selectedCollection == tab) ColorPaletteRewards.Card else Color.Transparent
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = tab.label,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (selectedCollection == tab) ColorPaletteRewards.Violet else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun InventoryItemGridCard(
-    item: InventoryItemEntity,
-    selectedCollection: CollectionTab,
-    onPurchase: () -> Unit,
-    onEquip: () -> Unit,
-    onUnequip: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 7.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (item.isEquipped) ColorPaletteRewards.MintSoft else ColorPaletteRewards.Card
-        ),
-        shape = RoundedCornerShape(28.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased) 2.dp else 0.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            rarityColor(item.rarity).copy(alpha = 0.18f),
-                            RoundedCornerShape(18.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (item.isPurchased) Icons.Default.Star else Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = rarityColor(item.rarity),
-                        modifier = Modifier.size(26.dp)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.LocalFireDepartment,
+                    contentDescription = "Streak",
+                    tint = ColorPaletteRewards.Honey,
+                    modifier = Modifier.size(24.dp)
+                )
                 Text(
-                    text = item.rarity.name,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = rarityColor(item.rarity)
+                    text = "$streak d",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteRewards.Ink
                 )
             }
 
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.titleMedium,
-                color = ColorPaletteRewards.Ink
-            )
-            Text(
-                text = item.unlockSource.ifBlank { "Shop" },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = ColorPaletteRewards.Violet.copy(alpha = 0.1f)
             ) {
-                Text(
-                    text = "${item.price} coins",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = ColorPaletteRewards.Amber
-                )
-                when {
-                    item.isEquipped -> {
-                        Button(
-                            onClick = onUnequip,
-                            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteRewards.SoftSurface),
-                            shape = RoundedCornerShape(999.dp)
-                        ) {
-                            Text("Unequip", color = ColorPaletteRewards.Ink)
-                        }
-                    }
-                    selectedCollection == CollectionTab.Owned && item.isPurchased -> {
-                        Button(
-                            onClick = onEquip,
-                            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteRewards.Violet),
-                            shape = RoundedCornerShape(999.dp)
-                        ) {
-                            Text("Equip")
-                        }
-                    }
-                    selectedCollection == CollectionTab.Locked && item.isUnlocked -> {
-                        Button(
-                            onClick = onPurchase,
-                            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteRewards.Amber),
-                            shape = RoundedCornerShape(999.dp)
-                        ) {
-                            Text("Buy")
-                        }
-                    }
-                    else -> {
-                        Text(
-                            text = "Locked",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.End
-                        )
-                    }
-                }
-            }
-
-            if (item.isEquipped) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Check,
+                        imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = ColorPaletteRewards.Mint,
-                        modifier = Modifier.size(16.dp)
+                        tint = ColorPaletteRewards.Violet,
+                        modifier = Modifier.size(14.dp)
                     )
                     Text(
-                        text = "Equipped",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = ColorPaletteRewards.Mint
+                        text = stageName,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteRewards.Violet
                     )
                 }
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountBalanceWallet,
+                    contentDescription = "Coins",
+                    tint = ColorPaletteRewards.Amber,
+                    modifier = Modifier.size(22.dp)
+                )
+                Text(
+                    text = "$coins",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteRewards.Ink
+                )
             }
         }
     }
 }
+
+private fun borderStrokeFix(selected: Boolean, color: Color = ColorPaletteRewards.Violet) =
+    if (selected) androidx.compose.foundation.BorderStroke(1.5.dp, color) else null
 
 private fun CollectionTypeTab.itemsFlow(viewModel: RewardsViewModel) = when (this) {
     CollectionTypeTab.Outfits -> viewModel.outfits
@@ -500,14 +613,14 @@ private fun CollectionTypeTab.itemsFlow(viewModel: RewardsViewModel) = when (thi
 
 private fun rarityColor(rarity: Rarity): Color = when (rarity) {
     Rarity.NORMAL -> Color(0xFF6F6A8A)
-    Rarity.RARE -> Color(0xFF4BA3FF)
-    Rarity.EPIC -> Color(0xFFB26CFF)
-    Rarity.LEGENDARY -> Color(0xFFFFB84D)
+    Rarity.RARE -> Color(0xFF3B91FF)
+    Rarity.EPIC -> Color(0xFFA14BFF)
+    Rarity.LEGENDARY -> Color(0xFFFF9F1C)
 }
 
 private enum class CollectionTypeTab(val label: String) {
     Outfits("Outfits"),
-    Backgrounds("Backgrounds"),
+    Backgrounds("Scenes"),
     Auras("Auras")
 }
 
@@ -518,12 +631,10 @@ private enum class CollectionTab(val label: String) {
 
 private object ColorPaletteRewards {
     val Card = Color(0xFFFFFFFF)
-    val SoftSurface = Color(0xFFF1EDFF)
-    val LavenderSoft = Color(0xFFF2EEFF)
-    val MintSoft = Color(0xFFE8FBF2)
     val Violet = Color(0xFF8A76F9)
     val Amber = Color(0xFFFFB84D)
-    val Mint = Color(0xFF4EDB95)
-    val Muted = Color(0xFF6F6A8A)
-    val Ink = Color(0xFF302B4A)
+    val Honey = Color(0xFFFF9F1C)
+    val Mint = Color(0xFF23A160)
+    val Muted = Color(0xFF6A6581)
+    val Ink = Color(0xFF1E1A34)
 }

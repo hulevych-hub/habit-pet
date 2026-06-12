@@ -4,24 +4,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -44,17 +51,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.GameEventEntity
-import com.example.mobile.domain.GameEventType
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.GameEventRarity
-import com.example.mobile.presentation.ui.components.EmptyStateCard
-import com.example.mobile.presentation.ui.components.ProgressHeader
-import com.example.mobile.presentation.ui.components.ProgressHeaderState
+import com.example.mobile.domain.GameEventType
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
 import com.example.mobile.util.ReinforcementMessageProvider
 import java.util.Calendar
@@ -83,9 +90,12 @@ fun ActivityTimelineScreen(
     }
 
     Scaffold(
+        containerColor = Color(0xFFFAFAFC),
         topBar = {
-            androidx.compose.material3.CenterAlignedTopAppBar(
-                title = { Text("Activity", color = ColorPaletteActivity.Ink) }
+            GamifiedFixedHeader(
+                streak = progressUiState.globalStreak,
+                coins = progressUiState.totalCoins,
+                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage)
             )
         }
     ) { padding ->
@@ -93,52 +103,11 @@ fun ActivityTimelineScreen(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(padding)
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
         ) {
-            item {
-                ActivityHeader(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
-                )
-                ProgressHeader(
-                    state = ProgressHeaderState(
-                        level = progressUiState.pet.level,
-                        xp = progressUiState.pet.xp,
-                        evolutionStage = progressUiState.pet.evolutionStage,
-                        totalCoins = progressUiState.totalCoins,
-                        globalStreak = progressUiState.globalStreak,
-                        currentCombo = progressUiState.currentCombo,
-                        lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
-                    ),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            when {
-                isLoading && events.isEmpty() -> item {
-                    Text(
-                        text = "Loading your dragon's story...",
-                        modifier = Modifier.padding(24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                !error.isNullOrBlank() -> item {
-                    Text(
-                        text = error.orEmpty(),
-                        modifier = Modifier.padding(24.dp),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-                events.isEmpty() -> item {
-                    EmptyStateCard(
-                        title = "Your story begins here",
-                        message = "Complete one small habit today and your dragon will start remembering your journey.",
-                        hint = "Your next habit completion will become the first memory in this timeline.",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-
             groups.forEach { group ->
                 item {
                     DayHeader(label = group.label)
@@ -148,12 +117,7 @@ fun ActivityTimelineScreen(
                     items = group.events,
                     key = { it.id }
                 ) { event ->
-                    val index = events.indexOf(event)
-                    ActivityTimelineItem(
-                        event = event,
-                        isLeft = index % 2 == 0,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp)
-                    )
+                    ActivityTimelineItem(event = event)
                 }
             }
 
@@ -162,20 +126,33 @@ fun ActivityTimelineScreen(
                     Button(
                         onClick = { activityTimelineViewModel.loadMore() },
                         enabled = !isLoadingMore,
-                        colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteActivity.Violet),
-                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ColorPaletteActivity.Violet,
+                            disabledContainerColor = ColorPaletteActivity.Violet.copy(alpha = 0.5f)
+                        ),
+                        shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                            .padding(vertical = 16.dp)
+                            .height(48.dp)
                     ) {
-                        if (isLoadingMore) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                color = Color.White
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            if (isLoadingMore) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
+                            Text(
+                                text = if (isLoadingMore) "Retrieving Chronicles..." else "Load Older Chronicles",
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                             )
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (isLoadingMore) "Loading older memories" else "Load older memories")
                     }
                 }
             }
@@ -184,29 +161,111 @@ fun ActivityTimelineScreen(
 }
 
 @Composable
-private fun ActivityHeader(modifier: Modifier = Modifier) {
+private fun GamifiedFixedHeader(
+    streak: Int,
+    coins: Int,
+    stageName: String
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color(0xFFFFFFFF),
+        shadowElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocalFireDepartment,
+                    contentDescription = "Streak",
+                    tint = ColorPaletteActivity.Flame,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "$streak d",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteActivity.Ink
+                )
+            }
+
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = ColorPaletteActivity.Violet.copy(alpha = 0.1f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Pets,
+                        contentDescription = null,
+                        tint = ColorPaletteActivity.Violet,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Text(
+                        text = stageName,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteActivity.Violet
+                    )
+                }
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountBalanceWallet,
+                    contentDescription = "Coins",
+                    tint = ColorPaletteActivity.Amber,
+                    modifier = Modifier.size(22.dp)
+                )
+                Text(
+                    text = "$coins",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteActivity.Ink
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActivityHeader() {
     Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteActivity.Card),
-        shape = RoundedCornerShape(30.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = ColorPaletteActivity.Ink),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ColorPaletteActivity.LavenderSoft)
-                .padding(18.dp)
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(ColorPaletteActivity.Ink, Color(0xFF231D3D))
+                    )
+                )
+                .padding(20.dp)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "Dragon story path",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = ColorPaletteActivity.Ink
+                    text = "Dragon Story Path",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = Color.White
                 )
                 Text(
-                    text = "Every habit, reward, and milestone becomes a memory your dragon carries forward.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Every productive rhythm becomes a timeless chronicle your companion carries forward.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.65f)
                 )
             }
         }
@@ -215,17 +274,19 @@ private fun ActivityHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DayHeader(label: String) {
-    Surface(
-        modifier = Modifier.padding(vertical = 10.dp),
-        shape = RoundedCornerShape(999.dp),
-        color = Color.Transparent
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp, bottom = 4.dp),
+        contentAlignment = Alignment.CenterStart
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
             color = ColorPaletteActivity.Violet,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+            modifier = Modifier
+                .background(ColorPaletteActivity.Violet.copy(alpha = 0.1f), RoundedCornerShape(999.dp))
+                .padding(horizontal = 14.dp, vertical = 4.dp)
         )
     }
 }
@@ -233,78 +294,84 @@ private fun DayHeader(label: String) {
 @Composable
 private fun ActivityTimelineItem(
     event: GameEventEntity,
-    isLeft: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val reinforcementMessage = remember(event.id) {
         ReinforcementMessageProvider.timelineMessage(context, event)
     }
+
     val isMilestone = event.type == GameEventType.DRAGON_EVOLUTION.name ||
-        event.type == GameEventType.LEVEL_UP.name ||
-        event.type == GameEventType.STREAK_MILESTONE.name ||
-        event.type == GameEventType.DAILY_GOAL_COMPLETED.name ||
-        event.type == GameEventType.SURPRISE_REWARD.name ||
-        event.type == GameEventType.COMBO_MILESTONE.name
-    val accent = rarityColor(event.rarity)
+            event.type == GameEventType.LEVEL_UP.name ||
+            event.type == GameEventType.STREAK_MILESTONE.name ||
+            event.type == GameEventType.DAILY_GOAL_COMPLETED.name ||
+            event.type == GameEventType.SURPRISE_REWARD.name ||
+            event.type == GameEventType.COMBO_MILESTONE.name
 
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    val accentColor = rarityColor(event.rarity)
+
+    IntrinsicSizeRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp)
     ) {
-        if (isLeft) {
-            TimelineEventCard(
-                event = event,
-                reinforcementMessage = reinforcementMessage,
-                isMilestone = isMilestone,
-                accent = accent,
-                modifier = Modifier.weight(1f)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.width(32.dp)
+        ) {
+            TimelineNode(accent = accentColor)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .width(2.dp)
+                    .background(ColorPaletteActivity.Line)
             )
-        } else {
-            Spacer(modifier = Modifier.weight(1f))
         }
 
-        TimelineNode(accent = accent)
+        Spacer(modifier = Modifier.width(10.dp))
 
-        if (!isLeft) {
-            TimelineEventCard(
-                event = event,
-                reinforcementMessage = reinforcementMessage,
-                isMilestone = isMilestone,
-                accent = accent,
-                modifier = Modifier.weight(1f)
-            )
-        } else {
-            Spacer(modifier = Modifier.weight(1f))
-        }
+        TimelineEventCard(
+            event = event,
+            reinforcementMessage = reinforcementMessage,
+            isMilestone = isMilestone,
+            accent = accentColor,
+            modifier = Modifier
+                .weight(1f)
+                .padding(bottom = 12.dp)
+        )
     }
+}
+
+@Composable
+private fun IntrinsicSizeRow(
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
+) {
+    Row(modifier = modifier.height(IntrinsicSize.Min), content = content)
 }
 
 @Composable
 private fun TimelineNode(accent: Color) {
     Box(
-        modifier = Modifier
-            .size(28.dp),
+        modifier = Modifier.size(32.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(34.dp)
-                .background(ColorPaletteActivity.Line, RoundedCornerShape(999.dp)),
+                .size(16.dp)
+                .background(accent.copy(alpha = 0.2f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(16.dp)
-                    .background(accent, RoundedCornerShape(999.dp)),
-                contentAlignment = Alignment.Center
+                    .size(10.dp)
+                    .background(accent, CircleShape)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(7.dp)
-                        .background(Color.White, RoundedCornerShape(999.dp))
+                        .size(4.dp)
+                        .background(Color.White, CircleShape)
+                        .align(Alignment.Center)
                 )
             }
         }
@@ -320,56 +387,95 @@ private fun TimelineEventCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isMilestone) accent.copy(alpha = 0.12f) else ColorPaletteActivity.Card
+            containerColor = if (isMilestone) accent.copy(alpha = 0.04f) else ColorPaletteActivity.Card
         ),
-        shape = RoundedCornerShape(if (isMilestone) 26.dp else 22.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isMilestone) 3.dp else 1.dp)
+        shape = RoundedCornerShape(20.dp),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = if (isMilestone) accent.copy(alpha = 0.3f) else ColorPaletteActivity.Line.copy(alpha = 0.4f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isMilestone) 2.dp else 0.5.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = iconForEvent(event.type),
-                    contentDescription = null,
-                    tint = accent,
-                    modifier = Modifier.size(if (isMilestone) 30.dp else 24.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .background(accent.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = iconForEvent(event.type),
+                            contentDescription = null,
+                            tint = accent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                        Text(
+                            text = event.title,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ColorPaletteActivity.Ink
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = accent.copy(alpha = 0.1f)
+                        ) {
+                            Text(
+                                text = rewardPreview(event).uppercase(),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
+                                color = accent,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+                }
+
                 Text(
                     text = timeAgo(event.timestamp),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
+                    color = ColorPaletteActivity.Muted
                 )
             }
-            Text(
-                text = event.title,
-                style = if (isMilestone) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
-                color = ColorPaletteActivity.Ink
-            )
+
             Text(
                 text = event.description,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = ColorPaletteActivity.Ink.copy(alpha = 0.75f),
+                lineHeight = 18.sp
             )
-            Text(
-                text = reinforcementMessage,
-                style = MaterialTheme.typography.labelMedium,
-                color = ColorPaletteActivity.Amber
-            )
-            Text(
-                text = rewardPreview(event),
-                style = MaterialTheme.typography.labelMedium,
-                color = accent
-            )
+
+            if (reinforcementMessage.isNotBlank()) {
+                Surface(
+                    shape = RoundedCornerShape(10.dp),
+                    color = ColorPaletteActivity.Amber.copy(alpha = 0.08f),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "💬 $reinforcementMessage",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+                        color = ColorPaletteActivity.AmberText,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                    )
+                }
+            }
         }
     }
 }
@@ -383,9 +489,8 @@ private fun groupEventsByDay(events: List<GameEventEntity>): List<TimelineGroup>
         val label = when (dayKey(event.timestamp)) {
             today -> "Today"
             yesterday -> "Yesterday"
-            else -> "Earlier"
+            else -> "Earlier Chronicles"
         }
-
         grouped.getOrPut(label) { mutableListOf() }.add(event)
     }
 
@@ -413,17 +518,17 @@ private fun timeAgo(timestamp: Long): String {
 }
 
 private fun rewardPreview(event: GameEventEntity): String = when (event.type) {
-    GameEventType.HABIT_COMPLETED.name -> "Habit reward"
-    GameEventType.ACHIEVEMENT_UNLOCKED.name -> "Achievement milestone"
-    GameEventType.LEVEL_UP.name -> "Level-up reward"
-    GameEventType.DRAGON_EVOLUTION.name -> "Evolution moment"
-    GameEventType.CHEST_OPENED.name -> "Chest reward"
-    GameEventType.STREAK_MILESTONE.name -> "Streak chest"
-    GameEventType.DAILY_GOAL_COMPLETED.name -> "Daily goal reward"
-    GameEventType.SURPRISE_REWARD.name -> "Surprise bonus"
-    GameEventType.COMBO_MILESTONE.name -> "Momentum bonus"
-    GameEventType.FIRST_DAILY_LOGIN.name -> "Daily welcome"
-    else -> "Progress memory"
+    GameEventType.HABIT_COMPLETED.name -> "Habit Reward"
+    GameEventType.ACHIEVEMENT_UNLOCKED.name -> "Milestone Loot"
+    GameEventType.LEVEL_UP.name -> "Level Up Tier"
+    GameEventType.DRAGON_EVOLUTION.name -> "Evolution Moment"
+    GameEventType.CHEST_OPENED.name -> "Treasure Unlock"
+    GameEventType.STREAK_MILESTONE.name -> "Streak Reward"
+    GameEventType.DAILY_GOAL_COMPLETED.name -> "Daily Bonus"
+    GameEventType.SURPRISE_REWARD.name -> "Surprise Buff"
+    GameEventType.COMBO_MILESTONE.name -> "Momentum Buff"
+    GameEventType.FIRST_DAILY_LOGIN.name -> "Daily Welcome"
+    else -> "Progress Memory"
 }
 
 private fun iconForEvent(type: String) = when (type) {
@@ -442,10 +547,10 @@ private fun iconForEvent(type: String) = when (type) {
 
 @Composable
 private fun rarityColor(rarity: String): Color = when (rarity) {
-    GameEventRarity.LEGENDARY.name -> Color(0xFFFFD700)
-    GameEventRarity.EPIC.name -> Color(0xFFA855F7)
-    GameEventRarity.RARE.name -> Color(0xFF60A5FA)
-    else -> MaterialTheme.colorScheme.onSurfaceVariant
+    GameEventRarity.LEGENDARY.name -> Color(0xFFFF9F1C)
+    GameEventRarity.EPIC.name -> Color(0xFFA14BFF)
+    GameEventRarity.RARE.name -> Color(0xFF3B91FF)
+    else -> Color(0xFF6F6A8A)
 }
 
 private data class TimelineGroup(
@@ -457,9 +562,11 @@ private const val DAY_MILLIS = 24L * 60L * 60L * 1000L
 
 private object ColorPaletteActivity {
     val Card = Color(0xFFFFFFFF)
-    val LavenderSoft = Color(0xFFF2EEFF)
     val Violet = Color(0xFF8A76F9)
+    val Flame = Color(0xFFFF6B35)
     val Amber = Color(0xFFFFB84D)
-    val Line = Color(0xFFE5DDFF)
-    val Ink = Color(0xFF302B4A)
+    val AmberText = Color(0xFFB37400)
+    val Line = Color(0xFFEBE9F5)
+    val Muted = Color(0xFF8E8A9F)
+    val Ink = Color(0xFF1E1A34)
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Star
@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,16 +46,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
-import com.example.mobile.presentation.ui.components.EvolutionTeaser
-import com.example.mobile.presentation.ui.components.ProgressHeader
-import com.example.mobile.presentation.ui.components.ProgressHeaderState
 
 @Composable
 fun HomeScreen(
@@ -76,100 +76,134 @@ fun HomeScreen(
         petNameDraft = pet.name
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .padding(top = 14.dp, bottom = 28.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            HomeTopBar(
+    Scaffold(
+        containerColor = Color(0xFFFAFAFC),
+        topBar = {
+            GamifiedFixedHeader(
                 streak = uiState.globalStreak,
                 coins = uiState.totalCoins,
-                onHabitsClick = onNavigateToHabits
-            )
-
-            DragonHero(
-                pet = pet,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            ProgressModule(
-                state = ProgressHeaderState(
-                    level = pet.level,
-                    xp = pet.xp,
-                    evolutionStage = pet.evolutionStage,
-                    totalCoins = uiState.totalCoins,
-                    globalStreak = uiState.globalStreak,
-                    lastStreakDate = uiState.lastStreakDate,
-                    currentCombo = uiState.currentCombo,
-                    lastHabitCompletionTimestamp = uiState.lastHabitCompletionTimestamp
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            DailyGoalCard(
-                goalXp = uiState.dailyGoalXp.toLong(),
-                progressXp = uiState.dailyGoalProgressXp,
-                completed = uiState.dailyGoalCompleted,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            TodayNourishmentSection(
-                habits = uiState.habits,
-                completedToday = uiState.completedToday,
-                onNavigateToHabits = onNavigateToHabits,
-                onNavigateToHabitDetail = onNavigateToHabitDetail
+                stageName = ExpConfig.evolutionStageName(pet.evolutionStage)
             )
         }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 8.dp, bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                DragonHero(
+                    pet = pet,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        if (showMandatoryPetNameDialog) {
-            PetRenameDialog(
-                initialName = petNameDraft,
-                helperText = "You can rename your dragon later.",
-                allowDismiss = false,
-                onDismissRequest = { showMandatoryPetNameDialog = false },
-                onConfirm = { newName ->
-                    homeScreenViewModel.renamePet(newName.trim())
-                    showMandatoryPetNameDialog = false
-                }
-            )
+                TodayNourishmentSection(
+                    habits = uiState.habits,
+                    completedToday = uiState.completedToday,
+                    onNavigateToHabits = onNavigateToHabits,
+                    onNavigateToHabitDetail = onNavigateToHabitDetail
+                )
+            }
+
+            if (showMandatoryPetNameDialog) {
+                PetRenameDialog(
+                    initialName = petNameDraft,
+                    helperText = "You can rename your dragon later.",
+                    allowDismiss = false,
+                    onDismissRequest = { showMandatoryPetNameDialog = false },
+                    onConfirm = { newName ->
+                        homeScreenViewModel.renamePet(newName.trim())
+                        showMandatoryPetNameDialog = false
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun HomeTopBar(
+private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
-    onHabitsClick: () -> Unit
+    stageName: String
 ) {
-    Row(
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        color = Color(0xFFFFFFFF),
+        shadowElevation = 1.dp
     ) {
-        PremiumPill(
-            icon = Icons.Default.FavoriteBorder,
-            title = "Streak",
-            value = "$streak days",
-            accentColor = ColorPaletteHome.Honey,
-            modifier = Modifier.weight(1f)
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        PremiumPill(
-            icon = Icons.Default.AccountBalanceWallet,
-            title = "Wallet",
-            value = coins.toString(),
-            accentColor = ColorPaletteHome.Amber,
-            modifier = Modifier.weight(1f)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocalFireDepartment,
+                    contentDescription = "Streak",
+                    tint = ColorPaletteHome.Honey,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "$streak d",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteHome.Ink
+                )
+            }
+
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = ColorPaletteHome.Violet.copy(alpha = 0.1f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Pets,
+                        contentDescription = null,
+                        tint = ColorPaletteHome.Violet,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Text(
+                        text = stageName,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteHome.Violet
+                    )
+                }
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountBalanceWallet,
+                    contentDescription = "Wallet Balance",
+                    tint = ColorPaletteHome.Amber,
+                    modifier = Modifier.size(22.dp)
+                )
+                Text(
+                    text = "$coins",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteHome.Ink
+                )
+            }
+        }
     }
 }
 
@@ -178,191 +212,136 @@ private fun DragonHero(
     pet: com.example.mobile.data.local.entities.PetEntity,
     modifier: Modifier = Modifier
 ) {
-    BoxWithConstraints(modifier = modifier) {
-        val heroHeight = if (maxHeight < 680.dp) 270.dp else 330.dp
-        Card(
+    // Exact mapping from your PetScreen implementation
+    val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
+    val xpForNextLevel = ExpConfig.xpRequiredForNextLevel(pet.xp).coerceAtLeast(1L)
+    val progressFraction = (currentLevelXp.toFloat() / xpForNextLevel.toFloat()).coerceIn(0f, 1f)
+
+    val currentStageName = ExpConfig.evolutionStageName(pet.evolutionStage)
+    val nextStageName = ExpConfig.evolutionStageName(pet.evolutionStage + 1).ifBlank { "Max Tier reached" }
+
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        shape = RoundedCornerShape(28.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(heroHeight),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(32.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f),
+                            Color.Transparent
+                        )
+                    )
+                )
+                .padding(vertical = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                ColorPaletteHome.LavenderSoft,
-                                ColorPaletteHome.AmethystSoft,
-                                ColorPaletteHome.Card
-                            )
-                        )
-                    )
+                    .fillMaxWidth()
+                    .height(180.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
-                        .size(210.dp)
-                        .align(Alignment.TopEnd)
-                        .padding(20.dp)
-                        .background(ColorPaletteHome.Amber.copy(alpha = 0.22f), RoundedCornerShape(999.dp))
+                        .size(140.dp)
+                        .background(ColorPaletteHome.AmethystSoft.copy(alpha = 0.25f), RoundedCornerShape(999.dp))
                 )
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(18.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+
+                val petSize = if (LocalConfiguration.current.screenWidthDp < 360) 150.dp else 175.dp
+                AnimatedPet(
+                    pet = pet,
+                    modifier = Modifier.size(petSize),
+                    showNameOverlay = false
+                )
+            }
+
+            Text(
+                text = pet.name.ifBlank { "Meet My Pet" },
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.5).sp
+                ),
+                color = ColorPaletteHome.Ink,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LevelBadge(pet.level)
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = ColorPaletteHome.Mint.copy(alpha = 0.15f)
                 ) {
-                    val petSize = if (LocalConfiguration.current.screenWidthDp < 360) 205.dp else 235.dp
-                    AnimatedPet(
-                        pet = pet,
-                        modifier = Modifier.size(petSize),
-                        showNameOverlay = false
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = pet.name.ifBlank { "Dragon" },
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = ColorPaletteHome.Ink,
-                        textAlign = TextAlign.Center
+                        text = DragonMood.from(pet.mood).displayName,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = ColorPaletteHome.Green,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
                     )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        LevelBadge(pet.level)
-                        Surface(
-                            shape = RoundedCornerShape(999.dp),
-                            color = Color.White.copy(alpha = 0.72f)
-                        ) {
-                            Text(
-                                text = ExpConfig.evolutionStageName(pet.evolutionStage),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = ColorPaletteHome.Violet,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
-                            )
-                        }
-                        Surface(
-                            shape = RoundedCornerShape(999.dp),
-                            color = ColorPaletteHome.Mint.copy(alpha = 0.18f)
-                        ) {
-                            Text(
-                                text = DragonMood.from(pet.mood).displayName,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = ColorPaletteHome.Green,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
-                            )
-                        }
-                    }
                 }
             }
-        }
-    }
-}
 
-@Composable
-private fun ProgressModule(
-    state: ProgressHeaderState,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteHome.Card),
-        shape = RoundedCornerShape(28.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Growth track",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = ColorPaletteHome.Ink
-                )
-                Text(
-                    text = "Lv. ${state.level}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = ColorPaletteHome.Violet
-                )
-            }
-            ProgressHeader(state = state)
-            EvolutionTeaser(
-                totalXp = state.xp,
-                currentStage = state.evolutionStage
-            )
-        }
-    }
-}
+            Spacer(modifier = Modifier.height(16.dp))
 
-@Composable
-private fun DailyGoalCard(
-    goalXp: Long,
-    progressXp: Long,
-    completed: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val progress = (progressXp.toFloat() / goalXp.toFloat()).coerceIn(0f, 1f)
-    val title = if (completed) "Daily goal complete" else "Today's nourishment"
-    val message = if (completed) {
-        "Your dragon is glowing from today's steady rhythm."
-    } else {
-        "${progressXp.toInt()} / ${goalXp.toInt()} XP · three small wins light the path."
-    }
-
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = if (completed) ColorPaletteHome.Mint.copy(alpha = 0.16f) else ColorPaletteHome.Card
-        ),
-        shape = RoundedCornerShape(28.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = ColorPaletteHome.Ink
-                )
-                Text(
-                    text = if (completed) "Complete" else "Growing",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (completed) ColorPaletteHome.Green else ColorPaletteHome.Violet,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                )
-            }
-            LinearProgressIndicator(
-                progress = progress,
+            // Premium Modernized Minimalist Experience & Evolution Milestone Meter
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(12.dp),
-                color = if (completed) ColorPaletteHome.Amber else ColorPaletteHome.Violet
-            )
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Level Progress",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteHome.Ink.copy(alpha = 0.8f)
+                    )
+                    Text(
+                        text = "$currentLevelXp / ${xpForNextLevel} XP",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteHome.Violet
+                    )
+                }
+
+                LinearProgressIndicator(
+                    progress = { progressFraction },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp),
+                    color = ColorPaletteHome.Violet,
+                    trackColor = ColorPaletteHome.Line,
+                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Current: $currentStageName",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                        color = ColorPaletteHome.Ink.copy(alpha = 0.5f)
+                    )
+                    Text(
+                        text = "Next Phase: $nextStageName ✨",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteHome.Violet.copy(alpha = 0.9f)
+                    )
+                }
+            }
         }
     }
 }
@@ -374,49 +353,49 @@ private fun TodayNourishmentSection(
     onNavigateToHabits: () -> Unit,
     onNavigateToHabitDetail: (Long) -> Unit
 ) {
-    Card(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteHome.Card),
-        shape = RoundedCornerShape(28.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Today's nourishment",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = ColorPaletteHome.Ink
-                )
-                Button(
-                    onClick = onNavigateToHabits,
-                    colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteHome.Violet),
-                    shape = RoundedCornerShape(999.dp)
-                ) {
-                    Text("Manage")
-                }
-            }
+            Text(
+                text = "Today's Quest",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = ColorPaletteHome.Ink
+            )
+            Text(
+                text = "Manage",
+                style = MaterialTheme.typography.labelLarge.copy(
+                    color = ColorPaletteHome.Violet,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.clickable { onNavigateToHabits() }
+            )
+        }
 
-            if (habits.isEmpty()) {
-                EmptyHomeQuest(onNavigateToHabits)
-            } else {
-                habits.forEach { habit ->
-                    HomeHabitItem(
-                        habit = habit,
-                        completed = completedToday[habit.id] == true,
-                        onClick = { onNavigateToHabitDetail(habit.id) }
-                    )
-                }
+        if (habits.isEmpty()) {
+            EmptyHomeQuest(onNavigateToHabits)
+        } else {
+            habits.forEach { habit ->
+                HomeHabitItem(
+                    habit = habit,
+                    completed = completedToday[habit.id] == true,
+                    onClick = { onNavigateToHabitDetail(habit.id) }
+                )
             }
         }
+
+        Text(
+            text = "✨ Next Unlock: Dragon Nest Background at Lv. 3",
+            style = MaterialTheme.typography.bodySmall,
+            color = ColorPaletteHome.Ink.copy(alpha = 0.5f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+        )
     }
 }
 
@@ -425,30 +404,30 @@ private fun EmptyHomeQuest(onNavigateToHabits: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ColorPaletteHome.LavenderSoft, RoundedCornerShape(24.dp))
-            .padding(18.dp),
+            .background(ColorPaletteHome.Card, RoundedCornerShape(24.dp))
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = Icons.Default.Star,
             contentDescription = null,
             tint = ColorPaletteHome.Amber,
-            modifier = Modifier.size(34.dp)
+            modifier = Modifier.size(36.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Your dragon is ready for its first tiny quest.",
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
             color = ColorPaletteHome.Ink,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         Button(
             onClick = onNavigateToHabits,
-            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteHome.Amber),
+            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteHome.Violet),
             shape = RoundedCornerShape(999.dp)
         ) {
-            Text("Create first habit")
+            Text("Create first habit", modifier = Modifier.padding(horizontal = 8.dp))
         }
     }
 }
@@ -463,93 +442,50 @@ private fun HomeHabitItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(24.dp),
-        color = if (completed) ColorPaletteHome.Mint.copy(alpha = 0.16f) else ColorPaletteHome.LavenderSoft,
-        shadowElevation = if (completed) 0.dp else 1.dp
+        shape = RoundedCornerShape(20.dp),
+        color = if (completed) ColorPaletteHome.Mint.copy(alpha = 0.15f) else ColorPaletteHome.Card,
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Icon(
                 imageVector = if (completed) Icons.Default.CheckCircle else habitIcon(habit),
-                contentDescription = if (completed) "Completed" else "Not completed",
+                contentDescription = null,
                 tint = if (completed) ColorPaletteHome.Green else ColorPaletteHome.Violet,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(28.dp)
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
                     text = habit.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (completed) ColorPaletteHome.Ink else ColorPaletteHome.Ink
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = ColorPaletteHome.Ink
                 )
                 Text(
-                    text = if (completed) "Nourished for today" else "${habit.type} • ${habit.currentStreak} day streak",
+                    text = if (completed) "Nourished for today" else "${habit.type} • ${habit.currentStreak}d streak",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = ColorPaletteHome.Ink.copy(alpha = 0.6f)
                 )
             }
             if (completed) {
                 Text(
                     text = "+100 XP",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     color = ColorPaletteHome.Green
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.RadioButtonUnchecked,
-                    contentDescription = "Open habit",
-                    tint = ColorPaletteHome.Violet.copy(alpha = 0.55f),
+                    contentDescription = null,
+                    tint = ColorPaletteHome.Violet.copy(alpha = 0.4f),
                     modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PremiumPill(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    value: String,
-    accentColor: Color,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(999.dp),
-        color = ColorPaletteHome.Card,
-        shadowElevation = 2.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(20.dp)
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = ColorPaletteHome.Ink
                 )
             }
         }
@@ -560,14 +496,13 @@ private fun PremiumPill(
 private fun LevelBadge(level: Int) {
     Surface(
         shape = RoundedCornerShape(999.dp),
-        color = ColorPaletteHome.Amber,
-        shadowElevation = 3.dp
+        color = ColorPaletteHome.Amber
     ) {
         Text(
             text = "Lv. $level",
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
             color = Color.White,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
         )
     }
 }
@@ -585,8 +520,9 @@ private object ColorPaletteHome {
     val AmethystSoft = Color(0xFFE5DDFF)
     val Violet = Color(0xFF8A76F9)
     val Amber = Color(0xFFFFB84D)
-    val Honey = Color(0xFFFFB84D)
+    val Honey = Color(0xFFFF9F1C)
     val Mint = Color(0xFF4EDB95)
     val Green = Color(0xFF27A86B)
-    val Ink = Color(0xFF302B4A)
+    val Line = Color(0xFFEBE9F5)
+    val Ink = Color(0xFF1C1930)
 }

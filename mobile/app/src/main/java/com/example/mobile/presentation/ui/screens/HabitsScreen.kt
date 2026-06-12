@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,10 +27,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -55,11 +56,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.mobile.data.local.entities.HabitEntity
@@ -78,6 +79,7 @@ fun HabitsScreen(
     val completedToday by habitsViewModel.completedToday.collectAsState(initial = emptyMap())
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+
     val dailyGoalProgress = if (progressUiState.dailyGoalXp > 0) {
         (progressUiState.dailyGoalProgressXp.toFloat() / progressUiState.dailyGoalXp.toFloat()).coerceIn(0f, 1f)
     } else {
@@ -90,11 +92,19 @@ fun HabitsScreen(
     }
 
     Scaffold(
+        containerColor = Color(0xFFFAFAFC), // Alabaster Premium Background matching home
         topBar = {
             androidx.compose.material3.CenterAlignedTopAppBar(
+                colors = androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFFFAFAFC)
+                ),
                 title = {
                     Text(
                         text = "Habits",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-0.5).sp
+                        ),
                         color = ColorPaletteHabits.Ink
                     )
                 },
@@ -113,9 +123,11 @@ fun HabitsScreen(
             FloatingActionButton(
                 onClick = { navController.navigate("habitCreation") },
                 containerColor = ColorPaletteHabits.Violet,
-                shape = RoundedCornerShape(22.dp)
+                contentColor = Color.White,
+                shape = RoundedCornerShape(999.dp),
+                modifier = Modifier.padding(bottom = 16.dp, end = 8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add habit")
+                Icon(Icons.Default.Add, contentDescription = "Add habit", modifier = Modifier.size(26.dp))
             }
         }
     ) { padding ->
@@ -124,7 +136,7 @@ fun HabitsScreen(
                 .fillMaxSize()
                 .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
                 HabitsHeader(
@@ -133,7 +145,7 @@ fun HabitsScreen(
                     dailyGoalSegments = dailyGoalSegments,
                     dailyGoalProgressXp = progressUiState.dailyGoalProgressXp,
                     dailyGoalXp = progressUiState.dailyGoalXp,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                 )
             }
 
@@ -143,7 +155,7 @@ fun HabitsScreen(
                         title = "Your dragon is ready for its first tiny quest.",
                         message = "Create one small habit and give your dragon a simple win to celebrate.",
                         hint = "Start with something easy enough to finish today.",
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(20.dp)
                     )
                 }
             }
@@ -163,7 +175,7 @@ fun HabitsScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(112.dp))
+                Spacer(modifier = Modifier.height(120.dp))
             }
         }
     }
@@ -180,24 +192,15 @@ private fun HabitsHeader(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(containerColor = ColorPaletteHabits.HeaderCardBackground),
+        shape = RoundedCornerShape(28.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            ColorPaletteHabits.HeaderStart,
-                            ColorPaletteHabits.HeaderEnd
-                        )
-                    ),
-                    shape = RoundedCornerShape(30.dp)
-                )
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -205,21 +208,28 @@ private fun HabitsHeader(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = null,
-                        tint = ColorPaletteHabits.Amber,
-                        modifier = Modifier.size(34.dp)
-                    )
+                    // Modern flame container without rough boundaries
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(ColorPaletteHabits.AmberSoft, RoundedCornerShape(14.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocalFireDepartment,
+                            contentDescription = null,
+                            tint = ColorPaletteHabits.Amber,
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
                     Column {
                         Text(
                             text = "Current Streak: $streak Days",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = ColorPaletteHabits.Amber,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ColorPaletteHabits.AmberDark
                         )
                         Text(
                             text = "Rhythm is visibility.",
@@ -228,49 +238,46 @@ private fun HabitsHeader(
                         )
                     }
                 }
-                Icon(
-                    imageVector = Icons.Default.Inventory2,
-                    contentDescription = null,
-                    tint = ColorPaletteHabits.Amber,
-                    modifier = Modifier.size(42.dp)
-                )
             }
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Text(
+                    text = "Daily Goal: $dailyGoalProgressXp / $dailyGoalXp XP to Bonus Chest",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = ColorPaletteHabits.Ink
+                )
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "Daily Goal: $dailyGoalProgressXp / $dailyGoalXp XP to Bonus Chest",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = ColorPaletteHabits.Ink,
-                        fontWeight = FontWeight.SemiBold
+                    LinearProgressIndicator(
+                        progress = { dailyGoalProgress },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp),
+                        color = ColorPaletteHabits.Violet,
+                        trackColor = ColorPaletteHabits.ProgressTrack
                     )
+
+                    // Chest container asset showcase right next to progress indicator track
                     Icon(
-                        imageVector = Icons.Default.Inventory2,
-                        contentDescription = null,
+                        imageVector = Icons.Default.ShoppingBag,
+                        contentDescription = "Bonus Chest",
                         tint = ColorPaletteHabits.Amber,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(28.dp)
                     )
                 }
-                LinearProgressIndicator(
-                    progress = { dailyGoalProgress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(10.dp),
-                    color = ColorPaletteHabits.Amber,
-                    trackColor = ColorPaletteHabits.ProgressTrack
-                )
+
                 Text(
-                    text = "$dailyGoalSegments/3",
-                    style = MaterialTheme.typography.labelMedium,
+                    text = "$dailyGoalSegments / 3 Tasks Done",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                     color = ColorPaletteHabits.Muted,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -292,26 +299,28 @@ private fun HabitItem(
     var showActionsDialog by remember { mutableStateOf(false) }
     var skippedToday by remember { mutableStateOf(false) }
     val category = habitCategory(habit)
-    val cardColors = habitCardColors(habit, completed)
+
+    // Dynamic matching of the card colors based on checked states
+    val itemBackground = if (completed) ColorPaletteHabits.MintSurfaceActive else ColorPaletteHabits.DefaultItemCardBackground
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 20.dp, vertical = 6.dp)
             .combinedClickable(
                 onClick = { navController.navigate("habitDetail/${habit.id}") },
                 onLongClick = { showActionsDialog = true }
             ),
-        shape = RoundedCornerShape(28.dp),
-        color = cardColors.background,
-        shadowElevation = 2.dp
+        shape = RoundedCornerShape(24.dp),
+        color = itemBackground,
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             CompletionButton(
                 completed = completed,
@@ -322,8 +331,7 @@ private fun HabitItem(
 
             IconBadge(
                 icon = habitIcon(habit),
-                tint = cardColors.iconTint,
-                backgroundColor = cardColors.iconBackground
+                completed = completed
             )
 
             Column(
@@ -331,54 +339,50 @@ private fun HabitItem(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
-                    text = habitTitle(habit, category),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = ColorPaletteHabits.Ink,
-                    fontWeight = FontWeight.SemiBold
+                    text = habit.name,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteHabits.Ink
                 )
                 Text(
                     text = category,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = cardColors.categoryTint
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = ColorPaletteHabits.Muted.copy(alpha = 0.7f)
                 )
                 if (skippedToday) {
                     Text(
                         text = "Skipped for this session",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = ColorPaletteHabits.Muted,
-                        textAlign = TextAlign.Center
+                        style = MaterialTheme.typography.labelSmall,
+                        color = ColorPaletteHabits.Danger
                     )
                 }
             }
 
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 StreakBadge(streak = habit.currentStreak)
+
                 IconButton(
                     onClick = { navController.navigate("habitEdit/${habit.id}") },
-                    modifier = Modifier.size(38.dp)
+                    modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit habit",
-                        tint = ColorPaletteHabits.Violet,
-                        modifier = Modifier.size(22.dp)
+                        tint = ColorPaletteHabits.Violet.copy(alpha = 0.8f),
+                        modifier = Modifier.size(18.dp)
                     )
                 }
                 IconButton(
-                    onClick = {
-                        showActionsDialog = false
-                        showDeleteDialog = true
-                    },
-                    modifier = Modifier.size(38.dp)
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete habit",
-                        tint = ColorPaletteHabits.Danger,
-                        modifier = Modifier.size(22.dp)
+                        tint = ColorPaletteHabits.Danger.copy(alpha = 0.8f),
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
@@ -432,10 +436,10 @@ private fun HabitItem(
 private fun StreakBadge(streak: Int) {
     Surface(
         shape = RoundedCornerShape(999.dp),
-        color = ColorPaletteHabits.AmberSoft
+        color = ColorPaletteHabits.AmberSoft.copy(alpha = 0.6f)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -443,11 +447,11 @@ private fun StreakBadge(streak: Int) {
                 imageVector = Icons.Default.LocalFireDepartment,
                 contentDescription = null,
                 tint = ColorPaletteHabits.Amber,
-                modifier = Modifier.size(12.dp)
+                modifier = Modifier.size(14.dp)
             )
             Text(
                 text = "${streak}d streak",
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = ColorPaletteHabits.AmberDark
             )
         }
@@ -457,23 +461,24 @@ private fun StreakBadge(streak: Int) {
 @Composable
 private fun IconBadge(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    tint: Color,
-    backgroundColor: Color
+    completed: Boolean
 ) {
+    val tintColor = if (completed) ColorPaletteHabits.Success else ColorPaletteHabits.Violet
+    val ambientBg = if (completed) ColorPaletteHabits.Success.copy(alpha = 0.12f) else ColorPaletteHabits.Violet.copy(alpha = 0.08f)
+
     Surface(
-        modifier = Modifier.size(48.dp),
-        shape = RoundedCornerShape(16.dp),
-        color = backgroundColor,
-        shadowElevation = 0.dp
+        modifier = Modifier.size(46.dp),
+        shape = RoundedCornerShape(14.dp),
+        color = ambientBg
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier
-                .size(28.dp)
-                .padding(10.dp)
-        )
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = tintColor,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 
@@ -487,20 +492,20 @@ private fun CompletionButton(
     IconButton(
         onClick = onComplete,
         enabled = !completed && !skippedToday && !isCompleting,
-        modifier = Modifier.size(44.dp)
+        modifier = Modifier.size(40.dp)
     ) {
         if (isCompleting) {
             CircularProgressIndicator(
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier.size(24.dp),
                 strokeWidth = 2.5.dp,
                 color = ColorPaletteHabits.Violet
             )
         } else {
             Icon(
                 imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-                contentDescription = if (completed) "Completed" else "Complete habit",
-                tint = if (completed) ColorPaletteHabits.Success else ColorPaletteHabits.Violet,
-                modifier = Modifier.size(34.dp)
+                contentDescription = null,
+                tint = if (completed) ColorPaletteHabits.Success else ColorPaletteHabits.Violet.copy(alpha = 0.6f),
+                modifier = Modifier.size(30.dp)
             )
         }
     }
@@ -545,10 +550,6 @@ private fun HabitActionsDialog(
     )
 }
 
-private fun habitTitle(habit: HabitEntity, category: String): String {
-    return if (category == "CATEGORY") habit.name else "${habit.name} | $category"
-}
-
 private fun habitCategory(habit: HabitEntity): String {
     val name = habit.name.lowercase()
     val icon = habit.icon.lowercase()
@@ -576,71 +577,17 @@ private fun habitIcon(habit: HabitEntity) = when (habitCategory(habit)) {
     else -> Icons.Default.Pets
 }
 
-private fun habitCardColors(habit: HabitEntity, completed: Boolean): HabitCardColors {
-    if (completed) {
-        return HabitCardColors(
-            background = ColorPaletteHabits.MintSoft,
-            iconBackground = ColorPaletteHabits.SuccessSoft,
-            iconTint = ColorPaletteHabits.Success,
-            categoryTint = ColorPaletteHabits.SuccessDark
-        )
-    }
-
-    return when (habitCategory(habit)) {
-        "EXERCISE" -> HabitCardColors(
-            background = ColorPaletteHabits.MintSoft,
-            iconBackground = ColorPaletteHabits.SuccessSoft,
-            iconTint = ColorPaletteHabits.Success,
-            categoryTint = ColorPaletteHabits.SuccessDark
-        )
-        "READ" -> HabitCardColors(
-            background = ColorPaletteHabits.BlueSoft,
-            iconBackground = ColorPaletteHabits.BlueIcon,
-            iconTint = ColorPaletteHabits.Blue,
-            categoryTint = ColorPaletteHabits.BlueDark
-        )
-        "HEALTH" -> HabitCardColors(
-            background = ColorPaletteHabits.AmberSoft,
-            iconBackground = ColorPaletteHabits.AmberIcon,
-            iconTint = ColorPaletteHabits.Amber,
-            categoryTint = ColorPaletteHabits.AmberDark
-        )
-        else -> HabitCardColors(
-            background = ColorPaletteHabits.PurpleSoft,
-            iconBackground = ColorPaletteHabits.PurpleIcon,
-            iconTint = ColorPaletteHabits.Violet,
-            categoryTint = ColorPaletteHabits.Muted
-        )
-    }
-}
-
-private data class HabitCardColors(
-    val background: Color,
-    val iconBackground: Color,
-    val iconTint: Color,
-    val categoryTint: Color
-)
-
 private object ColorPaletteHabits {
-    val HeaderStart = Color(0xFFF2EAFF)
-    val HeaderEnd = Color(0xFFF8F0FF)
-    val ProgressTrack = Color(0xFFE6D9FF)
-    val PurpleSoft = Color(0xFFF6F0FF)
-    val PurpleIcon = Color(0xFFEDE4FF)
-    val MintSoft = Color(0xFFE8FBF2)
-    val SuccessSoft = Color(0xFFDFF8EA)
-    val BlueSoft = Color(0xFFEAF4FF)
-    val BlueIcon = Color(0xFFE0ECFF)
-    val AmberSoft = Color(0xFFFFF4E4)
-    val AmberIcon = Color(0xFFFFEAC2)
+    val HeaderCardBackground = Color(0xFFEBE5FC) // Creamy lavender header block
+    val DefaultItemCardBackground = Color(0xFFFFFFFF) // Clean pristine card base
+    val MintSurfaceActive = Color(0xFFD7F5E6) // Smooth Mint Green active feedback
+    val ProgressTrack = Color(0xFFDDD5F3)
     val Violet = Color(0xFF8A76F9)
     val Amber = Color(0xFFFFB84D)
-    val Success = Color(0xFF4EDB95)
-    val SuccessDark = Color(0xFF2F9D68)
-    val Blue = Color(0xFF4BA3FF)
-    val BlueDark = Color(0xFF2F6FAE)
-    val AmberDark = Color(0xFFB97820)
+    val AmberSoft = Color(0xFFFFF2DC)
+    val AmberDark = Color(0xFFB57416)
+    val Success = Color(0xFF2EA366)
     val Danger = Color(0xFFFF6B6B)
-    val Muted = Color(0xFF6F6A8A)
-    val Ink = Color(0xFF302B4A)
+    val Muted = Color(0xFF635E7A)
+    val Ink = Color(0xFF1B172E)
 }
