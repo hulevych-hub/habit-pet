@@ -26,10 +26,7 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -45,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,13 +64,8 @@ fun HomeScreen(
     var showMandatoryPetNameDialog by remember { mutableStateOf(false) }
     var petNameDraft by remember { mutableStateOf(pet.name) }
 
-    LaunchedEffect(shouldRequestPetName) {
-        showMandatoryPetNameDialog = shouldRequestPetName
-    }
-
-    LaunchedEffect(pet.name) {
-        petNameDraft = pet.name
-    }
+    LaunchedEffect(shouldRequestPetName) { showMandatoryPetNameDialog = shouldRequestPetName }
+    LaunchedEffect(pet.name) { petNameDraft = pet.name }
 
     Scaffold(
         containerColor = Color(0xFFFAFAFC),
@@ -86,28 +77,26 @@ fun HomeScreen(
             )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            // 1. HERO: Fixed size (or aspect ratio) at the top
+            DragonHero(
+                pet = pet,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(500.dp) // Set a fixed height that works for most screens
+            )
+
+            // 2. LIST: Scrollable area for everything else
+            // We use weight(1f) here so it fills the remaining screen space
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 8.dp, bottom = 32.dp),
+                    .padding(horizontal = 20.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                DragonHero(
-                    pet = pet,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                ResetGameButton(
-                    onResetClick = { homeScreenViewModel.resetAllGameData() }
-                )
-
+                ResetGameButton(onResetClick = { homeScreenViewModel.resetAllGameData() })
                 TodayNourishmentSection(
                     habits = uiState.habits,
                     completedToday = uiState.completedToday,
@@ -115,17 +104,72 @@ fun HomeScreen(
                     onNavigateToHabitDetail = onNavigateToHabitDetail
                 )
             }
+        }
 
-            if (showMandatoryPetNameDialog) {
-                PetRenameDialog(
-                    initialName = petNameDraft,
-                    helperText = "You can rename your dragon later.",
-                    allowDismiss = false,
-                    onDismissRequest = { showMandatoryPetNameDialog = false },
-                    onConfirm = { newName ->
-                        homeScreenViewModel.renamePet(newName.trim())
-                        showMandatoryPetNameDialog = false
-                    }
+
+        if (showMandatoryPetNameDialog) {
+            PetRenameDialog(
+                initialName = petNameDraft,
+                helperText = "You can rename your dragon later.",
+                allowDismiss = false,
+                onDismissRequest = { showMandatoryPetNameDialog = false },
+                onConfirm = { newName ->
+                    homeScreenViewModel.renamePet(newName.trim())
+                    showMandatoryPetNameDialog = false
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DragonHero(
+    pet: com.example.mobile.data.local.entities.PetEntity,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f), Color.Transparent)
+                )
+            )
+            // Adding top padding to create a balanced gap from the header
+            .padding(top = 24.dp, bottom = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // We keep the height at 260.dp or 280.dp for that immersive feel
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f) // Fills available space, but stays within parent bounds
+                .padding(horizontal = 20.dp), // Add breathing room
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            AnimatedPet(
+                pet = pet,
+                modifier = Modifier.fillMaxSize(),
+                showNameOverlay = false
+            )
+        }
+
+        Text(
+            text = pet.name.ifBlank { "Meet My Pet" },
+            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
+            color = ColorPaletteHome.Ink
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+            LevelBadge(pet.level)
+            Surface(shape = RoundedCornerShape(999.dp), color = ColorPaletteHome.Mint.copy(alpha = 0.15f)) {
+                Text(
+                    text = DragonMood.from(pet.mood).displayName,
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = ColorPaletteHome.Green,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
                 )
             }
         }
@@ -211,144 +255,6 @@ private fun GamifiedFixedHeader(
     }
 }
 
-@Composable
-private fun DragonHero(
-    pet: com.example.mobile.data.local.entities.PetEntity,
-    modifier: Modifier = Modifier
-) {
-    // Exact mapping from your PetScreen implementation
-    val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
-    val xpRequiredForNextLevel = ExpConfig.xpRequiredForCurrentLevelProgress(pet.xp)
-    val progressFraction = (currentLevelXp.toFloat() / xpRequiredForNextLevel.toFloat()).coerceIn(0f, 1f)
-
-    val currentStageName = ExpConfig.evolutionStageName(pet.evolutionStage)
-    val nextStageName = ExpConfig.evolutionStageName(pet.evolutionStage + 1).ifBlank { "Max Tier reached" }
-
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(28.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f),
-                            Color.Transparent
-                        )
-                    )
-                )
-                .padding(vertical = 4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(140.dp)
-                        .background(ColorPaletteHome.AmethystSoft.copy(alpha = 0.25f), RoundedCornerShape(999.dp))
-                )
-
-                val petSize = if (LocalConfiguration.current.screenWidthDp < 360) 150.dp else 175.dp
-                AnimatedPet(
-                    pet = pet,
-                    modifier = Modifier.size(petSize),
-                    showNameOverlay = false
-                )
-            }
-
-            Text(
-                text = pet.name.ifBlank { "Meet My Pet" },
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.5).sp
-                ),
-                color = ColorPaletteHome.Ink,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                LevelBadge(pet.level)
-                Surface(
-                    shape = RoundedCornerShape(999.dp),
-                    color = ColorPaletteHome.Mint.copy(alpha = 0.15f)
-                ) {
-                    Text(
-                        text = DragonMood.from(pet.mood).displayName,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = ColorPaletteHome.Green,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Premium Modernized Minimalist Experience & Evolution Milestone Meter
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Level Progress",
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteHome.Ink.copy(alpha = 0.8f)
-                    )
-                    Text(
-                        text = "$currentLevelXp / ${xpRequiredForNextLevel} XP",
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteHome.Violet
-                    )
-                }
-
-                LinearProgressIndicator(
-                    progress = { progressFraction },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
-                    color = ColorPaletteHome.Violet,
-                    trackColor = ColorPaletteHome.Line,
-                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Current: $currentStageName",
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                        color = ColorPaletteHome.Ink.copy(alpha = 0.5f)
-                    )
-                    Text(
-                        text = "Next Phase: $nextStageName ✨",
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteHome.Violet.copy(alpha = 0.9f)
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun ResetGameButton(

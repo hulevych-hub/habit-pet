@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -46,19 +46,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ChestType
-import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 import com.example.mobile.presentation.ui.components.PetPhaseTransition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.util.ReinforcementMessageProvider
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
+import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 
 @Composable
 fun RewardScreen(
@@ -744,7 +743,6 @@ private fun DragonEvolutionRewardContent(
                 pet = pet.copy(evolutionStage = toStage),
                 fromStage = fromStage,
                 toStage = toStage,
-                size = IntSize((240 * emphasisTier.rewardScale).toInt(), (240 * emphasisTier.rewardScale).toInt()),
                 onTransitionCompleted = { isTransitionComplete = true }
             )
 

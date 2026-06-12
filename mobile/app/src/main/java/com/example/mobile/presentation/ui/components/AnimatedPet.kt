@@ -12,7 +12,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,20 +24,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.presentation.ui.animations.PetAnimations
 import com.example.mobile.util.PetTransitionPrefs
 
-/**
- * Animated pet display using actual drawable assets with proper animations and equipped items
- */
 @Composable
 fun AnimatedPet(
     pet: PetEntity,
@@ -47,45 +43,41 @@ fun AnimatedPet(
 ) {
     val evolutionStage = pet.evolutionStage.takeIf { it in 0..4 } ?: 0
 
-    // Set background to transparent to prevent layer-blend bleeding on screens
+    // The Box now fills the size provided by the parent (HomeScreen)
     Box(
-        modifier = modifier.background(Color.Transparent)
+        modifier = modifier.background(Color.Transparent),
+        contentAlignment = Alignment.Center
     ) {
-        // Layered rendering: Aura -> Background -> Pet -> Outfit
-
+        // AURA: Now fills the parent container
         AuraLayer(
             equippedAura = pet.equippedAura,
-            modifier = Modifier.size(220.dp).align(Alignment.Center)
+            modifier = Modifier.fillMaxSize()
         )
 
-        // Background (if equipped)
+        // BACKGROUND: Now fills the parent container
         if (pet.equippedBackground != null) {
             Image(
                 painter = painterResource(backgroundImageForItemId(pet.equippedBackground)),
                 contentDescription = "Pet background",
-                modifier = Modifier
-                    .size(180.dp)
-                    .align(Alignment.Center)
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
             )
         }
 
+        // PET: Transition logic now fills the container
         PetPhaseTransition(
             pet = pet,
             fromStage = evolutionStage - 1,
             toStage = evolutionStage,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.fillMaxSize()
         )
 
         if (showNameOverlay) {
-            // Pet name and level overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .align(Alignment.BottomCenter)
                     .padding(8.dp)
-                    .background(
-                        MaterialTheme.colorScheme.background.copy(alpha = 0.7f)
-                    )
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f))
             ) {
                 Text(
                     text = "${pet.name}\nLv.${pet.level}",
@@ -104,13 +96,12 @@ fun PetPhaseTransition(
     fromStage: Int,
     toStage: Int,
     modifier: Modifier = Modifier,
-    size: IntSize = IntSize(180, 180),
     onTransitionCompleted: (() -> Unit)? = null
 ) {
     val normalizedToStage = toStage.takeIf { it in 0..4 } ?: 0
     val normalizedFromStage = fromStage.takeIf { it in 0..3 && it == normalizedToStage - 1 }
-        ?: (normalizedToStage - 1).takeIf { it in 0..3 }
-        ?: normalizedToStage
+        ?: (normalizedToStage - 1).takeIf { it in 0..3 } ?: normalizedToStage
+
     val context = LocalContext.current
     val density = LocalDensity.current
     val transition = rememberInfiniteTransition(label = "pet idle")
@@ -121,205 +112,126 @@ fun PetPhaseTransition(
 
     var transitionFinished by remember { mutableStateOf(false) }
 
-    LaunchedEffect(normalizedToStage, hasPlayedTransition) {
-        transitionFinished = false
-    }
+    LaunchedEffect(normalizedToStage, hasPlayedTransition) { transitionFinished = false }
 
     val transitionProgress = animateFloatAsState(
         targetValue = if (shouldTransition || transitionFinished) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 900,
-            easing = FastOutSlowInEasing
-        ),
+        animationSpec = tween(900, easing = FastOutSlowInEasing),
         label = "pet phase transition progress"
     )
 
     val transitionScale = animateFloatAsState(
         targetValue = if (shouldTransition) 1.06f else 1f,
-        animationSpec = tween(
-            durationMillis = 900,
-            easing = FastOutSlowInEasing
-        ),
+        animationSpec = tween(900, easing = FastOutSlowInEasing),
         label = "pet phase transition scale"
     )
 
     val transitionShift = animateFloatAsState(
         targetValue = if (shouldTransition) 10f else 0f,
-        animationSpec = tween(
-            durationMillis = 900,
-            easing = FastOutSlowInEasing
-        ),
+        animationSpec = tween(900, easing = FastOutSlowInEasing),
         label = "pet phase transition shift"
     )
 
-    LaunchedEffect(transitionProgress.value) {
-        if (shouldTransition && !transitionFinished && transitionProgress.value >= 0.995f) {
-            PetTransitionPrefs.markTransitionPlayed(
-                context,
-                normalizedToStage - 1,
-                normalizedToStage
-            )
-            transitionFinished = true
-            onTransitionCompleted?.invoke()
-        }
-    }
-
+    // Breathing and Idle Animations
     val breathingScale = transition.animateFloat(
         initialValue = 1f - petIdleScaleAmplitude(normalizedToStage, pet.mood),
         targetValue = 1f + petIdleScaleAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = petIdleBreathingDuration(normalizedToStage, pet.mood),
-                easing = FastOutSlowInEasing
-            ),
+            animation = tween(petIdleBreathingDuration(normalizedToStage, pet.mood), easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "pet breathing scale"
+        ), label = "pet breathing scale"
     )
 
     val breathingY = transition.animateFloat(
         initialValue = -petIdleVerticalAmplitude(normalizedToStage, pet.mood),
         targetValue = petIdleVerticalAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = petIdleBreathingDuration(normalizedToStage, pet.mood),
-                easing = FastOutSlowInEasing
-            ),
+            animation = tween(petIdleBreathingDuration(normalizedToStage, pet.mood), easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "pet breathing translation"
+        ), label = "pet breathing translation"
     )
 
     val rotation = transition.animateFloat(
         initialValue = -petIdleRotationAmplitude(normalizedToStage, pet.mood),
         targetValue = petIdleRotationAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = petIdleSwayDuration(normalizedToStage, pet.mood),
-                easing = FastOutSlowInEasing
-            ),
+            animation = tween(petIdleSwayDuration(normalizedToStage, pet.mood), easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "pet idle sway"
+        ), label = "pet idle sway"
     )
 
     val softBounce = transition.animateFloat(
         initialValue = -petIdleBounceAmplitude(normalizedToStage, pet.mood),
         targetValue = petIdleBounceAmplitude(normalizedToStage, pet.mood),
         animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = petIdleBounceDuration(normalizedToStage, pet.mood),
-                easing = FastOutSlowInEasing
-            ),
+            animation = tween(petIdleBounceDuration(normalizedToStage, pet.mood), easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "pet soft bounce"
+        ), label = "pet soft bounce"
     )
 
     val showTransition = shouldTransition || transitionFinished
-    val transitionFromAlpha = 1f - transitionProgress.value
-    val transitionToAlpha = transitionProgress.value
     val transitionScaleValue = transitionScale.value
     val transitionShiftPx = transitionShift.value * density.density
     val idleScale = breathingScale.value
     val idleRotation = rotation.value
     val idleTranslationY = (breathingY.value + softBounce.value) * density.density
 
-    val transitionFromModifier = modifier
-        .size(size.width.dp, size.height.dp)
-        .graphicsLayer(
-            alpha = transitionFromAlpha,
-            scaleX = idleScale * transitionScaleValue,
-            scaleY = idleScale * transitionScaleValue,
-            rotationZ = idleRotation,
-            translationY = idleTranslationY - transitionShiftPx
-        )
+    // Modifiers using the passed parent 'modifier'
+    val transitionFromModifier = modifier.graphicsLayer(
+        alpha = 1f - transitionProgress.value,
+        scaleX = idleScale * transitionScaleValue,
+        scaleY = idleScale * transitionScaleValue,
+        rotationZ = idleRotation,
+        translationY = idleTranslationY - transitionShiftPx
+    )
 
-    val transitionToModifier = modifier
-        .size(size.width.dp, size.height.dp)
-        .graphicsLayer(
-            alpha = transitionToAlpha,
-            scaleX = idleScale * transitionScaleValue,
-            scaleY = idleScale * transitionScaleValue,
-            rotationZ = idleRotation,
-            translationY = idleTranslationY + transitionShiftPx
-        )
+    val transitionToModifier = modifier.graphicsLayer(
+        alpha = transitionProgress.value,
+        scaleX = idleScale * transitionScaleValue,
+        scaleY = idleScale * transitionScaleValue,
+        rotationZ = idleRotation,
+        translationY = idleTranslationY + transitionShiftPx
+    )
 
-    val finalModifier = modifier
-        .size(size.width.dp, size.height.dp)
-        .graphicsLayer(
-            scaleX = idleScale,
-            scaleY = idleScale,
-            rotationZ = idleRotation,
-            translationY = idleTranslationY
-        )
+    val finalModifier = modifier.graphicsLayer(
+        scaleX = idleScale,
+        scaleY = idleScale,
+        rotationZ = idleRotation,
+        translationY = idleTranslationY
+    )
 
     if (showTransition) {
-        PetImageLayer(
-            pet = pet,
-            evolutionStage = normalizedFromStage,
-            modifier = transitionFromModifier
-        )
-        PetImageLayer(
-            pet = pet,
-            evolutionStage = normalizedToStage,
-            modifier = transitionToModifier
-        )
+        PetImageLayer(pet, normalizedFromStage, transitionFromModifier)
+        PetImageLayer(pet, normalizedToStage, transitionToModifier)
     } else {
-        PetImageLayer(
-            pet = pet,
-            evolutionStage = normalizedToStage,
-            modifier = finalModifier
-        )
+        PetImageLayer(pet, normalizedToStage, finalModifier)
     }
 }
 
 @Composable
-private fun PetImageLayer(
-    pet: PetEntity,
-    evolutionStage: Int,
-    modifier: Modifier = Modifier
-) {
-    // FIXED: Removed the dynamic mood intensity alpha modifier to force crisp 100% solid rendering
+private fun PetImageLayer(pet: PetEntity, evolutionStage: Int, modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(petImageForStage(evolutionStage)),
         contentDescription = "Pet image",
-        modifier = modifier
+        modifier = modifier,
+        contentScale = ContentScale.Fit // Ensures the image scales within the provided modifier
     )
-
-    OutfitLayer(
-        equippedOutfit = pet.equippedOutfit,
-        modifier = modifier
-    )
+    OutfitLayer(pet.equippedOutfit, modifier)
 }
 
 @Composable
-private fun AuraLayer(
-    equippedAura: String?,
-    modifier: Modifier = Modifier
-) {
+private fun AuraLayer(equippedAura: String?, modifier: Modifier = Modifier) {
     if (equippedAura == null) return
-
-    Image(
-        painter = painterResource(auraImageForItemId(equippedAura)),
-        contentDescription = "Pet aura",
-        modifier = modifier.graphicsLayer(alpha = 0.38f)
-    )
+    Image(painter = painterResource(auraImageForItemId(equippedAura)), contentDescription = "Aura", modifier = modifier.graphicsLayer(alpha = 0.38f))
 }
 
 @Composable
-private fun OutfitLayer(
-    equippedOutfit: String?,
-    modifier: Modifier = Modifier
-) {
+private fun OutfitLayer(equippedOutfit: String?, modifier: Modifier = Modifier) {
     if (equippedOutfit == null) return
-
-    Image(
-        painter = painterResource(outfitImageForItemId(equippedOutfit)),
-        contentDescription = "Pet outfit",
-        modifier = modifier.graphicsLayer(alpha = 0.62f)
-    )
+    Image(painter = painterResource(outfitImageForItemId(equippedOutfit)), contentDescription = "Outfit", modifier = modifier.graphicsLayer(alpha = 0.62f))
 }
+
+// ... (Keep all your existing helper functions like backgroundImageForItemId, petImageForStage, etc. here)
 
 private fun backgroundImageForItemId(itemId: String?): Int = when (itemId) {
     "background_forest", "sunny_meadow" -> R.drawable.background_forest
