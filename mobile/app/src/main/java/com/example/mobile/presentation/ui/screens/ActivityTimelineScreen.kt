@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.GameEventEntity
@@ -50,6 +51,7 @@ import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ProgressHeader
 import com.example.mobile.presentation.ui.components.ProgressHeaderState
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
+import com.example.mobile.util.ReinforcementMessageProvider
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -189,6 +191,10 @@ private fun DayHeader(label: String) {
 
 @Composable
 private fun ActivityTimelineItem(event: GameEventEntity) {
+    val context = LocalContext.current
+    val reinforcementMessage = remember(event.id) {
+        ReinforcementMessageProvider.timelineMessage(context, event)
+    }
     val isMilestone = event.type == GameEventType.DRAGON_EVOLUTION.name ||
         event.type == GameEventType.LEVEL_UP.name ||
         event.type == GameEventType.STREAK_MILESTONE.name ||
@@ -242,6 +248,12 @@ private fun ActivityTimelineItem(event: GameEventEntity) {
                     text = event.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Text(
+                    text = reinforcementMessage,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFFB45309)
                 )
 
                 Text(

@@ -34,60 +34,34 @@ class NotificationHelper(private val context: Context) {
         )
 
         private fun dailyReminderMessage(context: Context): NotificationMessage {
-            val streak = NotificationPrefs.getLastStreak(context)
-
-            return when {
-                streak >= STREAK_HIGH_THRESHOLD -> NotificationMessage(
-                    title = "You’re close to a reward",
-                    message = "Your dragon is glowing with pride. One gentle step keeps the rhythm alive."
-                )
-                streak > 0 -> NotificationMessage(
-                    title = "Your dragon is waiting 🐉",
-                    message = "A small habit today is enough to keep your spark warm."
-                )
-                else -> NotificationMessage(
-                    title = "Something grew while you were away",
-                    message = "Your dragon saved a little room for your next beginning."
-                )
+            val behavior = if (NotificationPrefs.getLastStreak(context) >= STREAK_HIGH_THRESHOLD) {
+                ReinforcementMessageProvider.UserBehavior.STREAK
+            } else {
+                ReinforcementMessageProvider.behavior(context)
             }
+            val message = ReinforcementMessageProvider.notification(context, behavior)
+
+            return NotificationMessage(message.title, message.message)
         }
 
         private fun streakReminderMessage(context: Context): NotificationMessage {
-            val streak = NotificationPrefs.getLastStreak(context)
+            val message = ReinforcementMessageProvider.notification(
+                context = context,
+                behavior = ReinforcementMessageProvider.UserBehavior.STREAK
+            )
 
-            return when {
-                streak >= STREAK_HIGH_THRESHOLD -> NotificationMessage(
-                    title = "You’re close to a reward",
-                    message = "Your streak is shining. Your dragon is proud of the rhythm you’re building."
-                )
-                streak > 0 -> NotificationMessage(
-                    title = "Your dragon is waiting 🐉",
-                    message = "A tiny step is enough. One habit can keep your streak alive."
-                )
-                else -> NotificationMessage(
-                    title = "Something grew while you were away",
-                    message = "A fresh start is still a win. Your dragon is here with you."
-                )
-            }
+            return NotificationMessage(message.title, message.message)
         }
 
         private fun petReminderMessage(context: Context): NotificationMessage {
-            val hoursSinceLastActive = hoursSinceLastActive(context)
-
-            return when {
-                hoursSinceLastActive > 48L -> NotificationMessage(
-                    title = "Your dragon is waiting 🐉",
-                    message = "Your pet has been patiently keeping your little corner warm."
-                )
-                hoursSinceLastActive > 6L -> NotificationMessage(
-                    title = "Something grew while you were away",
-                    message = "Come visit when you can. Your dragon saved a soft welcome for you."
-                )
-                else -> NotificationMessage(
-                    title = "You’re close to a reward",
-                    message = "Your dragon is humming with the progress you’ve already made."
-                )
+            val behavior = if (hoursSinceLastActive(context) > 48L) {
+                ReinforcementMessageProvider.UserBehavior.INACTIVE
+            } else {
+                ReinforcementMessageProvider.behavior(context)
             }
+            val message = ReinforcementMessageProvider.notification(context, behavior)
+
+            return NotificationMessage(message.title, message.message)
         }
 
         private fun hoursSinceLastActive(context: Context): Long {
@@ -261,8 +235,9 @@ class NotificationPublisher : BroadcastReceiver() {
 
         NotificationPrefs.markNotificationShown(safeContext)
 
-        val title = intent?.getStringExtra("title") ?: "Your dragon is waiting 🐉"
-        val message = intent?.getStringExtra("message") ?: "Your dragon saved a soft welcome for you."
+        val fallbackMessage = ReinforcementMessageProvider.notification(safeContext)
+        val title = intent?.getStringExtra("title") ?: fallbackMessage.title
+        val message = intent?.getStringExtra("message") ?: fallbackMessage.message
 
         NotificationHelper(safeContext).showNotification(title, message)
     }

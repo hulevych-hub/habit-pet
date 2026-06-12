@@ -202,6 +202,24 @@ Coin feedback is triggered from existing coin award paths:
 
 XP feedback is triggered when XP is added directly through habit completion or through queued chest and daily goal rewards. The feedback overlay is non-blocking and does not affect EXP, level, or evolution calculations.
 
+## Reward Moment Amplification
+
+Reward UI emphasis is handled in `RewardScreen` as a presentation-layer effect only. It does not award coins, EXP, customization items, or timeline events.
+
+Emphasis tiers:
+- Small: low-value coin rewards and simple pickups
+- Rare: level-up, daily goal, streak, rare chest, and most achievement moments
+- Epic: dragon evolution, epic or legendary chests, high-value chest contents, and major streak milestones
+
+Implemented emphasis states:
+- Scale animation on the reward content
+- Colored glow around the reward surface
+- Tier-based chest tint and chest size
+- Tier-based reward text color
+- Longer emphasis duration for epic moments
+
+These states are intentionally short-lived so reward moments interrupt the flow positively without changing the reward pipeline or blocking reward processing.
+
 ---
 
 # 🧾 COIN SPENDING
@@ -334,6 +352,7 @@ Any change to economy must:
 - GameEventType.kt
 - RewardManager.kt
 - RewardQueue.kt
+- RewardScreen.kt
 - MicroFeedbackManager.kt
 - MicroFeedbackOverlay.kt
 - MicroFeedbackEvent.kt

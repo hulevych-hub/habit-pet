@@ -18,29 +18,7 @@ For every task below:
 
 ## Implementation Queue
 
-### 1. Combo / Momentum System
-
-**Read**
-
-- EXP.md
-- ECONOMY.md
-
-**Update**
-
-- EXP.md
-
-**Tasks**
-
-- [x] Implement combo system for consecutive habit completions
-- [x] Increase XP slightly based on streaked activity / short-term momentum
-- [x] Reset combo after inactivity window using a configurable time threshold
-- [x] Show subtle combo multiplier feedback in UI
-- [x] Ensure combo is additive but not overpowered
-- [x] Log combo milestones in Activity Timeline system
-
----
-
-### 2. Positive Reinforcement Message System
+### 1. Positive Reinforcement Message System
 
 **Read**
 
@@ -52,21 +30,21 @@ For every task below:
 
 **Tasks**
 
-- [ ] Replace generic system messages with emotional reinforcement messages
-- [ ] Add dynamic message pool based on user behavior:
-- [ ] Consistent user: “You’re building something strong”
-- [ ] Inactive user: “Your dragon is still waiting for you”
-- [ ] Streak user: “Your consistency is rare”
-- [ ] Ensure messages feel human and supportive, not robotic
-- [ ] Integrate reinforcement messages into:
-- [ ] Notifications
-- [ ] Activity timeline
-- [ ] Reward screens
-- [ ] Ensure message selection is contextual and non-repetitive
+- [x] Replace generic system messages with emotional reinforcement messages
+- [x] Add dynamic message pool based on user behavior:
+- [x] Consistent user: “You’re building something strong”
+- [x] Inactive user: “Your dragon is still waiting for you”
+- [x] Streak user: “Your consistency is rare”
+- [x] Ensure messages feel human and supportive, not robotic
+- [x] Integrate reinforcement messages into:
+- [x] Notifications
+- [x] Activity timeline
+- [x] Reward screens
+- [x] Ensure message selection is contextual and non-repetitive
 
 ---
 
-### 3. Reward Moment Amplification System
+### 2. Reward Moment Amplification System
 
 **Read**
 
@@ -79,13 +57,13 @@ For every task below:
 
 **Tasks**
 
-- [ ] Enhance all reward moments: XP, coins, chest, achievement
-- [ ] Add visual emphasis states: scale, glow, pause effect logic only
-- [ ] Ensure reward moments briefly interrupt flow positively
-- [ ] Differentiate reward tiers:
-- [ ] Small reward: subtle feedback
-- [ ] Rare reward: stronger feedback
-- [ ] Epic reward: full emphasis moment
-- [ ] Ensure reward feedback never feels repetitive or annoying
-- [ ] Integrate with existing reward pipelines without blocking logic
+- [x] Enhance all reward moments: XP, coins, chest, achievement
+- [x] Add visual emphasis states: scale, glow, pause effect logic only
+- [x] Ensure reward moments briefly interrupt flow positively
+- [x] Differentiate reward tiers:
+- [x] Small reward: subtle feedback
+- [x] Rare reward: stronger feedback
+- [x] Epic reward: full emphasis moment
+- [x] Ensure reward feedback never feels repetitive or annoying
+- [x] Integrate with existing reward pipelines without blocking logic
 

@@ -1,14 +1,15 @@
 package com.example.mobile.presentation.ui.reward
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.InfiniteTransition
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,24 +29,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.ChestType
 import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 import com.example.mobile.presentation.ui.components.PetPhaseTransition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.util.ReinforcementMessageProvider
+import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -56,6 +67,12 @@ fun RewardScreen(
     onRewardCompleted: () -> Unit
 ) {
     if (reward == null) return
+
+    val context = LocalContext.current
+    val reinforcementMessage = remember(reward) {
+        ReinforcementMessageProvider.rewardMessage(context, reward)
+    }
+    val emphasisTier = reward.emphasisTier()
 
     Box(
         modifier = Modifier
@@ -82,13 +99,17 @@ fun RewardScreen(
 
                 is RewardUiEvent.LevelUpReward -> LevelUpRewardContent(
                     level = reward.level,
-                    coinsEarned = reward.coins
+                    coinsEarned = reward.coins,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier
                 )
 
                 is RewardUiEvent.DragonEvolutionReward -> DragonEvolutionRewardContent(
                     pet = pet,
                     fromStage = reward.fromStage,
                     toStage = reward.toStage,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier,
                     onConfirm = onRewardCompleted
                 )
 
@@ -96,20 +117,26 @@ fun RewardScreen(
                     streak = reward.streak,
                     coinsEarned = reward.coins,
                     rewardSummary = reward.rewardSummary,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier,
                     onConfirm = onRewardCompleted
                 )
 
                 is RewardUiEvent.DailyGoalReward -> DailyGoalRewardContent(
                     goalXp = reward.goalXp,
                     bonusCoins = reward.bonusCoins,
-                    bonusExp = reward.bonusExp
+                    bonusExp = reward.bonusExp,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier
                 )
 
                 is RewardUiEvent.ChestReward -> ChestRewardContent(
                     rewardType = reward.rewardType,
                     amount = reward.amount,
                     expAmount = reward.expAmount,
-                    customizationId = reward.customizationId
+                    customizationId = reward.customizationId,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier
                 )
 
                 is RewardUiEvent.AchievementReward -> AchievementRewardContent(
@@ -117,11 +144,15 @@ fun RewardScreen(
                     coinsEarned = reward.coins,
                     expAmount = reward.expAmount,
                     chestType = reward.chestType,
-                    rewards = reward.rewards
+                    rewards = reward.rewards,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier
                 )
 
                 is RewardUiEvent.CoinReward -> CoinRewardContent(
-                    amount = reward.amount
+                    amount = reward.amount,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier
                 )
             }
         }
@@ -132,37 +163,43 @@ fun RewardScreen(
 @Composable
 private fun LevelUpRewardContent(
     level: Int,
-    coinsEarned: Int
+    coinsEarned: Int,
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Text(
-            text = "LEVEL UP!",
-            style = MaterialTheme.typography.headlineLarge,
-            color = Color.White
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .background(Color(0xFF3B82F6), CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
             Text(
-                text = level.toString(),
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium
+                text = "LEVEL UP!",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .background(Color(0xFF3B82F6), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = level.toString(),
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "+$coinsEarned coins",
+                color = Color(0xFF34D399)
+            )
+
+            ReinforcementMessage(reinforcementMessage)
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "+$coinsEarned coins",
-            color = Color(0xFF34D399)
-        )
     }
 }
 
@@ -171,44 +208,45 @@ private fun LevelUpRewardContent(
 private fun DailyGoalRewardContent(
     goalXp: Long,
     bonusCoins: Int,
-    bonusExp: Long
+    bonusExp: Long,
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "DAILY GOAL COMPLETE!",
-            style = MaterialTheme.typography.headlineLarge,
-            color = Color.White
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .background(Color(0xFFFFB74D), CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "$goalXp XP",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium
+                text = "DAILY GOAL COMPLETE!",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .background(Color(0xFFFFB74D), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$goalXp XP",
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "+$bonusCoins coins  +$bonusExp XP",
+                color = Color(0xFF34D399),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ReinforcementMessage(reinforcementMessage)
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "+$bonusCoins coins  +$bonusExp XP",
-            color = Color(0xFF34D399),
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Your dragon loved today's steady rhythm.",
-            color = Color.White
-        )
     }
 }
 
@@ -218,60 +256,63 @@ private fun ChestRewardContent(
     rewardType: String,
     amount: Any,
     expAmount: Int = 0,
-    customizationId: Long? = null
+    customizationId: Long? = null,
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier
 ) {
     var isOpen by remember { mutableStateOf(false) }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        val imageRes = if (isOpen) {
-            R.drawable.chest_open
-        } else {
-            R.drawable.chest_closed // ensure this exists in res/drawable
-        }
-
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = null,
-            modifier = Modifier
-                .size(180.dp)
-                .clickable { isOpen = true }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (isOpen) {
-            val rewardText = mutableListOf<String>()
-
-            // Add coin reward if present
-            when (amount) {
-                is Int -> if (amount > 0) rewardText.add("+$amount coins")
-                is String -> if (!amount.isEmpty()) rewardText.add(amount)
+            val imageRes = if (isOpen) {
+                R.drawable.chest_open
+            } else {
+                R.drawable.chest_closed // ensure this exists in res/drawable
             }
 
-            // Add EXP reward if present
-            if (expAmount > 0) {
-                rewardText.add("+$expAmount EXP")
-            }
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(emphasisTier.chestTint),
+                modifier = Modifier
+                    .size((180 * emphasisTier.chestSizeMultiplier).dp)
+                    .clickable { isOpen = true }
+            )
 
-            // Note: customization names would require loading the inventory item.
-            if (customizationId != null) {
-                rewardText.add("Customization unlocked!")
-            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Display all rewards
-            if (rewardText.isNotEmpty()) {
+            if (isOpen) {
+                val rewardText = mutableListOf<String>()
+
+                when (amount) {
+                    is Int -> if (amount > 0) rewardText.add("+$amount coins")
+                    is String -> if (!amount.isEmpty()) rewardText.add(amount)
+                }
+
+                if (expAmount > 0) {
+                    rewardText.add("+$expAmount EXP")
+                }
+
+                if (customizationId != null) {
+                    rewardText.add("Customization unlocked!")
+                }
+
+                if (rewardText.isNotEmpty()) {
+                    Text(
+                        text = rewardText.joinToString("\n"),
+                        color = emphasisTier.rewardColor,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
                 Text(
-                    text = rewardText.joinToString("\n"),
-                    color = Color(0xFFFFD700),
-                    style = MaterialTheme.typography.titleLarge
+                    text = rewardType,
+                    color = Color.White.copy(alpha = 0.7f)
                 )
             }
 
-            Text(
-                text = rewardType,
-                color = Color.White.copy(alpha = 0.7f)
-            )
+            ReinforcementMessage(reinforcementMessage)
         }
     }
 }
@@ -282,6 +323,8 @@ private fun StreakRewardContent(
     streak: Int,
     coinsEarned: Int,
     rewardSummary: List<String> = emptyList(),
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier,
     onConfirm: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "streak hearts")
@@ -318,7 +361,7 @@ private fun StreakRewardContent(
             .clickable { onConfirm() },
         contentAlignment = Alignment.Center
     ) {
-        HeartOrbit(infiniteTransition)
+        HeartOrbit(infiniteTransition, emphasisTier)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -329,8 +372,8 @@ private fun StreakRewardContent(
                 contentDescription = "Streak celebration",
                 tint = Color(0xFFFF4D6D),
                 modifier = Modifier
-                    .size((96 * mainScale.value).dp)
-                    .offset(y = mainFloat.value.dp)
+                    .size((96 * mainScale.value * emphasisTier.rewardScale).dp)
+                    .offset(y = (mainFloat.value * emphasisTier.rewardScale).dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -359,20 +402,20 @@ private fun StreakRewardContent(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            Text(
-                text = "Tap to continue",
-                color = Color.White.copy(alpha = 0.75f)
-            )
+            ReinforcementMessage(reinforcementMessage)
         }
     }
 }
 
 @Composable
-private fun HeartOrbit(infiniteTransition: InfiniteTransition) {
+private fun HeartOrbit(
+    infiniteTransition: InfiniteTransition,
+    emphasisTier: RewardEmphasisTier
+) {
     repeat(8) { index ->
         val angle = (index * 45).toDouble() * (kotlin.math.PI / 180.0)
-        val x = (cos(angle) * 128).dp
-        val y = (sin(angle) * 86).dp
+        val x = (cos(angle) * 128 * emphasisTier.rewardScale).dp
+        val y = (sin(angle) * 86 * emphasisTier.rewardScale).dp
         val scale = infiniteTransition.animateFloat(
             initialValue = 0.65f,
             targetValue = 1.15f,
@@ -410,7 +453,9 @@ private fun AchievementRewardContent(
     coinsEarned: Int,
     expAmount: Int = 0,
     chestType: String? = null,
-    rewards: List<ConfigAchievementReward> = emptyList()
+    rewards: List<ConfigAchievementReward> = emptyList(),
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier
 ) {
     val rewardText = if (rewards.isNotEmpty()) {
         rewards.map { it.rewardLabel() }
@@ -418,35 +463,39 @@ private fun AchievementRewardContent(
         buildLegacyRewardText(coinsEarned, expAmount, chestType)
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Icon(
-            imageVector = Icons.Default.EmojiEvents,
-            contentDescription = null,
-            tint = Color(0xFFFFD700),
-            modifier = Modifier.size(64.dp)
-        )
+            Icon(
+                imageVector = Icons.Default.EmojiEvents,
+                contentDescription = null,
+                tint = emphasisTier.rewardColor,
+                modifier = Modifier.size((64 * emphasisTier.rewardScale).dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "ACHIEVEMENT UNLOCKED",
-            color = Color.White
-        )
+            Text(
+                text = "ACHIEVEMENT UNLOCKED",
+                color = Color.White
+            )
 
-        Text(
-            text = achievementName,
-            color = Color(0xFF818CF8),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
+            Text(
+                text = achievementName,
+                color = Color(0xFF818CF8),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = rewardText.joinToString("\n"),
-            color = Color(0xFF34D399)
-        )
+            Text(
+                text = rewardText.joinToString("\n"),
+                color = emphasisTier.rewardColor
+            )
+
+            ReinforcementMessage(reinforcementMessage)
+        }
     }
 }
 
@@ -479,32 +528,190 @@ private fun ConfigAchievementReward.rewardLabel(): String = when (this) {
     is ConfigAchievementReward.CustomizationReward -> "Customization"
 }
 
+private enum class RewardEmphasisTier(
+    val rewardColor: Color,
+    val chestTint: Color,
+    val glowColor: Color,
+    val rewardScale: Float,
+    val chestSizeMultiplier: Float,
+    val emphasisDurationMillis: Long
+) {
+    SMALL(
+        rewardColor = Color(0xFF34D399),
+        chestTint = Color(0xFFFFD166),
+        glowColor = Color(0xFFFFD166),
+        rewardScale = 1.0f,
+        chestSizeMultiplier = 1.0f,
+        emphasisDurationMillis = 650L
+    ),
+    RARE(
+        rewardColor = Color(0xFF60A5FA),
+        chestTint = Color(0xFF60A5FA),
+        glowColor = Color(0xFF60A5FA),
+        rewardScale = 1.06f,
+        chestSizeMultiplier = 1.08f,
+        emphasisDurationMillis = 950L
+    ),
+    EPIC(
+        rewardColor = Color(0xFFC084FC),
+        chestTint = Color(0xFFC084FC),
+        glowColor = Color(0xFFC084FC),
+        rewardScale = 1.12f,
+        chestSizeMultiplier = 1.16f,
+        emphasisDurationMillis = 1300L
+    )
+}
+
+private fun RewardUiEvent.emphasisTier(): RewardEmphasisTier = when (this) {
+    is RewardUiEvent.CoinReward -> RewardEmphasisTier.SMALL
+    is RewardUiEvent.LevelUpReward -> RewardEmphasisTier.RARE
+    is RewardUiEvent.DragonEvolutionReward -> RewardEmphasisTier.EPIC
+    is RewardUiEvent.StreakReward -> if (streak >= 30) RewardEmphasisTier.EPIC else RewardEmphasisTier.RARE
+    is RewardUiEvent.DailyGoalReward -> RewardEmphasisTier.RARE
+    is RewardUiEvent.ChestReward -> chestEmphasisTier(
+        rewardType = rewardType,
+        amount = amount,
+        expAmount = expAmount,
+        customizationId = customizationId
+    )
+    is RewardUiEvent.AchievementReward -> if (
+        chestType?.contains("legendary", ignoreCase = true) == true ||
+        rewards.any { it is ConfigAchievementReward.ChestReward && it.chestType == ChestType.LEGENDARY }
+    ) {
+        RewardEmphasisTier.EPIC
+    } else {
+        RewardEmphasisTier.RARE
+    }
+}
+
+private fun chestEmphasisTier(
+    rewardType: String,
+    amount: Any,
+    expAmount: Int,
+    customizationId: Long?
+): RewardEmphasisTier {
+    val chestType = ChestType.values().firstOrNull {
+        it.name.equals(rewardType.substringAfterLast('_'), ignoreCase = true) ||
+            rewardType.contains(it.name, ignoreCase = true)
+    }
+
+    return when (chestType) {
+        ChestType.LEGENDARY -> RewardEmphasisTier.EPIC
+        ChestType.EPIC -> RewardEmphasisTier.EPIC
+        ChestType.RARE -> RewardEmphasisTier.RARE
+        ChestType.NORMAL, null -> {
+            val coinAmount = amount as? Int ?: 0
+            when {
+                customizationId != null || expAmount >= 150 || coinAmount >= 80 -> RewardEmphasisTier.EPIC
+                expAmount > 0 || coinAmount >= 30 -> RewardEmphasisTier.RARE
+                else -> RewardEmphasisTier.SMALL
+            }
+        }
+    }
+}
+
+@Composable
+private fun RewardEmphasisFrame(
+    tier: RewardEmphasisTier,
+    content: @Composable () -> Unit
+) {
+    var emphasisActive by remember { mutableStateOf(false) }
+
+    LaunchedEffect(tier) {
+        emphasisActive = true
+        delay(tier.emphasisDurationMillis)
+        emphasisActive = false
+    }
+
+    val scale by animateFloatAsState(
+        targetValue = if (emphasisActive) tier.rewardScale else 1f,
+        animationSpec = tween(360, easing = FastOutSlowInEasing),
+        label = "reward emphasis scale"
+    )
+    val glowAlpha by animateFloatAsState(
+        targetValue = if (emphasisActive) 0.28f else 0f,
+        animationSpec = tween(360, easing = FastOutSlowInEasing),
+        label = "reward emphasis glow"
+    )
+    val elevation = if (emphasisActive) (24 * tier.rewardScale).dp else 8.dp
+
+    Box(
+        modifier = Modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .shadow(
+                elevation = elevation,
+                shape = CircleShape,
+                clip = false
+            )
+            .drawWithContent {
+                if (glowAlpha > 0.01f) {
+                    drawCircle(
+                        color = tier.glowColor.copy(alpha = glowAlpha),
+                        radius = size.maxDimension * tier.chestSizeMultiplier
+                    )
+                }
+                drawContent()
+            }
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun ReinforcementMessage(message: String) {
+    Spacer(modifier = Modifier.height(12.dp))
+
+    Text(
+        text = message,
+        color = Color.White.copy(alpha = 0.88f),
+        style = MaterialTheme.typography.bodyLarge,
+        textAlign = TextAlign.Center
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Text(
+        text = "Tap to continue",
+        color = Color.White.copy(alpha = 0.7f),
+        style = MaterialTheme.typography.labelMedium
+    )
+}
+
 // Coin Reward Screen
 @Composable
 private fun CoinRewardContent(
-    amount: Int
+    amount: Int,
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Icon(
-            imageVector = Icons.Default.Star,
-            contentDescription = null,
-            tint = Color(0xFFFFD700),
-            modifier = Modifier.size(64.dp)
-        )
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                tint = Color(0xFFFFD700),
+                modifier = Modifier.size((64 * emphasisTier.rewardScale).dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "+$amount",
-            style = MaterialTheme.typography.headlineLarge,
-            color = Color(0xFF34D399)
-        )
+            Text(
+                text = "+$amount",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color(0xFF34D399)
+            )
 
-        Text(
-            text = "Coins earned",
-            color = Color.White.copy(alpha = 0.8f)
-        )
+            Text(
+                text = "Coins earned",
+                color = Color.White.copy(alpha = 0.8f)
+            )
+
+            ReinforcementMessage(reinforcementMessage)
+        }
     }
 }
 
@@ -514,44 +721,50 @@ private fun DragonEvolutionRewardContent(
     pet: PetEntity,
     fromStage: Int,
     toStage: Int,
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier,
     onConfirm: () -> Unit
 ) {
     var isTransitionComplete by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .clickable {
-                if (isTransitionComplete) {
-                    onConfirm()
-                }
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        PetPhaseTransition(
-            pet = pet.copy(evolutionStage = toStage),
-            fromStage = fromStage,
-            toStage = toStage,
-            size = IntSize(240, 240),
-            onTransitionCompleted = { isTransitionComplete = true }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = if (isTransitionComplete) "Evolution Complete!" else "Watch your dragon evolve",
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.White
-        )
-
-        if (!isTransitionComplete) {
-            Text(
-                text = "Tap after the transformation to continue",
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 16.sp
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
+                .clickable {
+                    if (isTransitionComplete) {
+                        onConfirm()
+                    }
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            PetPhaseTransition(
+                pet = pet.copy(evolutionStage = toStage),
+                fromStage = fromStage,
+                toStage = toStage,
+                size = IntSize((240 * emphasisTier.rewardScale).toInt(), (240 * emphasisTier.rewardScale).toInt()),
+                onTransitionCompleted = { isTransitionComplete = true }
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = if (isTransitionComplete) "Evolution Complete!" else "Watch your dragon evolve",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White
+            )
+
+            ReinforcementMessage(reinforcementMessage)
+
+            if (!isTransitionComplete) {
+                Text(
+                    text = "Tap after the transformation to continue",
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }
