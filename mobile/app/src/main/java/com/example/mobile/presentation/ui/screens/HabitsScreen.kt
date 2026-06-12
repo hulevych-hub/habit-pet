@@ -79,6 +79,10 @@ fun HabitsScreen(
     val completedToday by habitsViewModel.completedToday.collectAsState(initial = emptyMap())
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    val sortedHabits = habits.sortedWith(
+        compareBy<HabitEntity> { completedToday[it.id] != true }
+            .thenBy { it.name.lowercase() }
+    )
 
     val dailyGoalProgress = if (progressUiState.dailyGoalXp > 0) {
         (progressUiState.dailyGoalProgressXp.toFloat() / progressUiState.dailyGoalXp.toFloat()).coerceIn(0f, 1f)
@@ -149,7 +153,7 @@ fun HabitsScreen(
                 )
             }
 
-            if (habits.isEmpty()) {
+            if (sortedHabits.isEmpty()) {
                 item {
                     EmptyStateCard(
                         title = "Your dragon is ready for its first tiny quest.",
@@ -161,7 +165,7 @@ fun HabitsScreen(
             }
 
             items(
-                items = habits,
+                items = sortedHabits,
                 key = { habit -> habit.id }
             ) { habit ->
                 HabitItem(

@@ -353,6 +353,11 @@ private fun TodayNourishmentSection(
     onNavigateToHabits: () -> Unit,
     onNavigateToHabitDetail: (Long) -> Unit
 ) {
+    val sortedHabits = habits.sortedWith(
+        compareBy<HabitEntity> { completedToday[it.id] != true }
+            .thenBy { it.name.lowercase() }
+    )
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -377,10 +382,10 @@ private fun TodayNourishmentSection(
             )
         }
 
-        if (habits.isEmpty()) {
+        if (sortedHabits.isEmpty()) {
             EmptyHomeQuest(onNavigateToHabits)
         } else {
-            habits.forEach { habit ->
+            sortedHabits.forEach { habit ->
                 HomeHabitItem(
                     habit = habit,
                     completed = completedToday[habit.id] == true,

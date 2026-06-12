@@ -105,7 +105,11 @@ class AchievementViewModel @Inject constructor(
                     _isLoading.value = false
                 }
                 .collect { list ->
-                    _achievements.value = list
+                    _achievements.value = list.sortedWith(
+                        compareByDescending<AchievementEntity> { it.isClaimed }
+                            .thenByDescending { it.isUnlocked }
+                            .thenBy { it.id }
+                    )
                     _isLoading.value = false
                 }
         }

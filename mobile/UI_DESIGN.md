@@ -91,4 +91,4 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ## Asset Notes
 
-No final artwork assets were required for this pass. The implementation uses existing `AnimatedPet` rendering, Material icons, gradient surfaces, and placeholder-style rarity badges.
+No final artwork assets were required for this pass. The implementation uses existing `AnimatedPet` rendering, existing drawable assets for collection previews where available, Material icons, gradient surfaces, and placeholder-style rarity badges.

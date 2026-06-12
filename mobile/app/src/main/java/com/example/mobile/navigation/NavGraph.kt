@@ -79,12 +79,7 @@ fun HabitPetNavGraph(
                     currentRoute = currentRoute,
                     claimableAchievementCount = claimableAchievementCount,
                     onNavigate = { route ->
-                        microFeedbackManager?.triggerTabSwitched()
-                        navController.navigate(route) {
-                            popUpTo("home") { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        navigateToBottomDestination(navController, route, microFeedbackManager)
                     }
                 )
             }
@@ -100,7 +95,7 @@ fun HabitPetNavGraph(
             ) {
                 composable("home") {
                     HomeScreen(
-                        onNavigateToHabits = { navController.navigate("habits") },
+                        onNavigateToHabits = { navigateToBottomDestination(navController, "habits", microFeedbackManager) },
                         onNavigateToHabitDetail = { habitId -> navController.navigate("habitDetail/$habitId") }
                     )
                 }
@@ -141,6 +136,22 @@ fun HabitPetNavGraph(
                 composable("notification_settings") { NotificationSettingsScreen() }
             }
         }
+    }
+}
+
+private fun navigateToBottomDestination(
+    navController: NavHostController,
+    route: String,
+    microFeedbackManager: MicroFeedbackManager?
+) {
+    microFeedbackManager?.triggerTabSwitched()
+    navController.navigate(route) {
+        popUpTo(navController.graph.startDestinationId) {
+            inclusive = false
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = false
     }
 }
 

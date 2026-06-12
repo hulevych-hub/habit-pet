@@ -51,9 +51,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
@@ -77,17 +77,11 @@ class RewardsViewModel @Inject constructor(
     val backgrounds = inventoryItemRepository.getItemsByType(CustomizationTypes.BACKGROUND)
     val auras = inventoryItemRepository.getItemsByType(CustomizationTypes.AURA)
 
-    fun purchaseItem(itemId: Long) = viewModelScope.launch {
-        inventoryItemRepository.purchaseItem(itemId)
-    }
+    suspend fun purchaseItem(itemId: Long): Int = inventoryItemRepository.purchaseItem(itemId)
 
-    fun equipItem(itemType: String, itemId: String) = viewModelScope.launch {
-        petRepository.equipItem(itemType, itemId)
-    }
+    suspend fun equipItem(itemType: String, itemId: String): Int = petRepository.equipItem(itemType, itemId)
 
-    fun unequipItem(itemType: String) = viewModelScope.launch {
-        petRepository.unequipItem(itemType)
-    }
+    suspend fun unequipItem(itemType: String): Int = petRepository.unequipItem(itemType)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,6 +94,7 @@ fun RewardsScreen(
     var selectedRarity by rememberSaveable { mutableStateOf<Rarity?>(null) }
     var selectedCollection by rememberSaveable { mutableStateOf(CollectionTab.Owned) }
     var activeInspectItem by remember { mutableStateOf<InventoryItemEntity?>(null) }
+    val actionScope = rememberCoroutineScope()
 
     val items by selectedTypeTab.itemsFlow(rewardsViewModel).collectAsState(initial = emptyList())
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
@@ -201,12 +196,16 @@ fun RewardsScreen(
                         currentWalletBalance = progressUiState.totalCoins,
                         onClose = { activeInspectItem = null },
                         onActionExecute = {
-                            when {
-                                item.isEquipped -> rewardsViewModel.unequipItem(item.type)
-                                item.isPurchased -> rewardsViewModel.equipItem(item.type, item.itemId)
-                                else -> rewardsViewModel.purchaseItem(item.id)
+                            actionScope.launch {
+                                val result = when {
+                                    item.isEquipped -> rewardsViewModel.unequipItem(item.type)
+                                    item.isPurchased -> rewardsViewModel.equipItem(item.type, item.itemId)
+                                    else -> rewardsViewModel.purchaseItem(item.id)
+                                }
+                                if (result > 0) {
+                                    activeInspectItem = null
+                                }
                             }
-                            activeInspectItem = null
                         }
                     )
                 }
