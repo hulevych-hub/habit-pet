@@ -51,10 +51,10 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ### Habits
 
-- Header includes motivational copy, streak metric, daily XP metric, and daily goal progress.
-- Habit cards are premium cards with category icons and streak text.
-- Completion affordance is a prominent star/check button.
-- Long press opens actions for edit, delete, and session-level skip.
+- Header is a lavender goal card with streak copy, daily XP progress, a segmented progress bar, and bonus chest emphasis.
+- Habit cards are premium cards with completion affordance, category badges, category labels, and visible edit/delete actions.
+- Completion affordance is a prominent check button.
+- Long press still opens actions for edit, delete, and session-level skip.
 
 ### Achievements
 

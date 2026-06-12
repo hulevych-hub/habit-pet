@@ -1,16 +1,16 @@
 # Graph Report - mobile  (2026-06-12)
 
 ## Corpus Check
-- 142 files · ~728,958 words
+- 142 files · ~729,365 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1711 nodes · 2685 edges · 128 communities (103 shown, 25 thin omitted)
+- 1715 nodes · 2700 edges · 128 communities (103 shown, 25 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 47 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7817b8c4`
+- Built from commit: `ffdf4338`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -154,6 +154,8 @@
 10. `ExpConfig` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `HabitPetNavGraph()` --calls--> `AchievementScreen()`  [INFERRED]
+  app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt
 - `HabitPetNavGraph()` --calls--> `HabitCreationScreen()`  [INFERRED]
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt
 - `HabitPetNavGraph()` --calls--> `HabitDetailScreen()`  [INFERRED]
@@ -162,8 +164,6 @@
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitEditScreen.kt
 - `HabitPetNavGraph()` --calls--> `HabitsScreen()`  [INFERRED]
   app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt
-- `HabitPetNavGraph()` --calls--> `HomeScreen()`  [INFERRED]
-  app/src/main/java/com/example/mobile/navigation/NavGraph.kt → app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
 
 ## Import Cycles
 - None detected.
@@ -171,8 +171,8 @@
 ## Communities (128 total, 25 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (51): AchievementViewModel, Boolean, Int, MicroFeedbackManager, Modifier, NavHostController, String, Modifier (+43 more)
+Cohesion: 0.10
+Nodes (37): Boolean, Int, MicroFeedbackManager, Modifier, NavHostController, String, ActivityTimelineViewModel, Boolean (+29 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.32
@@ -191,8 +191,8 @@ Cohesion: 0.16
 Nodes (14): Boolean, ChestType, HabitCompletionEntity, HabitEntity, Int, List, Long, PetEntity (+6 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.09
-Nodes (44): Boolean, Color, Float, Int, Long, Modifier, String, androidx (+36 more)
+Cohesion: 0.08
+Nodes (53): Boolean, Color, Float, Int, Long, Modifier, String, androidx (+45 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.07
@@ -443,8 +443,8 @@ Cohesion: 0.18
 Nodes (10): Absence of Calendar-Based Rewards, Activity-Based Daily Systems, Configuration, Current Implementation, DAILY_REWARDS, Data Model, Known Gaps, Overview (+2 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.20
-Nodes (13): androidx, Boolean, Context, List, Modifier, String, NotificationSettingsViewModel, ColorPaletteSettings (+5 more)
+Cohesion: 0.22
+Nodes (12): androidx, Boolean, Context, List, Modifier, String, ColorPaletteSettings, NotificationSettingsScreen() (+4 more)
 
 ### Community 87 - "Community 87"
 Cohesion: 0.23
@@ -455,8 +455,8 @@ Cohesion: 0.20
 Nodes (9): Configuration, Current Implementation, Data Flow, DATA_MODEL, Entity Relationships, Known Gaps, Overview, Rules (+1 more)
 
 ### Community 89 - "Community 89"
-Cohesion: 0.16
-Nodes (34): Boolean, Float, Int, Modifier, PetEntity, String, Unit, Boolean (+26 more)
+Cohesion: 0.27
+Nodes (25): Boolean, Float, Int, Modifier, PetEntity, String, Unit, AnimatedPet() (+17 more)
 
 ### Community 90 - "Community 90"
 Cohesion: 0.22
@@ -471,8 +471,8 @@ Cohesion: 0.18
 Nodes (8): Boolean, ChestType, Float, Int, Long, String, ActivityTimelineEngine, log()
 
 ### Community 93 - "Community 93"
-Cohesion: 0.13
-Nodes (24): Boolean, Color, HomeScreenViewModel, Int, InventoryItemEntity, Long, Modifier, Rarity (+16 more)
+Cohesion: 0.07
+Nodes (38): AchievementViewModel, Modifier, String, AchievementEntity, Float, Int, List, Modifier (+30 more)
 
 ### Community 94 - "Community 94"
 Cohesion: 0.38
@@ -492,7 +492,7 @@ Nodes (7): Boolean, ChestType, Int, Long, Rarity, EconomyConfig, Double
 
 ### Community 100 - "Community 100"
 Cohesion: 0.16
-Nodes (19): Boolean, Color, Float, HabitEntity, HomeScreenViewModel, Int, Long, Modifier (+11 more)
+Nodes (24): androidx, Boolean, Color, Float, HabitEntity, HomeScreenViewModel, Int, Long (+16 more)
 
 ### Community 101 - "Community 101"
 Cohesion: 0.40
@@ -571,24 +571,24 @@ Cohesion: 0.60
 Nodes (5): CoinGained, HabitCompleted, MicroFeedbackEvent, TabSwitched, XpGained
 
 ## Knowledge Gaps
-- **544 isolated node(s):** `PreToolUse`, `deny`, `allow`, `AchievementDatabaseInitializer`, `StatisticsDatabaseInitializer` (+539 more)
+- **543 isolated node(s):** `PreToolUse`, `deny`, `allow`, `AchievementDatabaseInitializer`, `StatisticsDatabaseInitializer` (+538 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `HabitPetNavGraph()` connect `Community 0` to `Community 100`, `Community 5`, `Community 8`, `Community 42`, `Community 117`, `Community 86`, `Community 89`, `Community 91`, `Community 93`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
+- **Why does `HabitPetNavGraph()` connect `Community 0` to `Community 100`, `Community 5`, `Community 8`, `Community 42`, `Community 117`, `Community 86`, `Community 91`, `Community 93`?**
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
 - **Why does `RewardsScreen()` connect `Community 93` to `Community 0`, `Community 5`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `PetScreen()` connect `Community 89` to `Community 0`, `Community 5`?**
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
+- **Why does `RewardsViewModel` connect `Community 93` to `Community 117`?**
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `AnimatedPet()` (e.g. with `DragonHero()` and `HomeScreen()`) actually correct?**
   _`AnimatedPet()` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 14 inferred relationships involving `HabitPetNavGraph()` (e.g. with `.onCreate()` and `AchievementScreen()`) actually correct?**
   _`HabitPetNavGraph()` has 14 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `PreToolUse`, `deny`, `allow` to the rest of the system?**
-  _544 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _543 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06298701298701298 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09871794871794871 - nodes in this community are weakly interconnected._

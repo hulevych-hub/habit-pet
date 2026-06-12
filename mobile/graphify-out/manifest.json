@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt": {
-    "mtime": 1781248156.0659635,
-    "ast_hash": "37a4b9faefd11ea29bbe2830502a43a0",
+    "mtime": 1781251278.442891,
+    "ast_hash": "5079141ff3b01e1f6863a6154ca46fd0",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt": {
-    "mtime": 1781247580.488348,
-    "ast_hash": "deef800b10658913e355df325571614a",
+    "mtime": 1781251916.4721365,
+    "ast_hash": "f188bac069ddf2d3b42e4dddea1c0e86",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
@@ -850,8 +850,8 @@
     "semantic_hash": ""
   },
   "UI_DESIGN.md": {
-    "mtime": 1781248430.976232,
-    "ast_hash": "37e79199bea69e3c4013d8148738e44b",
+    "mtime": 1781251219.9668236,
+    "ast_hash": "5ecd508293f484d5760787fbcff233b7",
     "semantic_hash": ""
   }
 }

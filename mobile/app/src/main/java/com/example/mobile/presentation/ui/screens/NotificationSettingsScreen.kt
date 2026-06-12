@@ -35,15 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobile.presentation.viewmodel.NotificationSettingsViewModel
 import com.example.mobile.util.NotificationPrefs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationSettingsScreen(
-    viewModel: NotificationSettingsViewModel = viewModel()
-) {
+fun NotificationSettingsScreen() {
     val context = LocalContext.current
 
     Scaffold(
@@ -63,22 +59,17 @@ fun NotificationSettingsScreen(
                 SettingsHero(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
                 )
+            }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(settingsItems(context)) { setting ->
-                        SettingRow(
-                            title = setting.title,
-                            description = setting.description,
-                            icon = setting.icon,
-                            isChecked = setting.isChecked,
-                            onCheckedChange = setting.onCheckedChange,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    }
-                }
+            items(settingsItems(context)) { setting ->
+                SettingRow(
+                    title = setting.title,
+                    description = setting.description,
+                    icon = setting.icon,
+                    isChecked = setting.isChecked,
+                    onCheckedChange = setting.onCheckedChange,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
             }
         }
     }
