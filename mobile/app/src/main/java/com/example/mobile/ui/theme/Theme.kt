@@ -1,14 +1,12 @@
 package com.example.mobile.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import com.example.mobile.R
-import com.example.mobile.ui.theme.ColorPalette
 
 @Composable
 fun HabitPetTheme(
@@ -17,26 +15,44 @@ fun HabitPetTheme(
 ) {
     val colorScheme = when {
         darkTheme -> darkColorScheme(
-            primary = ColorPalette.Purple500,
-            onPrimary = ColorPalette.Purple50,
-            secondary = ColorPalette.Teal200,
-            onSecondary = ColorPalette.Teal900,
-            background = ColorPalette.Background,
-            onBackground = ColorPalette.Purple900,
-            surface = ColorPalette.Surface,
-            onSurface = ColorPalette.Purple900,
-            error = ColorPalette.Red700
+            primary = ColorPalette.CosmicLavender,
+            onPrimary = Color.White,
+            primaryContainer = ColorPalette.SoftAmethyst.copy(alpha = 0.24f),
+            onPrimaryContainer = Color.White,
+            secondary = ColorPalette.MintGrass,
+            onSecondary = ColorPalette.DeepViolet,
+            secondaryContainer = ColorPalette.MintGrass.copy(alpha = 0.18f),
+            onSecondaryContainer = ColorPalette.SoftInk,
+            tertiary = ColorPalette.HoneyAmber,
+            onTertiary = ColorPalette.SoftInk,
+            background = Color(0xFF151225),
+            onBackground = ColorPalette.CardWhite,
+            surface = Color(0xFF1D1A31),
+            onSurface = ColorPalette.CardWhite,
+            surfaceVariant = Color(0xFF2A2642),
+            onSurfaceVariant = Color(0xFFE6E0F7),
+            outline = Color(0xFF4A4468),
+            error = ColorPalette.Danger
         )
         else -> lightColorScheme(
-            primary = ColorPalette.Purple500,
-            onPrimary = ColorPalette.Purple50,
-            secondary = ColorPalette.Teal200,
-            onSecondary = ColorPalette.Teal900,
-            background = ColorPalette.Background,
-            onBackground = ColorPalette.Purple900,
-            surface = ColorPalette.Surface,
-            onSurface = ColorPalette.Purple900,
-            error = ColorPalette.Red700
+            primary = ColorPalette.CosmicLavender,
+            onPrimary = Color.White,
+            primaryContainer = ColorPalette.SoftAmethyst.copy(alpha = 0.20f),
+            onPrimaryContainer = ColorPalette.SoftInk,
+            secondary = ColorPalette.MintGrass,
+            onSecondary = ColorPalette.DeepViolet,
+            secondaryContainer = ColorPalette.MintGrass.copy(alpha = 0.18f),
+            onSecondaryContainer = ColorPalette.SoftInk,
+            tertiary = ColorPalette.HoneyAmber,
+            onTertiary = ColorPalette.SoftInk,
+            background = ColorPalette.WarmAlabaster,
+            onBackground = ColorPalette.SoftInk,
+            surface = ColorPalette.CardWhite,
+            onSurface = ColorPalette.SoftInk,
+            surfaceVariant = Color(0xFFF1EDFF),
+            onSurfaceVariant = ColorPalette.MutedInk,
+            outline = ColorPalette.DividerMist,
+            error = ColorPalette.Danger
         )
     }
 
@@ -47,7 +63,4 @@ fun HabitPetTheme(
     )
 }
 
-private val Typography = Typography(
-    // You can customize typography here if needed
-    // For now, using defaults
-)
+private val Typography = Typography()

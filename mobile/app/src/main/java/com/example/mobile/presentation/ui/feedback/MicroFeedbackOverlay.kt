@@ -41,6 +41,9 @@ fun MicroFeedbackOverlay(
 
     LaunchedEffect(manager) {
         manager.events.collect { event ->
+            if (event is MicroFeedbackEvent.TabSwitched) {
+                return@collect
+            }
             currentEvent = event
             if (event is MicroFeedbackEvent.XpGained) {
                 xpPulseProgress = 1f

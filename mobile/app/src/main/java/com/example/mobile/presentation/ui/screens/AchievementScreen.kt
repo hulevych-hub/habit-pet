@@ -5,23 +5,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -30,317 +29,287 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.AchievementEntity
-import com.example.mobile.data.local.entities.PetEntity
-import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
+import androidx.compose.runtime.collectAsState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun AchievementScreen(
     achievementViewModel: AchievementViewModel = hiltViewModel()
 ) {
     val achievements by achievementViewModel.achievements.collectAsState()
-    val isLoading by achievementViewModel.isLoading.collectAsState()
-    val error by achievementViewModel.error.collectAsState()
-    val stats by achievementViewModel.statistics.collectAsState()
+    val statistics by achievementViewModel.statistics.collectAsState()
     val pet by achievementViewModel.pet.collectAsState()
     val ownedCustomizations by achievementViewModel.ownedCustomizations.collectAsState()
     val habitCount by achievementViewModel.habitCount.collectAsState()
-
-    val unlockedCount = achievements.count { it.isUnlocked }
-    val claimableCount = achievements.count { it.isUnlocked && !it.isClaimed }
-    val completionProgress = if (achievements.isEmpty()) 0f else {
-        unlockedCount.toFloat() / achievements.size.toFloat()
-    }
+    val isLoading by achievementViewModel.isLoading.collectAsState()
+    val error by achievementViewModel.error.collectAsState()
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Achievements") }
+            androidx.compose.material3.CenterAlignedTopAppBar(
+                title = { Text("Achievements", color = ColorPaletteAchievements.Ink) }
             )
         }
     ) { padding ->
-        Box(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            item {
+                AchievementHeader(
+                    claimableCount = achievements.count { it.isUnlocked && !it.isClaimed },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
+                )
+            }
+
             when {
-                isLoading -> {
+                isLoading -> item {
                     Text(
                         text = "Loading achievements...",
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(24.dp)
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-
-                !error.isNullOrBlank() -> {
+                !error.isNullOrBlank() -> item {
                     Text(
-                        text = error!!,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(24.dp)
+                        text = error.orEmpty(),
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
-
-                achievements.isEmpty() -> {
+                achievements.isEmpty() -> item {
                     EmptyStateCard(
                         title = "Your first milestone is close",
                         message = "Finish a habit, earn XP, or grow your streak to awaken the first achievement.",
                         hint = "Every small win moves your dragon closer to its first badge.",
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(16.dp)
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
+            }
 
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        item {
-                            AchievementSummary(
-                                unlockedCount = unlockedCount,
-                                totalCount = achievements.size,
-                                claimableCount = claimableCount,
-                                progress = completionProgress
-                            )
-                        }
-
-                        items(
-                            items = achievements,
-                            key = { it.id }
-                        ) { achievement ->
-                            AchievementItem(
-                                achievement = achievement,
-                                stats = stats,
-                                pet = pet,
-                                ownedCustomizations = ownedCustomizations,
-                                habitCount = habitCount,
-                                viewModel = achievementViewModel
-                            )
-                        }
-                    }
-                }
+            items(
+                items = achievements,
+                key = { achievement -> achievement.id }
+            ) { achievement ->
+                AchievementCard(
+                    achievement = achievement,
+                    title = AchievementsConfig.achievementById(achievement.id)?.name ?: achievement.id,
+                    description = AchievementsConfig.achievementById(achievement.id)?.description ?: "Keep growing.",
+                    progress = achievementViewModel.progressFor(
+                        achievement = achievement,
+                        stats = statistics,
+                        petState = pet,
+                        ownedCustomizationCount = ownedCustomizations,
+                        currentHabitCount = habitCount
+                    ),
+                    progressFraction = achievementViewModel.progressFraction(achievement.progress, achievement),
+                    progressLabel = achievementViewModel.progressLabel(achievement.progress, achievement),
+                    rewards = achievementViewModel.rewardLabels(achievement),
+                    onClaim = { achievementViewModel.claimAchievement(achievement.id) }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun AchievementSummary(
-    unlockedCount: Int,
-    totalCount: Int,
+private fun AchievementHeader(
     claimableCount: Int,
-    progress: Float
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.surfaceVariant,
-                RoundedCornerShape(16.dp)
-            )
-            .padding(16.dp)
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = ColorPaletteAchievements.Card),
+        shape = RoundedCornerShape(30.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Text(
-            text = "Progress",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LinearProgressIndicator(
-            progress = { progress.coerceIn(0f, 1f) },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "$unlockedCount / $totalCount unlocked",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        Text(
-            text = "$claimableCount ready to claim",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
-@Composable
-private fun AchievementItem(
-    achievement: AchievementEntity,
-    stats: StatisticsEntity,
-    pet: PetEntity,
-    ownedCustomizations: Int,
-    habitCount: Int,
-    viewModel: AchievementViewModel
-) {
-    val currentValue = viewModel.progressFor(
-        achievement = achievement,
-        stats = stats,
-        petState = pet,
-        ownedCustomizationCount = ownedCustomizations,
-        currentHabitCount = habitCount
-    )
-    val progress = viewModel.progressFraction(currentValue, achievement).coerceIn(0f, 1f)
-    val definition = AchievementsConfig.achievementById(achievement.id)
-    val isClaimable = achievement.isUnlocked && !achievement.isClaimed
-    val isClaimed = achievement.isClaimed
-    val statusText = when {
-        isClaimed -> "Claimed"
-        isClaimable -> "Ready to claim"
-        achievement.isUnlocked -> "Unlocked"
-        else -> "Locked"
-    }
-    val statusColor = when {
-        isClaimed -> MaterialTheme.colorScheme.onSurfaceVariant
-        isClaimable -> Color(0xFFFFD700)
-        achievement.isUnlocked -> Color(0xFF34D399)
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    val progressText = viewModel.progressLabel(currentValue, achievement)
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.surfaceVariant,
-                RoundedCornerShape(16.dp)
-            )
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorPaletteAchievements.LavenderSoft)
+                .padding(18.dp)
         ) {
-            Icon(
-                imageVector = if (achievement.isUnlocked) Icons.Default.CheckCircle else Icons.Default.Lock,
-                contentDescription = null,
-                tint = if (achievement.isUnlocked) Color(0xFF34D399) else Color.Gray,
-                modifier = Modifier.size(32.dp)
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.EmojiEvents,
+                        contentDescription = null,
+                        tint = ColorPaletteAchievements.Amber,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Text(
+                        text = "Milestone nest",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = ColorPaletteAchievements.Ink
+                    )
+                }
                 Text(
-                    text = definition?.name ?: achievement.id,
-                    style = MaterialTheme.typography.titleMedium
+                    text = "Claimable rewards: $claimableCount",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = ColorPaletteAchievements.Violet
                 )
-
                 Text(
-                    text = definition?.description ?: "Milestone progress",
+                    text = "Each achievement is a cozy keepsake from your real-life rhythm.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
-                Text(
-                    text = progressText,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            if (isClaimable) {
-                Icon(
-                    imageVector = Icons.Default.EmojiEvents,
-                    contentDescription = null,
-                    tint = Color(0xFFFFD700),
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-        }
-
-        LinearProgressIndicator(
-            progress = { progress },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        RewardChips(viewModel.rewardLabels(achievement))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = statusText,
-                style = MaterialTheme.typography.bodySmall,
-                color = statusColor
-            )
-
-            if (isClaimable) {
-                Button(
-                    onClick = { viewModel.claimAchievement(achievement.id) }
-                ) {
-                    Text("Claim")
-                }
             }
         }
     }
 }
 
 @Composable
-private fun RewardChips(rewards: List<String>) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+private fun AchievementCard(
+    achievement: AchievementEntity,
+    title: String,
+    description: String,
+    progress: Int,
+    progressFraction: Float,
+    progressLabel: String,
+    rewards: List<String>,
+    onClaim: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 7.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = when {
+                achievement.isClaimed -> ColorPaletteAchievements.Claimed
+                achievement.isUnlocked -> ColorPaletteAchievements.Card
+                else -> ColorPaletteAchievements.Locked
+            }
+        ),
+        shape = RoundedCornerShape(28.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (achievement.isUnlocked) 2.dp else 0.dp)
     ) {
-        rewards.forEach { reward ->
-            Surface(
-                shape = RoundedCornerShape(999.dp),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Icon(
-                        imageVector = rewardIcon(reward),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp)
-                    )
+                    Surface(
+                        shape = RoundedCornerShape(18.dp),
+                        color = if (achievement.isUnlocked) ColorPaletteAchievements.Amber.copy(alpha = 0.18f) else ColorPaletteAchievements.Mystery
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = if (achievement.isUnlocked) ColorPaletteAchievements.Amber else ColorPaletteAchievements.Card,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(22.dp)
+                        )
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = ColorPaletteAchievements.Ink
+                        )
+                        Text(
+                            text = description,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                if (achievement.isClaimed) {
                     Text(
-                        text = reward,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Claimed",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = ColorPaletteAchievements.Mint,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                     )
                 }
+            }
+
+            LinearProgressIndicator(
+                progress = progressFraction.coerceIn(0f, 1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp),
+                color = if (achievement.isUnlocked) ColorPaletteAchievements.Amber else ColorPaletteAchievements.Violet.copy(alpha = 0.5f)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = progressLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = rewards.joinToString(" • "),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (achievement.isUnlocked) ColorPaletteAchievements.Amber else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Button(
+                onClick = onClaim,
+                enabled = achievement.isUnlocked && !achievement.isClaimed,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (achievement.isUnlocked) ColorPaletteAchievements.Violet else ColorPaletteAchievements.Mystery
+                ),
+                shape = RoundedCornerShape(999.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = when {
+                        achievement.isClaimed -> "Reward Collected"
+                        achievement.isUnlocked -> "Claim Reward"
+                        else -> "Locked at $progress"
+                    },
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
 }
 
-@Composable
-private fun rewardIcon(reward: String): androidx.compose.ui.graphics.vector.ImageVector {
-    return when {
-        reward.contains("coins", ignoreCase = true) -> Icons.Default.Star
-        reward.contains("EXP", ignoreCase = true) -> Icons.Default.Star
-        reward.contains("chest", ignoreCase = true) -> Icons.Default.EmojiEvents
-        else -> Icons.Default.CheckCircle
-    }
+private object ColorPaletteAchievements {
+    val Card = Color(0xFFFFFFFF)
+    val LavenderSoft = Color(0xFFF2EEFF)
+    val Claimed = Color(0xFFE8FBF2)
+    val Locked = Color(0xFFEDEAF6)
+    val Violet = Color(0xFF8A76F9)
+    val Amber = Color(0xFFFFB84D)
+    val Mint = Color(0xFF4EDB95)
+    val Mystery = Color(0xFF3F3A6B)
+    val Ink = Color(0xFF302B4A)
 }

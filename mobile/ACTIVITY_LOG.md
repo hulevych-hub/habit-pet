@@ -59,7 +59,7 @@ New event types can be added to `GameEventType` and mapped in `GameEventFactory`
 - Yesterday
 - Earlier
 
-Event cards show an icon, title, time-ago label, description, and a lightweight reward preview. Level-up, evolution, streak milestone, and surprise reward events use larger milestone-style cards. The `FIRST_DAILY_LOGIN` event appears as a "Welcome back" card in the timeline.
+The timeline now renders as a central story path. Event cards alternate left and right around the path, with a colored node for each event. Event cards show an icon, title, time-ago label, description, reinforcement message, and a lightweight reward preview. Level-up, evolution, streak milestone, daily goal, surprise reward, and combo milestone events use larger milestone-style cards with stronger tinting. The `FIRST_DAILY_LOGIN` event appears as a "Welcome back" card in the timeline.
 
 ## Surprise Reward
 

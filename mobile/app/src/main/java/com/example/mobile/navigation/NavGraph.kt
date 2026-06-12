@@ -1,11 +1,20 @@
 package com.example.mobile.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CardGiftcard
@@ -18,7 +27,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -162,13 +170,62 @@ private fun HabitPetBottomBar(
     )
 
     NavigationBar {
-        destinations.forEach { destination ->
-            NavigationBarItem(
-                selected = currentRoute == destination.route,
-                onClick = { onNavigate(destination.route) },
-                icon = { BottomBarIcon(destination) },
-                label = { Text(destination.label) }
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            destinations.forEach { destination ->
+                HabitPetBottomNavItem(
+                    destination = destination,
+                    selected = currentRoute == destination.route,
+                    modifier = Modifier.weight(1f),
+                    onNavigate = { onNavigate(destination.route) }
+                )
+            }
+        }
+    }
+}
+
+private val NavSelected = Color(0xFF8A76F9)
+private val NavUnselected = Color(0xFF6F6A8A)
+private val NavIndicator = Color(0xFFEDE7FF)
+
+@Composable
+private fun HabitPetBottomNavItem(
+    destination: BottomDestination,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onNavigate: () -> Unit
+) {
+    val indicatorWidth by animateDpAsState(if (selected) 58.dp else 48.dp)
+
+    Box(
+        modifier = modifier
+            .height(64.dp)
+            .clickable(onClick = onNavigate),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .width(indicatorWidth)
+                .height(40.dp)
+                .background(
+                    if (selected) NavIndicator else Color.Transparent,
+                    RoundedCornerShape(20.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                BottomBarIcon(destination)
+                Text(
+                    text = destination.label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (selected) NavSelected else NavUnselected
+                )
+            }
         }
     }
 }

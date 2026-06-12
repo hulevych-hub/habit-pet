@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,12 +25,15 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.GameEventEntity
@@ -79,99 +84,98 @@ fun ActivityTimelineScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Activity") }
+            androidx.compose.material3.CenterAlignedTopAppBar(
+                title = { Text("Activity", color = ColorPaletteActivity.Ink) }
             )
         }
     ) { padding ->
-        Column(
+        LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ProgressHeader(
-                state = ProgressHeaderState(
-                    level = progressUiState.pet.level,
-                    xp = progressUiState.pet.xp,
-                    evolutionStage = progressUiState.pet.evolutionStage,
-                    totalCoins = progressUiState.totalCoins,
-                    globalStreak = progressUiState.globalStreak,
-                    currentCombo = progressUiState.currentCombo,
-                    lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
+            item {
+                ActivityHeader(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
                 )
-            )
+                ProgressHeader(
+                    state = ProgressHeaderState(
+                        level = progressUiState.pet.level,
+                        xp = progressUiState.pet.xp,
+                        evolutionStage = progressUiState.pet.evolutionStage,
+                        totalCoins = progressUiState.totalCoins,
+                        globalStreak = progressUiState.globalStreak,
+                        currentCombo = progressUiState.currentCombo,
+                        lastHabitCompletionTimestamp = progressUiState.lastHabitCompletionTimestamp
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
 
             when {
-                isLoading && events.isEmpty() -> {
+                isLoading && events.isEmpty() -> item {
                     Text(
                         text = "Loading your dragon's story...",
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(24.dp)
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-
-                !error.isNullOrBlank() -> {
+                !error.isNullOrBlank() -> item {
                     Text(
-                        text = error!!,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(24.dp)
+                        text = error.orEmpty(),
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
-
-                events.isEmpty() -> {
+                events.isEmpty() -> item {
                     EmptyStateCard(
                         title = "Your story begins here",
                         message = "Complete one small habit today and your dragon will start remembering your journey.",
                         hint = "Your next habit completion will become the first memory in this timeline.",
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
+            }
 
-                else -> {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+            groups.forEach { group ->
+                item {
+                    DayHeader(label = group.label)
+                }
+
+                items(
+                    items = group.events,
+                    key = { it.id }
+                ) { event ->
+                    val index = events.indexOf(event)
+                    ActivityTimelineItem(
+                        event = event,
+                        isLeft = index % 2 == 0,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp)
+                    )
+                }
+            }
+
+            if (hasMore) {
+                item {
+                    Button(
+                        onClick = { activityTimelineViewModel.loadMore() },
+                        enabled = !isLoadingMore,
+                        colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteActivity.Violet),
+                        shape = RoundedCornerShape(999.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
-                        groups.forEach { group ->
-                            item {
-                                DayHeader(label = group.label)
-                            }
-
-                            items(
-                                items = group.events,
-                                key = { it.id }
-                            ) { event ->
-                                ActivityTimelineItem(event = event)
-                            }
+                        if (isLoadingMore) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = Color.White
+                            )
                         }
-
-                        if (hasMore) {
-                            item {
-                                Button(
-                                    onClick = { activityTimelineViewModel.loadMore() },
-                                    enabled = !isLoadingMore,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 8.dp)
-                                ) {
-                                    if (isLoadingMore) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(16.dp),
-                                            color = MaterialTheme.colorScheme.onPrimary
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(if (isLoadingMore) "Loading older memories" else "Load older memories")
-                                }
-                            }
-                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(if (isLoadingMore) "Loading older memories" else "Load older memories")
                     }
                 }
             }
@@ -180,17 +184,58 @@ fun ActivityTimelineScreen(
 }
 
 @Composable
-private fun DayHeader(label: String) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
-    )
+private fun ActivityHeader(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = ColorPaletteActivity.Card),
+        shape = RoundedCornerShape(30.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorPaletteActivity.LavenderSoft)
+                .padding(18.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "Dragon story path",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = ColorPaletteActivity.Ink
+                )
+                Text(
+                    text = "Every habit, reward, and milestone becomes a memory your dragon carries forward.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
 }
 
 @Composable
-private fun ActivityTimelineItem(event: GameEventEntity) {
+private fun DayHeader(label: String) {
+    Surface(
+        modifier = Modifier.padding(vertical = 10.dp),
+        shape = RoundedCornerShape(999.dp),
+        color = Color.Transparent
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleMedium,
+            color = ColorPaletteActivity.Violet,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+        )
+    }
+}
+
+@Composable
+private fun ActivityTimelineItem(
+    event: GameEventEntity,
+    isLeft: Boolean,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val reinforcementMessage = remember(event.id) {
         ReinforcementMessageProvider.timelineMessage(context, event)
@@ -201,67 +246,130 @@ private fun ActivityTimelineItem(event: GameEventEntity) {
         event.type == GameEventType.DAILY_GOAL_COMPLETED.name ||
         event.type == GameEventType.SURPRISE_REWARD.name ||
         event.type == GameEventType.COMBO_MILESTONE.name
+    val accent = rarityColor(event.rarity)
 
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (isLeft) {
+            TimelineEventCard(
+                event = event,
+                reinforcementMessage = reinforcementMessage,
+                isMilestone = isMilestone,
+                accent = accent,
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        TimelineNode(accent = accent)
+
+        if (!isLeft) {
+            TimelineEventCard(
+                event = event,
+                reinforcementMessage = reinforcementMessage,
+                isMilestone = isMilestone,
+                accent = accent,
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun TimelineNode(accent: Color) {
     Box(
         modifier = Modifier
-            .fillMaxWidth(if (isMilestone) 1f else 0.96f)
-            .background(
-                color = if (isMilestone) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(if (isMilestone) 24.dp else 18.dp)
-            )
-            .padding(if (isMilestone) 18.dp else 14.dp)
+            .size(28.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(34.dp)
+                .background(ColorPaletteActivity.Line, RoundedCornerShape(999.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = iconForEvent(event.type),
-                contentDescription = null,
-                tint = rarityColor(event.rarity),
-                modifier = Modifier.size(if (isMilestone) 34.dp else 28.dp)
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .background(accent, RoundedCornerShape(999.dp)),
+                contentAlignment = Alignment.Center
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = event.title,
-                        style = if (isMilestone) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        text = timeAgo(event.timestamp),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Text(
-                    text = event.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Text(
-                    text = reinforcementMessage,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color(0xFFB45309)
-                )
-
-                Text(
-                    text = rewardPreview(event),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = rarityColor(event.rarity)
+                Box(
+                    modifier = Modifier
+                        .size(7.dp)
+                        .background(Color.White, RoundedCornerShape(999.dp))
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun TimelineEventCard(
+    event: GameEventEntity,
+    reinforcementMessage: String,
+    isMilestone: Boolean,
+    accent: Color,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = if (isMilestone) accent.copy(alpha = 0.12f) else ColorPaletteActivity.Card
+        ),
+        shape = RoundedCornerShape(if (isMilestone) 26.dp else 22.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isMilestone) 3.dp else 1.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = iconForEvent(event.type),
+                    contentDescription = null,
+                    tint = accent,
+                    modifier = Modifier.size(if (isMilestone) 30.dp else 24.dp)
+                )
+                Text(
+                    text = timeAgo(event.timestamp),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Text(
+                text = event.title,
+                style = if (isMilestone) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
+                color = ColorPaletteActivity.Ink
+            )
+            Text(
+                text = event.description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = reinforcementMessage,
+                style = MaterialTheme.typography.labelMedium,
+                color = ColorPaletteActivity.Amber
+            )
+            Text(
+                text = rewardPreview(event),
+                style = MaterialTheme.typography.labelMedium,
+                color = accent
+            )
         }
     }
 }
@@ -346,3 +454,12 @@ private data class TimelineGroup(
 )
 
 private const val DAY_MILLIS = 24L * 60L * 60L * 1000L
+
+private object ColorPaletteActivity {
+    val Card = Color(0xFFFFFFFF)
+    val LavenderSoft = Color(0xFFF2EEFF)
+    val Violet = Color(0xFF8A76F9)
+    val Amber = Color(0xFFFFB84D)
+    val Line = Color(0xFFE5DDFF)
+    val Ink = Color(0xFF302B4A)
+}

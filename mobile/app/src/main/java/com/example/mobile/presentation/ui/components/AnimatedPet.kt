@@ -42,14 +42,14 @@ import com.example.mobile.util.PetTransitionPrefs
 fun AnimatedPet(
     pet: PetEntity,
     modifier: Modifier = Modifier,
-    size: IntSize = IntSize(200, 200)
+    size: IntSize = IntSize(200, 200),
+    showNameOverlay: Boolean = true
 ) {
     val evolutionStage = pet.evolutionStage.takeIf { it in 0..4 } ?: 0
 
     // Container with proper sizing
     Box(
         modifier = modifier
-            .size(size.width.dp, size.height.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
         // Layered rendering: Aura -> Background -> Pet -> Outfit
@@ -77,22 +77,24 @@ fun AnimatedPet(
             modifier = Modifier.align(Alignment.Center)
         )
 
-        // Pet name and level overlay
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.BottomCenter)
-                .padding(8.dp)
-                .background(
-                    MaterialTheme.colorScheme.background.copy(alpha = 0.7f)
+        if (showNameOverlay) {
+            // Pet name and level overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.BottomCenter)
+                    .padding(8.dp)
+                    .background(
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.7f)
+                    )
+            ) {
+                Text(
+                    text = "${pet.name}\nLv.${pet.level}",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
                 )
-        ) {
-            Text(
-                text = "${pet.name}\nLv.${pet.level}",
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall
-            )
+            }
         }
     }
 }
