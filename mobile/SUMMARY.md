@@ -14,7 +14,7 @@
 | STATISTICS.md    | Fully documented        | Documents all tracked statistics, their usage, and known gaps |
 | NOTIFICATIONS.md | Fully documented        | Documents reminder system (daily, streak, pet) and user preferences |
 | DATA_MODEL.md    | Fully documented        | Documents all Room entities, relationships, and data flow |
-| EVENTS.md        | Fully documented        | Documents event systems (RewardUiEvent, JournalEngine, AchievementEngine, StreakEngine) |
+| EVENTS.md        | Fully documented        | Documents event systems (RewardUiEvent, ActivityTimelineEngine, AchievementEngine, StreakEngine) |
 | ENDGAME.md       | No implementation       | Open-ended progression with no defined endgame or completion state |
 
 ## Overall Statistics

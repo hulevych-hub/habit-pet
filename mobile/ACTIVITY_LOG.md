@@ -31,15 +31,17 @@ The timeline currently supports:
 - `STREAK_MILESTONE`
 - `FIRST_DAILY_LOGIN`
 - `SURPRISE_REWARD`
+- `DAILY_GOAL_COMPLETED`
+- `COMBO_MILESTONE`
 
 New event types can be added to `GameEventType` and mapped in `GameEventFactory` without changing the table schema.
 
 ## Event Sources
 
-- `HabitDetailViewModel` logs `HABIT_COMPLETED`, `LEVEL_UP`, `DRAGON_EVOLUTION`, and `SURPRISE_REWARD`.
+- `HabitDetailViewModel` and `HabitsViewModel` log `HABIT_COMPLETED`, `LEVEL_UP`, `DRAGON_EVOLUTION`, `SURPRISE_REWARD`, `DAILY_GOAL_COMPLETED`, and `COMBO_MILESTONE`.
 - `AchievementEngine` logs `ACHIEVEMENT_UNLOCKED` when an achievement transitions from locked to unlocked.
 - `StreakEngine` logs `STREAK_MILESTONE` when a streak chest milestone is awarded.
-- `RewardManager` emits completed chest rewards through `RewardEventBus`; `ActivityTimelineEngine` observes that bus and logs `CHEST_OPENED`.
+- `RewardManager` emits collected chest rewards through `RewardEventBus`; `ActivityTimelineEngine` observes that bus and logs `CHEST_OPENED`.
 - `ActivityTimelineEngine` logs `FIRST_DAILY_LOGIN` once per calendar day using local preferences. It detects the first app open of the day, stores the last active session timestamp, and includes current streak status, last-session time difference, and a short motivational message in the event payload and description.
 
 ## Storage and Querying
@@ -63,7 +65,7 @@ The timeline now renders as a central story path. Event cards alternate left and
 
 ## Surprise Reward
 
-`HabitDetailViewModel` logs a `SURPRISE_REWARD` event when the surprise reward trigger succeeds after a successful habit completion. The event includes bonus coins, bonus XP, surprise chest rarity, and whether the surprise chest granted a customization item. The extra surprise chest is still logged as `CHEST_OPENED` when it is collected through the existing reward queue.
+`HabitDetailViewModel` and `HabitsViewModel` log a `SURPRISE_REWARD` event when the surprise reward trigger succeeds after a successful habit completion. The event includes bonus coins, bonus XP, surprise chest rarity, and whether the surprise chest granted a customization item. The extra surprise chest is still logged as `CHEST_OPENED` when it is collected through the existing reward queue.
 
 ## First Daily Login
 

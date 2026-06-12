@@ -2,11 +2,11 @@
 
 ## Overview
 
-Habit Pet uses a Room database to persist game state, player progress, and various entities. The data model consists of interconnected entities that track habits, completions, player statistics, pet evolution, inventory, achievements, and journal entries.
+Habit Pet uses a Room database to persist game state, player progress, and various entities. The data model consists of interconnected entities that track habits, completions, player statistics, pet evolution, inventory, achievements, activity timeline events, and legacy journal compatibility.
 
 ## Current Implementation
 
-The data model includes 10 Room entities:
+The data model includes 9 Room entities:
 1. HabitEntity - Tracks habit definitions and streaks
 2. HabitCompletionEntity - Records individual habit completions
 3. HabitProgressEntity - Tracks timer habit progress
@@ -15,8 +15,7 @@ The data model includes 10 Room entities:
 6. InventoryItemEntity - Manages collectible customization items
 7. AchievementEntity - Tracks achievement progress and claim state
 8. GameEventEntity - Records persistent activity timeline events
-9. JournalEntryEntity - Legacy journal entry text
-10. (Implicit) Room database schema with relationships
+9. JournalEntryEntity - Legacy journal entry text retained for compatibility
 
 ## Rules
 
@@ -130,8 +129,8 @@ Game events are append-only. The timeline DAO exposes reverse-chronological quer
    - HabitProgressEntity tracks timer habit accumulation
 4. **Pet Rename**: PetEntity.name is updated through PetRepository.updatePet from the Pet screen and displayed on the Home and Pet screens
 5. **Achievement Tracking**: AchievementEntity records are updated when milestones are reached
-6. **Activity Timeline**: GameEventEntity records are appended for habit completions, achievements, level-ups, evolutions, chests, streak milestones, and daily welcomes
-7. **Legacy Journal Generation**: JournalEntryEntity records may still be created by the legacy journal system
+6. **Activity Timeline**: GameEventEntity records are appended for habit completions, daily goals, achievements, level-ups, evolutions, chests, and streak milestones
+7. **Legacy Journal Compatibility**: JournalEntryEntity remains in the schema for compatibility, but no active journal writer creates new rows
 8. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items
 
 ## Configuration

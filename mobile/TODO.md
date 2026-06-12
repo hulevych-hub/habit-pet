@@ -18,4 +18,13 @@ For every task below:
 
 ## Implementation Queue
 
-# 
+### Completed
+- Inventory cleanup targets and protected references
+- Remove unused code, routes, DAO methods, ViewModels, repositories, and resources with verified no references
+- Consolidate duplicate XP, level, evolution, reward, economy, achievement, and streak logic
+- Update affected documentation and TODO.md
+- Build and fix compilation or reference errors
+- Run final graphify update and validation checks
+
+### Pending
+- None

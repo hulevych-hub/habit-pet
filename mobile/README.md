@@ -11,7 +11,7 @@ Habit Pet is an Android application that helps users build and maintain healthy 
 - **Habit Tracking**: Create and track daily habits with streak counting
 - **Virtual Pet**: Care for a pet that evolves based on your habit consistency
 - **Achievement System**: Unlock achievements for various milestones
-- **Journal System**: Automatically generate journal entries for pet evolution and streak milestones
+- **Activity Timeline**: Persistent gameplay moments for habit completions, rewards, streaks, and achievements
 - **Notifications**: Customizable reminders for habits, streaks, and pet care
 - **Rewards Economy**: Earn coins for completing habits and use them to purchase cosmetic items
 - **Modern Architecture**: Built with Clean Architecture, Hilt for dependency injection, Jetpack Compose for UI
@@ -39,8 +39,8 @@ app/
 │   │   │   ├── di/             # Dependency injection modules
 │   │   │   ├── presentation/   # Presentation layer (ViewModels, UI screens)
 │   │   │   ├── navigation/     # Navigation configuration
-│   │   │   ├── util/           # Utility classes (notifications, preferences)
-│   │   │   └── HabitPetApp.kt  # Application class
+│   │   │   ├── HabitPetApp.kt  # Hilt application class and startup initializers
+│   │   │   └── util/           # Utility classes (notifications, preferences)
 │   │   └── res/                # Resources (strings, layouts, drawables)
 ```
 
@@ -70,7 +70,7 @@ The application follows Clean Architecture principles with three main layers:
 ### Key Components
 
 - **AchievementEngine**: Monitors game events and unlocks achievements when conditions are met
-- **JournalEngine**: Generates journal entries for pet evolution and streak milestones
+- **ActivityTimelineEngine**: Persists gameplay moments into the activity timeline
 - **NotificationHelper**: Manages scheduling and displaying notifications
 - **NotificationPrefs**: Handles user preferences for notification settings
 - **BootCompletedReceiver**: Reschedules notifications after device reboot
@@ -86,7 +86,7 @@ The project is organized into development phases:
 5. **Phase 5: Pet Animation System** - Mood-based animations for pet
 6. **Phase 6: Rewards and Economy** - Coin system, rewards, inventory
 7. **Phase 7: Cosmetics** - Pet customization and visual enhancements
-8. **Phase 8: Achievements and Journal** - Achievement system, journal generation
+8. **Phase 8: Achievements and Activity Timeline** - Achievement system and persistent gameplay moments
 9. **Phase 9: Notifications** - Reminder system with user preferences
 10. **Phase 10: Production Polish** - Performance optimization, accessibility, documentation
 

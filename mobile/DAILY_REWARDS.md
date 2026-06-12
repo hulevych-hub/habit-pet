@@ -17,7 +17,7 @@ While there are several systems that operate on a daily basis, all reward mechan
 ### Activity-Based Daily Systems
 All daily progression systems require player activity:
 1. **Streak System**: Requires completing all habits each day to maintain/increase streak
-2. **Journal System**: Logs activities based on actual habit completion
+2. **Activity Timeline**: Logs gameplay moments based on actual habit completion and progression
 3. **Statistics Tracking**: daysActive counts days with at least one habit completion
 
 ### Absence of Calendar-Based Rewards

@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ActivityTimelineEngine
-import com.example.mobile.domain.ChestRewardConfigProvider
-import com.example.mobile.domain.ChestType
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
@@ -164,37 +162,5 @@ class RewardManager @Inject constructor(
         val updatedPet = currentPet.copy(xp = currentPet.xp + expAmount)
         petRepository.updatePet(updatedPet)
         return currentPet to updatedPet
-    }
-
-    private suspend fun buildChestReward(chestTypeValue: String): RewardUiEvent.ChestReward {
-        val chestType = ChestType.values()
-            .firstOrNull { it.name.equals(chestTypeValue, ignoreCase = true) }
-            ?: ChestType.NORMAL
-
-        val config = ChestRewardConfigProvider.getConfig(chestType)
-        var coinAmount = config.getRandomCoins()
-        var expAmount = config.getRandomExp()
-        var customizationId: Long? = null
-
-        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
-            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
-                .firstOrNull()
-                ?.toList()
-                .orEmpty()
-
-            if (unownedItems.isNotEmpty()) {
-                val selectedItem = unownedItems.random()
-                if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
-                    customizationId = selectedItem.id
-                }
-            }
-        }
-
-        return RewardUiEvent.ChestReward(
-            rewardType = "achievement_${chestType.name.lowercase()}",
-            amount = coinAmount,
-            expAmount = expAmount,
-            customizationId = customizationId
-        )
     }
 }

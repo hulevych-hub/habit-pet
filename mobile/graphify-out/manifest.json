@@ -10,18 +10,13 @@
     "semantic_hash": ""
   },
   "app/build.gradle": {
-    "mtime": 1781262063.4721382,
-    "ast_hash": "57026c0cd89ba88c6808e5f1c42ea9f1",
+    "mtime": 1781273429.207801,
+    "ast_hash": "b48ac3b77c95396c167692a7783cee77",
     "semantic_hash": ""
   },
   "app/src/androidTest/java/com/example/mobile/ExampleInstrumentedTest.kt": {
     "mtime": 1780417801.6389594,
     "ast_hash": "2989bee73adbf33d6cd4dfb639a6de21",
-    "semantic_hash": ""
-  },
-  "app/src/main/java/com/example/mobile/App.kt": {
-    "mtime": 1780525303.7453537,
-    "ast_hash": "a45604e5f67d93fb4918a596dca994b9",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/HabitPetApp.kt": {
@@ -30,8 +25,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/MainActivity.kt": {
-    "mtime": 1781204968.72541,
-    "ast_hash": "80ac99e5d992eeaa09b1b6339497ec15",
+    "mtime": 1781274234.0349512,
+    "ast_hash": "53867c2249a4179cc199c6f74e573359",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/dao/AchievementDao.kt": {
@@ -59,11 +54,6 @@
     "ast_hash": "70b0973443dfd27b6bfc7a05c3c6b6f4",
     "semantic_hash": ""
   },
-  "app/src/main/java/com/example/mobile/data/local/dao/JournalEntryDao.kt": {
-    "mtime": 1780832382.8890867,
-    "ast_hash": "72632c6519ce8e282569b73ef553bb4c",
-    "semantic_hash": ""
-  },
   "app/src/main/java/com/example/mobile/data/local/dao/PetDao.kt": {
     "mtime": 1781200989.824763,
     "ast_hash": "d8af6ae9ada3f67fdc751105c33e6186",
@@ -80,8 +70,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt": {
-    "mtime": 1781214458.2653131,
-    "ast_hash": "8cd25c77dfbfda8b5b0b40b15980faac",
+    "mtime": 1781273277.4957922,
+    "ast_hash": "c26d535b4d0fed8a320dff633abc9222",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/database/StatisticsDatabaseInitializer.kt": {
@@ -154,11 +144,6 @@
     "ast_hash": "b24f15fc826e3fcaa1c8397fb3aef946",
     "semantic_hash": ""
   },
-  "app/src/main/java/com/example/mobile/data/repository/JournalEntryRepositoryImpl.kt": {
-    "mtime": 1780832960.6186333,
-    "ast_hash": "591a3bef3fe52ecb20e7178dc85f5a28",
-    "semantic_hash": ""
-  },
   "app/src/main/java/com/example/mobile/data/repository/PetRepositoryImpl.kt": {
     "mtime": 1781259644.2144942,
     "ast_hash": "3b726d24331b7c7dc7a732bd2515edc8",
@@ -170,23 +155,18 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/DatabaseModule.kt": {
-    "mtime": 1781201485.066626,
-    "ast_hash": "659c606497af964a93b5e7ebcb3d07e7",
+    "mtime": 1781273219.0646856,
+    "ast_hash": "c3b195fdf978c5328a99a66406b3dc84",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/RepositoryModule.kt": {
-    "mtime": 1781197804.535918,
-    "ast_hash": "355d3d6da1d65f48bae0acb70cb67639",
+    "mtime": 1781273624.2485669,
+    "ast_hash": "770b0f0044da90c72f5d9b9a475fbdbf",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/AchievementEngine.kt": {
     "mtime": 1781197866.903949,
     "ast_hash": "ed22d5172d8229ad6188423379533fd3",
-    "semantic_hash": ""
-  },
-  "app/src/main/java/com/example/mobile/domain/JournalEngine.kt": {
-    "mtime": 1780752139.2962844,
-    "ast_hash": "218c748938c74b97b3ce9aab102472f3",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/StreakCalculator.kt": {
@@ -195,8 +175,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/StreakEngine.kt": {
-    "mtime": 1781201428.4422393,
-    "ast_hash": "5f9e320491bc600b60135abcbe8770cf",
+    "mtime": 1781273900.421393,
+    "ast_hash": "770f28c5ffb2e0d3e6b0abb910f6136c",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt": {
@@ -224,11 +204,6 @@
     "ast_hash": "309bbfbe83d34269c8e7bf2329f29473",
     "semantic_hash": ""
   },
-  "app/src/main/java/com/example/mobile/domain/repository/JournalEntryRepository.kt": {
-    "mtime": 1780832761.232026,
-    "ast_hash": "5ec61adfacff99c1e96daa044e13a0f9",
-    "semantic_hash": ""
-  },
   "app/src/main/java/com/example/mobile/domain/repository/PetRepository.kt": {
     "mtime": 1780833061.8675675,
     "ast_hash": "c6e28ead3030f172e93929d5ae0eecf8",
@@ -250,8 +225,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt": {
-    "mtime": 1781261333.6515713,
-    "ast_hash": "cc41cc9138a775de21dd55f4f43c1f39",
+    "mtime": 1781274523.5148952,
+    "ast_hash": "cb1695e3bfaf0552c8cd9e4ab63ab06c",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt": {
@@ -265,8 +240,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt": {
-    "mtime": 1781212486.07034,
-    "ast_hash": "7a89376e4ef8c69a1b15a60c8c1f9b9c",
+    "mtime": 1781272862.870864,
+    "ast_hash": "55be0ed9a0a23323033789f0ff3f09fc",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlay.kt": {
@@ -295,18 +270,18 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt": {
-    "mtime": 1781266366.2847888,
-    "ast_hash": "be47181d7b02dfbf9c13352000be513e",
+    "mtime": 1781274704.187078,
+    "ast_hash": "f53e4804467b055e1e49f2317a464fc2",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt": {
-    "mtime": 1781257241.6654527,
-    "ast_hash": "778f221ac4585adc529767454439b09b",
+    "mtime": 1781274705.2598162,
+    "ast_hash": "6f4fb0d1a6805b6158794d67be178deb",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitEditScreen.kt": {
-    "mtime": 1781260699.5834734,
-    "ast_hash": "3bc1d827ba6f7c2d3dc2fa88237ef92e",
+    "mtime": 1781274706.7506437,
+    "ast_hash": "2ba5ba9cf6e30264fc88adb4e50aa8a9",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt": {
@@ -322,11 +297,6 @@
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
     "mtime": 1781216250.3170884,
     "ast_hash": "13c6d6e4ff0c376dce9e2d87b05e1298",
-    "semantic_hash": ""
-  },
-  "app/src/main/java/com/example/mobile/presentation/ui/screens/JournalScreen.kt": {
-    "mtime": 1781198266.373695,
-    "ast_hash": "51527a55cc0f69f00fc93623e9d738ca",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt": {
@@ -349,19 +319,9 @@
     "ast_hash": "cced67f9dbedbc3a78bc79f2b982816c",
     "semantic_hash": ""
   },
-  "app/src/main/java/com/example/mobile/presentation/utils/RewardPopupUtil.kt": {
-    "mtime": 1780693435.3269086,
-    "ast_hash": "6fccb7bedd4871e8cabf3ce9e5994a80",
-    "semantic_hash": ""
-  },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt": {
     "mtime": 1781258738.53481,
     "ast_hash": "fe877c57ca37f0a67a130d088a110e3e",
-    "semantic_hash": ""
-  },
-  "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitCompletionViewModel.kt": {
-    "mtime": 1780576554.9820511,
-    "ast_hash": "ed72ab1c12743d0fca610621e7153967",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitCreationViewModel.kt": {
@@ -370,8 +330,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt": {
-    "mtime": 1781266289.4966776,
-    "ast_hash": "9b49b0b5f617e314426bfa850b3e2f3a",
+    "mtime": 1781273830.420489,
+    "ast_hash": "44d1a847f9dbaabab2c24b159fde3580",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitEditViewModel.kt": {
@@ -379,14 +339,9 @@
     "ast_hash": "ddbe6bf42ed149afce1e13957701da51",
     "semantic_hash": ""
   },
-  "app/src/main/java/com/example/mobile/presentation/viewmodel/JournalViewModel.kt": {
-    "mtime": 1780752177.4221756,
-    "ast_hash": "fb994917fc75528bdaaeed15f17d6377",
-    "semantic_hash": ""
-  },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/NotificationSettingsViewModel.kt": {
-    "mtime": 1780756836.326263,
-    "ast_hash": "66b61f112d5127623b2f8f93b4a878ce",
+    "mtime": 1781272939.3754709,
+    "ast_hash": "ce8e4a70d43c22a982f18d2e6797eaea",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/ui/theme/Color.kt": {
@@ -450,8 +405,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1780760049.38371,
-    "ast_hash": "27e19ef7ae58ba0b38384035b3b88ab0",
+    "mtime": 1781279453.5006824,
+    "ast_hash": "bbed768b93cba989e572b304e57cab1f",
     "semantic_hash": ""
   },
   "app/src/main/res/drawable/adult_dragon.png": {
@@ -484,11 +439,6 @@
     "ast_hash": "7c9c174b949d56897292e4cd867eff43",
     "semantic_hash": ""
   },
-  "app/src/main/res/drawable/blue_scarf.png": {
-    "mtime": 1780651968.0633578,
-    "ast_hash": "f7db67a3edab85af5c4ff4a64bc0281d",
-    "semantic_hash": ""
-  },
   "app/src/main/res/drawable/chest_closed.png": {
     "mtime": 1780651968.0815845,
     "ast_hash": "091c756806ca0fcb6d3f21d6f07d33b4",
@@ -517,26 +467,6 @@
   "app/src/main/res/drawable/red_scarf.png": {
     "mtime": 1780651968.1134427,
     "ast_hash": "138270fb0c30820abdab70713923431e",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/round_glasses.png": {
-    "mtime": 1780651968.1204476,
-    "ast_hash": "2675ec960156ce78d543303f255bf807",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/sunglasses.png": {
-    "mtime": 1780651968.1291604,
-    "ast_hash": "25c743b4ac2baa8c0ec0f1830be591df",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/top_hat.png": {
-    "mtime": 1780651968.1366713,
-    "ast_hash": "96757e1b667cc4bc720e3e29b390c850",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/wizard_hat.png": {
-    "mtime": 1780651968.1463068,
-    "ast_hash": "634849625a5dd6b5f6bf623b591e54ac",
     "semantic_hash": ""
   },
   "app/src/main/res/drawable/young_dragon.png": {
@@ -595,8 +525,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/database/InventoryItemDatabaseInitializer.kt": {
-    "mtime": 1781182643.0319707,
-    "ast_hash": "c081eb212b5269c1c044fd375f4d52f4",
+    "mtime": 1781273186.434555,
+    "ast_hash": "a9333db905b87a820e69aef2bb597f75",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/ChestRewardConfig.kt": {
@@ -625,28 +555,28 @@
     "semantic_hash": ""
   },
   "ACHIEVEMENTS.md": {
-    "mtime": 1781195456.7939267,
-    "ast_hash": "3fd77507b41fa44f22d1d91f485e74b3",
+    "mtime": 1781279468.730978,
+    "ast_hash": "6505143d439dce0125c313ddf0d533f4",
     "semantic_hash": ""
   },
   "CHEST_REWARDS.md": {
-    "mtime": 1781203740.3173733,
-    "ast_hash": "91196b4bca02cfe3886814dc05893b8e",
+    "mtime": 1781279495.5401258,
+    "ast_hash": "c811707723e58160a5b5e49d7b3466c7",
     "semantic_hash": ""
   },
   "DAILY_REWARDS.md": {
-    "mtime": 1781029686.0874987,
-    "ast_hash": "269333e75e31f7e1e3dd893f75bb5147",
+    "mtime": 1781279711.02179,
+    "ast_hash": "12be395c8af44b64ef907b6c840510cf",
     "semantic_hash": ""
   },
   "DATA_MODEL.md": {
-    "mtime": 1781198392.9827516,
-    "ast_hash": "7f8f32a4fe5cba183bcc9f75abb66d4c",
+    "mtime": 1781279961.1282754,
+    "ast_hash": "9f956a9cdb7ffc2fc32420594dea1133",
     "semantic_hash": ""
   },
   "DRAGON_PHASES.md": {
-    "mtime": 1781209228.184857,
-    "ast_hash": "c6cbef98af101e4c05c3ee6f54cf5983",
+    "mtime": 1781279508.1567967,
+    "ast_hash": "580b91929f15a48ac2472408e44c3412",
     "semantic_hash": ""
   },
   "ECONOMY.md": {
@@ -655,13 +585,13 @@
     "semantic_hash": ""
   },
   "ENDGAME.md": {
-    "mtime": 1781185726.0986366,
-    "ast_hash": "99d495c6c6613214226fd3606859f149",
+    "mtime": 1781279552.714778,
+    "ast_hash": "40b58e711b052c3603401252a83a1e17",
     "semantic_hash": ""
   },
   "EVENTS.md": {
-    "mtime": 1781198506.396069,
-    "ast_hash": "8f705dcd18481b2e42afd291a45b5b19",
+    "mtime": 1781275995.7321372,
+    "ast_hash": "8bda4ad06c591085e3bc3b9a8185d79f",
     "semantic_hash": ""
   },
   "EXP.md": {
@@ -670,7 +600,7 @@
     "semantic_hash": ""
   },
   "NOTIFICATIONS.md": {
-    "mtime": 1781245337.9667346,
+    "mtime": 1781279565.8200822,
     "ast_hash": "98059460aee98dbbf011a59a52ad0a03",
     "semantic_hash": ""
   },
@@ -685,13 +615,13 @@
     "semantic_hash": ""
   },
   "SUMMARY.md": {
-    "mtime": 1781185864.0783288,
-    "ast_hash": "374e209b08af72c9a7d19a98583c47e1",
+    "mtime": 1781279724.4487438,
+    "ast_hash": "573275821a6e7e8e983626f7851fe5ff",
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781264937.5540178,
-    "ast_hash": "ea2f3f5d50a28966f2add314fdec7864",
+    "mtime": 1781279609.7259173,
+    "ast_hash": "2834225896e2839ab8d9e8750ed8575f",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt": {
@@ -755,8 +685,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt": {
-    "mtime": 1781195319.2900932,
-    "ast_hash": "847ae7153860eed43e166fc3dab478fc",
+    "mtime": 1781274843.7567623,
+    "ast_hash": "16c9567c5547fe7d1636bf3e642ee024",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt": {
@@ -790,8 +720,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt": {
-    "mtime": 1781256998.7223282,
-    "ast_hash": "2eeb376e6652138c7961e883d2b1933d",
+    "mtime": 1781274316.7407022,
+    "ast_hash": "b9d090954e769c6700b4379ef153e76e",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/ActivityTimelineViewModel.kt": {
@@ -800,8 +730,8 @@
     "semantic_hash": ""
   },
   "ACTIVITY_LOG.md": {
-    "mtime": 1781247737.4189548,
-    "ast_hash": "ef3d27729b1d3da30e1d88891a5c5628",
+    "mtime": 1781280008.6394436,
+    "ast_hash": "df2d1f9281236b164c4fd5adafa8cae9",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/DragonMood.kt": {
@@ -815,8 +745,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/EmptyStateCard.kt": {
-    "mtime": 1781209886.1880598,
-    "ast_hash": "ff8f37791e49368ff3fef2ebd93a6739",
+    "mtime": 1781275178.8098445,
+    "ast_hash": "1c455c6dcb8e212de1f55d3badd54bd2",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt": {
@@ -840,8 +770,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/HabitsViewModel.kt": {
-    "mtime": 1781266249.6013796,
-    "ast_hash": "8b3484bedfe9cdb4d152097ba09394ad",
+    "mtime": 1781272992.714093,
+    "ast_hash": "55e2726af14c6f1b6993cfbdcf49978b",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/ReinforcementMessageProvider.kt": {
@@ -857,6 +787,11 @@
   "app/src/main/java/com/example/mobile/presentation/ui/components/AssetPreview.kt": {
     "mtime": 1781258481.8381972,
     "ast_hash": "c9c805b8819c98b744da26e60600ba63",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt": {
+    "mtime": 1781272356.1795485,
+    "ast_hash": "f29e9747da20a73a43efb89507a59077",
     "semantic_hash": ""
   }
 }

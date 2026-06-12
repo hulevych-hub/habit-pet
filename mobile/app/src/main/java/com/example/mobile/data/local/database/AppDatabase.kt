@@ -35,7 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun inventoryItemDao(): com.example.mobile.data.local.dao.InventoryItemDao
     abstract fun achievementDao(): com.example.mobile.data.local.dao.AchievementDao
     abstract fun gameEventDao(): com.example.mobile.data.local.dao.GameEventDao
-    abstract fun journalEntryDao(): com.example.mobile.data.local.dao.JournalEntryDao
     abstract fun statisticsDao(): com.example.mobile.data.local.dao.StatisticsDao
     abstract fun habitProgressDao(): HabitProgressDao
 

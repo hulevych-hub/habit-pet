@@ -74,10 +74,8 @@ fun ActivityTimelineScreen(
 ) {
     val events by activityTimelineViewModel.events.collectAsState()
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
-    val isLoading by activityTimelineViewModel.isLoading.collectAsState()
     val isLoadingMore by activityTimelineViewModel.isLoadingMore.collectAsState()
     val hasMore by activityTimelineViewModel.hasMore.collectAsState()
-    val error by activityTimelineViewModel.error.collectAsState()
     val groups = remember(events) { groupEventsByDay(events) }
     val listState = rememberLazyListState()
     var hasAutoScrolled by remember { mutableStateOf(false) }

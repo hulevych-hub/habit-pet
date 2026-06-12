@@ -54,7 +54,11 @@ class AchievementRewardProcessor @Inject constructor(
                             rewards.add(
                                 PreparedAchievementReward(
                                     reward = reward,
-                                    chestReward = buildChestReward(reward.chestType)
+                                    chestReward = ChestRewardFactory.buildChestReward(
+                                        rewardType = "achievement_${reward.chestType.name.lowercase()}",
+                                        chestType = reward.chestType,
+                                        inventoryItemRepository = inventoryItemRepository
+                                    )
                                 )
                             )
                         }
@@ -84,7 +88,7 @@ class AchievementRewardProcessor @Inject constructor(
             rewardEventBus.emit(event)
             return true
         } catch (e: Exception) {
-            Log.e("AchievementRewardProcessor", "Achievement reward processing failed", e)
+            Log.e("AchievementReward", "Achievement reward processing failed", e)
             return false
         }
     }
@@ -112,32 +116,4 @@ class AchievementRewardProcessor @Inject constructor(
         val reward: AchievementReward,
         val chestReward: RewardUiEvent.ChestReward? = null
     )
-
-    private suspend fun buildChestReward(chestTypeValue: ChestType): RewardUiEvent.ChestReward {
-        val config = ChestRewardConfigProvider.getConfig(chestTypeValue)
-        var coinAmount = config.getRandomCoins()
-        var expAmount = config.getRandomExp()
-        var customizationId: Long? = null
-
-        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
-            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
-                .firstOrNull()
-                ?.toList()
-                .orEmpty()
-
-            if (unownedItems.isNotEmpty()) {
-                val selectedItem = unownedItems.random()
-                if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
-                    customizationId = selectedItem.id
-                }
-            }
-        }
-
-        return RewardUiEvent.ChestReward(
-            rewardType = "achievement_${chestTypeValue.name.lowercase()}",
-            amount = coinAmount,
-            expAmount = expAmount,
-            customizationId = customizationId
-        )
-    }
 }

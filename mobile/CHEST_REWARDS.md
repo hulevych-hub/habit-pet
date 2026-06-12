@@ -17,7 +17,7 @@ The chest reward system consists of:
   - Achievement chest rewards
   - Surprise habit reward chests
 - Four chest types: Normal, Rare, Epic, and Legendary
-- **Centralized configuration: `EconomyConfig` + `ChestRewardConfigProvider`**
+- **Centralized configuration and construction: `EconomyConfig` + `ChestRewardConfigProvider` + `ChestRewardFactory`**
 
 ## Rules
 
@@ -39,29 +39,29 @@ The chest reward system consists of:
      - 30 or 60 days → Epic
      - 100 days → Legendary
    - Reward type: `"global_streak_{streak}_{chest_type}"`
-   - Rewards are based on the milestone chest type configuration from `EconomyConfig`
+   - Contents are built by `ChestRewardFactory` from the milestone chest type configuration
 
-2. **Level Up Chests** (`HabitDetailViewModel.kt`):
+2. **Level Up Chests** (`HabitDetailViewModel.kt`, `HabitsViewModel.kt`):
    - Awarded every time the pet levels up
    - Chest type is randomly determined using `EconomyConfig` probabilities
    - Reward type: `"level_up_{chest_type}"`
-   - Rewards are based on the selected chest type configuration
+   - Contents are built by `ChestRewardFactory` from the selected chest type configuration
 
 3. **Achievement Chests** (`AchievementRewardProcessor.kt`):
    - Awarded when an achievement grants an `AchievementReward.ChestReward`
    - Chest type is read from `AchievementsConfig`
    - Reward type: `"achievement_{chest_type}"`
-   - Rewards are based on the selected chest type configuration
+   - Contents are built by `ChestRewardFactory` from the selected chest type configuration
    - The achievement reward popup is queued after the chest reward is prepared
 
-4. **Surprise Habit Reward Chests** (`HabitDetailViewModel.kt`):
-  - Awarded only when the surprise reward trigger succeeds after a successful habit completion
-  - Trigger requires at least 3 successful habit completions since the previous surprise
-  - Trigger chance is 8%
-  - Surprise chests are always Rare, Epic, or Legendary
-  - Reward type: `"surprise_{chest_type}"`
-  - Rewards are based on the selected chest type configuration
-  - The surprise chest is queued through `RewardQueue` and never blocks the habit completion flow
+4. **Surprise Habit Reward Chests** (`HabitDetailViewModel.kt`, `HabitsViewModel.kt`):
+   - Awarded only when the surprise reward trigger succeeds after a successful habit completion
+   - Trigger requires at least 3 successful habit completions since the previous surprise
+   - Trigger chance is 8%
+   - Surprise chests are always Rare, Epic, or Legendary
+   - Reward type: `"surprise_{chest_type}"`
+   - Contents are built by `ChestRewardFactory` from the selected chest type configuration
+   - The surprise chest is queued through `RewardQueue` and never blocks the habit completion flow
 
 ### Reward Queue Priority
 Chest rewards have priority level 4 in the RewardQueue:
@@ -146,6 +146,7 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 - app/src/main/java/com/example/mobile/domain/ChestType.kt
 - app/src/main/java/com/example/mobile/domain/ChestRewardConfig.kt
 - app/src/main/java/com/example/mobile/domain/ChestRewardConfigProvider.kt
+- app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt
 - app/src/main/java/com/example/mobile/domain/EconomyConfig.kt (centralized economy values)
 - app/src/main/java/com/example/mobile/domain/StreakEngine.kt
 - app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt

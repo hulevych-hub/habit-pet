@@ -1,12 +1,11 @@
 package com.example.mobile.di
 
-import com.example.mobile.domain.repository.HabitProgressRepository
 import com.example.mobile.data.repository.HabitProgressRepositoryImpl
+import com.example.mobile.domain.repository.HabitProgressRepository
 import com.example.mobile.data.repository.AchievementRepositoryImpl
 import com.example.mobile.data.repository.HabitCompletionRepositoryImpl
 import com.example.mobile.data.repository.HabitRepositoryImpl
 import com.example.mobile.data.repository.InventoryItemRepositoryImpl
-import com.example.mobile.data.repository.JournalEntryRepositoryImpl
 import com.example.mobile.data.repository.PetRepositoryImpl
 import com.example.mobile.data.repository.GameEventRepositoryImpl
 import com.example.mobile.data.repository.StatisticsRepositoryImpl
@@ -14,7 +13,6 @@ import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
-import com.example.mobile.domain.repository.JournalEntryRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.GameEventRepository
 import com.example.mobile.domain.repository.StatisticsRepository
@@ -38,9 +36,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindInventoryItemRepository(repository: InventoryItemRepositoryImpl): InventoryItemRepository
-
-    @Binds
-    abstract fun bindJournalEntryRepository(repository: JournalEntryRepositoryImpl): JournalEntryRepository
 
     @Binds
     abstract fun bindGameEventRepository(repository: GameEventRepositoryImpl): GameEventRepository

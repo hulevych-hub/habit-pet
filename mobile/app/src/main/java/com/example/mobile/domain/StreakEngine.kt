@@ -1,6 +1,7 @@
 package com.example.mobile.domain
 
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.ChestRewardFactory
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
@@ -18,11 +19,6 @@ class StreakEngine(
     private val activityTimelineEngine: ActivityTimelineEngine,
     private val dragonMoodEngine: DragonMoodEngine
 ) {
-
-    private data class StreakChestReward(
-        val event: RewardUiEvent.ChestReward,
-        val summary: List<String>
-    )
 
     companion object {
         private val STREAK_MILESTONES = listOf(7, 14, 30, 60, 100)
@@ -75,16 +71,29 @@ class StreakEngine(
 
             if (milestone != null) {
                 val milestoneChestType = getChestTypeForMilestone(milestone)
-                val streakChestReward = buildStreakChestReward(milestone)
+                val streakChestReward = ChestRewardFactory.buildChestReward(
+                    rewardType = "global_streak_${milestone}_${milestoneChestType.name.lowercase()}",
+                    chestType = milestoneChestType,
+                    inventoryItemRepository = inventoryItemRepository
+                )
+                val chestConfig = ChestRewardConfigProvider.getConfig(milestoneChestType)
+                val streakChestSummary = buildRewardSummary(
+                    streak = milestone,
+                    chestType = milestoneChestType,
+                    coinAmount = (streakChestReward.amount as? Int) ?: 0,
+                    expAmount = streakChestReward.expAmount,
+                    customizationId = streakChestReward.customizationId,
+                    hasCustomizationChance = chestConfig.customizationRarity != null
+                )
 
                 rewardQueue.addReward(
                     RewardUiEvent.StreakReward(
                         streak = currentStreak,
                         coins = 0,
-                        rewardSummary = streakChestReward.summary
+                        rewardSummary = streakChestSummary
                     )
                 )
-                rewardQueue.addReward(streakChestReward.event)
+                rewardQueue.addReward(streakChestReward)
                 activityTimelineEngine.logStreakMilestone(currentStreak, milestoneChestType)
 
                 statisticsRepository.updateStatistics(
@@ -121,46 +130,6 @@ class StreakEngine(
                 // optional safety rollback if you ever support it
             }
         }
-    }
-
-    private suspend fun buildStreakChestReward(streak: Int): StreakChestReward {
-        val chestType = getChestTypeForMilestone(streak)
-        val config = ChestRewardConfigProvider.getConfig(chestType)
-
-        var coinAmount = config.getRandomCoins()
-        var expAmount = config.getRandomExp()
-        var customizationId: Long? = null
-
-        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
-            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
-                .firstOrNull()?.toList() ?: emptyList()
-
-            if (unownedItems.isNotEmpty()) {
-                val selectedItem = unownedItems.random()
-                if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
-                    customizationId = selectedItem.id
-                }
-            }
-        }
-
-        val rewardType = "global_streak_${streak}_${chestType.name.lowercase()}"
-        val event = RewardUiEvent.ChestReward(
-            rewardType = rewardType,
-            amount = coinAmount,
-            expAmount = expAmount,
-            customizationId = customizationId
-        )
-
-        val summary = buildRewardSummary(
-            streak = streak,
-            chestType = chestType,
-            coinAmount = coinAmount,
-            expAmount = expAmount,
-            customizationId = customizationId,
-            hasCustomizationChance = config.customizationRarity != null
-        )
-
-        return StreakChestReward(event, summary)
     }
 
     private fun buildRewardSummary(

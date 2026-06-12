@@ -43,7 +43,6 @@ import com.example.mobile.util.PetTransitionPrefs
 fun AnimatedPet(
     pet: PetEntity,
     modifier: Modifier = Modifier,
-    size: IntSize = IntSize(200, 200),
     showNameOverlay: Boolean = true
 ) {
     val evolutionStage = pet.evolutionStage.takeIf { it in 0..4 } ?: 0

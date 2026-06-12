@@ -70,6 +70,7 @@ import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("DEPRECATION")
 fun HabitEditScreen(
     habitId: Long,
     viewModel: HabitEditViewModel = hiltViewModel(),

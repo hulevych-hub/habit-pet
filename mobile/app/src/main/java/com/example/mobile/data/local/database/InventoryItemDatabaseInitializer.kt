@@ -1,7 +1,6 @@
 package com.example.mobile.data.local.database
 
 import com.example.mobile.data.local.database.AppDatabase
-import com.example.mobile.data.local.dao.InventoryItemDao
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes

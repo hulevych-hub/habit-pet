@@ -63,6 +63,7 @@ import java.util.Locale
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("DEPRECATION")
 fun HabitDetailScreen(
     habitId: Long,
     viewModel: HabitDetailViewModel = hiltViewModel(),

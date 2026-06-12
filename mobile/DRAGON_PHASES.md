@@ -147,6 +147,7 @@ Visual asset mappings and animation behavior remain in:
 - app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
 - app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
+- app/src/main/java/com/example/mobile/presentation/viewmodel/HabitsViewModel.kt
 - app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt
 - app/src/main/java/com/example/mobile/presentation/ui/animations/PetAnimations.kt
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
@@ -154,8 +155,7 @@ Visual asset mappings and animation behavior remain in:
 - app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlayHost.kt
 - app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt
 - app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt
-- app/src/main/java/com/example/mobile/domain/JournalEngine.kt
-- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (NEW - centralized configuration)
+- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (centralized configuration)
 - app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt
 - app/src/main/java/com/example/mobile/domain/GameEventFactory.kt
 - app/src/main/java/com/example/mobile/domain/DragonMood.kt

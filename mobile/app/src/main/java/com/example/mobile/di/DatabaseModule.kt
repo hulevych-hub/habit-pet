@@ -81,12 +81,6 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideJournalEntryDao(database: AppDatabase): com.example.mobile.data.local.dao.JournalEntryDao {
-        return database.journalEntryDao()
-    }
-
-    @Provides
-    @Singleton
     fun provideStatisticsDao(database: AppDatabase): com.example.mobile.data.local.dao.StatisticsDao {
         return database.statisticsDao()
     }
@@ -213,20 +207,6 @@ object DatabaseModule {
     @Singleton
     fun provideRewardQueue(): RewardQueue {
         return RewardQueue()
-    }
-
-    @Provides
-    @Singleton
-    fun provideJournalEngine(
-        journalEntryDao: com.example.mobile.data.local.dao.JournalEntryDao,
-        petRepository: com.example.mobile.domain.repository.PetRepository,
-        statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository
-    ): com.example.mobile.domain.JournalEngine {
-        return com.example.mobile.domain.JournalEngine(
-            journalEntryDao,
-            petRepository,
-            statisticsRepository
-        )
     }
 
     @Provides

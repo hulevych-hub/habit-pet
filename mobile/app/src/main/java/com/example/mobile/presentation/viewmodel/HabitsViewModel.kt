@@ -8,13 +8,12 @@ import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ActivityTimelineEngine
 import com.example.mobile.domain.ChestRewardConfigProvider
-import com.example.mobile.domain.ChestType
+import com.example.mobile.domain.ChestRewardFactory
 import com.example.mobile.domain.DragonMoodEngine
 import com.example.mobile.domain.EconomyConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.HabitCompletionRepository
-import com.example.mobile.domain.repository.HabitCompletionResult
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
@@ -235,9 +234,10 @@ class HabitsViewModel @Inject constructor(
 
                 val chestType = ChestRewardConfigProvider.getRandomChestType()
                 rewardQueue.addReward(
-                    buildChestReward(
+                    ChestRewardFactory.buildChestReward(
                         rewardType = "level_up_${chestType.name.lowercase()}",
-                        chestType = chestType
+                        chestType = chestType,
+                        inventoryItemRepository = inventoryItemRepository
                     )
                 )
             }
@@ -283,9 +283,10 @@ class HabitsViewModel @Inject constructor(
 
         viewModelScope.launch {
             val chestType = EconomyConfig.getRandomSurpriseChestType()
-            val surpriseChest = buildChestReward(
+            val surpriseChest = ChestRewardFactory.buildChestReward(
                 rewardType = "surprise_${chestType.name.lowercase()}",
-                chestType = chestType
+                chestType = chestType,
+                inventoryItemRepository = inventoryItemRepository
             )
 
             awardPetXpAndCoins(EconomyConfig.SURPRISE_BONUS_XP, EconomyConfig.SURPRISE_BONUS_COINS)
@@ -297,35 +298,5 @@ class HabitsViewModel @Inject constructor(
             )
             rewardQueue.addReward(surpriseChest)
         }
-    }
-
-    private suspend fun buildChestReward(
-        rewardType: String,
-        chestType: ChestType
-    ): RewardUiEvent.ChestReward {
-        val config = ChestRewardConfigProvider.getConfig(chestType)
-        var customizationId: Long? = null
-
-        if (config.customizationRarity != null && Math.random() < config.customizationDropChance) {
-            val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
-                .firstOrNull()
-                ?.toList()
-                .orEmpty()
-
-            if (unownedItems.isNotEmpty()) {
-                val selectedItem = unownedItems.random()
-                val grantResult = inventoryItemRepository.grantItem(selectedItem.id)
-                if (grantResult == 1) {
-                    customizationId = selectedItem.id
-                }
-            }
-        }
-
-        return RewardUiEvent.ChestReward(
-            rewardType = rewardType,
-            amount = config.getRandomCoins(),
-            expAmount = config.getRandomExp(),
-            customizationId = customizationId
-        )
     }
 }

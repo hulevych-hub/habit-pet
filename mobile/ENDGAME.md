@@ -11,7 +11,7 @@ The game continues to provide progression and rewards beyond reaching maximum ev
 - Coin earning continues through habit completions, achievements, streak milestone chests, and level-ups
 - Habit tracking and streak maintenance remain core gameplay
 - Customization collection continues through outfits, backgrounds, and auras
-- Journal entries continue to be generated for evolution and streak milestones
+- Activity timeline events continue to be logged for evolution and streak milestones
 
 ## Rules
 
@@ -51,14 +51,14 @@ The pet has a maximum evolution stage of 4 (Ancient Dragon):
 - Streaks can continue indefinitely
 - Chest rewards are awarded at configured milestones: 7, 14, 30, 60, 100
 - No streak-based achievements beyond 30-day streak
-- Special recognition for extremely long streaks is limited to the configured milestone rewards and journal entries
+- Special recognition for extremely long streaks is limited to the configured milestone rewards and activity timeline events
 
-### Journal System
-- Journal entries continue to be generated for:
+### Activity Timeline
+- Activity timeline events continue to be logged for:
   * Pet arrival (one-time)
   * Evolution milestones (one-time per stage)
   * Streak milestones (7, 14, 30, 60, 100 days)
-- No additional journal entry types for extreme milestones
+- No additional timeline event types for extreme milestones
 
 ### Economy
 - Coin earning continues through:
@@ -100,7 +100,6 @@ No special endgame state is tracked:
 - app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
 - app/src/main/java/com/example/mobile/domain/AchievementEngine.kt
 - app/src/main/java/com/example/mobile/domain/StreakEngine.kt
-- app/src/main/java/com/example/mobile/domain/JournalEngine.kt
 - app/src/main/java/com/example/mobile/domain/ExpConfig.kt
 - app/src/main/java/com/example/mobile/domain/EconomyConfig.kt
 

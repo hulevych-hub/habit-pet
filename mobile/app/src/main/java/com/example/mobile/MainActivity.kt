@@ -2,6 +2,7 @@ package com.example.mobile
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -40,6 +41,8 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var statisticsRepository: StatisticsRepository
 
+    private var rewardBackPressedCallback: OnBackPressedCallback? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,9 +58,14 @@ class MainActivity : ComponentActivity() {
         // ✅ Proper edge-to-edge setup (modern Android way)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val controller = WindowCompat.getInsetsController(window, window.decorView)
-        controller.systemBarsBehavior =
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        rewardBackPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() = Unit
+        }
+        onBackPressedDispatcher.addCallback(rewardBackPressedCallback!!)
 
         setContent {
             HabitPetTheme {
@@ -85,24 +93,14 @@ class MainActivity : ComponentActivity() {
         // ✅ Hide system bars during reward cinematic
         lifecycleScope.launch {
             rewardManager.isDisplayingReward.collect { isDisplaying ->
-
-                val controller =
-                    WindowCompat.getInsetsController(window, window.decorView)
+                rewardBackPressedCallback?.isEnabled = isDisplaying
 
                 if (isDisplaying) {
-                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                    insetsController.hide(WindowInsetsCompat.Type.systemBars())
                 } else {
-                    controller.show(WindowInsetsCompat.Type.systemBars())
+                    insetsController.show(WindowInsetsCompat.Type.systemBars())
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        // Prevent navigation during reward cinematic
-        if (rewardManager.isDisplayingReward.value) {
-            return
-        }
-        super.onBackPressed()
     }
 }

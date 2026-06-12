@@ -143,7 +143,7 @@ Claims are serialized with a mutex to prevent duplicate processing from rapid ta
 
 - Coin rewards are added with `statisticsRepository.addCoins(...)`.
 - EXP rewards are added to the current pet.
-- Chest rewards are built through `ChestRewardConfigProvider` and queued as `RewardUiEvent.ChestReward`.
+- Chest rewards are built through `ChestRewardFactory` and queued as `RewardUiEvent.ChestReward`.
 - Customization rewards are granted by stable `itemId` through `InventoryItemRepository`.
 - Reward UI is queued through `RewardQueue` and emitted through `RewardEventBus`.
 

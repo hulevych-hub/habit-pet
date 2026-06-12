@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EmptyStateCard(
+    modifier: Modifier = Modifier,
     title: String,
     message: String,
-    hint: String? = null,
-    modifier: Modifier = Modifier
+    hint: String? = null
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
