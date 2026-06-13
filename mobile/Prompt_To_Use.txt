@@ -30,14 +30,6 @@ Follow TODO.md as the source of truth.
 - Only inspect files directly required for the current task.
 - Assume working systems are correct unless evidence indicates otherwise.
 
-## CRITICAL RULES (NON-NEGOTIABLE)
-
-* Do NOT invent APIs, classes, composables, imports, packages, repositories, events, managers, DTOs, models, or ViewModels.
-* Do NOT assume a symbol exists unless it exists in the codebase or official AndroidX APIs.
-* Reuse existing implementations whenever possible.
-* The code must compile exactly as written.
-* Do not create alternative implementations of existing systems.
-
 ## IMPORT AND PACKAGE CONSISTENCY RULE
 
 Before creating or modifying any file:
