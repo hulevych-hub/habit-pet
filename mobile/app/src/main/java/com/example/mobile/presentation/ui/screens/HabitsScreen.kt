@@ -65,6 +65,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
 import kotlin.math.ceil
 
@@ -78,6 +80,8 @@ fun HabitsScreen(
     val habits by habitsViewModel.habits.collectAsState(initial = emptyList())
     val completedToday by habitsViewModel.completedToday.collectAsState(initial = emptyMap())
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
+    val error by habitsViewModel.error.collectAsState(initial = null)
+    val isLoading by homeScreenViewModel.isLoading.collectAsState()
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
     val sortedHabits = habits.sortedWith(
         compareBy<HabitEntity> { completedToday[it.id] == true }
@@ -135,13 +139,31 @@ fun HabitsScreen(
             }
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+        if (!error.isNullOrBlank()) {
+            ErrorStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = error.orEmpty(),
+                onRetry = habitsViewModel::clearError
+            )
+        } else if (isLoading) {
+            LoadingStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = "Gathering today's quests..."
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
             item {
                 HabitsHeader(
                     streak = progressUiState.globalStreak,
@@ -183,6 +205,7 @@ fun HabitsScreen(
             }
         }
     }
+}
 }
 
 @Composable

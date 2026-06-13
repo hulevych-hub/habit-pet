@@ -62,6 +62,7 @@ import com.example.mobile.data.local.entities.GameEventEntity
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.GameEventRarity
 import com.example.mobile.domain.GameEventType
+import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
 import com.example.mobile.util.ReinforcementMessageProvider
 import java.util.Calendar
@@ -74,6 +75,7 @@ fun ActivityTimelineScreen(
 ) {
     val events by activityTimelineViewModel.events.collectAsState()
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    val isLoading by activityTimelineViewModel.isLoading.collectAsState()
     val isLoadingMore by activityTimelineViewModel.isLoadingMore.collectAsState()
     val hasMore by activityTimelineViewModel.hasMore.collectAsState()
     val groups = remember(events) { groupEventsByDay(events) }
@@ -97,15 +99,24 @@ fun ActivityTimelineScreen(
             )
         }
     ) { padding ->
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
-        ) {
+        if (isLoading) {
+            LoadingStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = "Opening your journey chronicle..."
+            )
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
+            ) {
             groups.forEach { group ->
                 item {
                     DayHeader(label = group.label)
@@ -156,6 +167,7 @@ fun ActivityTimelineScreen(
             }
         }
     }
+}
 }
 
 @Composable

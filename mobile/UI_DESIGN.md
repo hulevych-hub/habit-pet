@@ -53,6 +53,10 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 - Header is a lavender goal card with streak copy, daily XP progress, a segmented progress bar, and bonus chest emphasis.
 - Habit cards are premium cards with completion affordance, category badges, category labels, and visible edit/delete actions.
+- Repository-backed screens show a lightweight loading card while initial data is warming up.
+- Recoverable failures show a lightweight error card with a clear retry/dismiss action.
+- Settings toggle failures keep the previous toggle state and show the shared error card until the user dismisses it.
+- Destructive actions require confirmation before they execute.
 - Completion affordance is a prominent check button.
 - Long press still opens actions for edit, delete, and session-level skip.
 
@@ -62,6 +66,7 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 - Locked achievements use a mystery collectible style.
 - Claimable achievements use stronger amber/violet visual distinction.
 - Claimed achievements show a muted collected state.
+- Achievement load or claim failures use the shared lightweight error card with a retry action.
 
 ### Inventory / Rewards
 
@@ -85,9 +90,11 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ### Bottom Navigation
 
+- The persistent app shell uses six primary destinations: Home, Habits, Pet, Rewards, Achievements, and Settings.
 - Navigation items use consistent icon and label spacing.
-- The selected item has an animated rounded active indicator.
+- The selected item has an animated rounded active indicator using theme colors.
 - Achievement badge remains visible for claimable rewards.
+- The bottom bar is hidden on detail, edit, and creation screens so focus stays on the current task.
 
 ## Asset Notes
 

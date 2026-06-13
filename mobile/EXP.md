@@ -9,6 +9,7 @@ EXP (Experience Points) is a core progression system in Habit Pet. Players earn 
 The EXP system is implemented across multiple components:
 - XP is stored in the PetEntity database table
 - XP is awarded when habits are completed (checkbox habits can be completed from the list or detail screen; timer habits complete from the detail screen)
+- Habit completions are idempotent: the repository returns whether a completion was newly inserted, and reward/XP pipelines only run for new completions
 - XP determines pet level and evolution stage
 - Level progression uses a formula where each level requires increasingly more XP
 - Evolution stages are determined by XP thresholds
@@ -42,6 +43,7 @@ No new coin, XP, chest, or customization source was added by this system. The on
   - Example: 30 min session → 10 + 150 = 160 XP
 - XP is added to the pet's current XP total
 - Checkbox habit completion from the habit list is optimistic: the UI marks the habit complete immediately after the repository write succeeds, then the same reward pipeline updates pet XP, coins, streaks, activity timeline, micro-feedback, and any queued level-up/chest rewards
+- If a duplicate completion is returned by the repository, the ViewModel stops before logging rewards, updating pet XP, or queueing progression events
 - Reward overlays are reserved for major progression moments such as level-ups, evolutions, streak chests, achievements, and surprise chests; direct habit XP/coin feedback does not open a blocking reward screen
 
 ### Combo / Momentum
@@ -179,6 +181,7 @@ All EXP values are now centralized in `ExpConfig` (app/src/main/java/com/example
 4. ✅ **FIXED: Progress Visibility Gaps** - Major habit, collection, and activity screens now show `ProgressHeader`
 5. ✅ **FIXED: One-Tap Habit Completion Friction** - Checkbox habits can now be completed directly from the habit list with immediate reward pipeline execution
 6. ✅ **FIXED: No Short-Term Momentum Feedback** - Consecutive completions now produce a capped additive XP bonus, visible combo multiplier feedback, and timeline milestones
+7. ✅ **FIXED: Duplicate Pet XP After Habit Completion** - Habit completion is idempotent; pet XP and reward events are applied only when the repository inserts a new completion
 
 ## Progression Validation
 

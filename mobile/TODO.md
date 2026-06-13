@@ -18,11 +18,11 @@ For every task below:
 
 ## Critical Improvements
 
-- [ ] Prevent pet XP from being awarded twice after habit completion.
-- [ ] Add a persistent app shell with clear primary navigation.
-- [ ] Add confirmation and safeguards for destructive actions.
-- [ ] Add loading states for screens that load repository data.
-- [ ] Add error states for failed habit, reward, achievement, pet, and settings operations.
+- [x] Prevent pet XP from being awarded twice after habit completion.
+- [x] Add a persistent app shell with clear primary navigation.
+- [x] Add confirmation and safeguards for destructive actions.
+- [x] Add loading states for screens that load repository data.
+- [x] Add error states for failed habit, reward, achievement, pet, and settings operations.
 - [ ] Make notification settings read and write persisted preferences consistently.
 - [ ] Ensure reward overlays are integrated into the app shell so major progression moments block navigation.
 - [ ] Replace hardcoded navigation routes with typed or centralized navigation actions.

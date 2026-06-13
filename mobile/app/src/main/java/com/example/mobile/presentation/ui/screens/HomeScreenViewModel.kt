@@ -14,12 +14,15 @@ import com.example.mobile.domain.repository.StatisticsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -33,6 +36,9 @@ class HomeScreenViewModel @Inject constructor(
     private val habitCompletionRepository: HabitCompletionRepository,
     private val achievementRepository: AchievementRepository
 ) : ViewModel() {
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     fun resetAllGameData() {
         viewModelScope.launch {
@@ -112,6 +118,20 @@ class HomeScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = 0L
         )
+
+    init {
+        viewModelScope.launch {
+            combine(
+                statistics,
+                habits,
+                pet,
+                todayCompletionStatuses,
+                todayXpProgress
+            ) { _, _, _, _, _ -> }
+                .take(1)
+                .collect { _isLoading.value = false }
+        }
+    }
 
     // Combined state for easy access in UI
     val uiState: StateFlow<UiState> = combine(

@@ -25,8 +25,10 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -52,6 +54,7 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.LoadingStateCard
 
 @Composable
 fun HomeScreen(
@@ -60,9 +63,11 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
+    val isLoading by homeScreenViewModel.isLoading.collectAsState()
     val pet = uiState.pet
     val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
     var showMandatoryPetNameDialog by remember { mutableStateOf(false) }
+    var showResetGameDialog by remember { mutableStateOf(false) }
     var petNameDraft by remember { mutableStateOf(pet.name) }
 
     LaunchedEffect(shouldRequestPetName) { showMandatoryPetNameDialog = shouldRequestPetName }
@@ -80,25 +85,34 @@ fun HomeScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            DragonHero(
-                pet = pet,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                ResetGameButton(onResetClick = { homeScreenViewModel.resetAllGameData() })
-                TodayNourishmentSection(
-                    habits = uiState.habits,
-                    completedToday = uiState.completedToday,
-                    onNavigateToHabits = onNavigateToHabits,
-                    onNavigateToHabitDetail = onNavigateToHabitDetail
+            if (isLoading) {
+                LoadingStateCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                    message = "Waking up your dragon..."
                 )
+            } else {
+                DragonHero(
+                    pet = pet,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    ResetGameButton(onResetClick = { showResetGameDialog = true })
+                    TodayNourishmentSection(
+                        habits = uiState.habits,
+                        completedToday = uiState.completedToday,
+                        onNavigateToHabits = onNavigateToHabits,
+                        onNavigateToHabitDetail = onNavigateToHabitDetail
+                    )
+                }
             }
         }
 
@@ -112,6 +126,35 @@ fun HomeScreen(
                 onConfirm = { newName ->
                     homeScreenViewModel.renamePet(newName.trim())
                     showMandatoryPetNameDialog = false
+                }
+            )
+        }
+
+        if (showResetGameDialog) {
+            AlertDialog(
+                onDismissRequest = { showResetGameDialog = false },
+                title = { Text("Reset Game Data?") },
+                text = {
+                    Text("This clears habits, completions, rewards, pet progress, achievements, and statistics. This cannot be undone.")
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showResetGameDialog = false
+                            homeScreenViewModel.resetAllGameData()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
+                        )
+                    ) {
+                        Text("Reset")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showResetGameDialog = false }) {
+                        Text("Cancel")
+                    }
                 }
             )
         }

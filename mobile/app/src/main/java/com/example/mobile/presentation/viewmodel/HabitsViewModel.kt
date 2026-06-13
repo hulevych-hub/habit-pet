@@ -60,6 +60,10 @@ class HabitsViewModel @Inject constructor(
     val error: StateFlow<String?> = _error
     val completingHabitIds: StateFlow<Set<Long>> = _completingHabitIds
 
+    fun clearError() {
+        _error.value = null
+    }
+
     private val completedTodayFromRepository = habitRepository.getAllHabits()
         .flatMapLatest { habits ->
             val today = getDayStart(System.currentTimeMillis())
@@ -88,8 +92,13 @@ class HabitsViewModel @Inject constructor(
 
     fun deleteHabit(habit: HabitEntity) {
         viewModelScope.launch {
-            habitRepository.deleteHabit(habit)
-            streakEngine.recalculateTodayStreak(System.currentTimeMillis())
+            _error.value = null
+            try {
+                habitRepository.deleteHabit(habit)
+                streakEngine.recalculateTodayStreak(System.currentTimeMillis())
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Habit could not be deleted"
+            }
         }
     }
 
@@ -129,6 +138,12 @@ class HabitsViewModel @Inject constructor(
                     return@launch
                 }
 
+                if (!completionResult.isNewCompletion) {
+                    _optimisticCompletedHabitIds.value -= habit.id
+                    _error.value = "Already completed today"
+                    return@launch
+                }
+
                 val totalXpEarned = completionResult.totalXpEarned
                 activityTimelineEngine.logHabitCompleted(
                     habitName = habit.name,
@@ -160,7 +175,7 @@ class HabitsViewModel @Inject constructor(
                 dragonMoodEngine.refreshMood()
             } catch (e: Exception) {
                 _optimisticCompletedHabitIds.value -= habit.id
-                _error.value = e.message
+                _error.value = e.message ?: "Habit completion could not be saved"
             } finally {
                 _completingHabitIds.value -= habit.id
             }

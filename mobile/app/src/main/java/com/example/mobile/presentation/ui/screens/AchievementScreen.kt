@@ -46,13 +46,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
 
 @Composable
@@ -99,11 +99,10 @@ fun AchievementScreen(
                     }
                 }
                 !error.isNullOrBlank() -> item {
-                    Text(
-                        text = error.orEmpty(),
-                        modifier = Modifier.fillMaxWidth().padding(24.dp),
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
+                    ErrorStateCard(
+                        message = error.orEmpty(),
+                        modifier = Modifier.fillMaxWidth(),
+                        onRetry = achievementViewModel::retryLoadAchievements
                     )
                 }
                 achievements.isEmpty() -> item {

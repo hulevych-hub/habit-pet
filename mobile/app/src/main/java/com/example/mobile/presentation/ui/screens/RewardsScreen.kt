@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
@@ -62,7 +63,14 @@ import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.LoadingStateCard
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.foundation.lazy.grid.items as gridItems
@@ -73,15 +81,49 @@ class RewardsViewModel @Inject constructor(
     private val petRepository: PetRepository
 ) : ViewModel() {
 
+    private val _isLoading = MutableStateFlow(true)
+    private val _error = MutableStateFlow<String?>(null)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    val error: StateFlow<String?> = _error.asStateFlow()
+
+    fun clearError() {
+        _error.value = null
+    }
+
     val outfits = inventoryItemRepository.getItemsByType(CustomizationTypes.OUTFIT)
     val backgrounds = inventoryItemRepository.getItemsByType(CustomizationTypes.BACKGROUND)
     val auras = inventoryItemRepository.getItemsByType(CustomizationTypes.AURA)
 
-    suspend fun purchaseItem(itemId: Long): Int = inventoryItemRepository.purchaseItem(itemId)
+    init {
+        viewModelScope.launch {
+            combine(outfits, backgrounds, auras) { _, _, _ -> }
+                .collectLatest { _isLoading.value = false }
+        }
+    }
 
-    suspend fun equipItem(itemType: String, itemId: String): Int = petRepository.equipItem(itemType, itemId)
+    suspend fun purchaseItem(itemId: Long): Int = try {
+        _error.value = null
+        inventoryItemRepository.purchaseItem(itemId)
+    } catch (e: Exception) {
+        _error.value = e.message ?: "Reward could not be claimed"
+        -1
+    }
 
-    suspend fun unequipItem(itemType: String): Int = petRepository.unequipItem(itemType)
+    suspend fun equipItem(itemType: String, itemId: String): Int = try {
+        _error.value = null
+        petRepository.equipItem(itemType, itemId)
+    } catch (e: Exception) {
+        _error.value = e.message ?: "Reward could not be equipped"
+        -1
+    }
+
+    suspend fun unequipItem(itemType: String): Int = try {
+        _error.value = null
+        petRepository.unequipItem(itemType)
+    } catch (e: Exception) {
+        _error.value = e.message ?: "Reward could not be unequipped"
+        -1
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +139,8 @@ fun RewardsScreen(
     val actionScope = rememberCoroutineScope()
 
     val items by selectedTypeTab.itemsFlow(rewardsViewModel).collectAsState(initial = emptyList())
+    val isLoading by rewardsViewModel.isLoading.collectAsState()
+    val error by rewardsViewModel.error.collectAsState(initial = null)
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
 
     val filteredItems = items.filter { item ->
@@ -118,12 +162,30 @@ fun RewardsScreen(
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+        if (!error.isNullOrBlank()) {
+            ErrorStateCard(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 20.dp),
+                    .padding(padding)
+                    .padding(20.dp),
+                message = error.orEmpty(),
+                onRetry = rewardsViewModel::clearError
+            )
+        } else if (isLoading) {
+            LoadingStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = "Opening the reward chest..."
+            )
+        } else {
+            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp)
@@ -212,6 +274,7 @@ fun RewardsScreen(
             }
         }
     }
+}
 }
 
 @Composable

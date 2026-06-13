@@ -10,7 +10,8 @@ data class HabitCompletionResult(
     val totalXpEarned: Long,
     val combo: Int,
     val comboMultiplier: Float,
-    val comboMilestoneReached: Boolean
+    val comboMilestoneReached: Boolean,
+    val isNewCompletion: Boolean = true
 )
 
 interface HabitCompletionRepository {

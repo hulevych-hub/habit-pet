@@ -14,7 +14,7 @@ Habit Pet is an Android application that helps users build and maintain healthy 
 - **Activity Timeline**: Persistent gameplay moments for habit completions, rewards, streaks, and achievements
 - **Notifications**: Customizable reminders for habits, streaks, and pet care
 - **Rewards Economy**: Earn coins for completing habits and use them to purchase cosmetic items
-- **Modern Architecture**: Built with Clean Architecture, Hilt for dependency injection, Jetpack Compose for UI
+- **Modern Architecture**: Built with Clean Architecture, Hilt for dependency injection, Jetpack Compose for UI, and a persistent bottom-navigation app shell
 
 ## Technical Stack
 

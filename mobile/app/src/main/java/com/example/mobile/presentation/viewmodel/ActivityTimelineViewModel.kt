@@ -42,7 +42,12 @@ class ActivityTimelineViewModel @Inject constructor(
         if (loadedAll || _isLoading.value || _isLoadingMore.value) return
 
         viewModelScope.launch {
-            _isLoadingMore.value = true
+            val isFirstPage = offset == 0
+            if (isFirstPage) {
+                _isLoading.value = true
+            } else {
+                _isLoadingMore.value = true
+            }
             _error.value = null
 
             try {
@@ -68,6 +73,7 @@ class ActivityTimelineViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = e.message
             } finally {
+                _isLoading.value = false
                 _isLoadingMore.value = false
             }
         }

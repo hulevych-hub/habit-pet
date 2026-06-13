@@ -53,6 +53,14 @@ class AchievementViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    fun clearError() {
+        _error.value = null
+    }
+
+    fun retryLoadAchievements() {
+        loadAchievements()
+    }
+
     val statistics: StateFlow<StatisticsEntity> = statisticsRepository.getStatistics()
         .stateIn(
             scope = viewModelScope,
@@ -118,7 +126,12 @@ class AchievementViewModel @Inject constructor(
 
     fun claimAchievement(achievementId: String) {
         viewModelScope.launch {
-            achievementEngine.claimAchievement(achievementId)
+            _error.value = null
+            try {
+                achievementEngine.claimAchievement(achievementId)
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Achievement could not be claimed"
+            }
         }
     }
 

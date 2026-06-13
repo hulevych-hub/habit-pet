@@ -59,7 +59,12 @@ import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.LoadingStateCard
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -67,10 +72,22 @@ import javax.inject.Inject
 class PetViewModel @Inject constructor(
     private val petRepository: PetRepository
 ) : ViewModel() {
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
+
     val pet = petRepository.getPet()
 
+    fun clearError() {
+        _error.value = null
+    }
+
     fun renamePet(name: String, currentPet: PetEntity) = viewModelScope.launch {
-        petRepository.updatePet(currentPet.copy(id = currentPet.id, name = name))
+        _error.value = null
+        try {
+            petRepository.updatePet(currentPet.copy(id = currentPet.id, name = name))
+        } catch (e: Exception) {
+            _error.value = e.message ?: "Pet name could not be saved"
+        }
     }
 }
 
@@ -82,6 +99,8 @@ fun PetScreen(
 ) {
     // 1. Get the unified UI state from the HomeScreenViewModel
     val uiState by homeScreenViewModel.uiState.collectAsState()
+    val isLoading by homeScreenViewModel.isLoading.collectAsState()
+    val error by petViewModel.error.collectAsState(initial = null)
 
     // 2. Extract the safe, fully-loaded pet data (ID = 1)
     val pet = uiState.pet
@@ -102,13 +121,31 @@ fun PetScreen(
             )
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
+        if (!error.isNullOrBlank()) {
+            ErrorStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = error.orEmpty(),
+                onRetry = petViewModel::clearError
+            )
+        } else if (isLoading) {
+            LoadingStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = "Checking on your dragon..."
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
             // 1. TOP SECTION: Clean minimal dragon name header with inline edit action
             Row(
                 modifier = Modifier
@@ -272,6 +309,7 @@ fun PetScreen(
             }
         )
     }
+}
 }
 
 @Composable

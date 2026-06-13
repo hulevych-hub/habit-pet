@@ -2,10 +2,8 @@ package com.example.mobile.data.repository
 
 import com.example.mobile.data.local.dao.HabitCompletionDao
 import com.example.mobile.data.local.dao.HabitDao
-import com.example.mobile.data.local.dao.PetDao
 import com.example.mobile.data.local.dao.StatisticsDao
 import com.example.mobile.data.local.entities.HabitCompletionEntity
-import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.HabitCompletionRepository
@@ -17,8 +15,7 @@ import javax.inject.Inject
 class HabitCompletionRepositoryImpl @Inject constructor(
     private val habitCompletionDao: HabitCompletionDao,
     private val habitDao: HabitDao,
-    private val statisticsDao: StatisticsDao,
-    private val petDao: PetDao
+    private val statisticsDao: StatisticsDao
 ) : HabitCompletionRepository {
 
     override fun getCompletionsForHabit(
@@ -53,7 +50,8 @@ class HabitCompletionRepositoryImpl @Inject constructor(
                 totalXpEarned = existingCompletion.xpEarned,
                 combo = 0,
                 comboMultiplier = 1f,
-                comboMilestoneReached = false
+                comboMilestoneReached = false,
+                isNewCompletion = false
             )
         }
 
@@ -76,12 +74,12 @@ class HabitCompletionRepositoryImpl @Inject constructor(
                 totalXpEarned = completionWithCombo.xpEarned,
                 combo = nextCombo,
                 comboMultiplier = ExpConfig.comboMultiplier(nextCombo),
-                comboMilestoneReached = ExpConfig.comboMilestoneReached(nextCombo)
+                comboMilestoneReached = ExpConfig.comboMilestoneReached(nextCombo),
+                isNewCompletion = false
             )
         }
 
         updateHabitStreak(completion.habitId, completion.date)
-        updatePetProgress(completionWithCombo.xpEarned)
         updateStatistics(completionWithCombo, completionTimestamp, nextCombo)
 
         return HabitCompletionResult(
@@ -91,7 +89,8 @@ class HabitCompletionRepositoryImpl @Inject constructor(
             totalXpEarned = completionWithCombo.xpEarned,
             combo = nextCombo,
             comboMultiplier = ExpConfig.comboMultiplier(nextCombo),
-            comboMilestoneReached = ExpConfig.comboMilestoneReached(nextCombo)
+            comboMilestoneReached = ExpConfig.comboMilestoneReached(nextCombo),
+            isNewCompletion = true
         )
     }
 
@@ -183,22 +182,6 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         upsertStatistics(updated)
     }
 
-    private suspend fun updatePetProgress(xpEarned: Long) {
-        val pet = petDao.getPet().firstOrNull() ?: PetEntity(id = 1)
-
-        val newXp = pet.xp + xpEarned
-        val newLevel = ExpConfig.calculateLevelFromXp(newXp)
-        val newEvolutionStage = ExpConfig.calculateEvolutionStageFromXp(newXp)
-
-        val updated = pet.copy(
-            id = 1,
-            xp = newXp,
-            level = newLevel,
-            evolutionStage = newEvolutionStage
-        )
-
-        petDao.updatePet(updated)
-    }
 
     private suspend fun upsertStatistics(statistics: StatisticsEntity) {
         val updated = statisticsDao.updateStatistics(statistics.copy(id = 1))

@@ -51,22 +51,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.components.LoadingStateCard
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val statisticsRepository: StatisticsRepository
 ) : ViewModel() {
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     val statistics = statisticsRepository.getStatistics()
+
+    init {
+        viewModelScope.launch {
+            statistics.collectLatest { _isLoading.value = false }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel()) {
     val stats by statisticsViewModel.statistics.collectAsState(initial = StatisticsEntity())
+    val isLoading by statisticsViewModel.isLoading.collectAsState()
 
     Scaffold(
         containerColor = Color(0xFFFAFAFC),
@@ -84,12 +101,21 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
             )
         }
     ) { padding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp),
+        if (isLoading) {
+            LoadingStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = "Counting your journey milestones..."
+            )
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
             contentPadding = PaddingValues(top = 20.dp, bottom = 40.dp)
@@ -152,6 +178,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
             }
         }
     }
+}
 }
 
 @Composable

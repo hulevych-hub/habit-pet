@@ -1,5 +1,6 @@
 package com.example.mobile.presentation.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.util.NotificationPrefs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +58,7 @@ fun NotificationSettingsScreen(
 ) {
     val context = LocalContext.current
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    var settingsError by remember { mutableStateOf<String?>(null) }
 
     // Remember states dynamically to guarantee instantaneous toggle UI rendering updates
     var isDailyEnabled by remember { mutableStateOf(NotificationPrefs.isDailyReminderEnabled(context)) }
@@ -72,15 +75,25 @@ fun NotificationSettingsScreen(
             )
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
-        ) {
+        if (!settingsError.isNullOrBlank()) {
+            ErrorStateCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(20.dp),
+                message = settingsError.orEmpty(),
+                onRetry = { settingsError = null }
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
+            ) {
             item {
                 SettingsHero()
             }
@@ -92,8 +105,15 @@ fun NotificationSettingsScreen(
                     icon = Icons.Default.Pets,
                     isChecked = isDailyEnabled,
                     onCheckedChange = { checked ->
-                        NotificationPrefs.setDailyReminderEnabled(context, checked)
-                        isDailyEnabled = checked
+                        if (saveNotificationSetting(
+                                context,
+                                checked,
+                                NotificationPrefs::setDailyReminderEnabled,
+                                "Daily reminder could not be saved",
+                                { settingsError = it }
+                            )) {
+                            isDailyEnabled = checked
+                        }
                     }
                 )
             }
@@ -105,8 +125,15 @@ fun NotificationSettingsScreen(
                     icon = Icons.Default.Star,
                     isChecked = isStreakEnabled,
                     onCheckedChange = { checked ->
-                        NotificationPrefs.setStreakReminderEnabled(context, checked)
-                        isStreakEnabled = checked
+                        if (saveNotificationSetting(
+                                context,
+                                checked,
+                                NotificationPrefs::setStreakReminderEnabled,
+                                "Streak reminder could not be saved",
+                                { settingsError = it }
+                            )) {
+                            isStreakEnabled = checked
+                        }
                     }
                 )
             }
@@ -118,13 +145,35 @@ fun NotificationSettingsScreen(
                     icon = Icons.Default.FavoriteBorder,
                     isChecked = isPetEnabled,
                     onCheckedChange = { checked ->
-                        NotificationPrefs.setPetReminderEnabled(context, checked)
-                        isPetEnabled = checked
+                        if (saveNotificationSetting(
+                                context,
+                                checked,
+                                NotificationPrefs::setPetReminderEnabled,
+                                "Pet reminder could not be saved",
+                                { settingsError = it }
+                            )) {
+                            isPetEnabled = checked
+                        }
                     }
                 )
             }
+            }
         }
     }
+}
+
+private fun saveNotificationSetting(
+    context: Context,
+    checked: Boolean,
+    save: (Context, Boolean) -> Unit,
+    errorMessage: String,
+    onError: (String) -> Unit
+): Boolean = try {
+    save(context, checked)
+    true
+} catch (e: Exception) {
+    onError(e.message ?: errorMessage)
+    false
 }
 
 @Composable

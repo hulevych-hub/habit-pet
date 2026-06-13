@@ -31,8 +31,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -142,6 +144,7 @@ private fun HabitEditForm(
     val error by viewModel.error.collectAsState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -308,8 +311,12 @@ private fun HabitEditForm(
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedButton(
-                onClick = { viewModel.deleteHabit() },
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = ColorPaletteEdit.Coral),
+                onClick = { showDeleteDialog = true },
+                enabled = !isLoading,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = ColorPaletteEdit.Coral,
+                    disabledContentColor = ColorPaletteEdit.Coral.copy(alpha = 0.5f)
+                ),
                 border = androidx.compose.foundation.BorderStroke(1.5.dp, ColorPaletteEdit.Coral.copy(alpha = 0.35f)),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
@@ -340,6 +347,33 @@ private fun HabitEditForm(
                 }
             }
         }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Habit?") },
+            text = { Text("Delete '$name'? This cannot be undone.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        viewModel.deleteHabit()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ColorPaletteEdit.Coral,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
     // Modern Bottom Sheet Emoji Vault

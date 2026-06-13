@@ -194,6 +194,11 @@ class HabitDetailViewModel @Inject constructor(
                     return@launch
                 }
 
+                if (!completionResult.isNewCompletion) {
+                    _error.value = "Already completed today"
+                    return@launch
+                }
+
                 val totalXpEarned = completionResult.totalXpEarned
                 activityTimelineEngine.logHabitCompleted(
                     habitName = _habit.value?.name ?: "Habit",
@@ -307,6 +312,11 @@ class HabitDetailViewModel @Inject constructor(
 
                     if (completionResult.completionId == -1L) {
                         _error.value = "Habit completion could not be saved"
+                        return@launch
+                    }
+
+                    if (!completionResult.isNewCompletion) {
+                        _error.value = "Already completed today"
                         return@launch
                     }
 
