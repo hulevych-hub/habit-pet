@@ -57,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -357,8 +358,9 @@ private fun HabitItem(
             )
 
             IconBadge(
-                icon = habitIcon(habit),
-                completed = completed
+                icon = habit.icon,
+                completed = completed,
+                fallbackIcon = habitIcon(habit)
             )
 
             Column(
@@ -487,8 +489,9 @@ private fun StreakBadge(streak: Int) {
 
 @Composable
 private fun IconBadge(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    completed: Boolean
+    icon: String,
+    completed: Boolean,
+    fallbackIcon: ImageVector
 ) {
     val tintColor = if (completed) ColorPaletteHabits.Success else ColorPaletteHabits.Violet
     val ambientBg = if (completed) ColorPaletteHabits.Success.copy(alpha = 0.12f) else ColorPaletteHabits.Violet.copy(alpha = 0.08f)
@@ -499,12 +502,19 @@ private fun IconBadge(
         color = ambientBg
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = tintColor,
-                modifier = Modifier.size(24.dp)
-            )
+            if (icon.isNotBlank()) {
+                Text(
+                    text = icon,
+                    fontSize = 24.sp
+                )
+            } else {
+                Icon(
+                    imageVector = fallbackIcon,
+                    contentDescription = null,
+                    tint = tintColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
