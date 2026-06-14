@@ -1,0 +1,51 @@
+Create a 2048x2048 PNG image with a transparent background.
+
+Using the provided base dragon image as reference, modify ONLY the dragon by adding the outfit described below.
+
+
+
+CRITICAL RULES:
+
+- Do NOT change the dragon’s body, face, pose, proportions, or style
+
+- Do NOT redesign the character
+
+- Do NOT change lighting or camera angle
+
+- Do NOT add background
+
+- Output must remain a transparent PNG
+
+- Only add wearable/attached outfit elements
+
+
+
+OUTFIT DESCRIPTION:
+
+Fantasy adventurer outfit with leather vest, utility belt, small pouch, fingerless gloves, shoulder strap, and sturdy boots. Include explorer goggles resting on the forehead or a small adventurer hat adapted for dragon horns. Keep the face fully visible.
+
+
+
+DESIGN CONSTRAINTS:
+
+- Must conform perfectly to the dragon’s body shape
+
+- Must follow strict front-facing symmetry
+
+- Must not obscure face or eyes
+
+- Must stay consistent with original art style
+
+- Must look like it is physically worn by the dragon
+
+- No floating or detached pieces
+
+
+
+OUTPUT:
+
+- Single dragon image with outfit applied
+
+- Transparent background
+
+- No extra objects or environment
