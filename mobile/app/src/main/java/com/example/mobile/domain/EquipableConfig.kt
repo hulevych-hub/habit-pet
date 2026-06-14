@@ -145,8 +145,8 @@ object EquipableConfig {
             phase = DragonPhase.YOUNG_DRAGON,
             drawableName = SAKURA_AURA,
             rarity = Rarity.NORMAL,
-            price = 1,
-            unlockSource = UnlockSources.SHOP
+            price = null,
+            unlockSource = UnlockSources.ACHIEVEMENT
         ),
         EquipableDefinition(
             id = FIRE_AURA,
