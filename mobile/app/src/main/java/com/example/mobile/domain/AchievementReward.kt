@@ -5,7 +5,7 @@ sealed class AchievementReward {
     data class ExpReward(val amount: Int) : AchievementReward()
     data class ChestReward(val chestType: ChestType) : AchievementReward()
     data class CustomizationReward(
-        val itemId: String,
+        val equipableId: String,
         val type: String = CustomizationTypes.OUTFIT
     ) : AchievementReward()
 }

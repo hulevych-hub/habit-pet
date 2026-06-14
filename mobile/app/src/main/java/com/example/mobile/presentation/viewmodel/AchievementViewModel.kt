@@ -10,6 +10,7 @@ import com.example.mobile.domain.AchievementProgressSource
 import com.example.mobile.domain.AchievementReward
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.domain.CustomizationTypes
+import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
@@ -189,6 +190,7 @@ class AchievementViewModel @Inject constructor(
         is AchievementReward.CoinReward -> "+$amount coins"
         is AchievementReward.ExpReward -> "+$amount EXP"
         is AchievementReward.ChestReward -> "${chestType.name.replaceFirstChar { it.uppercase() }} chest"
-        is AchievementReward.CustomizationReward -> CustomizationTypes.displayName(type)
+        is AchievementReward.CustomizationReward ->
+            EquipableConfig.definition(equipableId)?.name ?: CustomizationTypes.displayName(type)
     }
 }

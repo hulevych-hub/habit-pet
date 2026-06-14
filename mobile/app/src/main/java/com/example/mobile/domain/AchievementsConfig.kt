@@ -88,12 +88,12 @@ object AchievementsConfig {
         AchievementDefinition(
             id = FIRST_AURA_GLOW,
             name = "First Aura Glow",
-            description = "Unlock the Soft Glow aura",
-            icon = "aura_soft_glow",
+            description = "Unlock the Sakura Aura",
+            icon = "aura_sakura",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 1,
             rewards = listOf(
-                AchievementReward.CustomizationReward("soft_glow", CustomizationTypes.AURA)
+                AchievementReward.CustomizationReward(EquipableConfig.SAKURA_AURA, CustomizationTypes.AURA)
             )
         ),
         AchievementDefinition(
@@ -108,12 +108,12 @@ object AchievementsConfig {
         AchievementDefinition(
             id = COZY_OUTFIT,
             name = "Cozy Outfit",
-            description = "Unlock the Royal Scarf outfit",
-            icon = "outfit_royal_scarf",
+            description = "Unlock the Royal Outfit",
+            icon = "outfit_royal",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 2,
             rewards = listOf(
-                AchievementReward.CustomizationReward("royal_scarf", CustomizationTypes.OUTFIT)
+                AchievementReward.CustomizationReward(EquipableConfig.ROYAL_OUTFIT, CustomizationTypes.OUTFIT)
             )
         ),
         AchievementDefinition(
@@ -133,7 +133,7 @@ object AchievementsConfig {
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 3,
             rewards = listOf(
-                AchievementReward.CustomizationReward("background_forest", CustomizationTypes.BACKGROUND)
+                AchievementReward.CustomizationReward(EquipableConfig.BACKGROUND_FOREST, CustomizationTypes.BACKGROUND)
             )
         ),
         AchievementDefinition(
@@ -274,12 +274,12 @@ object AchievementsConfig {
         AchievementDefinition(
             id = CRYSTAL_AURA,
             name = "Crystal Aura",
-            description = "Unlock the Crystal Aura",
-            icon = "aura_crystal",
+            description = "Unlock the Icy Aura",
+            icon = "aura_icy",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 5,
             rewards = listOf(
-                AchievementReward.CustomizationReward("crystal_aura", CustomizationTypes.AURA)
+                AchievementReward.CustomizationReward(EquipableConfig.ICY_AURA, CustomizationTypes.AURA)
             )
         ),
         AchievementDefinition(
@@ -297,23 +297,23 @@ object AchievementsConfig {
         AchievementDefinition(
             id = CRYSTAL_CROWN,
             name = "Crystal Crown",
-            description = "Unlock the Crystal Crown outfit",
-            icon = "outfit_crystal_crown",
+            description = "Earn an epic chest reward",
+            icon = "outfit_knight",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 7,
             rewards = listOf(
-                AchievementReward.CustomizationReward("crystal_crown", CustomizationTypes.OUTFIT)
+                AchievementReward.ChestReward(ChestType.EPIC)
             )
         ),
         AchievementDefinition(
             id = CRYSTAL_CAVE,
             name = "Crystal Cave",
-            description = "Unlock the Crystal Cave background",
+            description = "Unlock the Beach Background",
             icon = "background_beach",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 8,
             rewards = listOf(
-                AchievementReward.CustomizationReward("background_beach", CustomizationTypes.BACKGROUND)
+                AchievementReward.CustomizationReward(EquipableConfig.BACKGROUND_BEACH, CustomizationTypes.BACKGROUND)
             )
         ),
         AchievementDefinition(
@@ -436,23 +436,23 @@ object AchievementsConfig {
         AchievementDefinition(
             id = DRAGONFIRE_AURA,
             name = "Dragonfire Aura",
-            description = "Unlock the Dragonfire Aura",
-            icon = "aura_dragonfire",
+            description = "Earn a rare chest reward",
+            icon = "aura_fire",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 10,
             rewards = listOf(
-                AchievementReward.CustomizationReward("dragonfire_aura", CustomizationTypes.AURA)
+                AchievementReward.ChestReward(ChestType.RARE)
             )
         ),
         AchievementDefinition(
             id = MYSTIC_CLOAK,
             name = "Mystic Cloak",
-            description = "Unlock the Mystic Cloak outfit",
-            icon = "outfit_mystic_cloak",
+            description = "Earn a legendary chest reward",
+            icon = "outfit_ninja",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 11,
             rewards = listOf(
-                AchievementReward.CustomizationReward("mystic_cloak", CustomizationTypes.OUTFIT)
+                AchievementReward.ChestReward(ChestType.LEGENDARY)
             )
         ),
         AchievementDefinition(
@@ -482,12 +482,12 @@ object AchievementsConfig {
         AchievementDefinition(
             id = FLOATING_ISLANDS,
             name = "Floating Islands",
-            description = "Unlock the Floating Islands background",
+            description = "Earn an epic chest reward",
             icon = "background_mountains",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 12,
             rewards = listOf(
-                AchievementReward.CustomizationReward("background_mountains", CustomizationTypes.BACKGROUND)
+                AchievementReward.ChestReward(ChestType.EPIC)
             )
         ),
         AchievementDefinition(
@@ -541,34 +541,34 @@ object AchievementsConfig {
         AchievementDefinition(
             id = STARLIGHT_ARMOR,
             name = "Starlight Armor",
-            description = "Unlock the Starlight Armor outfit",
-            icon = "outfit_starlight_armor",
+            description = "Unlock the Adventure Outfit",
+            icon = "outfit_adventure",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 12,
             rewards = listOf(
-                AchievementReward.CustomizationReward("starlight_armor", CustomizationTypes.OUTFIT)
+                AchievementReward.CustomizationReward(EquipableConfig.ADVENTURE_OUTFIT, CustomizationTypes.OUTFIT)
             )
         ),
         AchievementDefinition(
             id = CELESTIAL_REALM,
             name = "Celestial Realm",
-            description = "Unlock the Celestial Realm background",
+            description = "Earn a legendary chest reward",
             icon = "background_night_sky",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 12,
             rewards = listOf(
-                AchievementReward.CustomizationReward("background_night_sky", CustomizationTypes.BACKGROUND)
+                AchievementReward.ChestReward(ChestType.LEGENDARY)
             )
         ),
         AchievementDefinition(
             id = CELESTIAL_AURA,
             name = "Celestial Aura",
-            description = "Unlock the Celestial Aura",
-            icon = "aura_celestial",
+            description = "Unlock the Sakura Aura",
+            icon = "aura_sakura",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 12,
             rewards = listOf(
-                AchievementReward.CustomizationReward("celestial_aura", CustomizationTypes.AURA)
+                AchievementReward.CustomizationReward(EquipableConfig.SAKURA_AURA, CustomizationTypes.AURA)
             )
         ),
         AchievementDefinition(

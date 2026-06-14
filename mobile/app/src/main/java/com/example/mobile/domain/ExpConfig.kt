@@ -11,7 +11,7 @@ object ExpConfig {
     // =========================
 
     /** XP earned from completing a checkbox habit */
-    const val CHECKBOX_HABIT_XP: Long = 100
+    const val CHECKBOX_HABIT_XP: Long = 1000
 
     /** Base XP earned from completing a timer habit session */
     const val TIMER_HABIT_BASE_XP: Long = 10

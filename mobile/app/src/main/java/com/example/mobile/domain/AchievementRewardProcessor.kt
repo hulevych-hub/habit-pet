@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.room.withTransaction
 import com.example.mobile.data.local.database.AppDatabase
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.EquipableConfig
+import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
@@ -99,8 +101,15 @@ class AchievementRewardProcessor @Inject constructor(
     }
 
     private suspend fun grantCustomization(reward: AchievementReward.CustomizationReward) {
-        val item = inventoryItemRepository.getItemByItemId(reward.itemId).firstOrNull()
-            ?: throw IllegalStateException("Missing customization reward: ${reward.itemId}")
+        val equipable = EquipableConfig.definition(reward.equipableId)
+            ?: throw IllegalStateException("Missing customization reward: ${reward.equipableId}")
+
+        if (equipable.unlockSource != UnlockSources.ACHIEVEMENT) {
+            throw IllegalStateException("Achievement customization reward must use ACHIEVEMENT source: ${equipable.id}")
+        }
+
+        val item = inventoryItemRepository.getItemByItemId(equipable.id).firstOrNull()
+            ?: throw IllegalStateException("Missing customization reward: ${equipable.id}")
 
         if (item.isPurchased) {
             return
@@ -108,7 +117,7 @@ class AchievementRewardProcessor @Inject constructor(
 
         val result = inventoryItemRepository.grantItem(item.id)
         if (result < 0) {
-            throw IllegalStateException("Failed to grant customization reward: ${reward.itemId}")
+            throw IllegalStateException("Failed to grant customization reward: ${equipable.id}")
         }
     }
 

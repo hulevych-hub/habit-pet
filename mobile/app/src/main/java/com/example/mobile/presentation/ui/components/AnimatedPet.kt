@@ -27,12 +27,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.presentation.ui.animations.PetAnimations
+import com.example.mobile.util.AssetResolver
 import com.example.mobile.util.PetTransitionPrefs
 
 @Composable
@@ -48,16 +47,16 @@ fun AnimatedPet(
         modifier = modifier.background(Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
-        // AURA: Now fills the parent container
-        AuraLayer(
-            equippedAura = pet.equippedAura,
-            modifier = Modifier.fillMaxSize()
-        )
+        val assetManager = LocalContext.current.assets
+        val backgroundAssetPath = remember(pet.equippedBackground) {
+            AssetResolver.backgroundAssetPath(assetManager, pet.equippedBackground)
+        }
 
-        // BACKGROUND: Now fills the parent container
-        if (pet.equippedBackground != null) {
+        // BACKGROUND: Render first.
+        val backgroundPainter = rememberAssetPainter(backgroundAssetPath, "pet background")
+        if (backgroundPainter != null) {
             Image(
-                painter = painterResource(backgroundImageForItemId(pet.equippedBackground)),
+                painter = backgroundPainter,
                 contentDescription = "Pet background",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
@@ -210,55 +209,39 @@ fun PetPhaseTransition(
 
 @Composable
 private fun PetImageLayer(pet: PetEntity, evolutionStage: Int, modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(petImageForStage(evolutionStage)),
-        contentDescription = "Pet image",
-        modifier = modifier,
-        contentScale = ContentScale.Fit // Ensures the image scales within the provided modifier
-    )
-    OutfitLayer(pet.equippedOutfit, modifier)
+    val assetManager = LocalContext.current.assets
+    val baseAssetPath = remember(evolutionStage, pet.equippedAura) {
+        AssetResolver.dragonBaseAssetPath(assetManager, evolutionStage, pet.equippedAura)
+    }
+    val basePainter = rememberAssetPainter(baseAssetPath, "dragon base")
+
+    if (basePainter != null) {
+        Image(
+            painter = basePainter,
+            contentDescription = "Pet image",
+            modifier = modifier,
+            contentScale = ContentScale.Fit
+        )
+    }
+
+    OutfitLayer(pet, evolutionStage, modifier)
 }
 
 @Composable
-private fun AuraLayer(equippedAura: String?, modifier: Modifier = Modifier) {
-    if (equippedAura == null) return
-    Image(painter = painterResource(auraImageForItemId(equippedAura)), contentDescription = "Aura", modifier = modifier.graphicsLayer(alpha = 0.38f))
-}
+private fun OutfitLayer(pet: PetEntity, evolutionStage: Int, modifier: Modifier = Modifier) {
+    val assetManager = LocalContext.current.assets
+    val outfitAssetPath = remember(evolutionStage, pet.equippedOutfit) {
+        AssetResolver.outfitAssetPath(assetManager, evolutionStage, pet.equippedOutfit)
+    }
+    val outfitPainter = rememberAssetPainter(outfitAssetPath, "outfit overlay")
 
-@Composable
-private fun OutfitLayer(equippedOutfit: String?, modifier: Modifier = Modifier) {
-    if (equippedOutfit == null) return
-    Image(painter = painterResource(outfitImageForItemId(equippedOutfit)), contentDescription = "Outfit", modifier = modifier.graphicsLayer(alpha = 0.62f))
-}
-
-// ... (Keep all your existing helper functions like backgroundImageForItemId, petImageForStage, etc. here)
-
-private fun backgroundImageForItemId(itemId: String?): Int = when (itemId) {
-    "background_forest", "sunny_meadow" -> R.drawable.background_forest
-    "background_beach", "crystal_cave" -> R.drawable.background_beach
-    "background_mountains", "floating_islands" -> R.drawable.background_mountains
-    "background_night_sky", "celestial_realm" -> R.drawable.background_night_sky
-    else -> R.drawable.background_forest
-}
-
-private fun outfitImageForItemId(itemId: String?): Int = when (itemId) {
-    "royal_scarf", "crystal_crown", "mystic_cloak", "starlight_armor" -> R.drawable.outfit_placeholder
-    else -> R.drawable.outfit_placeholder
-}
-
-private fun auraImageForItemId(itemId: String?): Int = when (itemId) {
-    "soft_glow", "crystal_aura", "dragonfire_aura", "celestial_aura" -> R.drawable.aura_placeholder
-    else -> R.drawable.aura_placeholder
-}
-
-private fun petImageForStage(stage: Int): Int {
-    return when (stage) {
-        0 -> R.drawable.egg
-        1 -> R.drawable.hatchling
-        2 -> R.drawable.young_dragon
-        3 -> R.drawable.adult_dragon
-        4 -> R.drawable.ancient_dragon
-        else -> R.drawable.egg
+    if (outfitPainter != null) {
+        Image(
+            painter = outfitPainter,
+            contentDescription = "Outfit",
+            modifier = modifier,
+            contentScale = ContentScale.Fit
+        )
     }
 }
 

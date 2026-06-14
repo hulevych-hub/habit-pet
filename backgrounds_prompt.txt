@@ -1,0 +1,50 @@
+Create a 2048x2048 PNG image to be used as a game background for a pet dragon.
+
+CRITICAL RULES:
+
+* Do NOT include any dragon
+* Do NOT include any character, creature, or NPC
+* Do NOT include foreground objects that cover the center area
+* Keep the center area relatively open for the dragon to stand in front
+* Background must work behind all dragon phases
+* Maintain a clean mobile-game aesthetic
+* Keep visual noise low
+* The dragon must remain the visual focus when overlaid
+
+STYLE REQUIREMENTS:
+
+* Fantasy game style
+* Soft lighting
+* High quality digital illustration
+* Slight depth and atmosphere
+* Rich but not distracting
+* Premium mobile game quality
+* Cute and magical aesthetic
+* Appealing for all audiences while slightly feminine and cozy
+
+COMPOSITION RULES:
+
+* Keep the middle 40% of the image visually clean
+* Place major scenery toward edges and corners
+* Avoid strong elements directly behind the dragon's face
+* Use subtle gradients and atmospheric effects
+* Ensure readability when UI elements are displayed on top
+
+TECHNICAL RULES:
+
+* Output as PNG
+* No text
+* No UI elements
+* No borders
+* No watermark
+
+BACKGROUND DESCRIPTION:
+
+An ancient forest campsite with maps, lanterns, wooden bridges, and distant ruins.
+
+OUTPUT:
+
+* Single background image only
+* No dragon
+* No characters
+* Ready for direct use in the game

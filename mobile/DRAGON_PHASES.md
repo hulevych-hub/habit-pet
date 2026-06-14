@@ -47,12 +47,15 @@ The pet has five evolution stages, represented by integer values:
 *Previously inconsistent between HabitCompletionRepositoryImpl and HabitDetailViewModel - now unified in ExpConfig*
 
 ### Visual Representation
-Each evolution stage has a corresponding visual representation:
-- Stage 0 (Egg): R.drawable.egg
-- Stage 1 (Hatchling): R.drawable.hatchling
-- Stage 2 (Young Dragon): R.drawable.young_dragon
-- Stage 3 (Adult Dragon): R.drawable.adult_dragon
-- Stage 4 (Ancient Dragon): R.drawable.ancient_dragon
+Each evolution stage loads its dragon base from the matching phase asset folder:
+
+- Stage 0 (Egg): `res/drawable/egg/default`.
+- Stage 1 (Hatchling): `res/drawable/hatchling/default`.
+- Stage 2 (Young Dragon): `res/drawable/young_dragon/default`.
+- Stage 3 (Adult Dragon): `res/drawable/adult_dragon/default` if present.
+- Stage 4 (Ancient Dragon): `res/drawable/ancient_dragon/default` if present.
+
+`AssetResolver` always looks for the phase `default` first, then accepts a phase-named default alias if one exists. If an aura or outfit has `phase = null` in `EquipableConfig`, it is treated as usable at any dragon phase and the resolver searches all phase folders. Otherwise, the resolver tries the configured phase folder first and falls back to the phase default when the aura asset is missing. If no dragon base asset exists, the dragon base layer is skipped and the missing asset is logged; the app does not crash.
 
 Idle animation behavior is handled in `AnimatedPet.kt` with Compose infinite transitions so the static drawables feel alive without frame swapping:
 - Stage 0 (Egg): slow breathing scale, gentle left-right tilt, and very subtle bounce
@@ -129,11 +132,14 @@ Evolution stage thresholds are now centralized in `ExpConfig`:
 - `ExpConfig.evolutionStageName()` - Single name lookup function
 - `ExpConfig.xpThresholdForStage()` - Single XP threshold lookup function used by evolution teasing UI and timeline milestone events
 
-Visual asset mappings and animation behavior remain in:
-- AnimatedPet.kt (pet images, backgrounds, equipped items, stage-specific idle animations, and shared phase transitions)
-- PetTransitionPrefs.kt (SharedPreferences keys that prevent completed phase transitions from replaying)
-- RewardScreen.kt (reward-overlay phase transition screen)
-- RewardManager.kt and RewardOverlayHost.kt (current pet state passed into reward screens)
+Visual asset resolution and animation behavior are handled by:
+- `AssetResolver.kt` (phase/default/aura/outfit/background asset discovery and fallback paths)
+- `AnimatedPet.kt` (background-first rendering, dragon base rendering, outfit overlays, stage-specific idle animations, and shared phase transitions)
+- `AssetPainter.kt` (runtime bitmap decoding for packaged drawable-subfolder assets)
+- `RewardOverlay.kt` (evolution and chest asset rendering)
+- `PetTransitionPrefs.kt` (SharedPreferences keys that prevent completed phase transitions from replaying)
+- `RewardScreen.kt` (reward-overlay phase transition screen)
+- `RewardManager.kt` and `RewardOverlayHost.kt` (current pet state passed into reward screens)
 
 ## Data Model
 
@@ -174,7 +180,7 @@ Visual asset mappings and animation behavior remain in:
 4. **No Evolution Effects**: Beyond visual changes and journal entries, evolution stages don't affect gameplay mechanics (no stat boosts, special abilities, etc.).
 5. ✅ **FIXED: Evolution Teasing Visibility** - Home, pet, and progress header surfaces now show the next evolution stage and XP needed to reach it.
 6. ✅ **FIXED: Evolution Milestone Timeline Visibility** - XP reward paths now create activity timeline events when a locked evolution stage reaches 80% progress.
-7. **Visual Inconsistency**: While pet images change with evolution, equipped outfit and aura placeholders remain the same across all stages, which may look incongruous.
+7. ✅ **FIXED: Stage-specific customization rendering**: Equipped auras and outfits now resolve from the current phase folder, with missing assets falling back or skipping instead of using global placeholders.
 8. **No Evolution Requirements**: No additional requirements beyond XP (e.g., specific habits, time periods, or items) needed to evolve.
 
 ## Progression Timeline

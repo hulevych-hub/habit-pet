@@ -59,6 +59,7 @@ import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AssetPreview
@@ -142,6 +143,14 @@ fun RewardsScreen(
     val isLoading by rewardsViewModel.isLoading.collectAsState()
     val error by rewardsViewModel.error.collectAsState(initial = null)
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+
+    val equippedItemId = remember(progressUiState.pet, selectedTypeTab) {
+        when (selectedTypeTab) {
+            CollectionTypeTab.Outfits -> progressUiState.pet.equippedOutfit
+            CollectionTypeTab.Backgrounds -> progressUiState.pet.equippedBackground
+            CollectionTypeTab.Auras -> progressUiState.pet.equippedAura
+        }
+    }
 
     val filteredItems = items.filter { item ->
         val collectionMatch = when (selectedCollection) {
@@ -243,6 +252,7 @@ fun RewardsScreen(
                     InventoryItemGridSquare(
                         item = item,
                         isSelected = activeInspectItem?.id == item.id,
+                        isEquipped = equippedItemId == item.itemId,
                         onClick = { activeInspectItem = item }
                     )
                 }
@@ -256,11 +266,13 @@ fun RewardsScreen(
                     ItemInspectDrawer(
                         item = item,
                         currentWalletBalance = progressUiState.totalCoins,
+                        isEquipped = equippedItemId == item.itemId,
                         onClose = { activeInspectItem = null },
                         onActionExecute = {
                             actionScope.launch {
+                                val isEquipped = equippedItemId == item.itemId
                                 val result = when {
-                                    item.isEquipped -> rewardsViewModel.unequipItem(item.type)
+                                    isEquipped -> rewardsViewModel.unequipItem(item.type)
                                     item.isPurchased -> rewardsViewModel.equipItem(item.type, item.itemId)
                                     else -> rewardsViewModel.purchaseItem(item.id)
                                 }
@@ -281,6 +293,7 @@ fun RewardsScreen(
 private fun InventoryItemGridSquare(
     item: InventoryItemEntity,
     isSelected: Boolean,
+    isEquipped: Boolean = item.isEquipped,
     onClick: () -> Unit
 ) {
     val tierColor = rarityColor(item.rarity)
@@ -290,8 +303,8 @@ private fun InventoryItemGridSquare(
             .aspectRatio(1f)
             .fillMaxWidth()
             .border(
-                width = if (isSelected) 3.dp else if (item.isEquipped) 2.dp else 0.dp,
-                color = if (isSelected) ColorPaletteRewards.Violet else if (item.isEquipped) ColorPaletteRewards.Mint else Color.Transparent,
+                width = if (isSelected) 3.dp else if (isEquipped) 2.dp else 0.dp,
+                color = if (isSelected) ColorPaletteRewards.Violet else if (isEquipped) ColorPaletteRewards.Mint else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable(onClick = onClick),
@@ -337,7 +350,7 @@ private fun InventoryItemGridSquare(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-            } else if (item.isEquipped) {
+            } else if (isEquipped) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -362,11 +375,18 @@ private fun InventoryItemGridSquare(
 private fun ItemInspectDrawer(
     item: InventoryItemEntity,
     currentWalletBalance: Int,
+    isEquipped: Boolean = item.isEquipped,
     onClose: () -> Unit,
     onActionExecute: () -> Unit
 ) {
     val tierColor = rarityColor(item.rarity)
-    val canAfford = currentWalletBalance >= item.price
+    val isPurchasable = item.unlockSource == UnlockSources.SHOP && item.price > 0
+    val canAfford = isPurchasable && currentWalletBalance >= item.price
+    val unavailableLabel = when (item.unlockSource) {
+        UnlockSources.CHEST -> "Chest Reward"
+        UnlockSources.ACHIEVEMENT -> "Achievement Reward"
+        else -> "Not Available In Shop"
+    }
 
     Card(
         modifier = Modifier
@@ -423,7 +443,7 @@ private fun ItemInspectDrawer(
                     )
                 }
 
-                if (!item.isPurchased) {
+                if (!item.isPurchased && isPurchasable) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -440,24 +460,26 @@ private fun ItemInspectDrawer(
 
             Button(
                 onClick = onActionExecute,
-                enabled = item.isPurchased || canAfford,
+                enabled = isEquipped || item.isPurchased || isPurchasable,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = when {
-                        item.isEquipped -> ColorPaletteRewards.Ink.copy(alpha = 0.08f)
+                        isEquipped -> ColorPaletteRewards.Ink.copy(alpha = 0.08f)
                         item.isPurchased -> ColorPaletteRewards.Violet
-                        else -> ColorPaletteRewards.Amber
+                        isPurchasable -> ColorPaletteRewards.Amber
+                        else -> ColorPaletteRewards.Muted
                     },
-                    contentColor = if (item.isEquipped) ColorPaletteRewards.Ink else Color.White
+                    contentColor = if (isEquipped) ColorPaletteRewards.Ink else Color.White
                 ),
                 shape = RoundedCornerShape(999.dp),
                 modifier = Modifier.fillMaxWidth().height(48.dp)
             ) {
                 Text(
                     text = when {
-                        item.isEquipped -> "Unequip Item"
+                        isEquipped -> "Unequip Item"
                         item.isPurchased -> "Equip Customization"
                         canAfford -> "Unlock Reward"
-                        else -> "Insufficient Gold Balance"
+                        isPurchasable -> "Insufficient Gold Balance"
+                        else -> unavailableLabel
                     },
                     fontWeight = FontWeight.Bold
                 )

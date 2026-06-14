@@ -12,7 +12,7 @@ The data model includes 9 Room entities:
 3. HabitProgressEntity - Tracks timer habit progress
 4. PetEntity - Stores pet state (level, XP, equipped items)
 5. StatisticsEntity - Tracks player statistics and progress
-6. InventoryItemEntity - Manages collectible customization items
+6. InventoryItemEntity - Manages collectible customization items synced from `EquipableConfig`
 7. AchievementEntity - Tracks achievement progress and claim state
 8. GameEventEntity - Records persistent activity timeline events
 9. JournalEntryEntity - Legacy journal entry text retained for compatibility
@@ -74,21 +74,23 @@ The data model includes 9 Room entities:
 
 **InventoryItemEntity** (table: `inventory_items`)
 - `id: Long` - Primary key (auto-generated)
-- `itemId: String` - Stable item identifier used by rendering and migrations
+- `itemId: String` - Stable `EquipableConfig` identifier used by rendering, rewards, and migrations
 - `name: String` - Item display name
 - `type: String` - Category: `OUTFIT`, `BACKGROUND`, or `AURA`
 - `imageUrl: String` - Expected asset path
-- `isUnlocked: Boolean` - Whether item is visible/purchasable in the shop
+- `isUnlocked: Boolean` - Catalog visibility/purchasability; configured from `EquipableConfig` during inventory synchronization
 - `isPurchased: Boolean` - Whether player owns the item
-- `isEquipped: Boolean` - Cached equipped state
-- `price: Int` - Cost in coins to purchase the item
+- `isEquipped: Boolean` - Cached equipped state; Rewards screen also derives equipped state from `PetEntity`
+- `price: Int` - Cost in coins to purchase the item; non-purchasable config items store `0` here
 - `rarity: Rarity` - Rarity of the item (`NORMAL`, `RARE`, `EPIC`, `LEGENDARY`)
-- `unlockSource: String` - `SHOP` or `CHEST`
+- `unlockSource: String` - `SHOP`, `CHEST`, or `ACHIEVEMENT`; `ACHIEVEMENT` items are excluded from chest customization rolls
 
 **Chest Reward Integration**
 The chest reward system interacts with InventoryItemEntity through the InventoryItemRepository:
 - `grantItem(itemId: Long)`: Marks an item as purchased (`isPurchased = true`) when awarded from a chest
+- `grantItemByItemId(itemId: String)`: Resolves a stable `EquipableConfig` item ID and marks it as purchased
 - `getUnownedItemsByRarity(rarity: Rarity)`: Returns unpurchased items, preferring locked items first, to avoid duplicate chest rewards
+- Chest rewards filter out `unlockSource = "ACHIEVEMENT"` items before selecting a random reward
 - Chest rewards only grant customization items that are not already owned, preventing duplicates
 - When all customization items of a rarity are owned, the chest reward falls back to coin and EXP rewards only
 
@@ -131,7 +133,7 @@ Game events are append-only. The timeline DAO exposes reverse-chronological quer
 5. **Achievement Tracking**: AchievementEntity records are updated when milestones are reached
 6. **Activity Timeline**: GameEventEntity records are appended for habit completions, daily goals, achievements, level-ups, evolutions, chests, and streak milestones
 7. **Legacy Journal Compatibility**: JournalEntryEntity remains in the schema for compatibility, but no active journal writer creates new rows
-8. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items
+8. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items and are synchronized from `EquipableConfig` without overwriting player-owned, purchased, or equipped state; catalog metadata is refreshed
 
 ## Configuration
 
@@ -149,6 +151,8 @@ All entities are configured with Room annotations:
 - app/src/main/java/com/example/mobile/data/local/entities/HabitEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/HabitProgressEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/InventoryItemEntity.kt
+- app/src/main/java/com/example/mobile/data/local/database/InventoryItemDatabaseInitializer.kt
+- app/src/main/java/com/example/mobile/domain/EquipableConfig.kt
 - app/src/main/java/com/example/mobile/data/local/entities/GameEventEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/JournalEntryEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
@@ -163,7 +167,7 @@ All entities are configured with Room annotations:
    - StatisticsEntity.globalStreak (appears redundant)
    - StatisticsEntity.petAgeDays (never updated or displayed)
    - StatisticsEntity.rewardChestsAvailable (tracked but never used)
-   - InventoryItemEntity.imageUrl (stored but not used in UI)
+   - InventoryItemEntity.isEquipped is a cache; equipped state is authoritative in `PetEntity`
    - PetEntity.mood (tracked but not visually represented)
 
 2. **Data Redundancy**: Some information is stored in multiple places:

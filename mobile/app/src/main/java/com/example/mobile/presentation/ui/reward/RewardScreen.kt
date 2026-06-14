@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ChestType
+import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.presentation.ui.components.PetPhaseTransition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.util.ReinforcementMessageProvider
@@ -134,6 +135,7 @@ fun RewardScreen(
                     amount = reward.amount,
                     expAmount = reward.expAmount,
                     customizationId = reward.customizationId,
+                    equipableId = reward.equipableId,
                     reinforcementMessage = reinforcementMessage,
                     emphasisTier = emphasisTier
                 )
@@ -256,6 +258,7 @@ private fun ChestRewardContent(
     amount: Any,
     expAmount: Int = 0,
     customizationId: Long? = null,
+    equipableId: String? = null,
     reinforcementMessage: String,
     emphasisTier: RewardEmphasisTier
 ) {
@@ -293,8 +296,11 @@ private fun ChestRewardContent(
                     rewardText.add("+$expAmount EXP")
                 }
 
-                if (customizationId != null) {
-                    rewardText.add("Customization unlocked!")
+                if (customizationId != null || equipableId != null) {
+                    val equipableName = equipableId
+                        ?.let { EquipableConfig.definition(it)?.name }
+                        ?: "Customization"
+                    rewardText.add("$equipableName unlocked!")
                 }
 
                 if (rewardText.isNotEmpty()) {
@@ -524,7 +530,8 @@ private fun ConfigAchievementReward.rewardLabel(): String = when (this) {
         val label = chestType.name.replaceFirstChar { it.uppercase() }
         "$label chest"
     }
-    is ConfigAchievementReward.CustomizationReward -> "Customization"
+    is ConfigAchievementReward.CustomizationReward ->
+        EquipableConfig.definition(equipableId)?.name ?: "Customization"
 }
 
 private enum class RewardEmphasisTier(
@@ -571,7 +578,8 @@ private fun RewardUiEvent.emphasisTier(): RewardEmphasisTier = when (this) {
         rewardType = rewardType,
         amount = amount,
         expAmount = expAmount,
-        customizationId = customizationId
+        customizationId = customizationId,
+        equipableId = equipableId
     )
     is RewardUiEvent.AchievementReward -> if (
         chestType?.contains("legendary", ignoreCase = true) == true ||
@@ -587,7 +595,8 @@ private fun chestEmphasisTier(
     rewardType: String,
     amount: Any,
     expAmount: Int,
-    customizationId: Long?
+    customizationId: Long?,
+    equipableId: String? = null
 ): RewardEmphasisTier {
     val chestType = ChestType.values().firstOrNull {
         it.name.equals(rewardType.substringAfterLast('_'), ignoreCase = true) ||
@@ -601,7 +610,7 @@ private fun chestEmphasisTier(
         ChestType.NORMAL, null -> {
             val coinAmount = amount as? Int ?: 0
             when {
-                customizationId != null || expAmount >= 150 || coinAmount >= 80 -> RewardEmphasisTier.EPIC
+                customizationId != null || equipableId != null || expAmount >= 150 || coinAmount >= 80 -> RewardEmphasisTier.EPIC
                 expAmount > 0 || coinAmount >= 30 -> RewardEmphasisTier.RARE
                 else -> RewardEmphasisTier.SMALL
             }

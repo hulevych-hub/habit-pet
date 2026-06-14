@@ -7,7 +7,7 @@ Chest rewards are reward events in Habit Pet that players collect to receive coi
 ## Current Implementation
 
 The chest reward system consists of:
-- Chest reward events (`RewardUiEvent.ChestReward`) with a source string, coin amount, EXP amount, and optional customization item ID
+- Chest reward events (`RewardUiEvent.ChestReward`) with a source string, coin amount, EXP amount, and optional stable equipable ID
 - Two UI presentations: interactive chest opening in `RewardScreen` and simple chest with collect button in `RewardOverlay`
 - Priority-based queuing in `RewardQueue` (priority level 4)
 - Automatic processing of collected coins, EXP, and customization items via `RewardManager`
@@ -25,7 +25,8 @@ The chest reward system consists of:
 - `rewardType: String` - identifies the source/reason for the chest
 - `amount: Any` - the coin reward content (stored as `Any` for backward compatibility)
 - `expAmount: Int` - the EXP reward amount
-- `customizationId: Long?` - the ID of the customization item granted, if any
+- `customizationId: Long?` - local database item ID retained for backward compatibility
+- `equipableId: String?` - stable `EquipableConfig` item ID granted, if any
 
 ### Chest Reward Sources
 
@@ -75,7 +76,8 @@ Chest rewards have priority level 4 in the RewardQueue:
 When a chest reward is collected:
 - RewardManager extracts coin amount: `(current.amount as? Int) ?: 0` and adds it to player statistics
 - RewardManager adds EXP amount to the pet's total EXP: `current.expAmount`
-- RewardManager grants customization item by marking it as purchased: `inventoryItemRepository.grantItem(current.customizationId)`
+- RewardManager grants customization item by resolving `equipableId` through `InventoryItemRepository.grantItemByItemId`
+- If an older event only contains `customizationId`, RewardManager falls back to `inventoryItemRepository.grantItem(current.customizationId)`
 - Non-Int coin amounts result in 0 coins awarded
 
 ### Customization Grant Logic
@@ -84,20 +86,21 @@ When a chest reward is collected:
 - The DAO query prefers locked items first and then unowned purchased-eligible items:
   - `isPurchased = 0`
   - ordered by `isUnlocked ASC, type, name`
-- If all target-rarity items are already purchased, the chest falls back to coin/EXP rewards
+- Chest rewards exclude `unlockSource = "ACHIEVEMENT"` items because those are granted only by achievement reward flow
+- If all target-rarity items are already purchased or achievement-only, the chest falls back to coin/EXP rewards
 - Duplicate purchased rewards are avoided whenever possible
 
 ### Outfit, Background, and Aura Reward Probabilities
 
 The current implementation is type-neutral. Chests target a rarity, then randomly choose among available unpurchased items of that rarity.
 
-Default seeded inventory contains one outfit, one background, and one aura per rarity. Therefore, before any target-rarity item has been purchased:
+Default chest-sourced inventory excludes shop and achievement-only items. Current chest candidates are:
 
-- Outfit reward chance within a customization drop: 1/3
-- Background reward chance within a customization drop: 1/3
-- Aura reward chance within a customization drop: 1/3
+- Rare: `fire_aura`
+- Epic: `knight_outfit`, `background_mountains`
+- Legendary: `ninja_outfit`, `background_night_sky`
 
-Across randomized level-up chests, each type has the same expected chance because the rarity distribution is symmetric and each rarity has one item of each type.
+Chests remain type-neutral within the selected rarity, so the actual type odds depend on which unpurchased chest-sourced items remain.
 
 ## Configuration
 
@@ -139,7 +142,8 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 - `rewardType: String` - identifies the source and chest type
 - `amount: Any` - coin reward (backward compatibility)
 - `expAmount: Int` - EXP reward amount
-- `customizationId: Long?` - granted customization item ID (null if none)
+- `customizationId: Long?` - local database item ID retained for backward compatibility
+- `equipableId: String?` - stable `EquipableConfig` item ID granted (null if none)
 
 ## Source Files
 
@@ -148,6 +152,7 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 - app/src/main/java/com/example/mobile/domain/ChestRewardConfigProvider.kt
 - app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt
 - app/src/main/java/com/example/mobile/domain/EconomyConfig.kt (centralized economy values)
+- app/src/main/java/com/example/mobile/domain/EquipableConfig.kt
 - app/src/main/java/com/example/mobile/domain/StreakEngine.kt
 - app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt
 - app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt
@@ -168,9 +173,8 @@ The `RewardUiEvent.ChestReward` data class defines the structure:
 
 1. **Visual Differentiation**: All chest rewards use the same chest image regardless of chest type; future work could add visual differentiation based on `chestType`.
 2. **Particle Effects**: No particle effects or animations specific to chest rewards beyond the basic opening animation.
-3. **Customization Name Display**: Reward UI shows a generic customization message instead of the actual item name because reward UI does not load inventory names.
-4. **Configuration Flexibility**: While a configuration system exists, values are still hardcoded in `EconomyConfig`; future work could load configurations from remote sources or allow tuning.
-5. **Type-Specific Drop Tables**: The current system targets rarity only. Outfit, background, and aura probabilities are balanced by inventory composition rather than explicit per-type drop tables.
+3. **Configuration Flexibility**: While a configuration system exists, values are still hardcoded in `EconomyConfig`; future work could load configurations from remote sources or allow tuning.
+4. **Type-Specific Drop Tables**: The current system targets rarity only. Outfit, background, and aura probabilities are balanced by inventory composition rather than explicit per-type drop tables.
 
 ## Balance Validation
 

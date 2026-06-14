@@ -3,6 +3,7 @@ package com.example.mobile.data.repository
 import com.example.mobile.data.local.dao.InventoryItemDao
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
+import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -48,6 +49,11 @@ class InventoryItemRepositoryImpl @Inject constructor(
             return -2 // Already purchased
         }
 
+        // Non-shop items cannot be bought with coins
+        if (item.unlockSource != UnlockSources.SHOP || item.price <= 0) {
+            return -3 // Not purchasable
+        }
+
         // Get current statistics
         val currentStats = statisticsRepository.getStatistics().firstOrNull()
             ?: return -3 // Unable to get statistics
@@ -86,6 +92,13 @@ class InventoryItemRepositoryImpl @Inject constructor(
         inventoryItemDao.updateItem(updatedItem)
 
         return 1 // Success
+    }
+
+    override suspend fun grantItemByItemId(itemId: String): Int {
+        val item = inventoryItemDao.getItemByItemId(itemId).firstOrNull()
+            ?: return -1
+
+        return grantItem(item.id)
     }
 
     override fun getUnownedItemsByType(type: String): Flow<List<InventoryItemEntity>> {

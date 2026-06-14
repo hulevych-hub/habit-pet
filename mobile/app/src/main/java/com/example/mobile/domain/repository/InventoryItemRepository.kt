@@ -14,6 +14,7 @@ interface InventoryItemRepository {
     suspend fun deleteItem(item: InventoryItemEntity): Int
     suspend fun purchaseItem(itemId: Long): Int
     suspend fun grantItem(itemId: Long): Int
+    suspend fun grantItemByItemId(itemId: String): Int
     fun getUnownedItemsByType(type: String): Flow<List<InventoryItemEntity>>
     fun getUnownedItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>>
 

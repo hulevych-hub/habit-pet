@@ -20,7 +20,7 @@ Achievement rewards can be:
 - Coins
 - EXP
 - Chest rewards
-- Customization item grants
+- Customization item grants for achievement-only equipables
 - Multiple reward types on the same achievement
 
 Global streak milestones are separate from claimable achievements. They trigger immediately through `StreakEngine`, display an immersive celebration screen, and then flow into the centralized chest reward pipeline.
@@ -42,7 +42,7 @@ Reward types are modeled as `AchievementReward`:
 - `AchievementReward.CoinReward(amount)`
 - `AchievementReward.ExpReward(amount)`
 - `AchievementReward.ChestReward(chestType)`
-- `AchievementReward.CustomizationReward(itemId, type)`
+- `AchievementReward.CustomizationReward(equipableId, type)` - stable `EquipableConfig` item ID and category; the equipable must use `unlockSource = "ACHIEVEMENT"`
 
 ## Default Achievements
 
@@ -144,7 +144,8 @@ Claims are serialized with a mutex to prevent duplicate processing from rapid ta
 - Coin rewards are added with `statisticsRepository.addCoins(...)`.
 - EXP rewards are added to the current pet.
 - Chest rewards are built through `ChestRewardFactory` and queued as `RewardUiEvent.ChestReward`.
-- Customization rewards are granted by stable `itemId` through `InventoryItemRepository`.
+- Customization rewards are resolved through `EquipableConfig` and granted by stable `equipableId` through `InventoryItemRepository`; achievement-only equipables use `unlockSource = "ACHIEVEMENT"` and are not purchasable with coins.
+- Achievements that target chest-only equipables use `AchievementReward.ChestReward(...)` so the chest reward pipeline can select from `unlockSource = "CHEST"` items.
 - Reward UI is queued through `RewardQueue` and emitted through `RewardEventBus`.
 
 `RewardManager` remains the centralized processor for queued non-achievement reward events and does not double-process achievement reward coins or EXP.
@@ -169,7 +170,7 @@ Achievement definitions are initialized in:
 
 - `app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt`
 
-Coin values reuse `EconomyConfig`. Chest rewards use `ChestType` and `ChestRewardConfigProvider`. Customization rewards use stable `InventoryItemEntity.itemId` values.
+Coin values reuse `EconomyConfig`. Chest rewards use `ChestType` and `ChestRewardConfigProvider`. Customization rewards use stable IDs from `EquipableConfig` and are restricted to achievement-only equipables.
 
 ## Data Model
 
@@ -200,6 +201,7 @@ Database version was increased from 13 to 14 with `MIGRATION_13_14`, which prese
 - `app/src/main/java/com/example/mobile/domain/AchievementReward.kt`
 - `app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt`
 - `app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt`
+- `app/src/main/java/com/example/mobile/domain/EquipableConfig.kt`
 - `app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt`
 - `app/src/main/java/com/example/mobile/domain/StreakEngine.kt`
 - `app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt`

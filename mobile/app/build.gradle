@@ -19,6 +19,12 @@ android {
         versionName "1.0"
     }
 
+    sourceSets {
+        main {
+            assets.srcDirs += "src/main/res/drawable"
+        }
+    }
+
     buildFeatures {
         compose true
     }

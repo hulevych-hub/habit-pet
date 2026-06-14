@@ -40,6 +40,7 @@ sealed class RewardUiEvent {
         val rewardType: String,
         val amount: Any,
         val expAmount: Int = 0,
-        val customizationId: Long? = null
+        val customizationId: Long? = null,
+        val equipableId: String? = null
     ) : RewardUiEvent()
 }

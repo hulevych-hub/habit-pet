@@ -13,14 +13,15 @@ import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Wallpaper
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.mobile.R
 import com.example.mobile.domain.CustomizationTypes
+import com.example.mobile.util.AssetResolver
 
 @Composable
 fun AssetPreview(
@@ -30,18 +31,24 @@ fun AssetPreview(
     tintColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val assetPath = remember(itemType, itemId, imageUrl) {
+        AssetResolver.itemAssetPath(context.assets, itemType, itemId, imageUrl)
+    }
+    val assetPainter = rememberAssetPainter(assetPath, "asset preview")
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        drawableIdForAsset(itemType, itemId, imageUrl)?.let { drawableId ->
+        if (assetPainter != null) {
             Image(
-                painter = painterResource(drawableId),
+                painter = assetPainter,
                 contentDescription = "${CustomizationTypes.displayName(itemType)} Preview",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
-        } ?: when (itemType) {
+        } else when (itemType) {
             CustomizationTypes.OUTFIT -> {
                 Icon(
                     imageVector = Icons.Default.Checkroom,
@@ -78,25 +85,4 @@ fun AssetPreview(
             }
         }
     }
-}
-
-private fun drawableIdForAsset(itemType: String, itemId: String, imageUrl: String): Int? = when (itemType) {
-    CustomizationTypes.BACKGROUND -> backgroundImageForAsset(imageUrl)
-    CustomizationTypes.OUTFIT -> outfitImageForAsset(itemId)
-    CustomizationTypes.AURA -> R.drawable.aura_placeholder
-    else -> null
-}
-
-private fun backgroundImageForAsset(imageUrl: String): Int? = when (imageUrl.removeSuffix(".png")) {
-    "background_forest", "forest" -> R.drawable.background_forest
-    "background_beach", "beach" -> R.drawable.background_beach
-    "background_mountains", "mountains" -> R.drawable.background_mountains
-    "background_night_sky", "night_sky" -> R.drawable.background_night_sky
-    else -> null
-}
-
-private fun outfitImageForAsset(itemId: String): Int = when (itemId) {
-    "royal_scarf" -> R.drawable.red_scarf
-    "crystal_crown" -> R.drawable.crown
-    else -> R.drawable.outfit_placeholder
 }

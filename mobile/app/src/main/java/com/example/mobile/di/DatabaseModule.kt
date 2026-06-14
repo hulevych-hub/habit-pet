@@ -120,9 +120,10 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideInventoryItemDatabaseInitializer(
-        database: AppDatabase
+        database: AppDatabase,
+        inventoryItemRepository: InventoryItemRepository
     ): InventoryItemDatabaseInitializer {
-        return InventoryItemDatabaseInitializer(database)
+        return InventoryItemDatabaseInitializer(database, inventoryItemRepository)
     }
 
     @Provides

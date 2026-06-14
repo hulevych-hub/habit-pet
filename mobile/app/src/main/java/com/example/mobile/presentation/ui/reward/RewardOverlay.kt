@@ -37,13 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mobile.R
 import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
+import com.example.mobile.presentation.ui.components.rememberAssetPainter
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.util.AssetResolver
 
 @Composable
 fun RewardOverlay(
@@ -332,21 +333,23 @@ private fun ChestRewardContent(
     onConfirm: () -> Unit
 ) {
     var isOpen by remember { mutableStateOf(false) }
+    val assetManager = LocalContext.current.assets
+    val chestAssetPath = remember(isOpen) {
+        AssetResolver.assetPath(assetManager, "", if (isOpen) "chest_open" else "chest_closed")
+    }
+    val chestPainter = rememberAssetPainter(chestAssetPath, "chest")
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        val chestImage = if (isOpen)
-            R.drawable.chest_open
-        else
-            R.drawable.chest_closed
-
-        Image(
-            painter = painterResource(id = chestImage),
-            contentDescription = "Chest",
-            modifier = Modifier
-                .size(80.dp)
-                .clickable { isOpen = true }
-        )
+        if (chestPainter != null) {
+            Image(
+                painter = chestPainter,
+                contentDescription = "Chest",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clickable { isOpen = true }
+            )
+        }
 
         if (isOpen) {
             Text("Chest Reward!")
@@ -393,24 +396,12 @@ private fun DragonEvolutionRewardContent(
 ) {
     var isEvolved by remember { mutableStateOf(false) }
 
-    // Map stage numbers to drawable resources (using actual asset names)
-    val fromImageRes = when (fromStage) {
-        0 -> R.drawable.egg
-        1 -> R.drawable.hatchling
-        2 -> R.drawable.young_dragon
-        3 -> R.drawable.adult_dragon
-        4 -> R.drawable.ancient_dragon
-        else -> R.drawable.egg // fallback
+    val assetManager = LocalContext.current.assets
+    val displayedStage = if (isEvolved) toStage else fromStage
+    val dragonAssetPath = remember(displayedStage) {
+        AssetResolver.defaultAssetPath(assetManager, displayedStage)
     }
-
-    val toImageRes = when (toStage) {
-        0 -> R.drawable.egg
-        1 -> R.drawable.hatchling
-        2 -> R.drawable.young_dragon
-        3 -> R.drawable.adult_dragon
-        4 -> R.drawable.ancient_dragon
-        else -> R.drawable.ancient_dragon // fallback
-    }
+    val dragonPainter = rememberAssetPainter(dragonAssetPath, "dragon evolution")
 
     Column(
         modifier = Modifier
@@ -426,12 +417,14 @@ private fun DragonEvolutionRewardContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(if (isEvolved) toImageRes else fromImageRes),
-            contentDescription = if (isEvolved) "Dragon evolved to stage $toStage" else "Dragon stage $fromStage",
-            modifier = Modifier
-                .size(200.dp)
-        )
+        if (dragonPainter != null) {
+            Image(
+                painter = dragonPainter,
+                contentDescription = if (isEvolved) "Dragon evolved to stage $toStage" else "Dragon stage $fromStage",
+                modifier = Modifier
+                    .size(200.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 

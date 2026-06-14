@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Customization lets players personalize their dragon without changing habit completion, XP, coins, or progression balance. The system is centralized through `InventoryItemEntity` and the existing `InventoryItemRepository`, so rewards, shop purchases, collection display, and equipped state all flow through the same data path.
+Customization lets players personalize their dragon without changing habit completion, XP, coins, or progression balance. The system is centralized through `EquipableConfig`, `InventoryItemEntity`, and the existing `InventoryItemRepository`, so rewards, shop purchases, collection display, and equipped state all flow through the same data path.
 
 ## Item Types
 
@@ -12,7 +12,7 @@ The app uses three customization types:
 - `BACKGROUND`: a scene background behind the dragon.
 - `AURA`: a glow layer behind the dragon.
 
-Type constants live in `domain/CustomizationTypes.kt`.
+Type constants live in `domain/CustomizationTypes.kt`. Stable equipable IDs, display names, nullable phase metadata, nullable shop price, rarity, and unlock source live in `domain/EquipableConfig.kt`.
 
 ## Persistence
 
@@ -24,11 +24,11 @@ Customization items are stored in `inventory_items`:
 - `name`: display name.
 - `imageUrl`: expected asset path.
 - `rarity`: `NORMAL`, `RARE`, `EPIC`, or `LEGENDARY`.
-- `price`: shop price in coins.
+- `price`: shop price in coins. Config price is nullable for non-shop items; the database stores `0` for those rows.
 - `isUnlocked`: whether the item is visible/purchasable in the shop.
+- `unlock_source`: `SHOP`, `CHEST`, or `ACHIEVEMENT`.
 - `isPurchased`: ownership state.
 - `isEquipped`: cached equipped state.
-- `unlock_source`: `SHOP` or `CHEST`.
 
 The equipped state is stored on `PetEntity`:
 
@@ -36,37 +36,50 @@ The equipped state is stored on `PetEntity`:
 - `equipped_background`
 - `equipped_aura`
 
-Only one item can be equipped per type. Equipping a new item clears the previous item of that same type.
+Only one item can be equipped per type. Equipping a new item clears the previous item of that same type. The Rewards screen derives the equipped badge from `PetEntity` so cached `InventoryItemEntity.isEquipped` values do not hide currently equipped items.
 
 ## Rendering
 
-`AnimatedPet` renders customization layers in this order:
+`AnimatedPet` renders customization layers through `AssetResolver` in this order:
 
-1. Aura placeholder, if `equipped_aura` is set.
-2. Background image, if `equipped_background` is set.
-3. Dragon phase image.
-4. Outfit placeholder, if `equipped_outfit` is set.
+1. Background image from `backgrounds/`, if `equipped_background` is set and the asset exists.
+2. Dragon base image from the current phase folder:
+   - If `equipped_aura` is set, resolve the aura through `EquipableConfig`. If the aura has a configured phase, load `<aura>_aura` from that phase folder; if phase is `null`, search all dragon phase folders. The aura image already includes the dragon and aura.
+   - Otherwise, load `default` from the phase folder.
+3. Outfit overlay from `<outfit>_outfit`. If the outfit has a configured phase, use that phase folder; if phase is `null`, search all dragon phase folders.
 
-Current placeholder drawables:
+Missing assets fall back without crashing:
 
-- `res/drawable/outfit_placeholder.xml`
-- `res/drawable/aura_placeholder.xml`
+1. Dragon base falls back to the phase `default`.
+2. Missing backgrounds are skipped.
+3. Missing outfits are skipped.
+4. Missing auras fall back to the phase `default`.
 
-Backgrounds use existing drawable assets and are mapped by `item_id`.
+Missing asset lookups are logged with `AssetResolver` / `AssetRenderer` for debugging.
 
 ## Asset Naming Convention
 
-Expected final PNG assets should use lowercase underscore names:
+Packaged assets live under `res/drawable/` subfolders and are exposed to runtime asset loading through the Gradle `assets.srcDirs += "src/main/res/drawable"` configuration.
 
-- Outfits: `res/drawable/outfit_<item_id>.png`
-- Auras: `res/drawable/aura_<item_id>.png`
-- Backgrounds: `res/drawable/background_<item_id>.png`
+Dragon phase folders:
 
-Until final art is available, the app uses:
+- `egg/`
+- `hatchling/`
+- `young_dragon/`
+- `adult_dragon/`
+- `ancient_dragon/`
 
-- `outfit_placeholder.xml` for all outfit rewards.
-- `aura_placeholder.xml` for all aura rewards.
-- Existing background drawables for background rewards.
+Background folder:
+
+- `backgrounds/`
+
+Each phase folder contains the assets available for that phase:
+
+- `default` is the transparent-base dragon appearance for that phase. The resolver also accepts a phase-named default alias if one exists, so legacy assets do not need to be renamed.
+- `*_outfit` files are outfit overlays. The item name is everything before `_outfit`.
+- `*_aura` files are dragon-plus-aura images. If an aura has a configured phase, it is phase-specific; if phase is `null`, the resolver searches all phase folders.
+
+Backgrounds are loaded by file name from `backgrounds/`. Outfits and auras use the configured equipable ID, nullable phase metadata, and asset suffix from `EquipableConfig`; `AssetResolver` then resolves the matching packaged asset file.
 
 ## Collection Screen
 
@@ -81,14 +94,21 @@ The bottom navigation tab is named `Collection`. It displays:
 
 ## Reward Flow
 
-Chest rewards use `ChestRewardConfig.customizationRarity` and `customizationDropChance`. When a customization reward is rolled, `InventoryItemRepository.getUnownedItemsByRarity` selects from unpurchased items and prefers locked items first. The selected item is granted through `InventoryItemRepository.grantItem`.
+Chest rewards use `ChestRewardConfig.customizationRarity` and `customizationDropChance`. When a customization reward is rolled, `InventoryItemRepository.getUnownedItemsByRarity` selects from unpurchased items and prefers locked items first. Achievement-only items (`unlockSource = "ACHIEVEMENT"`) are excluded from chest rolls. The selected item is granted through `InventoryItemRepository.grantItem`, and the queued reward carries the stable `equipableId` so the reward popup can show the actual item name.
 
 ## Default Items
 
-The database initializer seeds 12 customization items:
+The database initializer synchronizes `EquipableConfig` entries into `inventory_items` on startup. Existing player-owned, purchased, and equipped states are preserved; catalog metadata such as name, type, asset path, price, rarity, unlock source, and `isUnlocked` is refreshed from config. New config entries are inserted automatically.
 
-- 4 outfits.
-- 4 backgrounds.
-- 4 auras.
+Current equipables are defined in `EquipableConfig`:
 
-Some legendary items are chest-locked and are not purchasable until granted by a reward.
+- Outfits: `wizard_outfit`, `adventure_outfit`, `knight_outfit`, `ninja_outfit`, `royal_outfit`.
+- Auras: `sakura_aura`, `fire_aura`, `icy_aura`.
+- Backgrounds: `background_forest`, `background_beach`, `background_mountains`, `background_night_sky`.
+
+Unlock source examples:
+- Shop: `wizard_outfit`.
+- Chest: `knight_outfit`, `fire_aura`, `background_mountains`, `ninja_outfit`, `background_night_sky`.
+- Achievement: `royal_outfit`, `sakura_aura`, `icy_aura`, `background_forest`, `background_beach`, `adventure_outfit`.
+
+A `phase = null` value means the item is not phase-specific and can be equipped at any dragon phase. Backgrounds currently use `phase = null`. Shop-sourced equipables are immediately purchasable only when `price` is not `null`. Chest-sourced and achievement-only equipables keep `price = null`, remain visible as locked catalog items, and are not purchasable with coins.

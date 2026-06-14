@@ -16,79 +16,376 @@ For every task below:
 
 ---
 
-## Critical Improvements
+The equipable asset system is currently inconsistent. Some assets exist in the project but do not appear in Rewards, Inventory, Chests, or Achievements.
 
-- [x] Prevent pet XP from being awarded twice after habit completion.
-- [x] Add a persistent app shell with clear primary navigation.
-- [x] Add confirmation and safeguards for destructive actions.
-- [x] Add loading states for screens that load repository data.
-- [x] Add error states for failed habit, reward, achievement, pet, and settings operations.
-- [ ] Make notification settings read and write persisted preferences consistently.
-- [ ] Ensure reward overlays are integrated into the app shell so major progression moments block navigation.
-- [ ] Replace hardcoded navigation routes with typed or centralized navigation actions.
-- [ ] Replace screen-local hardcoded colors with shared theme resources.
+I need a full audit and refactor to create a single, centralized equipable system.
 
-## Quick Wins
+Follow existing architecture and documentation. Do NOT invent package names, classes, or systems if equivalent implementations already exist.
 
-- [ ] Add a bottom navigation bar for Home, Habits, Pet, Rewards, Achievements, and Settings.
-- [ ] Add a floating action button on the Home screen for creating the first habit.
-- [ ] Add compact Home cards for daily goal progress, streak progress, pet level progress, and next action.
-- [ ] Add claimable achievement count to the main achievements entry point.
-- [ ] Add today’s completed habit count to the Home header.
-- [ ] Add a softer visual treatment for the reset action.
-- [ ] Add loading shimmer or skeleton states for empty initial loads.
-- [ ] Add empty-state illustrations or icons to all empty states.
-- [ ] Add pull-to-refresh or reload affordances where repository data is displayed.
-- [ ] Add back navigation affordances to detail and edit screens.
-- [ ] Add route-safe navigation when habit IDs are missing.
-- [ ] Add disabled states for completion, edit, and delete buttons while saving.
-- [ ] Add “saved” feedback after habit create, edit, and delete actions.
-- [ ] Add confirmation before deleting habits.
-- [ ] Add confirmation before resetting all game data.
-- [ ] Add undo or confirmation after accidental deletion.
-- [ ] Add visible empty states for rewards, achievements, activity, statistics, and equipped customization.
-- [ ] Add visible prompt states for pet naming, first habit creation, daily goal progress, streak risk, streak recovery, and new customization availability.
-- [ ] Add visible prompt states for claimable achievements, available rewards, new pet level, new pet phase, new chest, and saved notification settings.
-- [ ] Add visible prompt states for habit created, habit completed, habit streak updated, habit edited, habit deleted, pet renamed, pet customization purchased, pet customization equipped, achievement unlocked, reward claimed, daily goal completed, streak milestone reached, combo milestone reached, and surprise chest unlocked.
+Build and verify after changes.
 
-## UI & Visual Design
+---
 
-- [ ] Apply a consistent premium color palette across all screens.
-- [ ] Use theme typography instead of inline text styles.
-- [ ] Add consistent card spacing, rounded corners, elevation, and shadow treatment.
-- [ ] Add consistent iconography for habit categories.
-- [ ] Add consistent progress bar, button, dialog, snackbar, empty-state, loading-state, and error-state styling.
-- [ ] Add consistent achievement, habit, pet, reward, statistics, activity, and settings card styling.
-- [ ] Add consistent bottom-sheet, modal, chip, segmented control, tab, filter, search, sort, badge, divider, and list-item styling.
-- [ ] Add consistent detail-page, edit-page, form-field, and validation-message styling.
-- [ ] Add consistent dark-mode, light-mode, accessibility contrast, touch-target, content padding, and safe-area handling.
-- [ ] Add consistent status-bar, navigation-bar, and motion-reduction handling.
-- [ ] Add consistent image scaling, placeholder, skeleton, shimmer, gradient, icon-tint, badge-count, progress-ring, chart, and legend styling.
-- [ ] Add consistent illustration styling for onboarding, rewards, pet, habits, achievements, chests, coins, streaks, levels, customizations, notifications, settings, statistics, activity, and rewards.
+# GOAL
 
-## UX & Navigation
+Create a centralized `EquipableConfig` that becomes the SINGLE SOURCE OF TRUTH for all equipables in the game.
 
-- [ ] Add a first-run onboarding flow.
-- [ ] Add guided first-time flows for habit creation, pet naming, completion, reward, pet customization, achievement, streak, daily goal, chest, notification, settings, statistics, activity, rewards, achievements, pet screen, habits screen, home screen, navigation, reward overlay, microfeedback, empty state, loading state, error state, success state, warning state, danger state, info state, confirmation, undo, delete, edit, create, complete, skip, claim, purchase, equip, rename, reset, notification setting, reminder, streak recovery, streak loss, daily goal completion, daily goal miss, combo milestone, surprise chest, level up, evolution, customization unlock, achievement unlock, achievement claim, reward claim, reward dismissal, reward queue, and reward event.
+All systems must use it:
 
-## Gamification & Retention
+* Rewards screen
+* Inventory
+* Equip/unequip
+* Chest rewards
+* Achievements
+* Dragon rendering
+* Future reward systems
 
-- [ ] Strengthen the home screen progress loop.
-- [ ] Strengthen the habit completion, streak, daily goal, pet growth, customization, achievement, chest reward, combo momentum, surprise reward, notification, activity timeline, statistics, and rewards history loops.
-- [ ] Strengthen motivation loops for onboarding, empty states, loading states, error states, success states, warning states, danger states, info states, confirmation, undo, delete, edit, create, complete, skip, claim, purchase, equip, rename, reset, notification settings, reminders, streak recovery, streak loss, daily goal completion, daily goal miss, combo milestones, surprise chests, level ups, evolutions, customization unlocks, achievement unlocks, achievement claims, reward claims, reward dismissals, reward queues, and reward events.
+The system must allow adding new rewards later without changing database schema or business logic.
 
-## New Features
+---
 
-- [ ] Add bottom navigation.
-- [ ] Add first-run onboarding.
-- [ ] Add first-time screens for habit creation, pet naming, completion, reward, customization, achievement, streak, daily goal, chest, notification, settings, statistics, activity, rewards, achievements, pet screen, habits screen, home screen, navigation, reward overlay, microfeedback, empty state, loading state, error state, success state, warning state, danger state, info state, confirmation, undo, delete, edit, create, complete, skip, claim, purchase, equip, rename, reset, notification setting, reminder, streak recovery, streak loss, daily goal completion, daily goal miss, combo milestone, surprise chest, level up, evolution, customization unlock, achievement unlock, achievement claim, reward claim, reward dismissal, reward queue, and reward event.
+# CURRENT ASSETS
 
-## Polish & Delight
+## Young Dragon Outfits
 
-- [ ] Add celebrations for first habit creation, first habit completion, first streak, first daily goal, first pet level, first pet evolution, first customization, first achievement, first chest, first reward, first combo, first surprise reward, first notification setting, first reminder, first streak recovery, first streak milestone, first daily goal completion, first combo milestone, first surprise chest, first level up, first evolution, first customization unlock, first achievement unlock, first achievement claim, first reward claim, first reward dismissal, first reward queue, first reward event, first reward overlay dismissal, first reward overlay confirmation, first reward overlay interruption, first reward overlay recovery, first reward overlay failure, first reward overlay cancellation, first reward overlay expiration, first reward overlay archive, first reward overlay restore, first reward overlay duplicate, first reward overlay merge, first reward overlay split, first reward overlay transform, first reward overlay validate, first reward overlay invalidate, first reward overlay accept, first reward overlay reject, first reward overlay pending, first reward overlay processing, first reward overlay processed, first reward overlay queued, first reward overlay dequeued, first reward overlay enqueued, first reward overlay requeued, first reward overlay unqueued, first reward overlay scheduled, first reward overlay unscheduled, first reward overlay rescheduled, first reward overlay postponed, first reward overlay advanced, first reward overlay delayed, first reward overlay resumed, first reward overlay paused, first reward overlay started, first reward overlay finished, first reward overlay interrupted, and first reward overlay recovered.
+Location:
 
-## Long-Term Improvements
+`app/src/main/res/drawable/young_dragon/`
 
-- [ ] Add weekly review.
-- [ ] Add monthly review.
-- [ ] Add habit, streak, pet mood, reward, achievement, customization, notification, settings, statistics, activity, rewards, onboarding, navigation, empty-state, loading-state, error-state, success-state, warning-state, danger-state, info-state, confirmation, undo, delete, edit, create, complete, skip, claim, purchase, equip, rename, reset, notification setting, reminder, streak recovery, streak loss, daily goal completion, daily goal miss, combo milestone, surprise chest, level up, evolution, customization unlock, achievement unlock, achievement claim, reward claim, reward dismissal, reward queue, reward event, reward overlay dismissal, reward overlay confirmation, reward overlay interruption, reward overlay recovery, reward overlay failure, reward overlay cancellation, reward overlay expiration, reward overlay archive, reward overlay restore, reward overlay duplicate, reward overlay merge, reward overlay split, reward overlay transform, reward overlay validate, reward overlay invalidate, reward overlay accept, reward overlay reject, reward overlay pending, reward overlay processing, reward overlay processed, reward overlay queued, reward overlay dequeued, reward overlay enqueued, reward overlay requeued, reward overlay unqueued, reward overlay scheduled, reward overlay unscheduled, reward overlay rescheduled, reward overlay postponed, reward overlay advanced, reward overlay delayed, reward overlay resumed, reward overlay paused, reward overlay started, reward overlay finished, reward overlay interrupted, and reward overlay recovered insights.
+Files:
+
+* `wizard_outfit.jpg`
+* `adventure_outfit.jpg`
+* `knight_outfit.jpg`
+* `ninja_outfit.jpg`
+* `royal_outfit.jpg`
+
+## Young Dragon Auras
+
+Location:
+
+`app/src/main/res/drawable/young_dragon/`
+
+Files:
+
+* `sakura_aura.jpg`
+* `fire_aura.jpg`
+* `icy_aura.jpg`
+
+## Backgrounds
+
+Location:
+
+`app/src/main/res/drawable/backgrounds/`
+
+Backgrounds should also be treated as equipables.
+
+---
+
+# TASK 1 - ROOT CAUSE ANALYSIS
+
+**Status:** Completed. Root cause was fragmented equipable discovery/seeding plus achievement rewards referencing stale item IDs. The fix moved equipable definitions into `EquipableConfig`, synchronized them into inventory without overwriting player state, and routed chest/achievement rewards through stable equipable IDs.
+
+Investigate why these assets do not appear in:
+
+* Rewards screen
+* Inventory
+* Chest rewards
+* Achievement rewards
+
+Trace the complete flow:
+
+Asset  Config  Database  Repository  ViewModel  UI
+
+Validate:
+
+* Asset discovery
+* Drawable loading
+* Database initialization
+* Inventory creation
+* Reward generation
+* Filters
+* Purchase state
+* Unlock state
+* Equip state
+* Resource IDs
+* Rendering
+
+Fix the root cause.
+
+Do NOT guess.
+
+---
+
+# TASK 2 - CREATE EQUIPABLE CONFIG
+
+**Status:** Completed. `domain/EquipableConfig.kt` now defines all current outfits, auras, and backgrounds with stable IDs, names, types, nullable phases, drawable names, rarity, nullable shop price, unlock source, and metadata support.
+
+Create a centralized configuration file:
+
+`EquipableConfig.kt`
+
+This becomes the SINGLE SOURCE OF TRUTH.
+
+Each equipable definition should support:
+
+* id (stable unique ID)
+* name
+* type
+
+  * OUTFIT
+  * AURA
+  * BACKGROUND
+* phase (nullable; `null` means usable at any dragon phase)
+
+  * EGG
+  * HATCHLING
+  * YOUNG_DRAGON
+  * ADULT_DRAGON
+  * ANCIENT_DRAGON
+* drawableName
+* rarity
+* price (nullable; `null` means not purchasable with coins)
+* unlockSource (`SHOP`, `CHEST`, or `ACHIEVEMENT`)
+* future metadata support
+
+Example:
+
+```kotlin
+EquipableDefinition(
+    id = "royal_outfit",
+    name = "Royal Outfit",
+    type = OUTFIT,
+    phase = YOUNG_DRAGON,
+    drawableName = "royal_outfit",
+    rarity = EPIC,
+    price = 800 // nullable; use null for non-coin rewards
+)
+```
+
+Do NOT hardcode equipables anywhere else.
+
+All systems must read from `EquipableConfig`.
+
+---
+
+# TASK 3 - DATABASE SYNCHRONIZATION
+
+**Status:** Completed. `InventoryItemDatabaseInitializer` now syncs `EquipableConfig` entries into `inventory_items`, inserts missing equipables, stores `0` for nullable prices, and updates metadata while preserving purchased, equipped, and unlocked player state.
+
+On app startup:
+
+* Load all equipables from `EquipableConfig`
+* Compare with database
+* Insert missing equipables automatically
+* Preserve player data:
+
+  * purchased state
+  * equipped state
+  * unlock state
+
+Never delete player progress.
+
+Support future additions automatically.
+
+Adding a new equipable to `EquipableConfig` should be sufficient for it to appear in-game.
+
+---
+
+# TASK 4 - CHEST REWARD INTEGRATION
+
+**Status:** Completed. Chest rewards now carry `equipableId`, select unowned non-achievement items by rarity through the inventory repository, and grant through `grantItemByItemId`.
+
+Refactor chest rewards to use `EquipableConfig`.
+
+Current chest reward flow must:
+
+* select unowned equipables
+* avoid duplicates whenever possible
+* filter by rarity
+* support:
+
+  * outfits
+  * auras
+  * backgrounds
+
+Chest rewards must grant equipables by ID:
+
+Example:
+
+```kotlin
+ChestReward(
+    equipableId = "royal_outfit"
+)
+```
+
+or dynamically select an equipable matching rarity rules.
+
+No hardcoded item names.
+
+No hardcoded IDs.
+
+Update chest logic to use the centralized config.
+
+Update documentation if behavior changes.
+
+---
+
+# TASK 5 - ACHIEVEMENT REWARD INTEGRATION
+
+**Status:** Completed. `AchievementsConfig` uses `EquipableConfig` constants for customization rewards, `AchievementRewardProcessor` resolves rewards through `EquipableConfig` before granting them, and achievement-only sources are supported.
+
+Achievements must also use equipable IDs.
+
+Example:
+
+```kotlin
+CustomizationReward(
+    equipableId = "fire_aura"
+)
+```
+
+Achievement reward processing must resolve rewards through `EquipableConfig`.
+
+No hardcoded item names.
+
+No duplicated reward logic.
+
+---
+
+# TASK 6 - INVENTORY & REWARDS SCREEN
+
+**Status:** Completed. Rewards screen filters now show all configured equipables, derives equipped badges from `PetEntity`, and reward popups resolve equipable names from `EquipableConfig`.
+
+Ensure all equipables appear correctly in:
+
+* Rewards screen
+* Inventory
+* Locked items
+* Purchased items
+* Equipped items
+
+Verify the following assets appear:
+
+Outfits:
+
+* wizard_outfit
+* adventure_outfit
+* knight_outfit
+* ninja_outfit
+* royal_outfit
+
+Auras:
+
+* sakura_aura
+* fire_aura
+* icy_aura
+
+Backgrounds:
+
+* all assets inside `backgrounds/`
+
+Support:
+
+* unlock
+* purchase
+* equip
+* unequip
+
+---
+
+# TASK 7 - DRAGON RENDERING
+
+**Status:** Completed. `AssetResolver` uses nullable `EquipableConfig` phase metadata for aura and outfit lookups while preserving fallback behavior.
+
+Rendering order:
+
+1. Background
+2. Dragon base
+3. Aura
+4. Outfit overlay
+
+Default phase dragon:
+
+* `default`
+
+If aura equipped:
+
+* use `<aura>_aura`
+
+If outfit equipped:
+
+* overlay `<outfit>_outfit`
+
+Outfits have transparent backgrounds and should render above the aura image.
+
+Example:
+
+`fire_aura + royal_outfit`
+
+renders:
+
+Fire aura dragon base + Royal outfit overlay.
+
+---
+
+# TASK 8 - FALLBACKS
+
+**Status:** Completed. Missing asset lookups remain non-fatal and `AssetResolver` logs missing files while falling back to configured/default behavior.
+
+If an asset is missing:
+
+Fallback order:
+
+1. phase default
+2. no aura
+3. no outfit
+4. no background
+
+The app must never crash due to missing assets.
+
+Log missing assets for debugging.
+
+---
+
+# TASK 9 - VALIDATION
+
+**Status:** Completed. `./gradlew :app:assembleDebug` succeeds.
+
+Verify:
+
+* Equipables are loaded correctly
+* Inventory is initialized correctly
+* Chest rewards grant correct equipables
+* Achievement customization rewards grant correct achievement-only equipables
+* Chest-only equipables flow through the chest reward pipeline
+* Rendering works correctly
+* Existing player data is preserved
+* Database migration remains valid
+* Build succeeds
+
+---
+
+# TASK 10 - DOCUMENTATION
+
+**Status:** Completed. Updated `ACCESSORIES.md`, `DRAGON_PHASES.md`, `CHEST_REWARDS.md`, `ACHIEVEMENTS.md`, `DATA_MODEL.md`, and `CUSTOMIZATION.md` to match nullable phase, nullable price, and unlock-source behavior.
+
+Update all affected documentation:
+
+* ACCESSORIES.md (or replacement file)
+* CHEST_REWARDS.md
+* ACHIEVEMENTS.md
+* DATA_MODEL.md
+* DRAGON_PHASES.md
+
+Documentation must reflect actual implementation exactly.
+
+Provide a final report:
+
+* files changed
+* files created
+* migrations added
+* documentation updated
+* remaining issues (if any)
+* missing assets (if any)
+

@@ -142,8 +142,15 @@ class RewardManager @Inject constructor(
                         }
                     }
 
-                    current.customizationId?.let { customizationId ->
-                        inventoryItemRepository.grantItem(customizationId)
+                    val grantResult = when {
+                        !current.equipableId.isNullOrBlank() ->
+                            inventoryItemRepository.grantItemByItemId(current.equipableId)
+                        current.customizationId != null ->
+                            inventoryItemRepository.grantItem(current.customizationId)
+                        else -> 0
+                    }
+                    if (grantResult < 0) {
+                        current.customizationId?.let { inventoryItemRepository.grantItem(it) }
                     }
                 }
 

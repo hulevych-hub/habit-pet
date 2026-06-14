@@ -1,0 +1,59 @@
+Create a 2048x2048 PNG image with a transparent background.
+
+Using the provided base dragon image as reference, modify ONLY the aura around the dragon by adding the aura described below.
+
+
+CRITICAL RULES:
+
+- Do NOT change the dragon’s body, face, pose, proportions, or style
+
+- Do NOT redesign the character
+
+- Do NOT change lighting or camera angle
+
+- Do NOT add background
+
+- Output must remain a transparent PNG
+
+- Only add wearable/attached outfit elements
+
+* The aura must exist ONLY outside the dragon's silhouette
+* Do NOT place effects on the dragon's body, face, wings, or outfit
+* Do NOT add glow to scales, armor, clothing, or eyes
+* Maintain a clear gap of approximately 5-10% of the dragon's width between the body and the aura
+* Effects should originate around and behind the character, never on top of it
+* The dragon must remain fully readable and unobstructed
+* The aura acts as a background halo surrounding the character
+* The center area occupied by the dragon should remain mostly unchanged
+* No particles may overlap the face, outfit, or body
+* Visual effects should form a ring, halo, or ambient field around the silhouette
+
+
+OUTFIT DESCRIPTION:
+
+Soft pink magical aura with glowing cherry blossom petals, sparkling stardust, gentle rose-colored light, and delicate floating hearts drifting around the dragon.
+
+
+DESIGN CONSTRAINTS:
+
+- Must conform perfectly to the dragon’s body shape
+
+- Must follow strict front-facing symmetry
+
+- Must not obscure face or eyes
+
+- Must stay consistent with original art style
+
+- Must look like it is physically worn by the dragon
+
+- No floating or detached pieces
+
+
+
+OUTPUT:
+
+- Single dragon image with outfit applied
+
+- Transparent background
+
+- No extra objects or environment

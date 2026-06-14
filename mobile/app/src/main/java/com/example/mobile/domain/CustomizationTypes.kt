@@ -7,10 +7,6 @@ object CustomizationTypes {
 
     val TYPES = listOf(OUTFIT, BACKGROUND, AURA)
 
-    fun displayName(type: String): String = when (type) {
-        OUTFIT -> "Outfits"
-        BACKGROUND -> "Backgrounds"
-        AURA -> "Auras"
-        else -> type
-    }
+    fun displayName(type: String): String =
+        EquipableType.fromValue(type)?.let(EquipableConfig::displayName) ?: type
 }
