@@ -6,6 +6,7 @@ import com.example.mobile.domain.repository.StatisticsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.util.Calendar
 import javax.inject.Inject
 
 class StatisticsRepositoryImpl @Inject constructor(
@@ -39,7 +40,7 @@ class StatisticsRepositoryImpl @Inject constructor(
     override suspend fun isStreakAlreadyCountedToday(): Boolean {
         val stats = statisticsDao.getStatistics().first() ?: return false
 
-        val today = System.currentTimeMillis() / 86_400_000L
+        val today = todayKey()
 
         return stats.lastStreakDate == today
     }
@@ -47,7 +48,7 @@ class StatisticsRepositoryImpl @Inject constructor(
     override suspend fun markStreakUpdatedToday() {
         val stats = statisticsDao.getStatistics().first() ?: return
 
-        val today = System.currentTimeMillis() / 86_400_000L
+        val today = todayKey()
 
         val updated = stats.copy(
             lastStreakDate = today
@@ -78,5 +79,15 @@ class StatisticsRepositoryImpl @Inject constructor(
         )
 
         statisticsDao.updateStatistics(updated)
+    }
+
+    private fun todayKey(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis / 86_400_000L
     }
 }

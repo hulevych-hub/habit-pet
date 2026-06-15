@@ -21,11 +21,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -49,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,6 +65,8 @@ import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AssetPreview
+import com.example.mobile.presentation.ui.components.CoinIcon
+import com.example.mobile.presentation.ui.components.CoinPill
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.LoadingStateCard
@@ -167,7 +171,8 @@ fun RewardsScreen(
             GamifiedFixedHeader(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
-                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage)
+                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
+                streakCompletedToday = progressUiState.globalStreakCompletedToday
             )
         }
     ) { padding ->
@@ -448,12 +453,7 @@ private fun ItemInspectDrawer(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Icon(Icons.Default.AccountBalanceWallet, null, tint = ColorPaletteRewards.Amber, modifier = Modifier.size(18.dp))
-                        Text(
-                            text = "${item.price}g",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ColorPaletteRewards.Amber
-                        )
+                        CoinPill(amount = item.price)
                     }
                 }
             }
@@ -511,11 +511,22 @@ private fun CollectionTypeTabs(
                     .clickable { onTypeSelected(tab) },
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = tab.label,
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                    color = if (isSelected) Color.White else ColorPaletteRewards.Muted
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = tab.icon,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else ColorPaletteRewards.Muted,
+                        modifier = Modifier.size(15.dp)
+                    )
+                    Text(
+                        text = tab.label,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = if (isSelected) Color.White else ColorPaletteRewards.Muted
+                    )
+                }
             }
         }
     }
@@ -538,14 +549,14 @@ private fun CollectionToggle(
                     .height(44.dp)
                     .clickable { onSelected(tab) },
                 shape = RoundedCornerShape(16.dp),
-                color = if (isSelected) ColorPaletteRewards.Violet.copy(alpha = 0.12f) else ColorPaletteRewards.Card,
+                color = if (isSelected) ColorPaletteRewards.Violet else ColorPaletteRewards.Violet.copy(alpha = 0.08f),
                 border = borderStrokeFix(isSelected)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = "${tab.label} Inventory",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = if (isSelected) ColorPaletteRewards.Violet else ColorPaletteRewards.Muted
+                        color = if (isSelected) Color.White else ColorPaletteRewards.Violet
                     )
                 }
             }
@@ -591,17 +602,17 @@ private fun RarityChip(
 ) {
     Surface(
         modifier = modifier
-            .height(34.dp)
+            .height(36.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(999.dp),
-        color = if (isSelected) chipColor.copy(alpha = 0.15f) else Color.Transparent,
-        border = borderStrokeFix(isSelected, chipColor)
+        color = if (isSelected) chipColor else chipColor.copy(alpha = 0.16f),
+        border = if (isSelected) androidx.compose.foundation.BorderStroke(1.5.dp, chipColor) else androidx.compose.foundation.BorderStroke(1.dp, chipColor.copy(alpha = 0.28f))
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = label.replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = if (isSelected) chipColor else ColorPaletteRewards.Muted.copy(alpha = 0.7f)
+                color = if (isSelected) Color.White else chipColor
             )
         }
     }
@@ -611,13 +622,16 @@ private fun RarityChip(
 private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
-    stageName: String
+    stageName: String,
+    streakCompletedToday: Boolean
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color(0xFFFFFFFF),
         shadowElevation = 1.dp
     ) {
+        val streakTint = if (streakCompletedToday) ColorPaletteRewards.Honey else Color(0xFFA9A3B8)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -633,7 +647,7 @@ private fun GamifiedFixedHeader(
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Streak",
-                    tint = ColorPaletteRewards.Honey,
+                    tint = streakTint,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
@@ -670,11 +684,9 @@ private fun GamifiedFixedHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = "Coins",
-                    tint = ColorPaletteRewards.Amber,
-                    modifier = Modifier.size(22.dp)
+                CoinIcon(
+                    modifier = Modifier.size(22.dp),
+                    tint = ColorPaletteRewards.Amber
                 )
                 Text(
                     text = "$coins",
@@ -697,15 +709,15 @@ private fun CollectionTypeTab.itemsFlow(viewModel: RewardsViewModel) = when (thi
 
 private fun rarityColor(rarity: Rarity): Color = when (rarity) {
     Rarity.NORMAL -> Color(0xFF6F6A8A)
-    Rarity.RARE -> Color(0xFF3B91FF)
-    Rarity.EPIC -> Color(0xFFA14BFF)
-    Rarity.LEGENDARY -> Color(0xFFFF9F1C)
+    Rarity.RARE -> Color(0xFF4EDB95)
+    Rarity.EPIC -> Color(0xFF3B91FF)
+    Rarity.LEGENDARY -> Color(0xFFB26CFF)
 }
 
-private enum class CollectionTypeTab(val label: String) {
-    Outfits("Outfits"),
-    Backgrounds("Scenes"),
-    Auras("Auras")
+private enum class CollectionTypeTab(val label: String, val icon: ImageVector) {
+    Outfits("Outfits", Icons.Default.AutoAwesome),
+    Backgrounds("Scenes", Icons.Default.Pets),
+    Auras("Auras", Icons.Default.Star)
 }
 
 private enum class CollectionTab(val label: String) {
@@ -715,6 +727,7 @@ private enum class CollectionTab(val label: String) {
 
 private object ColorPaletteRewards {
     val Card = Color(0xFFFFFFFF)
+    val Line = Color(0xFFD9D4EA)
     val Violet = Color(0xFF8A76F9)
     val Amber = Color(0xFFFFB84D)
     val Honey = Color(0xFFFF9F1C)

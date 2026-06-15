@@ -31,7 +31,7 @@ fun HabitPetTheme(
             onSurface = ColorPalette.CardWhite,
             surfaceVariant = Color(0xFF2A2642),
             onSurfaceVariant = Color(0xFFE6E0F7),
-            outline = Color(0xFF4A4468),
+            outline = Color(0xFF5A537D),
             error = ColorPalette.Danger
         )
         else -> lightColorScheme(
@@ -50,8 +50,8 @@ fun HabitPetTheme(
             surface = ColorPalette.CardWhite,
             onSurface = ColorPalette.SoftInk,
             surfaceVariant = Color(0xFFF1EDFF),
-            onSurfaceVariant = ColorPalette.MutedInk,
-            outline = ColorPalette.DividerMist,
+            onSurfaceVariant = Color(0xFF5F5A78),
+            outline = Color(0xFFC9C2E3),
             error = ColorPalette.Danger
         )
     }

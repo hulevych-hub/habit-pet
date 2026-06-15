@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Notifications
@@ -48,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.util.NotificationPrefs
 
@@ -71,7 +71,8 @@ fun NotificationSettingsScreen(
             GamifiedFixedHeader(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
-                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage)
+                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
+                streakCompletedToday = progressUiState.globalStreakCompletedToday
             )
         }
     ) { padding ->
@@ -180,13 +181,16 @@ private fun saveNotificationSetting(
 private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
-    stageName: String
+    stageName: String,
+    streakCompletedToday: Boolean
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color(0xFFFFFFFF),
         shadowElevation = 1.dp
     ) {
+        val streakTint = if (streakCompletedToday) ColorPaletteSettings.Flame else Color(0xFFA9A3B8)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -202,7 +206,7 @@ private fun GamifiedFixedHeader(
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Streak",
-                    tint = ColorPaletteSettings.Flame,
+                    tint = streakTint,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
@@ -239,11 +243,9 @@ private fun GamifiedFixedHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = "Coins",
-                    tint = ColorPaletteSettings.Amber,
-                    modifier = Modifier.size(22.dp)
+                CoinIcon(
+                    modifier = Modifier.size(22.dp),
+                    tint = ColorPaletteSettings.Amber
                 )
                 Text(
                     text = "$coins",

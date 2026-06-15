@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +35,8 @@ import com.example.mobile.presentation.ui.animations.PetAnimations
 import com.example.mobile.util.AssetResolver
 import com.example.mobile.util.PetTransitionPrefs
 
+private const val PET_SCALE_FRACTION = 0.86f
+
 @Composable
 fun AnimatedPet(
     pet: PetEntity,
@@ -42,9 +45,11 @@ fun AnimatedPet(
 ) {
     val evolutionStage = pet.evolutionStage.takeIf { it in 0..4 } ?: 0
 
-    // The Box now fills the size provided by the parent (HomeScreen)
+    // The Box fills the size provided by the parent screen.
     Box(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier
+            .background(Color.Transparent)
+            .clipToBounds(),
         contentAlignment = Alignment.Center
     ) {
         val assetManager = LocalContext.current.assets
@@ -59,16 +64,16 @@ fun AnimatedPet(
                 painter = backgroundPainter,
                 contentDescription = "Pet background",
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
         }
 
-        // PET: Transition logic now fills the container
+        // PET: Keep the pet smaller than the full-width background so idle animations do not clip.
         PetPhaseTransition(
             pet = pet,
             fromStage = evolutionStage - 1,
             toStage = evolutionStage,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(PET_SCALE_FRACTION)
         )
 
         if (showNameOverlay) {

@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt": {
-    "mtime": 1781163143.659215,
-    "ast_hash": "1776a23bd7fd637e8cb4e385f6963a99",
+    "mtime": 1781509902.8552372,
+    "ast_hash": "ba14369601388c231da63ba5d5adcaca",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/DatabaseModule.kt": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/StreakEngine.kt": {
-    "mtime": 1781273900.421393,
-    "ast_hash": "770f28c5ffb2e0d3e6b0abb910f6136c",
+    "mtime": 1781506640.2495317,
+    "ast_hash": "e75669f36f5d8bc043305764d04edb8b",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt": {
@@ -185,8 +185,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/HabitCompletionRepository.kt": {
-    "mtime": 1781351750.3627863,
-    "ast_hash": "fc893b308fe61f5a924710238496fd3f",
+    "mtime": 1781506664.4279501,
+    "ast_hash": "881c41c7933636a791a1b446f34319b9",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/HabitProgressRepository.kt": {
@@ -225,8 +225,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt": {
-    "mtime": 1781437099.766467,
-    "ast_hash": "25a55a617cf823c3c1ae03a1b7330f8a",
+    "mtime": 1781469635.2018957,
+    "ast_hash": "17801aece53a6777b49c66cfb6027598",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt": {
@@ -265,53 +265,53 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt": {
-    "mtime": 1781360389.644824,
-    "ast_hash": "66659bb60eb901eb97e7108d887d039b",
+    "mtime": 1781512761.1109123,
+    "ast_hash": "ded428d3c82029e1f287327a6c7b1472",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt": {
-    "mtime": 1781274704.187078,
-    "ast_hash": "f53e4804467b055e1e49f2317a464fc2",
+    "mtime": 1781472533.1379192,
+    "ast_hash": "5deb8e0c95eaba018f9134e2a85ee332",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt": {
-    "mtime": 1781274705.2598162,
-    "ast_hash": "6f4fb0d1a6805b6158794d67be178deb",
+    "mtime": 1781473365.881492,
+    "ast_hash": "efe1893cc4bc479fbaeaabd3ca0defdf",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitEditScreen.kt": {
-    "mtime": 1781353553.906352,
-    "ast_hash": "1903906543b1373835f7bb903e3c50c0",
+    "mtime": 1781472891.3481476,
+    "ast_hash": "81ec57aa8656b268664f56c1b6193522",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt": {
-    "mtime": 1781374188.923706,
-    "ast_hash": "4b240947b01a62b67642b79a2f1e3454",
+    "mtime": 1781517824.368375,
+    "ast_hash": "8cb6c04349b1e3eb1643278b6191b2ae",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1781373152.6537786,
-    "ast_hash": "90ab1abb83dba0a1b6f814f1e56835d9",
+    "mtime": 1781513718.483601,
+    "ast_hash": "8682e3a6915381efb1c86c9ab5b89156",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
-    "mtime": 1781367021.265134,
-    "ast_hash": "9587d087f10636ae628102cde0c5edf6",
+    "mtime": 1781506909.9287639,
+    "ast_hash": "299dd4b50c90ca7f8a5a700689d9e228",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt": {
-    "mtime": 1781360958.6014717,
-    "ast_hash": "9cfe9f1984b280fc00e959531350da85",
+    "mtime": 1781512703.308814,
+    "ast_hash": "03861aa06f158c2907e8bc17514b563e",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781357559.4913373,
-    "ast_hash": "f8d6ce12ef273fc0960cb4f77f1ab474",
+    "mtime": 1781517604.074058,
+    "ast_hash": "0c153ff423d79d89d45d6d1ead4a5830",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
-    "mtime": 1781453404.7086017,
-    "ast_hash": "b509b0b0dfd4af4c6525f124566ab2a1",
+    "mtime": 1781511355.5612931,
+    "ast_hash": "feeeff0156a0aa2b0215f7786cc3d877",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/StatisticsScreen.kt": {
@@ -350,8 +350,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/ui/theme/Theme.kt": {
-    "mtime": 1781246795.418254,
-    "ast_hash": "f59d4359fe0e365b5b8779075862e6ce",
+    "mtime": 1781469454.7073133,
+    "ast_hash": "37af81117cfb96a72c072854a9e75c73",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/BootCompletedReceiver.kt": {
@@ -565,8 +565,8 @@
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781460851.9598062,
-    "ast_hash": "7f783da7dc54e3111389cd0304320c0c",
+    "mtime": 1781512901.3528502,
+    "ast_hash": "9abc4079e8c3e845deaa68d26bb1a0ff",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt": {
-    "mtime": 1781355354.7206106,
-    "ast_hash": "712d4e1fe5c0b4087aed5958ef6f2ee4",
+    "mtime": 1781512533.2914953,
+    "ast_hash": "0af7f395295861cf05a99d3080704e0d",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/ActivityTimelineViewModel.kt": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt": {
-    "mtime": 1781261107.1558104,
-    "ast_hash": "7a8f3c8eb28615e2c50faca92040870b",
+    "mtime": 1781509942.546337,
+    "ast_hash": "3a3582adf42ee96fa5751cb397021b4c",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/MicroFeedbackEvent.kt": {
@@ -725,8 +725,8 @@
     "semantic_hash": ""
   },
   "UI_DESIGN.md": {
-    "mtime": 1781373152.6502643,
-    "ast_hash": "8ff268e112513292cbff835cc109b975",
+    "mtime": 1781517849.0790737,
+    "ast_hash": "9204f9713a56bd582a35e506e789c70d",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AssetPreview.kt": {
@@ -769,49 +769,9 @@
     "ast_hash": "d8a4f205a50e606a5d69c285f2bb0b8f",
     "semantic_hash": ""
   },
-  "app/src/main/res/drawable/young_dragon/adventure_outfit.jpg": {
-    "mtime": 1781435099.7536047,
-    "ast_hash": "41bb3f567dbc6b7b17ad5f82cc00fe11",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/default.jpg": {
-    "mtime": 1781434599.9593618,
-    "ast_hash": "26cba7e915018444a8707433e4d77cb8",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/fire_aura.jpg": {
-    "mtime": 1781435791.4843643,
-    "ast_hash": "b5f621cea4a33d4af46aeb8726322279",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/knight_outfit.jpg": {
-    "mtime": 1781434932.3697953,
-    "ast_hash": "ef7d84c733744adab8542246b7e51c8b",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/ninja_outfit.jpg": {
-    "mtime": 1781434817.1191921,
-    "ast_hash": "28dd19b270962b7155d1b25e9c3b5732",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/royal_outfit.jpg": {
-    "mtime": 1781435157.909364,
-    "ast_hash": "3d2a2b9767a901a925c29eef6ca60fbe",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/sakura_aura.jpg": {
-    "mtime": 1781436041.8605003,
-    "ast_hash": "3c57aaf846e33d962e2256bcbfd636dc",
-    "semantic_hash": ""
-  },
-  "app/src/main/res/drawable/young_dragon/wizard_outfit.jpg": {
-    "mtime": 1781435040.6646779,
-    "ast_hash": "fb2fb73214663464530685ab315c12d7",
-    "semantic_hash": ""
-  },
   "app/src/main/java/com/example/mobile/domain/EquipableConfig.kt": {
-    "mtime": 1781460622.77484,
-    "ast_hash": "b4cecf21fdcf69b5c1e46783cd100f99",
+    "mtime": 1781466782.4380174,
+    "ast_hash": "f21d19898177431f82abc8fe8b3aa52c",
     "semantic_hash": ""
   },
   "app/src/main/res/drawable/background_beach.png": {
@@ -874,9 +834,189 @@
     "ast_hash": "e0bf4fe095b6f7e19f252c5de9c8640c",
     "semantic_hash": ""
   },
-  "app/src/main/res/drawable/young_dragon/icy_aura.jpg": {
+  "app/src/main/res/drawable/young_dragon/adventure_outfit.png": {
+    "mtime": 1781463701.522271,
+    "ast_hash": "838ff3f9e64c398cec7b96d251ff559d",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/default.png": {
+    "mtime": 1781463701.5388577,
+    "ast_hash": "c8006813ac66cb7d57ef0e18bbba898d",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/fire_aura.png": {
+    "mtime": 1781463701.5539765,
+    "ast_hash": "40d2f5b2c8f1f43faac1818903dfab47",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/icy_aura.png": {
+    "mtime": 1781463701.569538,
+    "ast_hash": "2465ae07163081ee913aa91507417268",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/knight_outfit.png": {
+    "mtime": 1781463701.583231,
+    "ast_hash": "5395a52850b5755e8bd57ff828c84ec1",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/ninja_outfit.png": {
+    "mtime": 1781463701.595273,
+    "ast_hash": "a415fdf917e812cf29acc10a87070a09",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/royal_outfit.png": {
+    "mtime": 1781463701.6097558,
+    "ast_hash": "15cc49ff3b725176558e9762427a59f4",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/sakura_aura.png": {
+    "mtime": 1781463701.6237712,
+    "ast_hash": "4474c410c5fb2f35433dfd863d7d739d",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/drawable/young_dragon/wizard_outfit.png": {
+    "mtime": 1781463701.6365557,
+    "ast_hash": "7400a974ecd6b7347b5b3637559a225c",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/adult_dragon/adult_dragon.png": {
+    "mtime": 1781437886.6690018,
+    "ast_hash": "1247d93ee1633f8d9e12465413c2e8f5",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/ancient_dragon/ancient_dragon.png": {
+    "mtime": 1781437886.6808703,
+    "ast_hash": "34e4f9f5eecb66802931ccf19ef09763",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/beach.jpg": {
+    "mtime": 1781452775.331457,
+    "ast_hash": "efba3ba4ce1dbfca531810ea458f109f",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/forest.jpg": {
+    "mtime": 1781446899.056456,
+    "ast_hash": "46200366e3bbcf12a4769431b413d2f5",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/icelandic.jpg": {
+    "mtime": 1781446833.7436078,
+    "ast_hash": "c7d154a4e1bb395eebb79ec95077ab83",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/majestic.jpg": {
+    "mtime": 1781446625.8944628,
+    "ast_hash": "c2985274692eae416932fc99e8ba17c7",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/mountains.jpg": {
+    "mtime": 1781452895.9009333,
+    "ast_hash": "76b017891730247ece30b386946f099b",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/night.jpg": {
+    "mtime": 1781452837.5288785,
+    "ast_hash": "d3301f22413fa97a62e3e934c2d892fe",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/sakura.jpg": {
+    "mtime": 1781446761.5542502,
+    "ast_hash": "51f5ec8cc5deae57b350ceed4ecac78d",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/backgrounds/volcanic.jpg": {
+    "mtime": 1781446699.7117643,
+    "ast_hash": "e0bf4fe095b6f7e19f252c5de9c8640c",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/egg/egg.png": {
+    "mtime": 1781437886.7519498,
+    "ast_hash": "71758aa287d359ce060402ff69fbdda6",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/hatchling/hatchling.png": {
+    "mtime": 1781437886.758967,
+    "ast_hash": "d8a4f205a50e606a5d69c285f2bb0b8f",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/adventure_outfit.jpg": {
+    "mtime": 1781435099.7536047,
+    "ast_hash": "41bb3f567dbc6b7b17ad5f82cc00fe11",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/default.jpg": {
+    "mtime": 1781434599.9593618,
+    "ast_hash": "26cba7e915018444a8707433e4d77cb8",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/fire_aura.jpg": {
+    "mtime": 1781435791.4843643,
+    "ast_hash": "b5f621cea4a33d4af46aeb8726322279",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/icy_aura.jpg": {
     "mtime": 1781435865.5491798,
     "ast_hash": "54e542d6df59c616d8e5d728f2073677",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/knight_outfit.jpg": {
+    "mtime": 1781434932.3697953,
+    "ast_hash": "ef7d84c733744adab8542246b7e51c8b",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/ninja_outfit.jpg": {
+    "mtime": 1781434817.1191921,
+    "ast_hash": "28dd19b270962b7155d1b25e9c3b5732",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/royal_outfit.jpg": {
+    "mtime": 1781435157.909364,
+    "ast_hash": "3d2a2b9767a901a925c29eef6ca60fbe",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/sakura_aura.jpg": {
+    "mtime": 1781436041.8605003,
+    "ast_hash": "3c57aaf846e33d962e2256bcbfd636dc",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/young_dragon/wizard_outfit.jpg": {
+    "mtime": 1781435040.6646779,
+    "ast_hash": "fb2fb73214663464530685ab315c12d7",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/others/background_beach.png": {
+    "mtime": 1781437886.6943936,
+    "ast_hash": "0612d4de514f7c59b8a5c5aeea0b2bcd",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/others/background_forest.png": {
+    "mtime": 1781437886.7128763,
+    "ast_hash": "3160af43cbe8b57b28e7b21c763339ce",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/others/background_mountains.png": {
+    "mtime": 1781437886.7279053,
+    "ast_hash": "2c0c87a755a79defa334ac7f41b695bf",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/others/background_night_sky.png": {
+    "mtime": 1781437886.746441,
+    "ast_hash": "7c9c174b949d56897292e4cd867eff43",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/others/chest_closed.png": {
+    "mtime": 1780651968.0815845,
+    "ast_hash": "091c756806ca0fcb6d3f21d6f07d33b4",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/with_background/others/chest_open.png": {
+    "mtime": 1780651968.0974183,
+    "ast_hash": "487c526b7986aabc70188436e4618162",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/mobile/presentation/ui/components/CurrencyIcon.kt": {
+    "mtime": 1781468747.5279994,
+    "ast_hash": "910f1f8bfd0d5310b3d8a2a2972f75e7",
     "semantic_hash": ""
   }
 }

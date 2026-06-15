@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.mobile.domain.ExpConfig
 import kotlinx.coroutines.delay
+import java.util.Calendar
 import java.util.Locale
 
 data class ProgressHeaderState(
@@ -151,7 +152,7 @@ fun ProgressHeader(
                         accentColor = COMBO_COLOR
                     )
                 }
-                ProgressChip("${state.totalCoins} coins")
+                CoinPill(amount = state.totalCoins)
                 ProgressChip("Evolution ${((evolutionProgress * 100f).toInt())}%")
             }
         }
@@ -387,7 +388,15 @@ private fun streakProtectionText(streak: Int, lastStreakDate: Long?): String = w
     else -> "Protect the flame: complete every habit today to keep $streak days alive."
 }
 
-private fun todayInDaysSinceEpoch(): Long = System.currentTimeMillis() / 86_400_000L
+private fun todayInDaysSinceEpoch(): Long {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = System.currentTimeMillis()
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return calendar.timeInMillis / 86_400_000L
+}
 
 private fun evolutionProgressFraction(totalXp: Long, stage: Int): Float {
     val lastIndex = ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex

@@ -16,376 +16,164 @@ For every task below:
 
 ---
 
-The equipable asset system is currently inconsistent. Some assets exist in the project but do not appear in Rewards, Inventory, Chests, or Achievements.
+# 17. UI REFINEMENT & UX IMPROVEMENTS
 
-I need a full audit and refactor to create a single, centralized equipable system.
+## Documentation
 
-Follow existing architecture and documentation. Do NOT invent package names, classes, or systems if equivalent implementations already exist.
+Read:
 
-Build and verify after changes.
-
----
-
-# GOAL
-
-Create a centralized `EquipableConfig` that becomes the SINGLE SOURCE OF TRUTH for all equipables in the game.
-
-All systems must use it:
-
-* Rewards screen
-* Inventory
-* Equip/unequip
-* Chest rewards
-* Achievements
-* Dragon rendering
-* Future reward systems
-
-The system must allow adding new rewards later without changing database schema or business logic.
-
----
-
-# CURRENT ASSETS
-
-## Young Dragon Outfits
-
-Location:
-
-`app/src/main/res/drawable/young_dragon/`
-
-Files:
-
-* `wizard_outfit.jpg`
-* `adventure_outfit.jpg`
-* `knight_outfit.jpg`
-* `ninja_outfit.jpg`
-* `royal_outfit.jpg`
-
-## Young Dragon Auras
-
-Location:
-
-`app/src/main/res/drawable/young_dragon/`
-
-Files:
-
-* `sakura_aura.jpg`
-* `fire_aura.jpg`
-* `icy_aura.jpg`
-
-## Backgrounds
-
-Location:
-
-`app/src/main/res/drawable/backgrounds/`
-
-Backgrounds should also be treated as equipables.
-
----
-
-# TASK 1 - ROOT CAUSE ANALYSIS
-
-**Status:** Completed. Root cause was fragmented equipable discovery/seeding plus achievement rewards referencing stale item IDs. The fix moved equipable definitions into `EquipableConfig`, synchronized them into inventory without overwriting player state, and routed chest/achievement rewards through stable equipable IDs.
-
-Investigate why these assets do not appear in:
-
-* Rewards screen
-* Inventory
-* Chest rewards
-* Achievement rewards
-
-Trace the complete flow:
-
-Asset  Config  Database  Repository  ViewModel  UI
-
-Validate:
-
-* Asset discovery
-* Drawable loading
-* Database initialization
-* Inventory creation
-* Reward generation
-* Filters
-* Purchase state
-* Unlock state
-* Equip state
-* Resource IDs
-* Rendering
-
-Fix the root cause.
-
-Do NOT guess.
-
----
-
-# TASK 2 - CREATE EQUIPABLE CONFIG
-
-**Status:** Completed. `domain/EquipableConfig.kt` now defines all current outfits, auras, and backgrounds with stable IDs, names, types, nullable phases, drawable names, rarity, nullable shop price, unlock source, and metadata support.
-
-Create a centralized configuration file:
-
-`EquipableConfig.kt`
-
-This becomes the SINGLE SOURCE OF TRUTH.
-
-Each equipable definition should support:
-
-* id (stable unique ID)
-* name
-* type
-
-  * OUTFIT
-  * AURA
-  * BACKGROUND
-* phase (nullable; `null` means usable at any dragon phase)
-
-  * EGG
-  * HATCHLING
-  * YOUNG_DRAGON
-  * ADULT_DRAGON
-  * ANCIENT_DRAGON
-* drawableName
-* rarity
-* price (nullable; `null` means not purchasable with coins)
-* unlockSource (`SHOP`, `CHEST`, or `ACHIEVEMENT`)
-* future metadata support
-
-Example:
-
-```kotlin
-EquipableDefinition(
-    id = "royal_outfit",
-    name = "Royal Outfit",
-    type = OUTFIT,
-    phase = YOUNG_DRAGON,
-    drawableName = "royal_outfit",
-    rarity = EPIC,
-    price = 800 // nullable; use null for non-coin rewards
-)
-```
-
-Do NOT hardcode equipables anywhere else.
-
-All systems must read from `EquipableConfig`.
-
----
-
-# TASK 3 - DATABASE SYNCHRONIZATION
-
-**Status:** Completed. `InventoryItemDatabaseInitializer` now syncs `EquipableConfig` entries into `inventory_items`, inserts missing equipables, stores `0` for nullable prices, and updates metadata while preserving purchased, equipped, and unlocked player state.
-
-On app startup:
-
-* Load all equipables from `EquipableConfig`
-* Compare with database
-* Insert missing equipables automatically
-* Preserve player data:
-
-  * purchased state
-  * equipped state
-  * unlock state
-
-Never delete player progress.
-
-Support future additions automatically.
-
-Adding a new equipable to `EquipableConfig` should be sufficient for it to appear in-game.
-
----
-
-# TASK 4 - CHEST REWARD INTEGRATION
-
-**Status:** Completed. Chest rewards now carry `equipableId`, select unowned non-achievement items by rarity through the inventory repository, and grant through `grantItemByItemId`.
-
-Refactor chest rewards to use `EquipableConfig`.
-
-Current chest reward flow must:
-
-* select unowned equipables
-* avoid duplicates whenever possible
-* filter by rarity
-* support:
-
-  * outfits
-  * auras
-  * backgrounds
-
-Chest rewards must grant equipables by ID:
-
-Example:
-
-```kotlin
-ChestReward(
-    equipableId = "royal_outfit"
-)
-```
-
-or dynamically select an equipable matching rarity rules.
-
-No hardcoded item names.
-
-No hardcoded IDs.
-
-Update chest logic to use the centralized config.
-
-Update documentation if behavior changes.
-
----
-
-# TASK 5 - ACHIEVEMENT REWARD INTEGRATION
-
-**Status:** Completed. `AchievementsConfig` uses `EquipableConfig` constants for customization rewards, `AchievementRewardProcessor` resolves rewards through `EquipableConfig` before granting them, and achievement-only sources are supported.
-
-Achievements must also use equipable IDs.
-
-Example:
-
-```kotlin
-CustomizationReward(
-    equipableId = "fire_aura"
-)
-```
-
-Achievement reward processing must resolve rewards through `EquipableConfig`.
-
-No hardcoded item names.
-
-No duplicated reward logic.
-
----
-
-# TASK 6 - INVENTORY & REWARDS SCREEN
-
-**Status:** Completed. Rewards screen filters now show all configured equipables, derives equipped badges from `PetEntity`, and reward popups resolve equipable names from `EquipableConfig`.
-
-Ensure all equipables appear correctly in:
-
-* Rewards screen
-* Inventory
-* Locked items
-* Purchased items
-* Equipped items
-
-Verify the following assets appear:
-
-Outfits:
-
-* wizard_outfit
-* adventure_outfit
-* knight_outfit
-* ninja_outfit
-* royal_outfit
-
-Auras:
-
-* sakura_aura
-* fire_aura
-* icy_aura
-
-Backgrounds:
-
-* all assets inside `backgrounds/`
-
-Support:
-
-* unlock
-* purchase
-* equip
-* unequip
-
----
-
-# TASK 7 - DRAGON RENDERING
-
-**Status:** Completed. `AssetResolver` uses nullable `EquipableConfig` phase metadata for aura and outfit lookups while preserving fallback behavior.
-
-Rendering order:
-
-1. Background
-2. Dragon base
-3. Aura
-4. Outfit overlay
-
-Default phase dragon:
-
-* `default`
-
-If aura equipped:
-
-* use `<aura>_aura`
-
-If outfit equipped:
-
-* overlay `<outfit>_outfit`
-
-Outfits have transparent backgrounds and should render above the aura image.
-
-Example:
-
-`fire_aura + royal_outfit`
-
-renders:
-
-Fire aura dragon base + Royal outfit overlay.
-
----
-
-# TASK 8 - FALLBACKS
-
-**Status:** Completed. Missing asset lookups remain non-fatal and `AssetResolver` logs missing files while falling back to configured/default behavior.
-
-If an asset is missing:
-
-Fallback order:
-
-1. phase default
-2. no aura
-3. no outfit
-4. no background
-
-The app must never crash due to missing assets.
-
-Log missing assets for debugging.
-
----
-
-# TASK 9 - VALIDATION
-
-**Status:** Completed. `./gradlew :app:assembleDebug` succeeds.
-
-Verify:
-
-* Equipables are loaded correctly
-* Inventory is initialized correctly
-* Chest rewards grant correct equipables
-* Achievement customization rewards grant correct achievement-only equipables
-* Chest-only equipables flow through the chest reward pipeline
-* Rendering works correctly
-* Existing player data is preserved
-* Database migration remains valid
-* Build succeeds
-
----
-
-# TASK 10 - DOCUMENTATION
-
-**Status:** Completed. Updated `ACCESSORIES.md`, `DRAGON_PHASES.md`, `CHEST_REWARDS.md`, `ACHIEVEMENTS.md`, `DATA_MODEL.md`, and `CUSTOMIZATION.md` to match nullable phase, nullable price, and unlock-source behavior.
-
-Update all affected documentation:
-
-* ACCESSORIES.md (or replacement file)
-* CHEST_REWARDS.md
-* ACHIEVEMENTS.md
-* DATA_MODEL.md
+* UI_GUIDELINES.md (if exists)
 * DRAGON_PHASES.md
+* DATA_MODEL.md
 
-Documentation must reflect actual implementation exactly.
+Update:
 
-Provide a final report:
+* UI_GUIDELINES.md (if exists)
 
-* files changed
-* files created
-* migrations added
-* documentation updated
-* remaining issues (if any)
-* missing assets (if any)
+## Tasks
+
+### Global Layout
+
+* [x] Remove the top application title/header bar from all screens
+* [x] Remove the black background app header entirely
+* [x] Ensure screens use full vertical space for content
+* [x] Verify no screen loses navigation functionality after removal
+
+---
+
+### Currency UI
+
+* [x] Replace current coin icon with an actual coin symbol/icon across the app
+* [x] Ensure coin icon remains consistent in:
+
+  * ProgressHeader
+  * Reward screens
+  * Inventory
+  * Statistics displays
+  * Any future coin displays
+
+---
+
+### Home Screen Improvements
+
+* [x] Move "Next unlock: ..." text below the "Level / Mood" section
+* [x] Improve visual hierarchy of pet progression information
+* [x] Keep Home screen focused on actionable daily progress
+
+### Home Header & Habit List Refinements
+
+* [x] Gray out the Home streak fire icon until the global streak has been counted for the current day
+* [x] Replace the coin drawable with a pile of coins
+* [x] Position the pet name on the left with level and mood badges on the right
+* [x] Make the Home screen content vertically scrollable so all of today's habits are reachable
+
+### Home Focus & Header Cleanup
+
+* [x] Remove the dragon/progress detail block from the Home screen
+* [x] Move "Next unlock: ..." above the Reset Game button
+* [x] Remove the persistent Android action bar/header showing the app name
+
+### Home Pet Summary & Rewards Filter Follow-up
+
+* [x] Restore a full-width Home dragon image with name, level, and mood
+* [x] Make Rewards rarity and collection filters visibly tinted when unselected
+* [x] Make selected Rewards filters use the darker/saturated filter color
+* [x] Fix Home streak fire state so it turns on after the global streak is counted for the current day
+* [x] Apply the same streak fire grey/active behavior to other screens with gamified headers
+
+---
+
+### Habits Screen Layout Fixes
+
+* [x] Fix habit row layout overflow issues
+* [x] Ensure habit names display horizontally and never vertically
+* [x] Move streak display below the habit name
+* [x] Remove large completion icon from the habit row
+* [x] Add a smaller checkbox icon aligned to the right side of the habit name
+* [x] Ensure layout remains responsive for long habit names
+* [x] Verify accessibility and readability on smaller screens
+
+---
+
+### Swipe Actions for Habits
+
+* [x] Remove permanently visible Edit and Delete buttons
+* [x] Implement swipe-to-reveal actions on habit rows
+* [x] Swiping left should reveal:
+
+  * Edit action (top)
+  * Delete action (bottom)
+* [x] Preserve existing edit and delete functionality
+* [x] Add smooth swipe animations
+* [x] Ensure accidental swipes are minimized
+* [x] Follow Material Design swipe behavior where possible
+
+---
+
+### Theme & Input Improvements
+
+* [x] Audit text colors across all screens
+* [x] Fix unreadable text colors in habit creation/edit screens
+* [x] Ensure text fields use proper contrast
+* [x] Change white text on light backgrounds to black or appropriate contrast colors
+* [x] Verify dark mode compatibility if supported
+
+---
+
+### Pet Screen Improvements
+
+* [x] Increase dragon display area height
+* [x] Increase background display height behind the dragon
+* [x] Make the dragon the visual focus of the screen
+* [x] Keep all important information visible without scrolling
+* [x] Preserve responsiveness on smaller devices
+
+---
+
+### Rewards Screen Improvements
+
+* [x] Add icon before each rewards tab title:
+
+  * Outfits
+  * Scenes
+  * Auras
+* [x] Select icons that visually communicate each category
+* [x] Ensure icons match the overall design language
+
+---
+
+### Rarity Filter Styling
+
+* [x] Update rarity filter colors:
+
+  * Normal - Grey
+  * Rare - Green
+  * Epic - Blue
+  * Legendary - Purple
+  * Mythic/Future - Dark Orange (if applicable)
+* [x] Ensure text remains readable on all filter colors
+* [x] Apply colors consistently across all rarity displays
+
+---
+
+### Validation
+
+* [x] Verify all layouts on small screens
+* [x] Verify all layouts on large screens
+* [x] Ensure no text clipping occurs
+* [x] Ensure no UI overlap occurs
+* [x] Ensure touch targets remain accessible
+* [x] Verify animations remain smooth
+* [x] Confirm all screens follow consistent spacing and typography
+
+---
+
+### App icon
+
+* [x] Change the application icon when installing. It should be an icon that represents that application goal
+
+### Build validation
+
+* [x] Verify the app icon is wired through the launcher manifest using `@drawable/ic_launcher_full`
+* [x] Generate the debug APK at `habit-pet.apk` with `./gradlew assembleDebug`
 

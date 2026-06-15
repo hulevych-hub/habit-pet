@@ -3,6 +3,7 @@ package com.example.mobile.presentation.ui.screens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,8 +59,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -102,32 +105,6 @@ fun HabitsScreen(
 
     Scaffold(
         containerColor = Color(0xFFFAFAFC), // Alabaster Premium Background matching home
-        topBar = {
-            androidx.compose.material3.CenterAlignedTopAppBar(
-                colors = androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFFFAFAFC)
-                ),
-                title = {
-                    Text(
-                        text = "Habits",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = (-0.5).sp
-                        ),
-                        color = ColorPaletteHabits.Ink
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = ColorPaletteHabits.Violet
-                        )
-                    }
-                }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("habitCreation") },
@@ -197,6 +174,7 @@ fun HabitsScreen(
                     isCompleting = habit.id in completingHabitIds,
                     navController = navController,
                     onComplete = { habitsViewModel.completeCheckboxHabit(habit) },
+                    onEdit = { navController.navigate("habitEdit/${habit.id}") },
                     onDelete = { habitsViewModel.deleteHabit(habit) }
                 )
             }
@@ -313,7 +291,7 @@ private fun HabitsHeader(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun HabitItem(
     habit: HabitEntity,
@@ -321,14 +299,15 @@ private fun HabitItem(
     isCompleting: Boolean,
     navController: NavHostController,
     onComplete: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showActionsDialog by remember { mutableStateOf(false) }
     var skippedToday by remember { mutableStateOf(false) }
+    var swipeOffset by remember { mutableStateOf(0f) }
+    var showSwipeActions by remember { mutableStateOf(false) }
     val category = habitCategory(habit)
-
-    // Dynamic matching of the card colors based on checked states
     val itemBackground = if (completed) ColorPaletteHabits.MintSurfaceActive else ColorPaletteHabits.DefaultItemCardBackground
 
     Surface(
@@ -338,80 +317,91 @@ private fun HabitItem(
             .combinedClickable(
                 onClick = { navController.navigate("habitDetail/${habit.id}") },
                 onLongClick = { showActionsDialog = true }
-            ),
+            )
+            .pointerInput(habit.id) {
+                detectDragGestures(
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        val nextOffset = (swipeOffset + dragAmount.x).coerceIn(-120f, 80f)
+                        swipeOffset = nextOffset
+                        showSwipeActions = nextOffset < -48f
+                    },
+                    onDragEnd = {
+                        showSwipeActions = swipeOffset < -48f
+                        swipeOffset = 0f
+                    },
+                    onDragCancel = {
+                        showSwipeActions = false
+                        swipeOffset = 0f
+                    }
+                )
+            },
         shape = RoundedCornerShape(24.dp),
         color = itemBackground,
         shadowElevation = 0.dp
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            CompletionButton(
-                completed = completed,
-                skippedToday = skippedToday,
-                isCompleting = isCompleting,
-                onComplete = onComplete
-            )
-
-            IconBadge(
-                icon = habit.icon,
-                completed = completed,
-                fallbackIcon = habitIcon(habit)
-            )
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+        Box(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = habit.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteHabits.Ink
+                CompletionButton(
+                    completed = completed,
+                    skippedToday = skippedToday,
+                    isCompleting = isCompleting,
+                    onComplete = onComplete
                 )
-                Text(
-                    text = category,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = ColorPaletteHabits.Muted.copy(alpha = 0.7f)
+
+                IconBadge(
+                    icon = habit.icon,
+                    completed = completed,
+                    fallbackIcon = habitIcon(habit)
                 )
-                if (skippedToday) {
+
+                Column(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
                     Text(
-                        text = "Skipped for this session",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = ColorPaletteHabits.Danger
+                        text = habit.name,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ColorPaletteHabits.Ink,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    Text(
+                        text = category,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = ColorPaletteHabits.Muted.copy(alpha = 0.7f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (skippedToday) {
+                        Text(
+                            text = "Skipped for this session",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = ColorPaletteHabits.Danger
+                        )
+                    }
                 }
+
+                StreakBadge(streak = habit.currentStreak)
             }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                StreakBadge(streak = habit.currentStreak)
-
-                IconButton(
-                    onClick = { navController.navigate("habitEdit/${habit.id}") },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit habit",
-                        tint = ColorPaletteHabits.Violet.copy(alpha = 0.8f),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                IconButton(
-                    onClick = { showDeleteDialog = true },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete habit",
-                        tint = ColorPaletteHabits.Danger.copy(alpha = 0.8f),
-                        modifier = Modifier.size(18.dp)
+            if (showSwipeActions) {
+                Box(modifier = Modifier.align(Alignment.TopEnd)) {
+                    SwipeActionsOverlay(
+                        onEdit = {
+                            showSwipeActions = false
+                            onEdit()
+                        },
+                        onDelete = {
+                            showSwipeActions = false
+                            showDeleteDialog = true
+                        }
                     )
                 }
             }
@@ -458,6 +448,61 @@ private fun HabitItem(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun SwipeActionsOverlay(
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .padding(top = 6.dp, end = 20.dp),
+        shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
+        color = Color.White,
+        shadowElevation = 4.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            SwipeActionButton(
+                icon = Icons.Default.Edit,
+                color = ColorPaletteHabits.Violet,
+                onClick = onEdit
+            )
+            SwipeActionButton(
+                icon = Icons.Default.Delete,
+                color = ColorPaletteHabits.Danger,
+                onClick = onDelete
+            )
+        }
+    }
+}
+
+@Composable
+private fun SwipeActionButton(
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit
+) {
+    Surface(
+        shape = RoundedCornerShape(18.dp),
+        color = color.copy(alpha = 0.14f)
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(44.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 

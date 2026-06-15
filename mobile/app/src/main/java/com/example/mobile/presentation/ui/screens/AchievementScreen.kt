@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -51,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
@@ -72,7 +72,8 @@ fun AchievementScreen(
             GamifiedFixedHeader(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
-                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage)
+                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
+                streakCompletedToday = progressUiState.globalStreakCompletedToday
             )
         }
     ) { padding ->
@@ -137,13 +138,16 @@ fun AchievementScreen(
 private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
-    stageName: String
+    stageName: String,
+    streakCompletedToday: Boolean
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color(0xFFFFFFFF),
         shadowElevation = 1.dp
     ) {
+        val streakTint = if (streakCompletedToday) ColorPaletteAchievements.Honey else Color(0xFFA9A3B8)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,7 +163,7 @@ private fun GamifiedFixedHeader(
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Streak",
-                    tint = ColorPaletteAchievements.Honey,
+                    tint = streakTint,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
@@ -196,11 +200,9 @@ private fun GamifiedFixedHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = "Coins",
-                    tint = ColorPaletteAchievements.Amber,
-                    modifier = Modifier.size(22.dp)
+                CoinIcon(
+                    modifier = Modifier.size(22.dp),
+                    tint = ColorPaletteAchievements.Amber
                 )
                 Text(
                     text = "$coins",

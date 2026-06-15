@@ -146,7 +146,7 @@ object EquipableConfig {
             drawableName = SAKURA_AURA,
             rarity = Rarity.NORMAL,
             price = null,
-            unlockSource = UnlockSources.ACHIEVEMENT
+            unlockSource = UnlockSources.CHEST
         ),
         EquipableDefinition(
             id = FIRE_AURA,

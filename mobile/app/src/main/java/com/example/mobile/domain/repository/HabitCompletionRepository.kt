@@ -38,8 +38,7 @@ interface HabitCompletionRepository {
     suspend fun deleteAll()
 
     /**
-     * Returns true if ANY habit has a completion on the given day.
-     * (Used for global streak evaluation)
+     * Returns true if any habit has a completion on the given day.
      */
     suspend fun hasAnyCompletionOnDate(date: Long): Boolean
 

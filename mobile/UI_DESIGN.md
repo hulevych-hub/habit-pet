@@ -14,7 +14,7 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 - Background: Warm Alabaster `#FAFAFC`
 - Cards: Elevated Card White `#FFFFFF`
 - Accent: Honey Amber `#FFB84D`
-- Rarity colors: Common `#6F6A8A`, Rare `#4BA3FF`, Epic `#B26CFF`, Legendary `#FFB84D`
+- Rarity colors: Normal `#6F6A8A`, Rare `#4EDB95`, Epic `#3B91FF`, Legendary `#B26CFF`
 
 ### Shape and Spacing
 
@@ -43,16 +43,19 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ### Home
 
-- Top bar uses compact streak and wallet pills.
-- The dragon hero area is the primary focal point with a gradient background.
-- Hero displays pet name, level badge, evolution stage, and mood.
-- ProgressHeader and EvolutionTeaser are grouped inside a single progression module.
+- The streak and coin pills appear in the top chrome on screens that use the shared gamified header.
+- The Home screen keeps the dragon image and gradient background flush to the left and right edges, starting immediately below the shared header.
+- The streak fire icon is muted until the global streak has been counted for the current day.
+- The Home screen focuses on actionable daily progress: Next Unlock, Reset Game, Today's Quest, and today's habits.
+- The Home content scrolls vertically so all of today's habits remain reachable.
 - Today's habits are shown as wide rounded cards with completed-state emphasis.
 
 ### Habits
 
-- Header is a lavender goal card with streak copy, daily XP progress, a segmented progress bar, and bonus chest emphasis.
-- Habit cards are premium cards with completion affordance, category badges, category labels, and visible edit/delete actions.
+- The dense title header is removed so the habit list can use more vertical content space while bottom navigation remains available.
+- Habit cards are premium cards with completion affordance, category badges, category labels, and swipe-revealed edit/delete actions.
+- Long names are constrained to one line with ellipsis overflow to prevent vertical text wrapping.
+- Swipe left reveals stacked white Edit and Remove action buttons on the right while the habit card stays visible; swipe right hides them.
 - Repository-backed screens show a lightweight loading card while initial data is warming up.
 - Recoverable failures show a lightweight error card with a clear retry/dismiss action.
 - Settings toggle failures keep the previous toggle state and show the shared error card until the user dismisses it.
@@ -70,9 +73,10 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ### Inventory / Rewards
 
-- Collection uses segmented tabs for Outfits, Backgrounds, and Auras.
+- Collection uses segmented tabs for Outfits, Backgrounds, and Auras with category icons.
 - Inventory items render in a three-column grid.
-- Rarity filters are segmented chips.
+- Rarity filters are segmented chips with stronger selected borders and readable muted unselected text.
+- Rarity filters use their rarity color as a translucent unselected background and a fully saturated selected background.
 - Owned and locked collections are toggled with a segmented control.
 - Items display rarity color, source, price, equipped state, and immediate equip/unequip/purchase actions.
 
@@ -81,6 +85,11 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 - Timeline uses a central story path with alternating left/right event placement.
 - Event cards use milestone tinting and colored nodes based on rarity.
 - The screen emphasizes player journey over duplicated stats.
+
+### Pet
+
+- The dragon showcase uses a full-width background and pet image flush to the screen edges below the shared header.
+- The pet scale is increased slightly within the showcase to make growth feel more present.
 
 ### Settings
 
@@ -98,4 +107,6 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ## Asset Notes
 
-No final artwork assets were required for this pass. The implementation uses existing `AnimatedPet` rendering, existing drawable assets for collection previews where available, Material icons, gradient surfaces, and placeholder-style rarity badges.
+- The launcher icon is now a custom full vector dragon icon in `drawable/ic_launcher_full.xml`.
+- The currency icon is now a custom pile-of-coins drawable in `drawable/ic_coin.xml` and is reused through `CoinIcon` / `CoinPill`.
+- The implementation uses existing `AnimatedPet` rendering, existing drawable assets for collection previews where available, Material icons, gradient surfaces, and rarity badges.

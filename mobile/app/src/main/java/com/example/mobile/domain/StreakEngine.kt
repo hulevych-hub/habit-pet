@@ -51,11 +51,7 @@ class StreakEngine(
 
         if (habits.isEmpty()) return
 
-        val allCompleted = habits.all { habit ->
-            habitCompletionRepository
-                .getCompletionForHabitOnDate(habit.id, normalizedToday)
-                .firstOrNull() != null
-        }
+        val allCompleted = habitCompletionRepository.areAllHabitsCompletedOnDate(normalizedToday)
 
         if (allCompleted) {
             statisticsRepository.incrementStreak()
@@ -116,11 +112,7 @@ class StreakEngine(
 
         if (habits.isEmpty()) return
 
-        val allCompleted = habits.all { habit ->
-            habitCompletionRepository
-                .getCompletionForHabitOnDate(habit.id, normalizedToday)
-                .firstOrNull() != null
-        }
+        val allCompleted = habitCompletionRepository.areAllHabitsCompletedOnDate(normalizedToday)
 
         val alreadyCounted = statisticsRepository.isStreakAlreadyCountedToday()
 

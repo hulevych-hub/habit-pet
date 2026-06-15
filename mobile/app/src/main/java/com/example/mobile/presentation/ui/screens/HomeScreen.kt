@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -51,9 +50,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 
 @Composable
@@ -80,11 +81,17 @@ fun HomeScreen(
             GamifiedFixedHeader(
                 streak = uiState.globalStreak,
                 coins = uiState.totalCoins,
-                stageName = ExpConfig.evolutionStageName(pet.evolutionStage)
+                stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
+                streakCompletedToday = uiState.globalStreakCompletedToday
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+        ) {
             if (isLoading) {
                 LoadingStateCard(
                     modifier = Modifier
@@ -93,18 +100,16 @@ fun HomeScreen(
                     message = "Waking up your dragon..."
                 )
             } else {
-                DragonHero(
-                    pet = pet,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                PetSummary(pet = pet)
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
+                    NextUnlockText()
                     ResetGameButton(onResetClick = { showResetGameDialog = true })
                     TodayNourishmentSection(
                         habits = uiState.habits,
@@ -162,55 +167,76 @@ fun HomeScreen(
 }
 
 @Composable
-private fun DragonHero(
-    pet: com.example.mobile.data.local.entities.PetEntity,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+private fun PetSummary(pet: PetEntity) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = ColorPaletteHome.Card,
+        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+        shadowElevation = 1.dp
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f), Color.Transparent)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            AnimatedPet(
-                pet = pet,
-                modifier = Modifier.fillMaxSize(),
-                showNameOverlay = false
-            )
-        }
-
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = pet.name.ifBlank { "Meet My Pet" },
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
-                color = ColorPaletteHome.Ink
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f), Color.Transparent)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                AnimatedPet(
+                    pet = pet,
+                    modifier = Modifier.fillMaxSize(),
+                    showNameOverlay = false
+                )
+            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = pet.name.ifBlank { "Baby Dragon" },
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = ColorPaletteHome.Ink,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
+                )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                LevelBadge(pet.level)
-                Surface(shape = RoundedCornerShape(999.dp), color = ColorPaletteHome.Mint.copy(alpha = 0.15f)) {
-                    Text(
-                        text = DragonMood.from(pet.mood).displayName,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = ColorPaletteHome.Green,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = ColorPaletteHome.Amber
+                    ) {
+                        Text(
+                            text = "Lv. ${pet.level}",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = ColorPaletteHome.Mint.copy(alpha = 0.16f)
+                    ) {
+                        Text(
+                            text = DragonMood.from(pet.mood).displayName,
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ColorPaletteHome.Green,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                        )
+                    }
                 }
             }
         }
@@ -221,13 +247,16 @@ private fun DragonHero(
 private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
-    stageName: String
+    stageName: String,
+    streakCompletedToday: Boolean
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color(0xFFFFFFFF),
         shadowElevation = 1.dp
     ) {
+        val streakTint = if (streakCompletedToday) ColorPaletteHome.Honey else Color(0xFFA9A3B8)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -243,7 +272,7 @@ private fun GamifiedFixedHeader(
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Streak",
-                    tint = ColorPaletteHome.Honey,
+                    tint = streakTint,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
@@ -280,11 +309,9 @@ private fun GamifiedFixedHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = "Wallet Balance",
-                    tint = ColorPaletteHome.Amber,
-                    modifier = Modifier.size(22.dp)
+                CoinIcon(
+                    modifier = Modifier.size(22.dp),
+                    tint = ColorPaletteHome.Amber
                 )
                 Text(
                     text = "$coins",
@@ -365,14 +392,18 @@ private fun TodayNourishmentSection(
             }
         }
 
-        Text(
-            text = "✨ Next Unlock: Dragon Nest Background at Lv. 3",
-            style = MaterialTheme.typography.bodySmall,
-            color = ColorPaletteHome.Ink.copy(alpha = 0.5f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-        )
     }
+}
+
+@Composable
+private fun NextUnlockText() {
+    Text(
+        text = "✨ Next Unlock: Dragon Nest Background at Lv. 3",
+        style = MaterialTheme.typography.bodySmall,
+        color = ColorPaletteHome.Ink.copy(alpha = 0.5f),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Composable
@@ -465,21 +496,6 @@ private fun HomeHabitItem(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun LevelBadge(level: Int) {
-    Surface(
-        shape = RoundedCornerShape(999.dp),
-        color = ColorPaletteHome.Amber
-    ) {
-        Text(
-            text = "Lv. $level",
-            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-            color = Color.White,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-        )
     }
 }
 

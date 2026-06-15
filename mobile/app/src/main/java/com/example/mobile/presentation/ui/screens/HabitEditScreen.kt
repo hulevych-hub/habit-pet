@@ -37,7 +37,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -50,7 +49,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -96,37 +94,55 @@ fun HabitEditScreen(
 
     HabitPetTheme {
         Scaffold(
-            containerColor = Color(0xFFFAFAFC),
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "Modify Quest Parameters",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ColorPaletteEdit.Ink
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateUp) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Back",
-                                tint = ColorPaletteEdit.Ink
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
-                )
-            }
+            containerColor = Color(0xFFFAFAFC)
         ) { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                HabitEditForm(viewModel = viewModel)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    InlineScreenHeader(
+                        title = "Modify Quest Parameters",
+                        onNavigateUp = onNavigateUp,
+                        accentColor = ColorPaletteEdit.Violet
+                    )
+                    HabitEditForm(viewModel = viewModel)
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun InlineScreenHeader(
+    title: String,
+    onNavigateUp: () -> Unit,
+    accentColor: Color
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onNavigateUp) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = accentColor
+            )
+        }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            color = ColorPaletteEdit.Ink
+        )
     }
 }
 
@@ -571,8 +587,8 @@ private fun DurationSelection(
 private object ColorPaletteEdit {
     val Card = Color(0xFFFFFFFF)
     val Violet = Color(0xFF8A76F9)
-    val Line = Color(0xFFEBE9F5)
-    val Muted = Color(0xFF8E8A9F)
+    val Line = Color(0xFFD9D4EA)
+    val Muted = Color(0xFF5F5A78)
     val Coral = Color(0xFFE65C5C)
     val Ink = Color(0xFF1E1A34)
 }

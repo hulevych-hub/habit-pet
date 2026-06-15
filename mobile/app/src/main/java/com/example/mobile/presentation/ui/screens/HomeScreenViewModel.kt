@@ -152,7 +152,7 @@ class HomeScreenViewModel @Inject constructor(
             lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
             dailyGoalXp = stats.dailyGoalXp,
             dailyGoalProgressXp = if (stats.dailyGoalDate == getDayStart(System.currentTimeMillis()) / 86_400_000L) xpProgress else 0L,
-            dailyGoalCompleted = stats.dailyGoalCompletedDate == getDayStart(System.currentTimeMillis()) / 86_400_000L
+            globalStreakCompletedToday = stats.lastStreakDate == getDayStart(System.currentTimeMillis()) / 86_400_000L
         )
     }
     .stateIn(
@@ -169,7 +169,7 @@ class HomeScreenViewModel @Inject constructor(
             lastHabitCompletionTimestamp = 0L,
             dailyGoalXp = 300,
             dailyGoalProgressXp = 0L,
-            dailyGoalCompleted = false
+            globalStreakCompletedToday = false
         )
     )
 
@@ -184,7 +184,7 @@ class HomeScreenViewModel @Inject constructor(
         val lastHabitCompletionTimestamp: Long,
         val dailyGoalXp: Int,
         val dailyGoalProgressXp: Long,
-        val dailyGoalCompleted: Boolean
+        val globalStreakCompletedToday: Boolean
     )
 
     private fun activeCombo(stats: StatisticsEntity): Int {
