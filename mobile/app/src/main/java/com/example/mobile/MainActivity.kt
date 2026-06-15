@@ -17,8 +17,9 @@ import com.example.mobile.presentation.ui.feedback.MicroFeedbackOverlay
 import com.example.mobile.presentation.ui.reward.RewardManager
 import com.example.mobile.presentation.ui.reward.RewardOverlayHost
 import com.example.mobile.ui.theme.HabitPetTheme
-import dagger.hilt.android.AndroidEntryPoint
 import com.example.mobile.util.NotificationPrefs
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,15 +46,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        lifecycleScope.launch {
-            val statistics = statisticsRepository.getStatistics().firstOrNull()
-            NotificationPrefs.recordStreak(this@MainActivity, statistics?.currentStreak ?: 0)
-            NotificationPrefs.recordLastActiveSession(this@MainActivity)
-
-            activityTimelineEngine.start()
-            dragonMoodEngine.refreshMood()
-        }
 
         // ✅ Proper edge-to-edge setup (modern Android way)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -88,6 +80,15 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val statistics = statisticsRepository.getStatistics().firstOrNull()
+            NotificationPrefs.recordStreak(this@MainActivity, statistics?.currentStreak ?: 0)
+            NotificationPrefs.recordLastActiveSession(this@MainActivity)
+
+            activityTimelineEngine.start()
+            dragonMoodEngine.refreshMood()
         }
 
         // ✅ Hide system bars during reward cinematic

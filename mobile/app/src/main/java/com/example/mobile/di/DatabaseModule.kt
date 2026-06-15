@@ -153,13 +153,11 @@ object DatabaseModule {
     fun provideDragonMoodEngine(
         petRepository: PetRepository,
         statisticsRepository: StatisticsRepository,
-        habitRepository: HabitRepository,
         habitCompletionRepository: HabitCompletionRepository
     ): DragonMoodEngine {
         return DragonMoodEngine(
             petRepository,
             statisticsRepository,
-            habitRepository,
             habitCompletionRepository
         )
     }

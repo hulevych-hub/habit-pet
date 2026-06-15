@@ -2,6 +2,7 @@ package com.example.mobile.data.repository
 
 import com.example.mobile.data.local.dao.HabitCompletionDao
 import com.example.mobile.data.local.dao.HabitDao
+import com.example.mobile.data.local.dao.RecentCompletionsStats
 import com.example.mobile.data.local.dao.StatisticsDao
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
@@ -24,6 +25,12 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         endDate: Long
     ): Flow<List<HabitCompletionEntity>> =
         habitCompletionDao.getCompletionsForHabit(habitId, startDate, endDate)
+
+    override suspend fun getRecentCompletionsStats(
+        startDate: Long,
+        endDate: Long
+    ): RecentCompletionsStats =
+        habitCompletionDao.getRecentCompletionsStats(startDate, endDate)
 
     override fun getCompletionForHabitOnDate(
         habitId: Long,

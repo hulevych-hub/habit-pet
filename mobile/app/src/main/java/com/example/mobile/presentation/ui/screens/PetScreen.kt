@@ -1,6 +1,7 @@
 package com.example.mobile.presentation.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,8 +48,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -108,7 +112,6 @@ fun PetScreen(
     val error by petViewModel.error.collectAsState(initial = null)
 
     val pet = uiState.pet
-
     var showRenameDialog by remember { mutableStateOf(false) }
 
     val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
@@ -128,34 +131,32 @@ fun PetScreen(
     ) { padding ->
         if (!error.isNullOrBlank()) {
             ErrorStateCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(20.dp),
+                modifier = Modifier.fillMaxSize().padding(padding).padding(20.dp),
                 message = error.orEmpty(),
                 onRetry = petViewModel::clearError
             )
         } else if (isLoading) {
             LoadingStateCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(20.dp),
+                modifier = Modifier.fillMaxSize().padding(padding).padding(20.dp),
                 message = "Checking on your dragon..."
             )
         } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
                     .background(PetPremiumColors.Background)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 PetShowcase(
                     pet = pet,
-                    modifier = Modifier.fillMaxWidth()
+                    level = pet.level,
+                    name = pet.name.ifBlank { "Baby Dragon" },
+                    mood = DragonMood.from(pet.mood).displayName,
+                    modifier = Modifier.fillMaxWidth().height(430.dp)
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 PetDetailsPanel(
                     pet = pet,
@@ -165,7 +166,7 @@ fun PetScreen(
                     onRenameClick = { showRenameDialog = true }
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
@@ -185,80 +186,146 @@ fun PetScreen(
 @Composable
 private fun PetShowcase(
     pet: PetEntity,
+    level: Int,
+    name: String,
+    mood: String,
     modifier: Modifier = Modifier
 ) {
     val showcaseShape = RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp)
 
     Box(
         modifier = modifier
-            .height(430.dp)
             .clip(showcaseShape)
             .background(PetPremiumColors.ShowcaseBase),
         contentAlignment = Alignment.Center
     ) {
+        AnimatedPet(
+            pet = pet,
+            modifier = Modifier.fillMaxSize(),
+            showNameOverlay = false
+        )
+
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .border(
-                    width = 2.dp,
-                    color = PetPremiumColors.Gold.copy(alpha = 0.38f),
-                    shape = showcaseShape
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .height(96.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            PetPremiumColors.Background.copy(alpha = 0.76f),
+                            PetPremiumColors.Background
+                        )
+                    )
                 )
-        ) {
-            AnimatedPet(
-                pet = pet,
-                modifier = Modifier.fillMaxSize(),
-                showNameOverlay = false
-            )
+        )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .height(92.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                PetPremiumColors.Background.copy(alpha = 0.72f),
-                                PetPremiumColors.Background
-                            )
-                        )
-                    )
-            )
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .width(250.dp)
-                    .height(34.dp)
-                    .padding(bottom = 52.dp)
-                    .clip(RoundedCornerShape(999.dp))
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                PetPremiumColors.GoldLight.copy(alpha = 0.72f),
-                                PetPremiumColors.Gold.copy(alpha = 0.34f)
-                            )
-                        )
-                    )
-            )
-        }
-
-        LevelBadge(
-            level = pet.level,
-            name = pet.name.ifBlank { "Baby Dragon" },
+        MedallionConnectors(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 22.dp)
+                .fillMaxWidth()
+                .height(62.dp)
+        )
+
+        PetMedallion(
+            level = level,
+            name = name,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 18.dp)
         )
 
         MoodPill(
-            mood = DragonMood.from(pet.mood).displayName,
+            mood = mood,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 18.dp, bottom = 54.dp)
         )
+    }
+}
+
+@Composable
+private fun MedallionConnectors(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier) {
+        val gold = PetPremiumColors.Gold
+        val strokeWidth = 3.dp.toPx()
+        val centerY = size.height / 2f
+        val medallionWidth = 176.dp.toPx()
+        val centerX = size.width / 2f
+        val leftEdge = centerX - medallionWidth / 2f
+        val rightEdge = centerX + medallionWidth / 2f
+        val curveWidth = 58.dp.toPx()
+        val curveHeight = 46.dp.toPx()
+
+        drawLine(
+            color = gold,
+            start = Offset(leftEdge, centerY),
+            end = Offset(leftEdge - curveWidth * 0.34f, centerY),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = gold,
+            start = Offset(rightEdge, centerY),
+            end = Offset(rightEdge + curveWidth * 0.34f, centerY),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
+        drawArc(
+            color = gold,
+            topLeft = Offset(leftEdge - curveWidth, centerY - curveHeight / 2f),
+            size = Size(curveWidth, curveHeight),
+            startAngle = 0f,
+            sweepAngle = -180f,
+            useCenter = false
+        )
+        drawArc(
+            color = gold,
+            topLeft = Offset(rightEdge, centerY - curveHeight / 2f),
+            size = Size(curveWidth, curveHeight),
+            startAngle = 180f,
+            sweepAngle = -180f,
+            useCenter = false
+        )
+    }
+}
+
+@Composable
+private fun PetMedallion(
+    level: Int,
+    name: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .width(176.dp)
+            .height(76.dp),
+        shape = RoundedCornerShape(22.dp),
+        color = PetPremiumColors.Medallion,
+        border = BorderStroke(1.5.dp, PetPremiumColors.Gold)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Lv. $level",
+                color = PetPremiumColors.Gold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = name,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
     }
 }
 
@@ -750,6 +817,7 @@ private object PetPremiumColors {
     val HeaderPill = Color(0xFF1A2549)
     val ShowcaseBase = Color(0xFF121A36)
     val Card = Color(0xFF121A36)
+    val Medallion = Color(0xFF111A38)
     val CardBorder = Color(0xFF2A355D)
     val Text = Color(0xFFF6F0FF)
     val Muted = Color(0xFFA9A4BD)

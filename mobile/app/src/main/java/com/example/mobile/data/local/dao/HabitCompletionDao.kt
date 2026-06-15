@@ -9,10 +9,24 @@ import androidx.room.Update
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import kotlinx.coroutines.flow.Flow
 
+data class RecentCompletionsStats(
+    val count: Int,
+    val lastActivityTimestamp: Long
+)
+
 @Dao
 interface HabitCompletionDao {
     @Query("SELECT * FROM habit_completions WHERE habitId = :habitId AND date >= :startDate AND date < :endDate")
     fun getCompletionsForHabit(habitId: Long, startDate: Long, endDate: Long): Flow<List<HabitCompletionEntity>>
+
+    @Query("""
+        SELECT
+            COUNT(*) AS count,
+            COALESCE(MAX(date), 0) AS lastActivityTimestamp
+        FROM habit_completions
+        WHERE date >= :startDate AND date < :endDate
+    """)
+    suspend fun getRecentCompletionsStats(startDate: Long, endDate: Long): RecentCompletionsStats
 
     @Query("SELECT * FROM habit_completions WHERE habitId = :habitId AND date = :date")
     fun getCompletionForHabitOnDate(habitId: Long, date: Long): Flow<HabitCompletionEntity?>

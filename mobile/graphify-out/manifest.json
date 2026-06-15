@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/MainActivity.kt": {
-    "mtime": 1781274234.0349512,
-    "ast_hash": "53867c2249a4179cc199c6f74e573359",
+    "mtime": 1781547134.2779593,
+    "ast_hash": "429e5467238792ef6c9b0f7333d32127",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/dao/AchievementDao.kt": {
@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/dao/HabitCompletionDao.kt": {
-    "mtime": 1780840780.0449176,
-    "ast_hash": "4884a2d7b9b58a1200297d1a9c486d54",
+    "mtime": 1781547168.8777995,
+    "ast_hash": "137d564c6e7b33b14594a514c7aadaea",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/dao/HabitDao.kt": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt": {
-    "mtime": 1781351937.2244682,
-    "ast_hash": "c7b56ddc5190b71ac747eb7e4d490bf6",
+    "mtime": 1781547079.587278,
+    "ast_hash": "2fad35477b515ecc2e7e681bc1200784",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/HabitProgressRepositoryImpl.kt": {
@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/DatabaseModule.kt": {
-    "mtime": 1781445285.8810914,
-    "ast_hash": "68e5fbc2b8c0b65f72be1784e1fdabc9",
+    "mtime": 1781547234.039049,
+    "ast_hash": "177f147971a6c5bd507f1f10768b3c14",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/RepositoryModule.kt": {
@@ -185,8 +185,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/HabitCompletionRepository.kt": {
-    "mtime": 1781506664.4279501,
-    "ast_hash": "881c41c7933636a791a1b446f34319b9",
+    "mtime": 1781547066.2307286,
+    "ast_hash": "4642ba62258fa4bb81b5e589be40e9e6",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/HabitProgressRepository.kt": {
@@ -300,13 +300,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt": {
-    "mtime": 1781512703.308814,
-    "ast_hash": "03861aa06f158c2907e8bc17514b563e",
+    "mtime": 1781546186.2472932,
+    "ast_hash": "1bbbdd1527954a983f45aefb878b15c1",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781541866.0993702,
-    "ast_hash": "bdf8bc98ed8ba3b8fd1667aaeb9241e8",
+    "mtime": 1781545533.7612395,
+    "ast_hash": "249b45781b4bddd779055458a16d6e93",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
@@ -565,8 +565,8 @@
     "semantic_hash": ""
   },
   "TODO.md": {
-    "mtime": 1781541987.8557174,
-    "ast_hash": "a46e84bea9ff89f031ba07b1938012e8",
+    "mtime": 1781544823.5715508,
+    "ast_hash": "d2635bc2fc12112c31c449e2ce79d404",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt": {
@@ -685,8 +685,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/DragonMoodEngine.kt": {
-    "mtime": 1781200977.8931189,
-    "ast_hash": "4a98a6a95d6bbad7a8d02a00f3fba1c0",
+    "mtime": 1781547100.8560317,
+    "ast_hash": "2cdac2605dd24580d789b5df5a4f5ebb",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/EmptyStateCard.kt": {
@@ -725,8 +725,8 @@
     "semantic_hash": ""
   },
   "UI_DESIGN.md": {
-    "mtime": 1781541973.383749,
-    "ast_hash": "f3800cf6044efb4b3f9d9793ad573bac",
+    "mtime": 1781546310.5802011,
+    "ast_hash": "e55edc31648a9ef58f41bd483986f4aa",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AssetPreview.kt": {

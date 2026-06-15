@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -158,9 +159,29 @@ fun NotificationSettingsScreen(
                     }
                 )
             }
+
+            item {
+                CopyrightFooter()
+            }
             }
         }
     }
+}
+
+@Composable
+private fun CopyrightFooter() {
+    Text(
+        text = "Copyright © 2026 Hulevych Enterprises. All rights to cuddle Vanessa Baron reserved.",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        color = Color(0xFF7A7786),
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+    )
 }
 
 private fun saveNotificationSetting(

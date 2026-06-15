@@ -1,5 +1,6 @@
 package com.example.mobile.domain.repository
 
+import com.example.mobile.data.local.dao.RecentCompletionsStats
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +22,8 @@ interface HabitCompletionRepository {
         startDate: Long,
         endDate: Long
     ): Flow<List<HabitCompletionEntity>>
+
+    suspend fun getRecentCompletionsStats(startDate: Long, endDate: Long): RecentCompletionsStats
 
     fun getCompletionForHabitOnDate(
         habitId: Long,
