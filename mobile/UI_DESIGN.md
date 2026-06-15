@@ -88,8 +88,12 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ### Pet
 
-- The dragon showcase uses a full-width background and pet image flush to the screen edges below the shared header.
-- The pet scale is increased slightly within the showcase to make growth feel more present.
+- The pet screen uses a premium dark navy shell with a full-width dragon showcase immediately below the shared header.
+- The showcase keeps the equipped background and animated dragon as the visual focus, with a gold frame and soft platform glow.
+- The level/name badge overlaps the lower showcase area, while the mood pill sits to the right with a green heart accent.
+- Below the showcase, XP is shown as centered text above a gold progress bar.
+- The pet bond control, attribute card, and level-up button use dark cards, gold borders, and warm amber gradients to match the reference layout.
+- Attribute rows show outfit, scene, and aura with category icons and compact equipped-state text.
 
 ### Settings
 

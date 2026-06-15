@@ -1,32 +1,36 @@
 package com.example.mobile.presentation.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Checkroom
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.LocalFlorist
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -43,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +58,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.DragonMood
+import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AnimatedPet
@@ -96,12 +103,10 @@ fun PetScreen(
     petViewModel: PetViewModel = hiltViewModel(),
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    // 1. Get the unified UI state from the HomeScreenViewModel
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
     val error by petViewModel.error.collectAsState(initial = null)
 
-    // 2. Extract the safe, fully-loaded pet data (ID = 1)
     val pet = uiState.pet
 
     var showRenameDialog by remember { mutableStateOf(false) }
@@ -111,7 +116,7 @@ fun PetScreen(
     val progressFraction = (currentLevelXp.toFloat() / xpRequiredForNextLevel.toFloat()).coerceIn(0f, 1f)
 
     Scaffold(
-        containerColor = ColorPalettePet.BackgroundColor,
+        containerColor = PetPremiumColors.Background,
         topBar = {
             GamifiedFixedHeader(
                 streak = uiState.globalStreak,
@@ -142,131 +147,25 @@ fun PetScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                    .padding(padding)
+                    .background(PetPremiumColors.Background)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-            // 2. CENTER SECTION: Full-width dragon showcase
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(ColorPalettePet.CardBackground),
-                contentAlignment = Alignment.Center
-            ) {
-                AnimatedPet(
+                PetShowcase(
                     pet = pet,
-                    modifier = Modifier.fillMaxSize(),
-                    showNameOverlay = false
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
 
-            // 3. BOTTOM SECTION: Clean, modern floating card containing stats & live cosmetics status
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 24.dp),
-                colors = CardDefaults.cardColors(containerColor = ColorPalettePet.CardBackground),
-                shape = RoundedCornerShape(28.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Level Indicator + Mood Pill Line
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Surface(shape = RoundedCornerShape(999.dp), color = ColorPalettePet.Amber) {
-                                Text(
-                                    text = "Lv. ${pet.level}",
-                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = Color.White,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                                )
-                            }
-                            Text(
-                                text = pet.name.ifBlank { "Baby Dragon" },
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ColorPalettePet.Ink,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            IconButton(
-                                onClick = { showRenameDialog = true },
-                                modifier = Modifier.size(32.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Rename Pet",
-                                    tint = ColorPalettePet.Violet,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
+                PetDetailsPanel(
+                    pet = pet,
+                    progressFraction = progressFraction,
+                    currentLevelXp = currentLevelXp,
+                    xpRequiredForNextLevel = xpRequiredForNextLevel,
+                    onRenameClick = { showRenameDialog = true }
+                )
 
-                        Surface(
-                            shape = RoundedCornerShape(999.dp),
-                            color = ColorPalettePet.MintSoft
-                        ) {
-                            Text(
-                                text = DragonMood.from(pet.mood).displayName,
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ColorPalettePet.Green,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
-
-                    // Compact Experience Meter Line
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Experience Points",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = ColorPalettePet.Muted
-                            )
-                            Text(
-                                text = "$currentLevelXp / $xpRequiredForNextLevel XP",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ColorPalettePet.Ink
-                            )
-                        }
-
-                        LinearProgressIndicator(
-                            progress = { progressFraction },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(10.dp)
-                                .clip(RoundedCornerShape(999.dp)),
-                            color = ColorPalettePet.Violet,
-                            trackColor = ColorPalettePet.ProgressTrack
-                        )
-                    }
-
-                    HorizontalDivider(
-                        color = ColorPalettePet.Ink.copy(alpha = 0.06f),
-                        thickness = 1.dp
-                    )
-
-                    // Equipping Layout Cosmetics Feed Summaries
-                    CustomizationSummary(
-                        outfit = pet.equippedOutfit,
-                        background = pet.equippedBackground,
-                        aura = pet.equippedAura
-                    )
-                }
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
@@ -282,6 +181,396 @@ fun PetScreen(
         )
     }
 }
+
+@Composable
+private fun PetShowcase(
+    pet: PetEntity,
+    modifier: Modifier = Modifier
+) {
+    val showcaseShape = RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp)
+
+    Box(
+        modifier = modifier
+            .height(430.dp)
+            .clip(showcaseShape)
+            .background(PetPremiumColors.ShowcaseBase),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .border(
+                    width = 2.dp,
+                    color = PetPremiumColors.Gold.copy(alpha = 0.38f),
+                    shape = showcaseShape
+                )
+        ) {
+            AnimatedPet(
+                pet = pet,
+                modifier = Modifier.fillMaxSize(),
+                showNameOverlay = false
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .height(92.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                PetPremiumColors.Background.copy(alpha = 0.72f),
+                                PetPremiumColors.Background
+                            )
+                        )
+                    )
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .width(250.dp)
+                    .height(34.dp)
+                    .padding(bottom = 52.dp)
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(
+                                PetPremiumColors.GoldLight.copy(alpha = 0.72f),
+                                PetPremiumColors.Gold.copy(alpha = 0.34f)
+                            )
+                        )
+                    )
+            )
+        }
+
+        LevelBadge(
+            level = pet.level,
+            name = pet.name.ifBlank { "Baby Dragon" },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 22.dp)
+        )
+
+        MoodPill(
+            mood = DragonMood.from(pet.mood).displayName,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 18.dp, bottom = 54.dp)
+        )
+    }
+}
+
+@Composable
+private fun LevelBadge(
+    level: Int,
+    name: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .width(138.dp)
+            .height(78.dp),
+        shape = RoundedCornerShape(24.dp),
+        color = PetPremiumColors.Header,
+        border = BorderStroke(2.dp, PetPremiumColors.Gold),
+        shadowElevation = 14.dp
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Lv. $level",
+                color = PetPremiumColors.Amber,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified
+            )
+            Text(
+                text = name,
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun MoodPill(
+    mood: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(999.dp),
+        color = PetPremiumColors.MoodBackground,
+        border = BorderStroke(1.dp, PetPremiumColors.MoodBorder)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = null,
+                tint = PetPremiumColors.Green,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                text = mood,
+                color = PetPremiumColors.Green,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+private fun PetDetailsPanel(
+    pet: PetEntity,
+    progressFraction: Float,
+    currentLevelXp: Long,
+    xpRequiredForNextLevel: Long,
+    onRenameClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(top = 10.dp, bottom = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        Text(
+            text = "$currentLevelXp / $xpRequiredForNextLevel XP",
+            color = PetPremiumColors.Text,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(999.dp))
+                .background(PetPremiumColors.ProgressTrack)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(progressFraction)
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(PetPremiumColors.GoldDark, PetPremiumColors.GoldLight)
+                        )
+                    )
+            )
+        }
+
+        PetBondButton(onClick = onRenameClick)
+
+        AttributeCard(pet = pet)
+
+        LevelUpButton()
+    }
+}
+
+@Composable
+private fun PetBondButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .clip(RoundedCornerShape(999.dp))
+            .background(PetPremiumColors.Card)
+            .border(1.5.dp, PetPremiumColors.Gold.copy(alpha = 0.62f), RoundedCornerShape(999.dp))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = null,
+                tint = PetPremiumColors.Gold,
+                modifier = Modifier.size(18.dp)
+            )
+            Text(
+                text = "Pet bond",
+                color = PetPremiumColors.Text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+private fun AttributeCard(pet: PetEntity) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(28.dp),
+        color = PetPremiumColors.Card,
+        border = BorderStroke(1.dp, PetPremiumColors.CardBorder)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Attribute Card",
+                color = PetPremiumColors.Text,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            AttributeRow(
+                icon = Icons.Default.Checkroom,
+                label = "Outfit",
+                value = customizationDisplayName(pet.equippedOutfit, CustomizationTypes.OUTFIT),
+                iconTint = PetPremiumColors.OutfitIcon,
+                valueColor = PetPremiumColors.Text
+            )
+            AttributeRow(
+                icon = Icons.Default.Landscape,
+                label = "Scene",
+                value = customizationDisplayName(pet.equippedBackground, CustomizationTypes.BACKGROUND),
+                iconTint = PetPremiumColors.SceneIcon,
+                valueColor = PetPremiumColors.Text
+            )
+            AttributeRow(
+                icon = Icons.Default.LocalFlorist,
+                label = "Aura",
+                value = customizationDisplayName(pet.equippedAura, CustomizationTypes.AURA),
+                secondaryText = if (!pet.equippedAura.isNullOrBlank()) "(Equipped)" else null,
+                iconTint = PetPremiumColors.AuraIcon,
+                valueColor = PetPremiumColors.Text,
+                secondaryColor = PetPremiumColors.Green
+            )
+        }
+    }
+}
+
+@Composable
+private fun AttributeRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    value: String,
+    iconTint: Color,
+    valueColor: Color,
+    secondaryText: String? = null,
+    secondaryColor: Color = PetPremiumColors.Muted
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(iconTint.copy(alpha = 0.13f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(17.dp)
+                )
+            }
+            Text(
+                text = label,
+                color = PetPremiumColors.Muted,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = value,
+                color = valueColor,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            secondaryText?.let {
+                Text(
+                    text = it,
+                    color = secondaryColor,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LevelUpButton() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        PetPremiumColors.ButtonDark,
+                        PetPremiumColors.ButtonMid,
+                        PetPremiumColors.ButtonLight
+                    )
+                )
+            )
+            .border(1.dp, PetPremiumColors.ButtonBorder, RoundedCornerShape(18.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Level Up",
+            color = PetPremiumColors.ButtonText,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.ExtraBold
+        )
+    }
+}
+
+private fun customizationDisplayName(value: String?, type: String): String {
+    if (value.isNullOrBlank()) return "None"
+
+    val definitionName = EquipableConfig.definition(value)?.name
+    val rawName = definitionName ?: value.replace('_', ' ')
+        .split(' ')
+        .joinToString(" ") { word -> word.replaceFirstChar { char -> char.titlecase() } }
+
+    return when (type) {
+        CustomizationTypes.OUTFIT -> rawName.removeSuffix(" Outfit")
+        CustomizationTypes.BACKGROUND -> rawName.removeSuffix(" Background")
+        else -> rawName
+    }
 }
 
 @Composable
@@ -293,10 +582,10 @@ private fun GamifiedFixedHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color(0xFFFFFFFF),
+        color = PetPremiumColors.Header,
         shadowElevation = 1.dp
     ) {
-        val streakTint = if (streakCompletedToday) ColorPalettePet.Honey else Color(0xFFA9A3B8)
+        val streakTint = if (streakCompletedToday) PetPremiumColors.Amber else Color(0xFF7D7894)
 
         Row(
             modifier = Modifier
@@ -308,110 +597,62 @@ private fun GamifiedFixedHeader(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Streak",
                     tint = streakTint,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(22.dp)
                 )
                 Text(
                     text = "$streak d",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPalettePet.Ink
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
             }
 
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = ColorPalettePet.Violet.copy(alpha = 0.1f)
+                color = PetPremiumColors.HeaderPill
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(7.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = ColorPalettePet.Violet,
-                        modifier = Modifier.size(14.dp)
+                        tint = PetPremiumColors.Violet,
+                        modifier = Modifier.size(15.dp)
                     )
                     Text(
                         text = stageName,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPalettePet.Violet
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 CoinIcon(
-                    modifier = Modifier.size(22.dp),
-                    tint = ColorPalettePet.Amber
+                    modifier = Modifier.size(20.dp),
+                    tint = PetPremiumColors.Amber
                 )
                 Text(
                     text = "$coins",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPalettePet.Ink
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun CustomizationSummary(
-    outfit: String?,
-    background: String?,
-    aura: String?
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = ColorPalettePet.Violet, modifier = Modifier.size(16.dp))
-                Text("Equipment Wardrobe", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = ColorPalettePet.Ink)
-            }
-        }
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            SummaryLine("Outfit Slot", outfit)
-            SummaryLine("Scene Background", background)
-            SummaryLine("Active Aura", aura)
-        }
-    }
-}
-
-@Composable
-private fun SummaryLine(
-    label: String,
-    value: String?
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(label, style = MaterialTheme.typography.bodySmall, color = ColorPalettePet.Muted)
-        Text(
-            text = value ?: "None Equipped",
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-            color = if (value != null) ColorPalettePet.Violet else ColorPalettePet.Muted.copy(alpha = 0.6f)
-        )
     }
 }
 
@@ -457,10 +698,10 @@ internal fun PetRenameDialog(
                     isError = nameError != null,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = ColorPalettePet.Violet,
-                        unfocusedBorderColor = ColorPalettePet.Line,
-                        focusedLabelColor = ColorPalettePet.Violet,
-                        unfocusedLabelColor = ColorPalettePet.Muted
+                        focusedBorderColor = PetPremiumColors.Violet,
+                        unfocusedBorderColor = PetPremiumColors.CardBorder,
+                        focusedLabelColor = PetPremiumColors.Violet,
+                        unfocusedLabelColor = PetPremiumColors.Muted
                     )
                 )
                 helperText?.let {
@@ -480,7 +721,7 @@ internal fun PetRenameDialog(
         },
         confirmButton = {
             Button(
-                colors = ButtonDefaults.buttonColors(containerColor = ColorPalettePet.Violet),
+                colors = ButtonDefaults.buttonColors(containerColor = PetPremiumColors.Violet),
                 onClick = {
                     val error = validatePetName(nameDraft)
                     if (error == null) {
@@ -496,23 +737,37 @@ internal fun PetRenameDialog(
         dismissButton = {
             if (allowDismiss) {
                 TextButton(onClick = onDismissRequest) {
-                    Text("Cancel", color = ColorPalettePet.Muted)
+                    Text("Cancel", color = PetPremiumColors.Muted)
                 }
             }
         }
     )
 }
 
-private object ColorPalettePet {
-    val BackgroundColor = Color(0xFFFAFAFC)
-    val CardBackground = Color(0xFFFFFFFF)
-    val ProgressTrack = Color(0xFFEBE6FC)
-    val Violet = Color(0xFF8A76F9)
-    val Line = Color(0xFFD9D4EA)
+private object PetPremiumColors {
+    val Background = Color(0xFF0B1028)
+    val Header = Color(0xFF0F1735)
+    val HeaderPill = Color(0xFF1A2549)
+    val ShowcaseBase = Color(0xFF121A36)
+    val Card = Color(0xFF121A36)
+    val CardBorder = Color(0xFF2A355D)
+    val Text = Color(0xFFF6F0FF)
+    val Muted = Color(0xFFA9A4BD)
+    val Gold = Color(0xFFD6A84F)
+    val GoldLight = Color(0xFFFFD878)
+    val GoldDark = Color(0xFF9A6A23)
+    val ButtonDark = Color(0xFF9A6A23)
+    val ButtonMid = Color(0xFFD6A84F)
+    val ButtonLight = Color(0xFFFFE29A)
+    val ButtonBorder = Color(0xFFFFE29A)
+    val ButtonText = Color(0xFF2A1B05)
     val Amber = Color(0xFFFFB84D)
-    val Honey = Color(0xFFFF9F1C)
-    val MintSoft = Color(0xFFE5F9EE)
-    val Green = Color(0xFF23A160)
-    val Muted = Color(0xFF5F5A78)
-    val Ink = Color(0xFF1E1A34)
+    val Violet = Color(0xFF8A76F9)
+    val ProgressTrack = Color(0xFF2A355D)
+    val Green = Color(0xFF72E69B)
+    val MoodBackground = Color(0xFF123A2A)
+    val MoodBorder = Color(0xFF2D6B4A)
+    val OutfitIcon = Color(0xFF7DD3FC)
+    val SceneIcon = Color(0xFF86EFAC)
+    val AuraIcon = Color(0xFFC084FC)
 }

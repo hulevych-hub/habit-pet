@@ -7590,7 +7590,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_currencyicon",
-      "community": 89,
+      "community": 93,
       "norm_label": "currencyicon.kt"
     },
     {
@@ -7600,7 +7600,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "components_currencyicon_coinicon",
-      "community": 89,
+      "community": 93,
       "norm_label": "coinicon()"
     },
     {
@@ -7610,7 +7610,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_currencyicon_kt_modifier",
-      "community": 89,
+      "community": 93,
       "norm_label": "modifier"
     },
     {
@@ -7620,7 +7620,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_currencyicon_kt_color",
-      "community": 89,
+      "community": 93,
       "norm_label": "color"
     },
     {
@@ -7630,7 +7630,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "components_currencyicon_coinpill",
-      "community": 89,
+      "community": 93,
       "norm_label": "coinpill()"
     },
     {
@@ -7640,7 +7640,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_currencyicon_kt_int",
-      "community": 89,
+      "community": 93,
       "norm_label": "int"
     },
     {
@@ -7650,7 +7650,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_emptystatecard",
-      "community": 93,
+      "community": 100,
       "norm_label": "emptystatecard.kt"
     },
     {
@@ -7660,7 +7660,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "components_emptystatecard_emptystatecard",
-      "community": 93,
+      "community": 100,
       "norm_label": "emptystatecard()"
     },
     {
@@ -7670,7 +7670,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_modifier",
-      "community": 93,
+      "community": 100,
       "norm_label": "modifier"
     },
     {
@@ -7680,7 +7680,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_string",
-      "community": 93,
+      "community": 100,
       "norm_label": "string"
     },
     {
@@ -7690,7 +7690,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "components_emptystatecard_loadingstatecard",
-      "community": 93,
+      "community": 100,
       "norm_label": "loadingstatecard()"
     },
     {
@@ -7700,7 +7700,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "components_emptystatecard_errorstatecard",
-      "community": 93,
+      "community": 100,
       "norm_label": "errorstatecard()"
     },
     {
@@ -7710,7 +7710,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_unit",
-      "community": 93,
+      "community": 100,
       "norm_label": "unit"
     },
     {
@@ -8360,7 +8360,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "viewmodel",
-      "community": 91,
+      "community": 4,
       "norm_label": "viewmodel"
     },
     {
@@ -9020,7 +9020,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_achievementscreen",
-      "community": 93,
+      "community": 100,
       "norm_label": "achievementscreen.kt"
     },
     {
@@ -9030,7 +9030,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementscreen",
-      "community": 93,
+      "community": 100,
       "norm_label": "achievementscreen()"
     },
     {
@@ -9040,7 +9040,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "achievementviewmodel",
-      "community": 93,
+      "community": 100,
       "norm_label": "achievementviewmodel"
     },
     {
@@ -9050,7 +9050,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_homescreenviewmodel",
-      "community": 93,
+      "community": 100,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -9060,7 +9060,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "screens_achievementscreen_gamifiedfixedheader",
-      "community": 93,
+      "community": 100,
       "norm_label": "gamifiedfixedheader()"
     },
     {
@@ -9070,7 +9070,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_int",
-      "community": 93,
+      "community": 100,
       "norm_label": "int"
     },
     {
@@ -9080,7 +9080,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_string",
-      "community": 93,
+      "community": 100,
       "norm_label": "string"
     },
     {
@@ -9090,7 +9090,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_boolean",
-      "community": 93,
+      "community": 100,
       "norm_label": "boolean"
     },
     {
@@ -9100,7 +9100,7 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementheader",
-      "community": 93,
+      "community": 100,
       "norm_label": "achievementheader()"
     },
     {
@@ -9110,7 +9110,7 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_modifier",
-      "community": 93,
+      "community": 100,
       "norm_label": "modifier"
     },
     {
@@ -9120,7 +9120,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementcard",
-      "community": 93,
+      "community": 100,
       "norm_label": "achievementcard()"
     },
     {
@@ -9130,7 +9130,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_achievemententity",
-      "community": 93,
+      "community": 100,
       "norm_label": "achievemententity"
     },
     {
@@ -9140,7 +9140,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_float",
-      "community": 93,
+      "community": 100,
       "norm_label": "float"
     },
     {
@@ -9150,7 +9150,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_list",
-      "community": 93,
+      "community": 100,
       "norm_label": "list"
     },
     {
@@ -9160,7 +9160,7 @@
       "source_location": "L438",
       "_origin": "ast",
       "id": "screens_achievementscreen_colorpaletteachievements",
-      "community": 93,
+      "community": 100,
       "norm_label": "colorpaletteachievements"
     },
     {
@@ -10057,7 +10057,7 @@
       "label": "SwipeActionsOverlay()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L452",
+      "source_location": "L454",
       "_origin": "ast",
       "id": "screens_habitsscreen_swipeactionsoverlay",
       "community": 21,
@@ -10067,7 +10067,7 @@
       "label": "SwipeActionButton()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L484",
+      "source_location": "L485",
       "_origin": "ast",
       "id": "screens_habitsscreen_swipeactionbutton",
       "community": 21,
@@ -10077,7 +10077,7 @@
       "label": "ImageVector",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L484",
+      "source_location": "L485",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_imagevector",
       "community": 21,
@@ -10087,7 +10087,7 @@
       "label": "Color",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L484",
+      "source_location": "L485",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_color",
       "community": 21,
@@ -10097,7 +10097,7 @@
       "label": "StreakBadge()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L508",
+      "source_location": "L509",
       "_origin": "ast",
       "id": "screens_habitsscreen_streakbadge",
       "community": 21,
@@ -10107,7 +10107,7 @@
       "label": "IconBadge()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L534",
+      "source_location": "L535",
       "_origin": "ast",
       "id": "screens_habitsscreen_iconbadge",
       "community": 21,
@@ -10117,7 +10117,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L534",
+      "source_location": "L535",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_string",
       "community": 21,
@@ -10127,7 +10127,7 @@
       "label": "CompletionButton()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L566",
+      "source_location": "L567",
       "_origin": "ast",
       "id": "screens_habitsscreen_completionbutton",
       "community": 21,
@@ -10137,7 +10137,7 @@
       "label": "HabitActionsDialog()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L595",
+      "source_location": "L596",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitactionsdialog",
       "community": 21,
@@ -10147,7 +10147,7 @@
       "label": "habitCategory()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L634",
+      "source_location": "L635",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitcategory",
       "community": 21,
@@ -10157,7 +10157,7 @@
       "label": "habitIcon()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L650",
+      "source_location": "L651",
       "_origin": "ast",
       "id": "screens_habitsscreen_habiticon",
       "community": 21,
@@ -10167,7 +10167,7 @@
       "label": "ColorPaletteHabits",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
-      "source_location": "L661",
+      "source_location": "L662",
       "_origin": "ast",
       "id": "screens_habitsscreen_colorpalettehabits",
       "community": 21,
@@ -10669,7 +10669,7 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt",
       "source_location": "L316",
       "_origin": "ast",
-      "id": "androidx",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_androidx",
       "community": 23,
       "norm_label": "androidx"
     },
@@ -10700,168 +10700,288 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_petscreen",
-      "community": 89,
+      "community": 5,
       "norm_label": "petscreen.kt"
     },
     {
       "label": "PetViewModel",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L70",
+      "source_location": "L78",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel",
-      "community": 89,
+      "community": 5,
       "norm_label": "petviewmodel"
     },
     {
       "label": "StateFlow",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L75",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_stateflow",
-      "community": 89,
+      "community": 5,
       "norm_label": "stateflow"
     },
     {
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L75",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
-      "community": 89,
+      "community": 5,
       "norm_label": "string"
     },
     {
       "label": ".clearError()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L79",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel_clearerror",
-      "community": 89,
+      "community": 5,
       "norm_label": ".clearerror()"
     },
     {
       "label": ".renamePet()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L83",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel_renamepet",
-      "community": 89,
+      "community": 5,
       "norm_label": ".renamepet()"
     },
     {
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L83",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
-      "community": 89,
+      "community": 5,
       "norm_label": "petentity"
     },
     {
       "label": "PetScreen()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L95",
+      "source_location": "L103",
       "_origin": "ast",
       "id": "screens_petscreen_petscreen",
-      "community": 89,
+      "community": 5,
       "norm_label": "petscreen()"
     },
     {
       "label": "HomeScreenViewModel",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L95",
+      "source_location": "L103",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_homescreenviewmodel",
-      "community": 89,
+      "community": 5,
       "norm_label": "homescreenviewmodel"
     },
     {
-      "label": "GamifiedFixedHeader()",
+      "label": "PetShowcase()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L287",
+      "source_location": "L186",
       "_origin": "ast",
-      "id": "screens_petscreen_gamifiedfixedheader",
-      "community": 89,
-      "norm_label": "gamifiedfixedheader()"
+      "id": "screens_petscreen_petshowcase",
+      "community": 5,
+      "norm_label": "petshowcase()"
+    },
+    {
+      "label": "Modifier",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L186",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_modifier",
+      "community": 5,
+      "norm_label": "modifier"
+    },
+    {
+      "label": "LevelBadge()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L266",
+      "_origin": "ast",
+      "id": "screens_petscreen_levelbadge",
+      "community": 5,
+      "norm_label": "levelbadge()"
     },
     {
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L287",
+      "source_location": "L266",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_int",
-      "community": 89,
+      "community": 5,
       "norm_label": "int"
+    },
+    {
+      "label": "MoodPill()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L306",
+      "_origin": "ast",
+      "id": "screens_petscreen_moodpill",
+      "community": 5,
+      "norm_label": "moodpill()"
+    },
+    {
+      "label": "PetDetailsPanel()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L338",
+      "_origin": "ast",
+      "id": "screens_petscreen_petdetailspanel",
+      "community": 5,
+      "norm_label": "petdetailspanel()"
+    },
+    {
+      "label": "Float",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L338",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_float",
+      "community": 5,
+      "norm_label": "float"
+    },
+    {
+      "label": "Long",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L338",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_long",
+      "community": 5,
+      "norm_label": "long"
+    },
+    {
+      "label": "PetBondButton()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L389",
+      "_origin": "ast",
+      "id": "screens_petscreen_petbondbutton",
+      "community": 5,
+      "norm_label": "petbondbutton()"
+    },
+    {
+      "label": "AttributeCard()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L421",
+      "_origin": "ast",
+      "id": "screens_petscreen_attributecard",
+      "community": 5,
+      "norm_label": "attributecard()"
+    },
+    {
+      "label": "AttributeRow()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L469",
+      "_origin": "ast",
+      "id": "screens_petscreen_attributerow",
+      "community": 5,
+      "norm_label": "attributerow()"
+    },
+    {
+      "label": "androidx",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L469",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_androidx",
+      "community": 5,
+      "norm_label": "androidx"
+    },
+    {
+      "label": "Color",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L469",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_color",
+      "community": 5,
+      "norm_label": "color"
+    },
+    {
+      "label": "LevelUpButton()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L534",
+      "_origin": "ast",
+      "id": "screens_petscreen_levelupbutton",
+      "community": 5,
+      "norm_label": "levelupbutton()"
+    },
+    {
+      "label": "customizationDisplayName()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L562",
+      "_origin": "ast",
+      "id": "screens_petscreen_customizationdisplayname",
+      "community": 5,
+      "norm_label": "customizationdisplayname()"
+    },
+    {
+      "label": "GamifiedFixedHeader()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L577",
+      "_origin": "ast",
+      "id": "screens_petscreen_gamifiedfixedheader",
+      "community": 5,
+      "norm_label": "gamifiedfixedheader()"
     },
     {
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L287",
+      "source_location": "L577",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_boolean",
-      "community": 89,
+      "community": 5,
       "norm_label": "boolean"
-    },
-    {
-      "label": "CustomizationSummary()",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L367",
-      "_origin": "ast",
-      "id": "screens_petscreen_customizationsummary",
-      "community": 89,
-      "norm_label": "customizationsummary()"
-    },
-    {
-      "label": "SummaryLine()",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L399",
-      "_origin": "ast",
-      "id": "screens_petscreen_summaryline",
-      "community": 89,
-      "norm_label": "summaryline()"
     },
     {
       "label": "validatePetName()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L420",
+      "source_location": "L662",
       "_origin": "ast",
       "id": "screens_petscreen_validatepetname",
-      "community": 89,
+      "community": 5,
       "norm_label": "validatepetname()"
     },
     {
       "label": "PetRenameDialog()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L429",
+      "source_location": "L671",
       "_origin": "ast",
       "id": "screens_petscreen_petrenamedialog",
-      "community": 89,
+      "community": 5,
       "norm_label": "petrenamedialog()"
     },
     {
-      "label": "ColorPalettePet",
+      "label": "PetPremiumColors",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L506",
+      "source_location": "L748",
       "_origin": "ast",
-      "id": "screens_petscreen_colorpalettepet",
-      "community": 89,
-      "norm_label": "colorpalettepet"
+      "id": "screens_petscreen_petpremiumcolors",
+      "community": 5,
+      "norm_label": "petpremiumcolors"
     },
     {
       "label": "RewardsScreen.kt",
@@ -11190,7 +11310,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_statisticsscreen",
-      "community": 41,
+      "community": 4,
       "norm_label": "statisticsscreen.kt"
     },
     {
@@ -11200,7 +11320,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsviewmodel",
-      "community": 91,
+      "community": 4,
       "norm_label": "statisticsviewmodel"
     },
     {
@@ -11210,7 +11330,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_stateflow",
-      "community": 91,
+      "community": 4,
       "norm_label": "stateflow"
     },
     {
@@ -11220,7 +11340,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_boolean",
-      "community": 91,
+      "community": 4,
       "norm_label": "boolean"
     },
     {
@@ -11230,7 +11350,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsscreen",
-      "community": 41,
+      "community": 4,
       "norm_label": "statisticsscreen()"
     },
     {
@@ -11240,7 +11360,7 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "screens_statisticsscreen_herostreakcard",
-      "community": 41,
+      "community": 4,
       "norm_label": "herostreakcard()"
     },
     {
@@ -11250,7 +11370,7 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_int",
-      "community": 41,
+      "community": 4,
       "norm_label": "int"
     },
     {
@@ -11260,7 +11380,7 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statbentocard",
-      "community": 41,
+      "community": 4,
       "norm_label": "statbentocard()"
     },
     {
@@ -11270,7 +11390,7 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_string",
-      "community": 41,
+      "community": 4,
       "norm_label": "string"
     },
     {
@@ -11280,7 +11400,7 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_imagevector",
-      "community": 41,
+      "community": 4,
       "norm_label": "imagevector"
     },
     {
@@ -11290,7 +11410,7 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_color",
-      "community": 41,
+      "community": 4,
       "norm_label": "color"
     },
     {
@@ -11300,7 +11420,7 @@
       "source_location": "L338",
       "_origin": "ast",
       "id": "screens_statisticsscreen_petlifecyclecard",
-      "community": 41,
+      "community": 4,
       "norm_label": "petlifecyclecard()"
     },
     {
@@ -11310,7 +11430,7 @@
       "source_location": "L396",
       "_origin": "ast",
       "id": "screens_statisticsscreen_colorpalettestats",
-      "community": 41,
+      "community": 4,
       "norm_label": "colorpalettestats"
     },
     {
@@ -11520,7 +11640,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel",
-      "community": 43,
+      "community": 4,
       "norm_label": "activitytimelineviewmodel.kt"
     },
     {
@@ -11530,7 +11650,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel",
-      "community": 43,
+      "community": 4,
       "norm_label": "activitytimelineviewmodel"
     },
     {
@@ -11540,7 +11660,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_stateflow",
-      "community": 43,
+      "community": 4,
       "norm_label": "stateflow"
     },
     {
@@ -11550,7 +11670,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_list",
-      "community": 43,
+      "community": 4,
       "norm_label": "list"
     },
     {
@@ -11560,7 +11680,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_gameevententity",
-      "community": 43,
+      "community": 4,
       "norm_label": "gameevententity"
     },
     {
@@ -11570,7 +11690,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_boolean",
-      "community": 43,
+      "community": 4,
       "norm_label": "boolean"
     },
     {
@@ -11580,7 +11700,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_string",
-      "community": 43,
+      "community": 4,
       "norm_label": "string"
     },
     {
@@ -11590,7 +11710,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel_loadmore",
-      "community": 43,
+      "community": 4,
       "norm_label": ".loadmore()"
     },
     {
@@ -12470,7 +12590,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel",
-      "community": 86,
+      "community": 4,
       "norm_label": "notificationsettingsviewmodel.kt"
     },
     {
@@ -12480,7 +12600,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel",
-      "community": 86,
+      "community": 4,
       "norm_label": "notificationsettingsviewmodel"
     },
     {
@@ -12490,7 +12610,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_stateflow",
-      "community": 86,
+      "community": 4,
       "norm_label": "stateflow"
     },
     {
@@ -12500,7 +12620,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_boolean",
-      "community": 86,
+      "community": 4,
       "norm_label": "boolean"
     },
     {
@@ -12510,7 +12630,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setdailyreminderenabled",
-      "community": 86,
+      "community": 4,
       "norm_label": ".setdailyreminderenabled()"
     },
     {
@@ -12520,7 +12640,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setstreakreminderenabled",
-      "community": 86,
+      "community": 4,
       "norm_label": ".setstreakreminderenabled()"
     },
     {
@@ -12530,7 +12650,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setpetreminderenabled",
-      "community": 86,
+      "community": 4,
       "norm_label": ".setpetreminderenabled()"
     },
     {
@@ -16677,7 +16797,7 @@
       "label": "Rewards Screen Improvements",
       "file_type": "document",
       "source_file": "TODO.md",
-      "source_location": "L133",
+      "source_location": "L134",
       "_origin": "ast",
       "id": "todo_rewards_screen_improvements",
       "community": 83,
@@ -16687,7 +16807,7 @@
       "label": "Rarity Filter Styling",
       "file_type": "document",
       "source_file": "TODO.md",
-      "source_location": "L145",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "todo_rarity_filter_styling",
       "community": 83,
@@ -16697,7 +16817,7 @@
       "label": "Validation",
       "file_type": "document",
       "source_file": "TODO.md",
-      "source_location": "L159",
+      "source_location": "L160",
       "_origin": "ast",
       "id": "todo_validation",
       "community": 83,
@@ -16707,7 +16827,7 @@
       "label": "App icon",
       "file_type": "document",
       "source_file": "TODO.md",
-      "source_location": "L171",
+      "source_location": "L172",
       "_origin": "ast",
       "id": "todo_app_icon",
       "community": 83,
@@ -16717,7 +16837,7 @@
       "label": "Build validation",
       "file_type": "document",
       "source_file": "TODO.md",
-      "source_location": "L175",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "todo_build_validation",
       "community": 83,
@@ -16867,7 +16987,7 @@
       "label": "Settings",
       "file_type": "document",
       "source_file": "UI_DESIGN.md",
-      "source_location": "L94",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "ui_design_settings",
       "community": 119,
@@ -16877,7 +16997,7 @@
       "label": "Bottom Navigation",
       "file_type": "document",
       "source_file": "UI_DESIGN.md",
-      "source_location": "L100",
+      "source_location": "L104",
       "_origin": "ast",
       "id": "ui_design_bottom_navigation",
       "community": 119,
@@ -16887,7 +17007,7 @@
       "label": "Asset Notes",
       "file_type": "document",
       "source_file": "UI_DESIGN.md",
-      "source_location": "L108",
+      "source_location": "L112",
       "_origin": "ast",
       "id": "ui_design_asset_notes",
       "community": 119,
@@ -29551,6 +29671,17 @@
       "target": "components_animatedpet_animatedpet"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L209",
+      "weight": 1.0,
+      "source": "screens_petscreen_petshowcase",
+      "target": "components_animatedpet_animatedpet"
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt",
@@ -35609,9 +35740,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
       "source_location": "L452",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_habitsscreen",
-      "target": "screens_habitsscreen_swipeactionsoverlay",
-      "confidence_score": 1.0
+      "target": "screens_habitsscreen_swipeactionsoverlay"
     },
     {
       "relation": "calls",
@@ -35851,9 +35982,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
       "source_location": "L395",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_habitsscreen_habititem",
-      "target": "screens_habitsscreen_swipeactionsoverlay",
-      "confidence_score": 1.0
+      "target": "screens_habitsscreen_swipeactionsoverlay"
     },
     {
       "relation": "references",
@@ -35928,9 +36059,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitsScreen.kt",
       "source_location": "L470",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_habitsscreen_swipeactionsoverlay",
-      "target": "screens_habitsscreen_swipeactionbutton",
-      "confidence_score": 1.0
+      "target": "screens_habitsscreen_swipeactionbutton"
     },
     {
       "relation": "references",
@@ -36772,12 +36903,12 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt",
-      "source_location": "L314",
+      "source_location": "L316",
       "weight": 1.0,
       "context": "parameter_type",
-      "confidence_score": 1.0,
       "source": "screens_notificationsettingsscreen_settingrow",
-      "target": "androidx"
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_androidx",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -36794,21 +36925,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L482",
+      "source_location": "L421",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "screens_petscreen",
-      "target": "screens_petscreen_colorpalettepet"
+      "target": "screens_petscreen_attributecard",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L252",
+      "source_location": "L469",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "screens_petscreen",
-      "target": "screens_petscreen_customizationsummary"
+      "target": "screens_petscreen_attributerow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L562",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_customizationdisplayname",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -36819,6 +36960,66 @@
       "confidence_score": 1.0,
       "source": "screens_petscreen",
       "target": "screens_petscreen_gamifiedfixedheader"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L266",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_levelbadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L534",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_levelupbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L306",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_moodpill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L389",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_petbondbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L338",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_petdetailspanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L748",
+      "weight": 1.0,
+      "source": "screens_petscreen",
+      "target": "screens_petscreen_petpremiumcolors",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -36844,21 +37045,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L29",
+      "source_location": "L186",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "screens_petscreen",
-      "target": "screens_petscreen_petviewmodel"
+      "target": "screens_petscreen_petshowcase",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L274",
+      "source_location": "L29",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "screens_petscreen",
-      "target": "screens_petscreen_summaryline"
+      "target": "screens_petscreen_petviewmodel"
     },
     {
       "relation": "contains",
@@ -36927,12 +37128,23 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L252",
+      "source_location": "L469",
       "weight": 1.0,
       "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_petscreen_customizationsummary",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string"
+      "source": "screens_petscreen_attributerow",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L562",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "screens_petscreen_customizationdisplayname",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -36944,6 +37156,28 @@
       "confidence_score": 1.0,
       "source": "screens_petscreen_gamifiedfixedheader",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L266",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_levelbadge",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L306",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_moodpill",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -36965,17 +37199,6 @@
       "context": "parameter_type",
       "confidence_score": 1.0,
       "source": "screens_petscreen_petviewmodel_renamepet",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L274",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_petscreen_summaryline",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string"
     },
     {
@@ -37012,6 +37235,28 @@
       "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L421",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_attributecard",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L338",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_petdetailspanel",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -37021,6 +37266,17 @@
       "confidence_score": 1.0,
       "source": "screens_petscreen_petscreen",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L186",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_petshowcase",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -37038,22 +37294,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L146",
+      "source_location": "L95",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "screens_petscreen_petscreen",
-      "target": "screens_petscreen_customizationsummary"
+      "target": "screens_petscreen_gamifiedfixedheader"
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L95",
+      "source_location": "L161",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "screens_petscreen_petscreen",
-      "target": "screens_petscreen_gamifiedfixedheader"
+      "target": "screens_petscreen_petdetailspanel",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -37067,15 +37323,81 @@
       "target": "screens_petscreen_petrenamedialog"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L156",
+      "weight": 1.0,
+      "source": "screens_petscreen_petscreen",
+      "target": "screens_petscreen_petshowcase",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L298",
+      "source_location": "L186",
       "weight": 1.0,
       "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_petscreen_gamifiedfixedheader",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_boolean"
+      "source": "screens_petscreen_petshowcase",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_modifier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L249",
+      "weight": 1.0,
+      "source": "screens_petscreen_petshowcase",
+      "target": "screens_petscreen_levelbadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L257",
+      "weight": 1.0,
+      "source": "screens_petscreen_petshowcase",
+      "target": "screens_petscreen_moodpill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L266",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_levelbadge",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_modifier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L306",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_moodpill",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_modifier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L266",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_levelbadge",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_int",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -37092,23 +37414,133 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L205",
+      "source_location": "L338",
       "weight": 1.0,
       "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "screens_petscreen_petrenamedialog",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_boolean"
+      "source": "screens_petscreen_petdetailspanel",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_float",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L338",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_petdetailspanel",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_long",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
-      "source_location": "L268",
+      "source_location": "L383",
       "weight": 1.0,
+      "source": "screens_petscreen_petdetailspanel",
+      "target": "screens_petscreen_attributecard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L385",
+      "weight": 1.0,
+      "source": "screens_petscreen_petdetailspanel",
+      "target": "screens_petscreen_levelupbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L381",
+      "weight": 1.0,
+      "source": "screens_petscreen_petdetailspanel",
+      "target": "screens_petscreen_petbondbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L442",
+      "weight": 1.0,
+      "source": "screens_petscreen_attributecard",
+      "target": "screens_petscreen_attributerow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L445",
+      "weight": 1.0,
+      "source": "screens_petscreen_attributecard",
+      "target": "screens_petscreen_customizationdisplayname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L469",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_attributerow",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_androidx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L469",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "screens_petscreen_attributerow",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_color",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L589",
+      "weight": 1.0,
+      "source": "screens_petscreen_gamifiedfixedheader",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_color",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L298",
+      "weight": 1.0,
+      "context": "parameter_type",
       "confidence_score": 1.0,
-      "source": "screens_petscreen_customizationsummary",
-      "target": "screens_petscreen_summaryline"
+      "source": "screens_petscreen_gamifiedfixedheader",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_boolean"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt",
+      "source_location": "L205",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "confidence_score": 1.0,
+      "source": "screens_petscreen_petrenamedialog",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_boolean"
     },
     {
       "relation": "calls",
@@ -46638,5 +47070,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "021a972bb8dcdfd6e4214589d2291cc11f7e41c6"
+  "built_at_commit": "752a67ec57ccc50c0a1b48e7832ab28445b5b1c1"
 }

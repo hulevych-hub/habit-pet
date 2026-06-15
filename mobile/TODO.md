@@ -127,6 +127,7 @@ Update:
 * [x] Make the dragon the visual focus of the screen
 * [x] Keep all important information visible without scrolling
 * [x] Preserve responsiveness on smaller devices
+* [x] Redesign the pet screen to match the premium dark-navy showcase layout with gold framing, level badge, mood pill, pet bond control, attribute card, and level-up button
 
 ---
 
