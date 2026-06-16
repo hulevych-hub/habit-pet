@@ -35,10 +35,6 @@ SET
     currentCombo = 0,
     bestCombo = 0,
     lastHabitCompletionTimestamp = 0,
-    dailyGoalXp = 300,
-    dailyGoalProgressXp = 0,
-    dailyGoalDate = 0,
-    dailyGoalCompletedDate = 0,
     lastUpdated = 0
 """)
     suspend fun reset()

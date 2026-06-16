@@ -2,6 +2,7 @@ package com.example.mobile
 
 import android.app.Application
 import com.example.mobile.data.local.database.AchievementDatabaseInitializer
+import com.example.mobile.data.local.database.ChallengeDatabaseInitializer
 import com.example.mobile.data.local.database.InventoryItemDatabaseInitializer
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.AchievementEngine
@@ -22,6 +23,9 @@ class HabitPetApp : Application() {
     lateinit var inventoryItemInitializer: InventoryItemDatabaseInitializer
 
     @Inject
+    lateinit var challengeInitializer: ChallengeDatabaseInitializer
+
+    @Inject
     lateinit var achievementEngine: AchievementEngine
 
     override fun onCreate() {
@@ -32,6 +36,8 @@ class HabitPetApp : Application() {
         statisticsInitializer.initializeStatisticsAsync()
 
         inventoryItemInitializer.initializeCustomizationItemsAsync()
+
+        challengeInitializer.initializeChallengesAsync()
 
         achievementEngine
 

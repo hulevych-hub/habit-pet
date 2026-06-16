@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.ChallengeEngine
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
+import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.domain.repository.StatisticsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +36,8 @@ class HomeScreenViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
     private val petRepository: PetRepository,
     private val habitCompletionRepository: HabitCompletionRepository,
-    private val achievementRepository: AchievementRepository
+    private val achievementRepository: AchievementRepository,
+    private val challengeEngine: ChallengeEngine
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(true)
@@ -47,6 +50,7 @@ class HomeScreenViewModel @Inject constructor(
             petRepository.resetPet()
             statisticsRepository.reset()
             achievementRepository.reset()
+            challengeEngine.reset()
         }
     }
 
@@ -54,6 +58,12 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val currentPet = pet.value
             petRepository.updatePet(currentPet.copy(id = 1, name = name))
+        }
+    }
+
+    fun claimChallenge() {
+        viewModelScope.launch {
+            challengeEngine.claimActiveChallenge()
         }
     }
 
@@ -79,7 +89,14 @@ class HomeScreenViewModel @Inject constructor(
             initialValue = PetEntity(id = 1)
         )
 
-    private val todayCompletionStatuses: StateFlow<Map<Long, Boolean>> = habitRepository.getAllHabits()
+    val challengeUiState: StateFlow<ChallengeUiState> = challengeEngine.getActiveChallengeUiState()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ChallengeUiState.empty()
+        )
+
+    private val todayCompletionXp: StateFlow<Map<Long, Long>> = habitRepository.getAllHabits()
         .flatMapLatest { habits ->
             if (habits.isEmpty()) {
                 flowOf(emptyMap())
@@ -88,7 +105,7 @@ class HomeScreenViewModel @Inject constructor(
                 combine(
                     habits.map { habit ->
                         habitCompletionRepository.getCompletionForHabitOnDate(habit.id, today)
-                            .map { completion -> habit.id to (completion != null) }
+                            .map { completion -> habit.id to (completion?.xpEarned ?: 0L) }
                     }
                 ) { pairs -> pairs.toMap() }
             }
@@ -99,35 +116,14 @@ class HomeScreenViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
-    private val todayXpProgress: StateFlow<Long> = habitRepository.getAllHabits()
-        .flatMapLatest { habits ->
-            if (habits.isEmpty()) {
-                flowOf(0L)
-            } else {
-                val today = getDayStart(System.currentTimeMillis())
-                combine(
-                    habits.map { habit ->
-                        habitCompletionRepository.getCompletionForHabitOnDate(habit.id, today)
-                            .map { completion -> completion?.xpEarned ?: 0L }
-                    }
-                ) { xpValues -> xpValues.sum() }
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = 0L
-        )
-
     init {
         viewModelScope.launch {
             combine(
                 statistics,
                 habits,
                 pet,
-                todayCompletionStatuses,
-                todayXpProgress
-            ) { _, _, _, _, _ -> }
+                todayCompletionXp
+            ) { _, _, _, _ -> }
                 .take(1)
                 .collect { _isLoading.value = false }
         }
@@ -138,20 +134,17 @@ class HomeScreenViewModel @Inject constructor(
         statistics,
         habits,
         pet,
-        todayCompletionStatuses,
-        todayXpProgress
-    ) { stats, habList, petState, completionStatuses, xpProgress ->
+        todayCompletionXp
+    ) { stats, habList, petState, completionXp ->
         UiState(
             globalStreak = stats.globalStreak,
             habits = habList,
             pet = petState,
-            completedToday = completionStatuses,
+            completedTodayXp = completionXp,
             totalCoins = stats.totalCoins,
             lastStreakDate = stats.lastStreakDate,
             currentCombo = activeCombo(stats),
             lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
-            dailyGoalXp = stats.dailyGoalXp,
-            dailyGoalProgressXp = if (stats.dailyGoalDate == getDayStart(System.currentTimeMillis()) / 86_400_000L) xpProgress else 0L,
             globalStreakCompletedToday = stats.lastStreakDate == getDayStart(System.currentTimeMillis()) / 86_400_000L
         )
     }
@@ -162,13 +155,11 @@ class HomeScreenViewModel @Inject constructor(
             globalStreak = 0,
             habits = emptyList(),
             pet = PetEntity(id = 1),
-            completedToday = emptyMap(),
+            completedTodayXp = emptyMap(),
             totalCoins = 0,
             lastStreakDate = 0L,
             currentCombo = 0,
             lastHabitCompletionTimestamp = 0L,
-            dailyGoalXp = 300,
-            dailyGoalProgressXp = 0L,
             globalStreakCompletedToday = false
         )
     )
@@ -177,13 +168,11 @@ class HomeScreenViewModel @Inject constructor(
         val globalStreak: Int,
         val habits: List<HabitEntity>,
         val pet: PetEntity,
-        val completedToday: Map<Long, Boolean>,
+        val completedTodayXp: Map<Long, Long>,
         val totalCoins: Int,
         val lastStreakDate: Long,
         val currentCombo: Int,
         val lastHabitCompletionTimestamp: Long,
-        val dailyGoalXp: Int,
-        val dailyGoalProgressXp: Long,
         val globalStreakCompletedToday: Boolean
     )
 

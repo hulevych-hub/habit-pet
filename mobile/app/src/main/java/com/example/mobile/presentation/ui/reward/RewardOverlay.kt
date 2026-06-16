@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -117,10 +119,13 @@ private fun RewardDialog(
                         onConfirm = onDismiss
                     )
 
-                    is RewardUiEvent.DailyGoalReward -> DailyGoalRewardContent(
-                        goalXp = reward.goalXp,
-                        bonusCoins = reward.bonusCoins,
-                        bonusExp = reward.bonusExp,
+                    is RewardUiEvent.ExpReward -> ExpRewardContent(
+                        amount = reward.amount,
+                        onConfirm = onDismiss
+                    )
+
+                    is RewardUiEvent.CustomizationReward -> CustomizationRewardContent(
+                        equipableId = reward.equipableId,
                         onConfirm = onDismiss
                     )
 
@@ -233,23 +238,42 @@ private fun StreakRewardContent(
 }
 
 @Composable
-private fun DailyGoalRewardContent(
-    goalXp: Long,
-    bonusCoins: Int,
-    bonusExp: Long,
+private fun ExpRewardContent(
+    amount: Long,
     onConfirm: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
-            imageVector = Icons.Default.LocalFireDepartment,
-            contentDescription = "Daily goal",
-            tint = Color(0xFFFFB74D),
+            imageVector = Icons.Default.Star,
+            contentDescription = "EXP",
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(56.dp)
         )
 
-        Text("Daily Goal Complete!")
-        Text("$goalXp XP gathered")
-        Text("+$bonusCoins coins  +$bonusExp XP")
+        Text("+${amount} EXP")
+        Text("XP Boost!")
+
+        Button(onClick = onConfirm) {
+            Text("Claim")
+        }
+    }
+}
+
+@Composable
+private fun CustomizationRewardContent(
+    equipableId: String,
+    onConfirm: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = Icons.Default.ShoppingBag,
+            contentDescription = "Customization",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(56.dp)
+        )
+
+        Text("Customization Unlocked!")
+        Text(equipableId)
 
         Button(onClick = onConfirm) {
             Text("Claim")

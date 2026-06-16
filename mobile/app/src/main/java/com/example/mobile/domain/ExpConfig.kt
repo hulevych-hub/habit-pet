@@ -11,13 +11,13 @@ object ExpConfig {
     // =========================
 
     /** XP earned from completing a checkbox habit */
-    const val CHECKBOX_HABIT_XP: Long = 1000
+    const val CHECKBOX_HABIT_XP: Long = 10
 
     /** Base XP earned from completing a timer habit session */
-    const val TIMER_HABIT_BASE_XP: Long = 10
+    const val TIMER_HABIT_BASE_XP: Long = 5
 
     /** Additional XP per minute for timer habits */
-    const val TIMER_HABIT_XP_PER_MINUTE: Long = 5
+    const val TIMER_HABIT_XP_PER_MINUTE: Long = 1
 
     // =========================
     // COMBO / MOMENTUM
@@ -27,10 +27,10 @@ object ExpConfig {
     const val COMBO_INACTIVITY_WINDOW_MS: Long = 2L * 60L * 60L * 1000L
 
     /** Small additive XP bonus per consecutive completion after the first */
-    const val COMBO_BONUS_XP_PER_CONSECUTIVE_COMPLETION: Long = 5
+    const val COMBO_BONUS_XP_PER_CONSECUTIVE_COMPLETION: Long = 1
 
     /** Maximum combo bonus XP awarded to a single habit completion */
-    const val COMBO_MAX_BONUS_XP: Long = 20
+    const val COMBO_MAX_BONUS_XP: Long = 4
 
     /** Combo milestones that are meaningful enough to record in the activity timeline */
     val COMBO_MILESTONES = listOf(3, 5, 10)
@@ -53,32 +53,25 @@ object ExpConfig {
     fun comboMilestoneReached(combo: Int): Boolean = COMBO_MILESTONES.contains(combo)
 
     // =========================
-    // DAILY GOALS
-    // =========================
-
-    /** XP target for the daily goal; three checkbox habits reach this goal */
-    const val DAILY_XP_GOAL: Long = 300
-
-    /** Bonus XP awarded when the daily goal is completed */
-    const val DAILY_GOAL_BONUS_XP: Long = 25
-
-    // =========================
     // LEVEL PROGRESSION
     // =========================
 
     /** XP required to reach level 1 from level 0 */
-    const val BASE_XP_FOR_LEVEL_1: Long = 100
+    const val BASE_XP_FOR_LEVEL_1: Long = 30
 
-    /** Additional XP required per level (linear growth) */
-    const val XP_PER_LEVEL_INCREMENT: Long = 50
+    /** Additional XP required per level for the smooth long-term curve */
+    const val XP_PER_LEVEL_INCREMENT: Long = 30
 
     /**
      * Calculates XP required to reach a specific level from the previous level.
-     * Level 1: 100 XP
-     * Level 2: 150 XP
-     * Level 3: 200 XP
+     * Level 1: 30 XP
+     * Level 2: 60 XP
+     * Level 3: 90 XP
      * ...
      * Level N: BASE_XP_FOR_LEVEL_1 + (N-1) * XP_PER_LEVEL_INCREMENT
+     *
+     * Total XP to reach level L is therefore 15 * L * (L + 1), creating a smooth
+     * quadratic curve: early levels are quick, then mid-game and late-game slow down.
      */
     fun xpRequiredForLevel(level: Int): Long {
         require(level >= 1) { "Level must be >= 1" }
@@ -152,11 +145,11 @@ object ExpConfig {
 
     /** Evolution stage thresholds based on total XP */
     private val EVOLUTION_THRESHOLDS = longArrayOf(
-        0,      // Stage 0: Egg (0-499 XP)
-        500,    // Stage 1: Hatchling (500-1499 XP)
-        1500,   // Stage 2: Young Dragon (1500-2999 XP)
-        3000,   // Stage 3: Adult Dragon (3000-5999 XP)
-        6000    // Stage 4: Ancient Dragon (6000+ XP)
+        0,      // Stage 0: Egg (0-74 XP)
+        75,     // Stage 1: Hatchling (75-299 XP)
+        300,    // Stage 2: Young Dragon (300-899 XP)
+        900,    // Stage 3: Adult Dragon (900-2499 XP)
+        2500    // Stage 4: Ancient Dragon (2500+ XP)
     )
 
     /** Names for each evolution stage */

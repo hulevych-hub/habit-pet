@@ -135,11 +135,14 @@ class RewardsViewModel @Inject constructor(
 @Composable
 fun RewardsScreen(
     rewardsViewModel: RewardsViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    initialCollection: String? = null,
+    onNavigateToRewardsLocked: () -> Unit
 ) {
     var selectedTypeTab by rememberSaveable { mutableStateOf(CollectionTypeTab.Outfits) }
     var selectedRarity by rememberSaveable { mutableStateOf<Rarity?>(null) }
-    var selectedCollection by rememberSaveable { mutableStateOf(CollectionTab.Owned) }
+    val initialCollectionTab = remember(initialCollection) { CollectionTab.fromRoute(initialCollection.orEmpty()) }
+    var selectedCollection by rememberSaveable(initialCollection) { mutableStateOf(initialCollectionTab) }
     var activeInspectItem by remember { mutableStateOf<InventoryItemEntity?>(null) }
     val actionScope = rememberCoroutineScope()
 
@@ -172,7 +175,8 @@ fun RewardsScreen(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
-                streakCompletedToday = progressUiState.globalStreakCompletedToday
+                streakCompletedToday = progressUiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked
             )
         }
     ) { padding ->
@@ -623,7 +627,8 @@ private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
     stageName: String,
-    streakCompletedToday: Boolean
+    streakCompletedToday: Boolean,
+    onCoinsClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -681,6 +686,7 @@ private fun GamifiedFixedHeader(
             }
 
             Row(
+                modifier = Modifier.clickable(onClick = onCoinsClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
@@ -722,7 +728,15 @@ private enum class CollectionTypeTab(val label: String, val icon: ImageVector) {
 
 private enum class CollectionTab(val label: String) {
     Owned("Owned"),
-    Locked("Locked")
+    Locked("Locked");
+
+    companion object {
+        fun fromRoute(value: String): CollectionTab = when (value.lowercase()) {
+            "locked" -> Locked
+            "owned" -> Owned
+            else -> Owned
+        }
+    }
 }
 
 private object ColorPaletteRewards {

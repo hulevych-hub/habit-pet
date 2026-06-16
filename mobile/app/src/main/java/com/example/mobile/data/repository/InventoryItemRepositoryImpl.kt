@@ -4,6 +4,7 @@ import com.example.mobile.data.local.dao.InventoryItemDao
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.UnlockSources
+import com.example.mobile.domain.repository.ChallengeRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 class InventoryItemRepositoryImpl @Inject constructor(
     private val inventoryItemDao: InventoryItemDao,
-    private val statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository
+    private val statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository,
+    private val challengeRepository: ChallengeRepository
 ) : InventoryItemRepository {
     override fun getItemsByType(type: String): Flow<List<InventoryItemEntity>> =
         inventoryItemDao.getItemsByType(type)
@@ -73,6 +75,7 @@ class InventoryItemRepositoryImpl @Inject constructor(
         // Mark item as purchased (not equipped by default)
         val updatedItem = item.copy(isPurchased = true, isEquipped = false)
         inventoryItemDao.updateItem(updatedItem)
+        challengeRepository.recordCustomizationUnlocked(item.itemId)
 
         return 1 // Success
     }
@@ -90,6 +93,7 @@ class InventoryItemRepositoryImpl @Inject constructor(
         // Mark item as granted/purchased (not equipped by default)
         val updatedItem = item.copy(isPurchased = true, isEquipped = false)
         inventoryItemDao.updateItem(updatedItem)
+        challengeRepository.recordCustomizationUnlocked(item.itemId)
 
         return 1 // Success
     }

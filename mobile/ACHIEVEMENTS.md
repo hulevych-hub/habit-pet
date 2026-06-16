@@ -1,12 +1,24 @@
-# ACHIEVEMENTS
+# Achievements
 
 ## Overview
 
 The achievements system gives players long-term goals across habit creation, habit completion, streaks, XP, pet levels, and customization collection. Achievement definitions are centralized in `AchievementsConfig`; the Room table stores only player progress and claim state.
 
-## Current Implementation
+## Source of truth
 
-Achievements are persisted in Room and monitored by `AchievementEngine`. The flow is:
+`AchievementsConfig.kt` is the source of truth for:
+
+- Achievement IDs
+- Names
+- Descriptions
+- Icons
+- Progress sources
+- Target values
+- Rewards
+
+Runtime code should not hardcode achievement conditions or rewards.
+
+## Achievement flow
 
 1. `AchievementDatabaseInitializer` syncs config-defined achievement rows with persisted progress rows on startup.
 2. `AchievementEngine` observes habit, streak, completion, XP, level, and customization collection state.
@@ -14,165 +26,141 @@ Achievements are persisted in Room and monitored by `AchievementEngine`. The flo
 4. The player opens the Achievements screen and claims unlocked rewards.
 5. `AchievementViewModel.claimAchievement(...)` calls `AchievementEngine.claimAchievement(...)`.
 6. `AchievementRewardProcessor` processes the configured reward list for that achievement.
-7. Reward UI is queued through `RewardQueue` and also emitted through `RewardEventBus`.
+7. Reward UI is queued through `RewardQueue` and emitted through `RewardEventBus`.
 
 Achievement rewards can be:
+
 - Coins
-- EXP
 - Chest rewards
 - Customization item grants for achievement-only equipables
 - Multiple reward types on the same achievement
 
 Global streak milestones are separate from claimable achievements. They trigger immediately through `StreakEngine`, display an immersive celebration screen, and then flow into the centralized chest reward pipeline.
 
-## Achievement Configuration
+## Reward rules
 
-`AchievementsConfig` is the source of truth for achievement metadata and rewards. Each definition includes:
+Achievement rewards should be meaningful without bypassing progression.
 
-- `id: String` - stable config identifier
-- `name: String` - achievement title
-- `description: String` - requirement description
-- `icon: String` - icon identifier
-- `progressSource: AchievementProgressSource` - tracked milestone source
-- `targetValue: Int?` - threshold, nullable for instant-reward achievements
-- `rewards: List<AchievementReward>` - configured reward list
+Important rule:
 
-Reward types are modeled as `AchievementReward`:
+- Achievement conditions must not be paid back with the same progression resource.
+- XP milestone achievements must not reward XP.
+- Coin milestone achievements should reward coins, chests, or cosmetics, but not enough to collapse saving goals.
+
+Examples:
+
+| Bad pattern | Better pattern |
+|---|---|
+| Reach `1000 XP` → reward `1000 XP` | Reach `1000 XP` → reward coins or chest |
+| Collect customization → reward the same customization | Collect customization count → reward coins/chest, or reward a later locked item |
+
+## Current reward types
+
+`AchievementReward` supports:
 
 - `AchievementReward.CoinReward(amount)`
-- `AchievementReward.ExpReward(amount)`
 - `AchievementReward.ChestReward(chestType)`
-- `AchievementReward.CustomizationReward(equipableId, type)` - stable `EquipableConfig` item ID and category; the equipable must use `unlockSource = "ACHIEVEMENT"`
+- `AchievementReward.CustomizationReward(equipableId, type)`
 
-## Default Achievements
+`AchievementReward.ExpReward` remains supported by the processor for backward compatibility, but the current achievement configuration no longer uses XP rewards for progression milestones.
 
-The game initializes with predefined achievements:
+Customization rewards must reference stable `EquipableConfig` IDs and use `unlockSource = "ACHIEVEMENT"`.
 
-1. **First Habit**
-   - Target: 1 habit created
-   - Reward: 50 coins
-   - Unlock condition: habit count >= 1
+## Achievement rebalance summary
 
-2. **3 Habit Builder**
-   - Target: 3 habits created
-   - Reward: 100 coins
-   - Unlock condition: habit count >= 3
+### XP achievements
 
-3. **7 Day Streak**
-   - Target: 7-day streak
-   - Reward: 100 coins
-   - Unlock condition: current streak >= 7
+XP achievements now reward coins and/or chests instead of XP.
 
-4. **30 Day Streak**
-   - Target: 30-day streak
-   - Reward: 250 coins
-   - Unlock condition: current streak >= 30
+| Achievement | Condition | Old reward | New reward |
+|---|---:|---|---|
+| `1000 XP` | `1000 XP` | `150 coins` | `150 coins` |
+| `3000 XP` | `3000 XP` | `150 XP` | `300 coins` |
+| `5000 XP` | `5000 XP` | `300 XP` | `350 coins` |
+| `7500 XP` | `7500 XP` | `Epic chest + 500 coins` | `Rare chest + 350 coins` |
+| `10000 XP` | `10000 XP` | `Epic chest + 600 coins` | `Epic chest + 450 coins` |
+| `15000 XP` | `15000 XP` | `Epic chest + 800 coins` | `Epic chest + 600 coins` |
+| `25000 XP` | `25000 XP` | `Legendary chest + 1000 coins` | `Legendary chest + 700 coins` |
 
-5. **100 Completions**
-   - Target: 100 habit completions
-   - Reward: 200 coins
-   - Unlock condition: total completions >= 100
+### Habit and completion achievements
 
-6. **1000 XP**
-   - Target: 1000 XP earned
-   - Reward: 150 coins
-   - Unlock condition: pet XP >= 1000
+| Achievement | Condition | Old reward | New reward |
+|---|---:|---|---|
+| First Habit | `1 habit` | `50 coins` | `50 coins` |
+| 3 Habit Builder | `3 habits` | `100 coins` | `90 coins` |
+| 5 Habit Builder | `5 habits` | `150 coins` | `120 coins` |
+| 10 Habit Builder | `10 habits` | `300 coins` | `250 coins` |
+| 15 Habit Builder | `15 habits` | `400 coins` | `350 coins` |
+| 20 Habit Builder | `20 habits` | `600 coins` | `500 coins` |
+| 25 Completions | `25 completions` | `100 coins` | `100 coins` |
+| 100 Completions | `100 completions` | `200 coins` | `200 coins` |
+| 250 Completions | `250 completions` | `300 coins` | `300 coins` |
+| 500 Completions | `500 completions` | `600 coins` | `500 coins` |
+| 1000 Completions | `1000 completions` | `Epic chest + 1000 coins` | `Epic chest + 800 coins` |
 
-7. **5000 XP**
-   - Target: 5000 XP earned
-   - Reward: 300 EXP
-   - Unlock condition: pet XP >= 5000
+### Streak achievements
 
-8. **Level 10**
-   - Target: reach level 10
-   - Reward: 300 coins
-   - Unlock condition: pet level >= 10
+| Achievement | Condition | Old reward | New reward |
+|---|---:|---|---|
+| 7 Day Streak | `7 days` | `100 coins` | `100 coins` |
+| 14 Day Streak | `14 days` | `150 coins` | `150 coins` |
+| 30 Day Streak | `30 days` | `250 coins` | `400 coins` |
+| 60 Day Streak | `60 days` | `Epic chest + 600 coins` | `Epic chest + 600 coins` |
+| 100 Day Streak | `100 days` | `Legendary chest + 1000 coins` | `Legendary chest + 800 coins` |
 
-9. **Level 25**
-   - Target: reach level 25
-   - Reward: 500 coins
-   - Unlock condition: pet level >= 25
+### Level achievements
 
-10. **First Customization**
-    - Target: unlock 1 customization item
-    - Reward: 75 coins
-    - Unlock condition: purchased customization count >= 1
+| Achievement | Condition | Old reward | New reward |
+|---|---:|---|---|
+| Level 5 | `level 5` | `100 coins` | `80 coins` |
+| Level 10 | `level 10` | `300 coins` | `300 coins` |
+| Level 15 | `level 15` | `300 coins` | `350 coins` |
+| Level 25 | `level 25` | `500 coins` | `500 coins` |
+| Level 40 | `level 40` | `800 coins` | `800 coins` |
+| Level 50 | `level 50` | `Epic chest + 1000 coins` | `Rare chest + 700 coins` |
+| Level 60 | `level 60` | `Legendary chest + 1200 coins` | `Legendary chest + 900 coins` |
 
-11. **Customization Collector**
-    - Target: unlock 5 customization items
-    - Reward: Rare chest + 50 coins
-    - Unlock condition: purchased customization count >= 5
+### Customization achievements
 
-## Achievement Unlocking
+Collection milestones count every unique equipable in `EquipableConfig`. The current catalog has 16 unique equipables, so final collection achievements use `16 owned`.
 
-`AchievementEngine` monitors:
+| Achievement | Condition | Old reward | New reward |
+|---|---:|---|---|
+| First Customization | `1 owned` | `75 coins` | `60 coins` |
+| 3 Customizations | `3 owned` | `150 coins` | `150 coins` |
+| Customization Collector | `5 owned` | `Rare chest + 50 coins` | `Rare chest + 50 coins` |
+| Crystal Crown | `7 owned` | `Epic chest` | `Epic chest` |
+| 8 Customizations | `8 owned` | `Rare chest + 200 coins` | `Rare chest + 200 coins` |
+| 10 Customization Spark | `10 owned` | `Epic chest` | `Rare chest` |
+| 10 Customizations | `10 owned` | `Epic chest + 300 coins` | `Epic chest + 300 coins` |
+| 11 Customization Hoard | `11 owned` | `Epic chest` | `Legendary chest` |
+| 11 Customizations | `11 owned` | `Epic chest + 250 coins` | `Epic chest + 250 coins` |
+| 16 Customization Milestone | `16 owned` | `12 owned → Epic chest` | `Epic chest` |
+| 16 Customizations | `16 owned` | `12 owned → Legendary chest + 300 coins` | `Legendary chest + 200 coins` |
+| Celestial Realm | `16 owned` | `12 owned → Legendary chest` | `Legendary chest` |
+| Celestial Finale | `16 owned` | `12 owned → Sakura Aura` | `Legendary chest + 200 coins` |
 
-- Habit count
-- Current streak
-- Total habit completions
-- Pet XP
-- Pet level
-- Purchased customization count across outfits, backgrounds, and auras
+### Achievement-only customization rewards
 
-When a condition is met, the engine:
+These rewards grant specific locked equipables that are not purchasable with coins. Their requirements are non-customization milestones so the displayed condition is not the same item as the reward:
 
-1. Finds the config definition by stable achievement ID.
-2. Updates the persisted row with the latest progress.
-3. Marks the achievement unlocked once progress reaches the configured target.
-4. Leaves `isClaimed = false` so the reward can be claimed from the Achievements screen.
+- `FIRST_AURA_GLOW` → Sakura Aura (`10 completions`)
+- `COZY_OUTFIT` → Royal Outfit (`25 completions`)
+- `FOREST_BACKGROUND` → Forest Background (`2500 XP`)
+- `CRYSTAL_AURA` → Icy Aura (`100 completions`)
+- `CRYSTAL_CAVE` → Beach Background (`level 25`)
+- `STARLIGHT_ARMOR` → Adventure Outfit (`level 40`)
 
-Once unlocked, an achievement remains unlocked even if the current live value later drops below the target.
+## Reward balance intent
 
-## Claiming Flow
+- Early achievements give small coin payouts to keep onboarding rewarding.
+- XP achievements reward coins/chests, not XP, so they do not bypass progression.
+- Chest rewards are milestone-based and become stronger only for long-term achievements.
+- High-rarity chests are reserved for rare milestones like `25000 XP`, `100 Day Streak`, `16 Customizations`, `Celestial Realm`, `Celestial Finale`, and `Level 60`.
+- Customization rewards are tied to stable `EquipableConfig` IDs, not display names.
+- If the equipable catalog changes, update collection achievement targets and docs so "all customizations" matches the actual unique count.
 
-Unlocked achievements are claimable from `AchievementScreen`.
-
-When the player taps **Claim**:
-
-1. `AchievementViewModel.claimAchievement(...)` calls `AchievementEngine.claimAchievement(...)`.
-2. The engine verifies that the achievement is unlocked and not already claimed.
-3. `AchievementRewardProcessor` processes all configured rewards for the achievement inside one Room transaction.
-4. The same transaction marks the achievement row `isClaimed = true`, so rewards and claim state succeed or fail together.
-5. A configured `RewardUiEvent.AchievementReward` is queued for display and emitted through `RewardEventBus`.
-
-Claims are serialized with a mutex to prevent duplicate processing from rapid taps.
-
-## Reward Processing
-
-`AchievementRewardProcessor` owns achievement reward execution:
-
-- Coin rewards are added with `statisticsRepository.addCoins(...)`.
-- EXP rewards are added to the current pet.
-- Chest rewards are built through `ChestRewardFactory` and queued as `RewardUiEvent.ChestReward`.
-- Customization rewards are resolved through `EquipableConfig` and granted by stable `equipableId` through `InventoryItemRepository`; achievement-only equipables use `unlockSource = "ACHIEVEMENT"` and are not purchasable with coins.
-- Achievements that target chest-only equipables use `AchievementReward.ChestReward(...)` so the chest reward pipeline can select from `unlockSource = "CHEST"` items.
-- Reward UI is queued through `RewardQueue` and emitted through `RewardEventBus`.
-
-`RewardManager` remains the centralized processor for queued non-achievement reward events and does not double-process achievement reward coins or EXP.
-
-This keeps achievement rewards inside the same reward flow used by streaks, level-ups, evolutions, and chest openings while allowing achievement reward definitions to contain multiple reward types.
-
-## UI
-
-`AchievementScreen` displays:
-
-- Total unlocked progress
-- Number of achievements ready to claim
-- Per-achievement progress bars
-- Current value vs target value under each achievement
-- Multiple reward preview chips
-- Claim button for unlocked, unclaimed achievements
-- Claimed, unlocked, or locked status for non-claimable achievements
-
-## Configuration
-
-Achievement definitions are initialized in:
-
-- `app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt`
-
-Coin values reuse `EconomyConfig`. Chest rewards use `ChestType` and `ChestRewardConfigProvider`. Customization rewards use stable IDs from `EquipableConfig` and are restricted to achievement-only equipables.
-
-## Data Model
+## Data model
 
 **AchievementEntity** (`app/src/main/java/com/example/mobile/data/local/entities/AchievementEntity.kt`):
 
@@ -186,37 +174,10 @@ Coin values reuse `EconomyConfig`. Chest rewards use `ChestType` and `ChestRewar
 
 Achievement metadata and reward definitions are not stored in the database. They are loaded from `AchievementsConfig`, which allows new achievements to be added without changing the Room schema.
 
-Database version was increased from 13 to 14 with `MIGRATION_13_14`, which preserves existing achievement progress by legacy achievement name and maps it to stable config IDs.
-
-## Source Files
-
-- `app/src/main/java/com/example/mobile/data/local/entities/AchievementEntity.kt`
-- `app/src/main/java/com/example/mobile/data/local/dao/AchievementDao.kt`
-- `app/src/main/java/com/example/mobile/data/local/database/AchievementDatabaseInitializer.kt`
-- `app/src/main/java/com/example/mobile/data/local/database/AchievementMetadataMigration.kt`
-- `app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt`
-- `app/src/main/java/com/example/mobile/data/repository/AchievementRepositoryImpl.kt`
-- `app/src/main/java/com/example/mobile/domain/AchievementEngine.kt`
-- `app/src/main/java/com/example/mobile/domain/AchievementProgressSource.kt`
-- `app/src/main/java/com/example/mobile/domain/AchievementReward.kt`
-- `app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt`
-- `app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt`
-- `app/src/main/java/com/example/mobile/domain/EquipableConfig.kt`
-- `app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt`
-- `app/src/main/java/com/example/mobile/domain/StreakEngine.kt`
-- `app/src/main/java/com/example/mobile/presentation/viewmodel/AchievementViewModel.kt`
-- `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt`
-- `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlay.kt`
-- `app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt`
-- `app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt`
-- `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt`
-- `app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt`
-- `app/src/main/java/com/example/mobile/di/DatabaseModule.kt`
-- `app/src/main/java/com/example/mobile/HabitPetApp.kt`
-
-## Known Gaps
+## Known gaps
 
 1. Achievement conditions use simple thresholds rather than compound rules.
 2. Achievement icons are stored but the UI currently uses generic check/lock/trophy icons.
 3. Achievements are shown as one list rather than grouped by type or difficulty.
 4. Unlock feedback uses the standard reward popup rather than a dedicated achievement animation or notification.
+5. Achievement-only customization rewards should continue to use non-customization conditions so claiming an achievement does not require already owning the rewarded item.

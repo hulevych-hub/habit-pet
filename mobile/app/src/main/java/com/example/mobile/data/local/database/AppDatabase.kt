@@ -3,12 +3,14 @@ package com.example.mobile.data.local.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.mobile.data.local.dao.HabitProgressDao
+import com.example.mobile.data.local.dao.ChallengeDao
 import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.GameEventEntity
 import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.InventoryItemEntity
+import com.example.mobile.data.local.entities.ChallengeEntity
 import com.example.mobile.data.local.entities.JournalEntryEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
@@ -23,9 +25,10 @@ import com.example.mobile.data.local.entities.StatisticsEntity
         GameEventEntity::class,
         JournalEntryEntity::class,
         StatisticsEntity::class,
-        HabitProgressEntity::class
+        HabitProgressEntity::class,
+        ChallengeEntity::class
     ],
-    version = 17,
+    version = 18,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -37,6 +40,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun gameEventDao(): com.example.mobile.data.local.dao.GameEventDao
     abstract fun statisticsDao(): com.example.mobile.data.local.dao.StatisticsDao
     abstract fun habitProgressDao(): HabitProgressDao
-
-    // We'll add other DAOs as we create them
+    abstract fun challengeDao(): ChallengeDao
 }

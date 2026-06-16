@@ -6,7 +6,9 @@ import com.example.mobile.data.local.dao.RecentCompletionsStats
 import com.example.mobile.data.local.dao.StatisticsDao
 import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.EconomyConfig
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.domain.repository.ChallengeRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitCompletionResult
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +18,8 @@ import javax.inject.Inject
 class HabitCompletionRepositoryImpl @Inject constructor(
     private val habitCompletionDao: HabitCompletionDao,
     private val habitDao: HabitDao,
-    private val statisticsDao: StatisticsDao
+    private val statisticsDao: StatisticsDao,
+    private val challengeRepository: ChallengeRepository
 ) : HabitCompletionRepository {
 
     override fun getCompletionsForHabit(
@@ -163,14 +166,15 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         val stats = statisticsDao.getStatistics().firstOrNull()
             ?: StatisticsEntity(id = 1)
 
-        val todayKey = completion.date / 86_400_000L
-        val sameDayGoal = stats.dailyGoalDate == todayKey
-        val previousProgress = if (sameDayGoal) stats.dailyGoalProgressXp else 0
-        val newProgress = (previousProgress + completion.xpEarned.toInt())
-            .coerceAtMost(stats.dailyGoalXp)
-        val alreadyCompletedToday = stats.dailyGoalCompletedDate == todayKey
-        val completedToday = newProgress >= stats.dailyGoalXp && !alreadyCompletedToday
-
+        val habit = habitDao.getHabitById(completion.habitId).firstOrNull()
+        val coinsEarned = when (habit?.type) {
+            "CHECKBOX" -> EconomyConfig.CHECKBOX_HABIT_COINS
+            "TIMER" -> {
+                val minutes = (completion.xpEarned - ExpConfig.TIMER_HABIT_BASE_XP).coerceAtLeast(0).toInt()
+                EconomyConfig.TIMER_HABIT_BASE_COINS + (minutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE)
+            }
+            else -> 0
+        }
         val updated = stats.copy(
             id = 1,
             totalCompletions = stats.totalCompletions + 1,
@@ -180,13 +184,15 @@ class HabitCompletionRepositoryImpl @Inject constructor(
             currentCombo = combo,
             bestCombo = maxOf(stats.bestCombo, combo),
             lastHabitCompletionTimestamp = completionTimestamp,
-            dailyGoalDate = todayKey,
-            dailyGoalProgressXp = newProgress,
-            dailyGoalCompletedDate = if (completedToday) todayKey else stats.dailyGoalCompletedDate,
             lastUpdated = System.currentTimeMillis()
         )
 
         upsertStatistics(updated)
+        challengeRepository.recordHabitCompleted(
+            habitId = completion.habitId,
+            xpEarned = completion.xpEarned,
+            coinsEarned = coinsEarned
+        )
     }
 
 

@@ -1,415 +1,247 @@
-# ECONOMY
+# Economy
 
----
+## Overview
 
-# 🧠 OVERVIEW
+The Habit Pet economy manages coins earned through active play and spent on customization. The rebalanced economy is designed to be grindy enough that cosmetics feel valuable, but not so scarce that players feel stuck.
 
-The economy system in Habit Pet manages the in-game currency (coins) that players earn through gameplay and spend on customization.
-
-Coins are the primary progression resource and must feel:
+Coins should feel:
 
 - Earned
 - Meaningful
 - Balanced over long-term play
+- Supportive of long-term pet attachment
 
----
+## Source of truth
 
-# 🧩 CURRENT IMPLEMENTATION
+All economy values are centralized in `EconomyConfig.kt`. Runtime code should read coin rewards, chest rewards, surprise rewards, and customization prices from `EconomyConfig` rather than hardcoding progression numbers.
 
-The economy consists of:
+## Coin storage
 
-- Coin storage in `StatisticsEntity.totalCoins`
-- Central repository: `StatisticsRepository`
-- Reward-based income system
-- Shop-based spending system (customization items)
-- Low-probability surprise bonuses on habit completion
-- Daily goal completion bonus coins
-- **Centralized configuration: `EconomyConfig`**
-
----
-
-# ⚠️ SYSTEM AUTHORITY RULE
-
-The **RewardManager is the single source of truth for queued non-achievement reward processing**.
-
-Documented direct coin updates are allowed only in:
-
-- `HabitDetailViewModel.awardCoins()` for habit completion coins, level-up base coins, and surprise bonus coins from the detail-screen flow
-- `HabitsViewModel.awardCoins()` for one-tap checkbox habit completion coins, level-up base coins, and surprise bonus coins from the habit-list flow
-- `AchievementRewardProcessor.process(...)` for achievement coin rewards
-- `RewardManager.rewardCompleted()` for queued reward events, including daily goal rewards
-
-All coin sources MUST be explicitly documented in this file.
-
----
-
-# 💰 COIN STORAGE
-
-- Currency type: coins (Int only)
+- Currency type: coins (`Int`)
 - Stored in: `StatisticsEntity.totalCoins`
-- Initial value: 0
+- Initial value: `0`
 - Persisted via Room database
 
 No fractional currency is supported.
 
----
+## Coin sources
 
-# 📈 COIN SOURCES
+### 1. Habit completion rewards
 
-Coins can be earned from the following systems:
+| Habit type | Formula | Example |
+|---|---:|---:|
+| Checkbox habit | `10 coins` | One completed checkbox habit = `10 coins` |
+| Timer habit | `5 base coins + 2 coins per completed minute` | 15-minute timer = `35 coins` |
 
----
+Checkbox habit coins are unchanged. Timer habit coins remain unchanged because timer rewards already represent time commitment.
 
-## 1. Habit Completion Rewards
+### 2. Surprise habit rewards
 
-### Checkbox Habits
-- **Reward**: 10 coins per completion
-- **Sources**:
-  - Direct reward via `HabitDetailViewModel.awardCoins()` from the habit detail screen
-  - Direct reward via `HabitsViewModel.awardCoins()` from one-tap list completion
-- **UX**: one-tap list completion uses optimistic completion state, then executes the same XP, coin, streak, activity timeline, micro-feedback, and reward-queue pipeline as detail-screen completion
+Surprise rewards are rare, non-blocking bonuses after successful habit completions.
 
-### Timer Habits
-- **Formula**: 5 base coins + 2 coins per completed minute
-- **Example**: 30 min session → 5 + 60 = 65 coins
-- **Source**: Direct reward via `HabitDetailViewModel.awardCoins()`
+| Setting | Old value | New value |
+|---|---:|---:|
+| Minimum completions before another roll | None | `3` |
+| Surprise chest chance | `10%` per completion | `4%` after cooldown |
+| Direct surprise XP | `25` | `5` |
+| Direct surprise coins | `15` | `3` |
+| Surprise Rare probability | `80%` | `85%` |
+| Surprise Epic probability | `18%` | `13%` |
+| Surprise Legendary probability | implied `2%` | implied `2%` |
 
----
+The cooldown is session-scoped in `HabitDetailViewModel` and `HabitsViewModel`, so surprise rewards cannot spam across rapid completions.
 
-## 2. Surprise Habit Rewards
+### 3. Challenge rewards
 
-Surprise rewards are rare, non-blocking bonuses that can trigger after a successful habit completion.
+Challenge rewards are granted when the player completes and claims the active challenge.
 
-Rules:
-- Trigger chance: 8% after at least 3 successful habit completions since the previous surprise.
-- Reward bundle:
-  - `EconomyConfig.SURPRISE_BONUS_XP` bonus XP
-  - `EconomyConfig.SURPRISE_BONUS_COINS` bonus coins
-  - one extra surprise chest queued through `RewardQueue`
-- Surprise chest rarity is always Rare, Epic, or Legendary.
-- Triggering is in-memory and session-scoped, so it cannot spam across app restarts.
-- Surprise chest rewards flow through the existing chest reward queue and `RewardManager`.
-- Surprise reward events are logged into `ActivityTimeline` as `SURPRISE_REWARD`.
+- Trigger: completing the active challenge target and pressing the claim button
+- Reward types: `CoinReward`, `ExpReward`, `ChestReward`, and `CustomizationReward`
+- Delivery: queued through `RewardQueue` and processed by `RewardManager`
+- Timeline event: `GameEventType.CHALLENGE_COMPLETED`
+- Source of truth: `ChallengeConfig.kt`
 
-Balance note: surprise rewards are intentionally low-frequency and rate-limited. They add emotional variety without becoming a predictable farming loop.
+Current examples include small coin, XP, chest, and customization rewards. Challenge rewards do not scale with player level.
 
----
+### 4. Achievement rewards
 
-## 3. Daily Goal Rewards
+Achievement rewards are configured in `AchievementsConfig`; coin values reuse `EconomyConfig`.
 
-Daily goal rewards are granted when the XP-based daily goal is completed.
+XP achievements no longer award XP directly. They reward coins and/or chests so achievements do not bypass progression pacing.
 
-Rules:
-- Trigger: reaching `ExpConfig.DAILY_XP_GOAL` XP on the current date key
-- Coin bonus: `EconomyConfig.DAILY_GOAL_COIN_BONUS`
-- XP bonus: `ExpConfig.DAILY_GOAL_BONUS_XP`
-- Delivery: queued through `RewardUiEvent.DailyGoalReward` and processed by `RewardManager`
-- Timeline event: `GameEventType.DAILY_GOAL_COMPLETED`
-
-Balance note: the daily goal bonus is intentionally small so it feels rewarding without disrupting the long-term coin economy.
-
----
-
-## 4. Achievement Rewards
-
-Achievement rewards are configured in `AchievementsConfig` and coin values reuse `EconomyConfig`:
-
-- First Habit → 50 coins
-- 3 Habit Builder → 100 coins
-- 7 Day Streak → 100 coins
-- 30 Day Streak → 250 coins
-- 100 Completions → 200 coins
-- 1000 XP → 150 coins
-- Level 10 → 300 coins
-- Level 25 → 500 coins
-- First Customization → 75 coins
-- Customization Collector → Rare chest + 50 coins
+| Achievement | Old reward | New reward |
+|---|---|---|
+| First Habit | `50 coins` | `50 coins` |
+| 3 Habit Builder | `100 coins` | `90 coins` |
+| 7 Day Streak | `100 coins` | `100 coins` |
+| 30 Day Streak | `250 coins` | `400 coins` |
+| 100 Completions | `200 coins` | `200 coins` |
+| 1000 XP | `150 coins` | `150 coins` |
+| 3000 XP | `150 XP` | `300 coins` |
+| 5000 XP | `300 XP` | `350 coins` |
+| Level 10 | `300 coins` | `300 coins` |
+| Level 25 | `500 coins` | `500 coins` |
+| Level 50 | `Epic chest + 1000 coins` | `Rare chest + 700 coins` |
+| Level 60 | `Legendary chest + 1200 coins` | `Legendary chest + 900 coins` |
+| First Customization | `75 coins` | `60 coins` |
+| Customization Collector | `Rare chest + 50 coins` | `Rare chest + 50 coins` |
 
 Achievement coin rewards are applied by `AchievementRewardProcessor.process(...)`. `RewardManager` does not double-process `RewardUiEvent.AchievementReward` coin values.
 
----
+### 5. Streak milestone chests
 
-## 5. Streak Milestone Chests
+Streak milestone chests are milestone-based rather than fixed coin payouts:
 
-Triggered on milestone streaks:
+- 7 days → Normal chest
+- 14 days → Rare chest
+- 30 or 60 days → Epic chest
+- 100 days → Legendary chest
 
-Conditions:
-- currentStreak ≥ 7
-- currentStreak is one of the configured milestones: 7, 14, 30, 60, 100
-- currentStreak > lastStreakAwardedAt
+They are queued through `StreakEngine` and processed by `RewardManager`.
 
-Reward:
-- No fixed 50-coin milestone payout
-- A `ChestReward` is queued through `StreakEngine`
-- Chest type is milestone-based:
-  - 7 days → Normal
-  - 14 days → Rare
-  - 30 or 60 days → Epic
-  - 100 days → Legendary
-
-Delivered via the centralized reward queue and processed by `RewardManager`.
-
----
-
-## 6. Level Up Rewards
+### 6. Level-up rewards
 
 Each level-up grants:
 
-- **Base reward**: level × 10 coins, defined in `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`
-- **Chest reward**: one randomized chest from `ChestRewardConfigProvider.getRandomChestType()`
-
-Example:
-- Level 5 → 50 base coins + one random chest
+- Base reward: `level × 10 coins`, defined in `ExpConfig.LEVEL_UP_COIN_MULTIPLIER`
+- Chest reward: one randomized chest from `ChestRewardConfigProvider.getRandomChestType()`
 
 The `EconomyConfig.LEVEL_UP_CHEST_BONUS_COINS` constant is retained as a tuning reference but is not used by the current reward pipeline.
 
----
-
-## 7. Chest Rewards
+### 7. Chest rewards
 
 Chest rewards are awarded for:
 
 - Streak milestone rewards
+- Challenge rewards
 - Every level-up
 - Achievement chest rewards
 - Surprise habit reward chests
 
-### Level-up and achievement chest type probabilities
+Chest contents are configured in `EconomyConfig` and built by `ChestRewardConfigProvider` + `ChestRewardFactory`.
 
-Chest type is randomly determined with these probabilities from `EconomyConfig`:
+| Chest | Coin range | EXP range | Customization drop chance |
+|---|---:|---:|---:|
+| Normal | `5-15` | `0-0` | `0%` |
+| Rare | `15-35` | `8-20` | `8%` |
+| Epic | `35-75` | `20-50` | `18%` |
+| Legendary | `75-150` | `50-100` | `35%` |
 
-- **Normal (55%)**: 10-30 coins, no EXP, no customization item
-- **Rare (30%)**: 30-80 coins, 50-150 EXP, 15% chance for Rare customization item
-- **Epic (12%)**: 80-180 coins, 150-350 EXP, 30% chance for Epic customization item
-- **Legendary (3%)**: 180-400 coins, 350-800 EXP, 50% chance for Legendary customization item
+Randomized level-up chest type probabilities:
 
-### Streak milestone chest type mapping
+| Chest | Old probability | New probability |
+|---|---:|---:|
+| Normal | `55%` | `65%` |
+| Rare | `30%` | `25%` |
+| Epic | `12%` | `8%` |
+| Legendary | `3%` | `2%` |
 
-Streak milestone chests do not randomize chest rarity. They use the milestone mapping above.
-
----
-
-## 8. Micro-feedback UI Events
-
-`MicroFeedbackManager` is a UI-only feedback system. It emits lightweight global feedback for habit completion, tab switches, XP gain events, and coin gain events. It does not award coins, modify `StatisticsEntity`, or change economy balance.
-
-Coin feedback is triggered from existing coin award paths:
-
-- `HabitDetailViewModel.awardCoins()` triggers coin feedback for direct habit completion coins, direct level-up base coins, and surprise bonus coins from the detail-screen flow.
-- `HabitsViewModel.awardCoins()` triggers coin feedback for one-tap checkbox habit completion coins, direct level-up base coins, and surprise bonus coins from the habit-list flow.
-- `RewardManager.rewardCompleted()` triggers coin feedback for queued reward coins from `CoinReward`, `StreakReward`, `DailyGoalReward`, and `ChestReward`.
-- `RewardManager.rewardCompleted()` intentionally skips `LevelUpReward` coin feedback because those level-up base coins are already awarded directly by `HabitDetailViewModel.awardCoins()` or `HabitsViewModel.awardCoins()`.
-
-XP feedback is triggered when XP is added directly through habit completion or through queued chest and daily goal rewards. The feedback overlay is non-blocking and does not affect EXP, level, or evolution calculations.
-
-## Reward Moment Amplification
-
-Reward UI emphasis is handled in `RewardScreen` as a presentation-layer effect only. It does not award coins, EXP, customization items, or timeline events.
-
-Emphasis tiers:
-- Small: low-value coin rewards and simple pickups
-- Rare: level-up, daily goal, streak, rare chest, and most achievement moments
-- Epic: dragon evolution, epic or legendary chests, high-value chest contents, and major streak milestones
-
-Implemented emphasis states:
-- Scale animation on the reward content
-- Colored glow around the reward surface
-- Tier-based chest tint and chest size
-- Tier-based reward text color
-- Longer emphasis duration for epic moments
-
-These states are intentionally short-lived so reward moments interrupt the flow positively without changing the reward pipeline or blocking reward processing.
-
----
-
-# 🧾 COIN SPENDING
-
-## Customization Purchases
+## Coin spending
 
 Coins are spent only on customization items.
 
-Rules:
-- Each item has a fixed price (`InventoryItemEntity.price`) calculated from `EconomyConfig.customizationPrice(rarity)`
-- Purchase requires: totalCoins ≥ price
+Purchase rules:
+
+- Each item has a fixed price from `InventoryItemEntity.price`.
+- Price is calculated from `EconomyConfig.customizationPrice(rarity)`.
+- Purchase requires: `totalCoins >= price`.
 - On success:
-  - Deduct coins
-  - Mark item as purchased
+  - Deduct coins.
+  - Mark item as purchased.
 
-### Customization Pricing (from `EconomyConfig`)
+### Customization pricing
 
-Pricing is rarity-based and type-neutral: outfits, backgrounds, and auras use the same rarity price.
+| Rarity | Old price | New price | Target save time at `75 coins/day` |
+|---|---:|---:|---:|
+| Normal | `100` | `120` | `2` days |
+| Rare | `300` | `400` | `6` days |
+| Epic | `800` | `1000` | `14` days |
+| Legendary | `2000` | `3000` | `40` days |
 
-| Rarity | Base Multiplier | Price | Target Save Time |
-|--------|----------------|-------|------------------|
-| Normal | 1.0x | 100 coins | ~1 day with recurring rewards; ~3.3 days from checkbox habit coins alone |
-| Rare | 3.0x | 300 coins | ~3 days with recurring rewards; ~10 days from checkbox habit coins alone |
-| Epic | 8.0x | 800 coins | ~8 days with recurring rewards; ~26.7 days from checkbox habit coins alone |
-| Legendary | 20.0x | 2000 coins | ~20 days with recurring rewards; ~66.7 days from checkbox habit coins alone |
+Cosmetics should require saving, but Normal items remain reachable quickly.
 
----
+## Coin flow pipeline
 
-## Purchase Failure Codes
+Habit completion coins, level-up base coins, and surprise bonus coins flow directly through:
 
-- -1 → Item not found
-- -2 → Already purchased
-- -3 → Statistics unavailable
-- -4 → Not enough coins
-
----
-
-# 🔄 COIN FLOW PIPELINE
-
-Habit completion coins, level-up base coins, and surprise bonus coins flow directly through `HabitDetailViewModel.awardCoins()` for detail-screen completion or `HabitsViewModel.awardCoins()` for one-tap checkbox completion from the habit list.
+- `HabitDetailViewModel.awardCoins()` for detail-screen completion
+- `HabitsViewModel.awardCoins()` for one-tap checkbox completion from the habit list
 
 Queued rewards flow through:
 
-RewardManager → RewardQueue → StatisticsRepository
+`RewardManager → RewardQueue → StatisticsRepository`
 
 Achievement rewards flow through:
 
-AchievementRewardProcessor → Room transaction over StatisticsRepository / PetRepository / InventoryItemRepository → RewardQueue → RewardEventBus
+`AchievementRewardProcessor → Room transaction → RewardQueue → RewardEventBus`
 
 Processing rules:
-1. RewardManager receives non-achievement reward events
-2. Extract coin value based on type:
-   - CoinReward → amount
-   - LevelUpReward → coins
-   - AchievementReward → 0, because achievement coins are already applied by `AchievementRewardProcessor`
-   - StreakReward → coins
-   - ChestReward → amount
-   - DragonEvolutionReward → 0
-3. If coins > 0:
-   - statisticsRepository.addCoins(coins)
 
----
+1. `RewardManager` receives non-achievement reward events.
+2. Coin value is extracted by type:
+   - `LevelUpReward` → coins
+   - `AchievementReward` → `0`, because achievement coins are already applied by `AchievementRewardProcessor`
+   - `StreakReward` → coins
+   - `ChestReward` → amount
+   - `CoinReward` → amount
+   - `DragonEvolutionReward` → `0`
+3. If coins are greater than `0`, `statisticsRepository.addCoins(coins)` is called.
 
-# 🎯 DESIGN INTENT
+## Design intent
 
-The economy is designed to:
+The rebalanced economy targets:
 
-- Provide steady progression (~30 coins/day from 3 checkbox habits)
-- Reach roughly ~100 coins/day early-game when recurring level-up and streak chests are included
-- Encourage daily engagement through streak milestone chests
-- Make customization items feel valuable without making Normal items feel unreachable
-- Avoid inflation spikes
-- Prevent passive farming loops
+- Steady active play income from habit completions.
+- Cosmetics that feel valuable without feeling unreachable.
+- Level-ups that remain satisfying throughout progression.
+- Chests that feel exciting but do not break progression.
+- No passive farming loops.
 
-Coins should always feel **earned, not free**.
+Coins should feel earned, not free.
 
----
+## Anti-inflation rules
 
-# 🚫 ANTI-INFLATION RULE
+Do not introduce new permanent coin sources without:
 
-Do NOT introduce new permanent coin sources without:
+- Defining the purpose clearly.
+- Updating this file.
+- Evaluating long-term economy impact.
+- Ensuring balance with XP, chests, achievements, and customization prices.
+- Using `EconomyConfig` as the single source of truth.
 
-- Defining purpose clearly
-- Updating this file
-- Evaluating long-term economy impact
-- Ensuring balance with existing systems
+## Economy balance validation
 
----
+Assuming mostly checkbox habits and light challenge completion:
 
-# ⚙️ ECONOMY CHANGE RULE
+| Daily completions | Habit coins | Typical challenge coins | Expected surprise/direct coins | Estimated coins/day |
+|---:|---:|---:|---:|---:|
+| 3 | `30` | `0-20` | `~1-2` | `31-52` before level-up chests |
+| 5 | `50` | `0-20` | `~1-3` | `51-73` before level-up chests |
 
-Any change to economy must:
+Including early level-up chests, active players should usually land near the `75 coins/day` target. Level-up chest frequency naturally falls as the level curve slows.
 
-1. Update this file first
-2. Update dependent systems afterward
-3. Preserve balance across progression systems
-4. Avoid untracked coin generation
-5. **Use `EconomyConfig` as single source of truth**
+### Expected randomized chest value
 
----
+| Chest type | Avg coins | Avg EXP | Customization EV* |
+|---|---:|---:|---:|
+| Normal | `10` | `0` | `0` |
+| Rare | `25` | `14` | `32` coin-equivalent |
+| Epic | `55` | `35` | `180` coin-equivalent |
+| Legendary | `112.5` | `75` | `1050` coin-equivalent |
 
-# 📦 DATA MODEL
+\*Customization EV = drop chance × customization price (`Rare=400`, `Epic=1000`, `Legendary=3000`).
 
-## StatisticsEntity
+Weighted randomized chest value:
 
-- totalCoins: Int
+- Avg coins: `19.4`
+- Avg EXP: `7.8`
+- Customization EV: about `43.4` coin-equivalent
 
----
+## Known gaps
 
-## InventoryItemEntity
-
-- price: Int (coin cost for purchase)
-
----
-
-# 📂 SOURCE FILES
-
-- StatisticsEntity.kt
-- InventoryItemEntity.kt
-- StatisticsRepository.kt
-- StatisticsRepositoryImpl.kt
-- AchievementEngine.kt
-- StreakEngine.kt
-- HabitDetailViewModel.kt
-- HabitsViewModel.kt
-- HabitsScreen.kt
-- ActivityTimelineEngine.kt
-- ActivityTimelineScreen.kt
-- GameEventFactory.kt
-- GameEventType.kt
-- RewardManager.kt
-- RewardQueue.kt
-- RewardScreen.kt
-- MicroFeedbackManager.kt
-- MicroFeedbackOverlay.kt
-- MicroFeedbackEvent.kt
-- EconomyConfig.kt (centralized configuration)
-- ExpConfig.kt (centralized XP/level configuration)
-
----
-
-# ⚠️ KNOWN GAPS
-
-1. No coin cap (infinite accumulation possible)
-2. No inflation control system
-3. No dynamic pricing (static rarity-based)
-4. Limited spending mechanics (only customization items)
-5. No persistent reward multipliers
-6. No economy sink systems beyond customization items
-
----
-
-# 📊 ECONOMY BALANCE VALIDATION
-
-## Target Metrics (from `EconomyConfig`)
-
-- **Base daily coins** (3 checkbox habits/day): 30 coins
-- **Surprise bonus expectation**: low-frequency session-scoped bonus after a 3-completion cooldown; average direct surprise value is about 2 XP and 1.2 coins per completion
-- **Target early-game daily coins** (base coins + recurring level-up/streak chests): ~100 coins/day
-- **Normal customization item**: 100 coins (~1 day with recurring rewards)
-- **Rare customization item**: 300 coins (~3 days with recurring rewards)
-- **Epic customization item**: 800 coins (~8 days with recurring rewards)
-- **Legendary customization item**: 2000 coins (~20 days with recurring rewards)
-
-## Progression Validation
-
-| Level | Total XP | Est. Habits (Checkbox) | Est. Days (3/day) | Coins from Level-Up Base Rewards |
-|-------|----------|------------------------|-------------------|----------------------------------|
-| 1 | 100 | 1 | 0.3 | 10 |
-| 5 | 1,000 | 10 | 3.3 | 150 |
-| 10 | 3,250 | 32.5 | 10.8 | 550 |
-| 15 | 6,750 | 67.5 | 22.5 | 1,200 |
-| 20 | 11,500 | 115 | 38.3 | 2,100 |
-| 25 | 17,500 | 175 | 58.3 | 3,250 |
-| 30 | 24,750 | 247.5 | 82.5 | 4,650 |
-| 40 | 43,000 | 430 | 143.3 | 8,200 |
-| 50 | 66,250 | 662.5 | 220.8 | 12,750 |
-
-*Assumes 100 XP per checkbox habit and no timer-habit bonus XP.*
-
-## Reward Balance Validation
-
-- Average randomized chest coin value: ~52 coins
-- Average randomized chest EXP value: ~77 EXP
-- Average randomized chest customization coin-equivalent value: ~72 coins
-- Combined randomized chest value: ~52 coins + ~77 EXP + ~72 coin-equivalent
-- Streak milestone chests are milestone-based rather than random, so their expected value depends on which milestone is reached.
-- Surprise chests are rare, rate-limited, and always Rare/Epic/Legendary; their expected value is small because they only trigger after a completion cooldown and an 8% chance roll.
-- Economy stability is maintained by:
-  - Fixed habit rewards
-  - Fixed rarity pricing
-  - Duplicate-preventing customization chest selection
-  - No coin generation from evolution rewards
+1. No coin cap.
+2. No dynamic pricing.
+3. Limited spending mechanics beyond customization items.
+4. No persistent reward multipliers.
+5. Chest rewards still use the same chest image regardless of chest type.
+6. Chest type-specific outfit/background/aura drop tables are not explicit.

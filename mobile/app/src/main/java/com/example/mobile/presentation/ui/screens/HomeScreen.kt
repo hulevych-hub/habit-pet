@@ -61,6 +61,7 @@ import com.example.mobile.presentation.ui.components.LoadingStateCard
 fun HomeScreen(
     onNavigateToHabits: () -> Unit,
     onNavigateToHabitDetail: (Long) -> Unit,
+    onNavigateToRewardsLocked: () -> Unit,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
@@ -82,7 +83,8 @@ fun HomeScreen(
                 streak = uiState.globalStreak,
                 coins = uiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
-                streakCompletedToday = uiState.globalStreakCompletedToday
+                streakCompletedToday = uiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked
             )
         }
     ) { innerPadding ->
@@ -113,7 +115,7 @@ fun HomeScreen(
                     ResetGameButton(onResetClick = { showResetGameDialog = true })
                     TodayNourishmentSection(
                         habits = uiState.habits,
-                        completedToday = uiState.completedToday,
+                        completedTodayXp = uiState.completedTodayXp,
                         onNavigateToHabits = onNavigateToHabits,
                         onNavigateToHabitDetail = onNavigateToHabitDetail
                     )
@@ -248,7 +250,8 @@ private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
     stageName: String,
-    streakCompletedToday: Boolean
+    streakCompletedToday: Boolean,
+    onCoinsClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -306,6 +309,7 @@ private fun GamifiedFixedHeader(
             }
 
             Row(
+                modifier = Modifier.clickable(onClick = onCoinsClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
@@ -347,12 +351,12 @@ private fun ResetGameButton(
 @Composable
 private fun TodayNourishmentSection(
     habits: List<HabitEntity>,
-    completedToday: Map<Long, Boolean>,
+    completedTodayXp: Map<Long, Long>,
     onNavigateToHabits: () -> Unit,
     onNavigateToHabitDetail: (Long) -> Unit
 ) {
     val sortedHabits = habits.sortedWith(
-        compareBy<HabitEntity> { completedToday[it.id] == true }
+        compareBy<HabitEntity> { completedTodayXp.containsKey(it.id) }
             .thenBy { it.name.lowercase() }
     )
 
@@ -386,7 +390,8 @@ private fun TodayNourishmentSection(
             sortedHabits.forEach { habit ->
                 HomeHabitItem(
                     habit = habit,
-                    completed = completedToday[habit.id] == true,
+                    completed = completedTodayXp.containsKey(habit.id),
+                    completedXp = completedTodayXp[habit.id],
                     onClick = { onNavigateToHabitDetail(habit.id) }
                 )
             }
@@ -443,6 +448,7 @@ private fun EmptyHomeQuest(onNavigateToHabits: () -> Unit) {
 private fun HomeHabitItem(
     habit: HabitEntity,
     completed: Boolean,
+    completedXp: Long?,
     onClick: () -> Unit
 ) {
     Surface(
@@ -483,7 +489,7 @@ private fun HomeHabitItem(
             }
             if (completed) {
                 Text(
-                    text = "+100 XP",
+                    text = "+${completedXp ?: 0L} XP",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     color = ColorPaletteHome.Green
                 )

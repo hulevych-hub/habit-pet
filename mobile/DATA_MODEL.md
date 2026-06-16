@@ -6,7 +6,7 @@ Habit Pet uses a Room database to persist game state, player progress, and vario
 
 ## Current Implementation
 
-The data model includes 9 Room entities:
+The data model includes 10 Room entities:
 1. HabitEntity - Tracks habit definitions and streaks
 2. HabitCompletionEntity - Records individual habit completions
 3. HabitProgressEntity - Tracks timer habit progress
@@ -15,7 +15,8 @@ The data model includes 9 Room entities:
 6. InventoryItemEntity - Manages collectible customization items synced from `EquipableConfig`
 7. AchievementEntity - Tracks achievement progress and claim state
 8. GameEventEntity - Records persistent activity timeline events
-9. JournalEntryEntity - Legacy journal entry text retained for compatibility
+9. ChallengeEntity - Stores the single active rotating challenge
+10. JournalEntryEntity - Legacy journal entry text retained for compatibility
 
 ## Rules
 
@@ -69,8 +70,11 @@ The data model includes 9 Room entities:
 - `totalCoins: Int` - Total accumulated in-game currency
 - `lastStreakAwardedAt: Int` - Last streak value at which chest reward was given
 - `lastUpdated: Long` - Timestamp of last statistics update
-- `rewardChestsAvailable: Int` - Unused chest reward counter
+- `rewardChestsAvailable: Int` - Chest counter used by challenge availability checks
 - `lastStreakDate: Long` - Date (days since epoch) of last streak counting
+- `currentCombo: Int` - Current short-term combo hit count
+- `bestCombo: Int` - Highest combo hit count achieved
+- `lastHabitCompletionTimestamp: Long` - Timestamp used to calculate combo windows
 
 **InventoryItemEntity** (table: `inventory_items`)
 - `id: Long` - Primary key (auto-generated)
@@ -115,6 +119,25 @@ Achievement metadata and reward definitions are not stored in this table. They a
 
 Game events are append-only. The timeline DAO exposes reverse-chronological queries with `LIMIT` and `OFFSET` for lazy loading.
 
+**ChallengeEntity** (table: `challenges`)
+- `id: Long` - Primary key, fixed to `1` for the single active challenge row
+- `challengeId: String` - Stable definition ID from `ChallengeConfig`
+- `title: String` - Challenge title
+- `description: String` - Challenge description
+- `icon: String` - Challenge icon key
+- `type: String` - Challenge type such as `HABIT_COMPLETION`, `XP_EARNED`, or `STREAK`
+- `targetValue: Int` - Target required to complete the challenge
+- `progressValue: Int` - Current progress toward `targetValue`
+- `rewardIdsJson: String` - Serialized reward definitions from `ChallengeConfig`
+- `isCompleted: Boolean` - Whether the challenge target has been reached
+- `isClaimed: Boolean` - Whether the player has claimed the completed challenge
+- `previousChallengeId: String?` - Previous challenge ID used for randomization variety
+- `createdAt: Long` - Challenge creation timestamp
+- `completedAt: Long?` - Timestamp when the challenge was completed
+- `claimedAt: Long?` - Timestamp when the challenge was claimed
+
+The challenge row is replaced after the player claims a completed challenge so the next random challenge is immediately visible.
+
 **JournalEntryEntity** (table: `journal_entries`)
 - `id: Long` - Primary key
 - `dayNumber: Int` - Days since pet creation
@@ -131,9 +154,10 @@ Game events are append-only. The timeline DAO exposes reverse-chronological quer
    - HabitProgressEntity tracks timer habit accumulation
 4. **Pet Rename**: PetEntity.name is updated through PetRepository.updatePet from the Pet screen and displayed on the Home and Pet screens
 5. **Achievement Tracking**: AchievementEntity records are updated when milestones are reached
-6. **Activity Timeline**: GameEventEntity records are appended for habit completions, daily goals, achievements, level-ups, evolutions, chests, and streak milestones
-7. **Legacy Journal Compatibility**: JournalEntryEntity remains in the schema for compatibility, but no active journal writer creates new rows
-8. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items and are synchronized from `EquipableConfig` without overwriting player-owned, purchased, or equipped state; catalog metadata is refreshed
+6. **Activity Timeline**: GameEventEntity records are appended for habit completions, challenge completions, achievements, level-ups, evolutions, chests, and streak milestones
+7. **Challenge Rotation**: ChallengeEntity stores one active challenge and is replaced with a new random challenge after claim
+8. **Legacy Journal Compatibility**: JournalEntryEntity remains in the schema for compatibility, but no active journal writer creates new rows
+9. **Inventory Management**: InventoryItemEntity records track owned/purchased/equipped items and are synchronized from `EquipableConfig` without overwriting player-owned, purchased, or equipped state; catalog metadata is refreshed
 
 ## Configuration
 
@@ -154,9 +178,11 @@ All entities are configured with Room annotations:
 - app/src/main/java/com/example/mobile/data/local/database/InventoryItemDatabaseInitializer.kt
 - app/src/main/java/com/example/mobile/domain/EquipableConfig.kt
 - app/src/main/java/com/example/mobile/data/local/entities/GameEventEntity.kt
+- app/src/main/java/com/example/mobile/data/local/entities/ChallengeEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/JournalEntryEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
 - app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt
+- app/src/main/java/com/example/mobile/data/local/dao/ChallengeDao.kt
 - app/src/main/java/com/example/mobile/data/local/dao/ (DAO interfaces)
 - app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt (database definition)
 
@@ -166,7 +192,7 @@ All entities are configured with Room annotations:
    - StatisticsEntity.bestStreak (only updated when currentStreak exceeds it)
    - StatisticsEntity.globalStreak (appears redundant)
    - StatisticsEntity.petAgeDays (never updated or displayed)
-   - StatisticsEntity.rewardChestsAvailable (tracked but never used)
+   - StatisticsEntity.rewardChestsAvailable (tracked but only used by challenge availability checks)
    - InventoryItemEntity.isEquipped is a cache; equipped state is authoritative in `PetEntity`
    - PetEntity.mood (tracked but not visually represented)
 

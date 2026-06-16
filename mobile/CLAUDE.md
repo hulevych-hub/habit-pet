@@ -49,6 +49,7 @@
 - Database: `data/local/database/AppDatabase.kt`.
 - Hilt: `di/DatabaseModule.kt`, `di/RepositoryModule.kt`.
 - XP/progression: `domain/ExpConfig.kt`, `data/local/entities/PetEntity.kt`, `data/local/entities/StatisticsEntity.kt`.
+- Challenges: `domain/ChallengeConfig.kt`, `domain/ChallengeEngine.kt`, `data/repository/ChallengeRepositoryImpl.kt`, `data/local/entities/ChallengeEntity.kt`.
 - Habit completion: `data/repository/HabitCompletionRepositoryImpl.kt`, `domain/repository/HabitCompletionRepository.kt`.
 - Habit reward flows: `presentation/viewmodel/HabitDetailViewModel.kt`, `presentation/viewmodel/HabitsViewModel.kt`.
 - Timeline: `domain/ActivityTimelineEngine.kt`, `domain/GameEventFactory.kt`, `domain/GameEventType.kt`, `data/local/entities/GameEventEntity.kt`.
@@ -71,23 +72,25 @@
 
 ## Room schema
 
-- `AppDatabase` version is `14`. Schema changes require migrations and version bump.
+- `AppDatabase` version is `18`. Schema changes require migrations and version bump.
 - Core entities:
   - `HabitEntity` - user habits.
   - `HabitCompletionEntity` - idempotent daily habit completions with `xpEarned`.
   - `HabitProgressEntity` - timer habit accumulated minutes per day.
   - `PetEntity` - pet XP, level, evolution stage, mood, equipped customization.
-  - `StatisticsEntity` - coins, streaks, completions, daily XP goal, combo state.
+  - `StatisticsEntity` - coins, streaks, completions, combo state.
   - `InventoryItemEntity` - customization catalog, ownership, equipped state.
   - `AchievementEntity` - achievement progress/unlock/claim state.
   - `GameEventEntity` - persistent activity timeline events.
+  - `ChallengeEntity` - single active rotating challenge.
   - `JournalEntryEntity` - legacy entity only; not active in current logic.
 - Key DAOs:
-  - `HabitDao`, `HabitCompletionDao`, `HabitProgressDao`, `PetDao`, `StatisticsDao`, `InventoryItemDao`, `AchievementDao`, `GameEventDao`.
+  - `HabitDao`, `HabitCompletionDao`, `HabitProgressDao`, `PetDao`, `StatisticsDao`, `InventoryItemDao`, `AchievementDao`, `GameEventDao`, `ChallengeDao`.
 
 ## Single sources of truth
 
-- XP, level, evolution, habit reward XP, combo, daily XP goal: `ExpConfig`.
+- XP, level, evolution, habit reward XP, combo: `ExpConfig`.
+- Challenge targets, randomization weights, availability, and rewards: `ChallengeConfig`.
 - Coin rewards, prices, chest probabilities, surprise chest behavior: `EconomyConfig`.
 - Chest reward contents/probabilities: `ChestRewardConfigProvider` + `ChestRewardFactory`.
 - Achievement metadata/rewards: `AchievementsConfig`.
@@ -96,18 +99,17 @@
 - Unlock source constants: `UnlockSources`.
 - Pet equipped state: `PetEntity.equippedOutfit`, `equippedBackground`, `equippedAura`.
 - Customization ownership/equipped cache: `InventoryItemEntity`.
-- Streak, coins, completions, daily goal, combo: `StatisticsEntity`.
+- Streak, coins, completions, combo: `StatisticsEntity`.
 - Persistent gameplay moments: `GameEventEntity` through `ActivityTimelineEngine`.
 
 ## Progression values
 
-- Checkbox habit: `100 XP`, `10 coins`.
-- Timer habit: `10 + 5 * minutes` XP; `5 + 2 * minutes` coins.
-- Combo: consecutive completions within 2 hours; `+5 XP` per completion after first, capped at `+20 XP`.
+- Checkbox habit: `10 XP`, `10 coins`.
+- Timer habit: `5 + 1 * minutes` XP; `5 + 2 * minutes` coins.
+- Combo: consecutive completions within 2 hours; `+1 XP` per completion after first, capped at `+4 XP`.
 - Combo milestones: `3`, `5`, `10` hits.
-- Daily XP goal: `300 XP`; bonus is `+25 XP` and `+25 coins`.
-- Level formula: next level requires `100 + currentLevel * 50` XP. Use `ExpConfig.calculateLevelFromXp()`.
-- Evolution thresholds: `0 Egg`, `500 Hatchling`, `1500 Young Dragon`, `3000 Adult Dragon`, `6000 Ancient Dragon`. Use `ExpConfig.calculateEvolutionStageFromXp()`.
+- Level formula: `totalXpForLevel(level) = 15 * level * (level + 1)`. Use `ExpConfig.calculateLevelFromXp()`.
+- Evolution thresholds: `0 Egg`, `75 Hatchling`, `300 Young Dragon`, `900 Adult Dragon`, `2500 Ancient Dragon`. Use `ExpConfig.calculateEvolutionStageFromXp()`.
 - Level-up base coins: `level * 10` via `ExpConfig.levelUpCoins(level)`.
 - Level-up chest: random chest from `ChestRewardConfigProvider.getRandomChestType()`.
 
@@ -121,7 +123,7 @@ Preferred flow:
 4. ViewModel updates pet XP/level/evolution through `PetRepository`.
 5. ViewModel awards direct coins through `StatisticsRepository`.
 6. `StreakEngine.evaluateTodayStreak()` updates streak state.
-7. `ActivityTimelineEngine` logs habit/combo/daily-goal/progression events.
+7. `ChallengeRepository` advances the active challenge; `ActivityTimelineEngine` logs habit/combo/challenge/progression events.
 8. `RewardQueue` receives major reward UI events.
 9. `MicroFeedbackManager` handles small non-blocking XP/coin feedback.
 10. `DragonMoodEngine.refreshMood()` updates pet mood.
@@ -143,9 +145,10 @@ Important: list completion is optimistic in `HabitsViewModel`; remove optimistic
 - `LevelUpReward`
 - `DragonEvolutionReward`
 - `StreakReward`
-- `DailyGoalReward`
 - `AchievementReward`
 - `ChestReward`
+- `ExpReward`
+- `CustomizationReward`
 
 Reward queue ordering:
 
@@ -154,13 +157,17 @@ Reward queue ordering:
 3. `StreakReward`
 4. `ChestReward`
 5. `AchievementReward`
+6. `ExpReward`
+7. `CustomizationReward`
+8. `CoinReward`
 
 Reward processing rules:
 
 - `RewardManager.rewardCompleted()` processes the currently displayed reward.
-- `CoinReward`, `StreakReward`, `DailyGoalReward.bonusCoins`, and `ChestReward` coin amounts add coins through `StatisticsRepository`.
-- `DailyGoalReward.bonusExp` and `ChestReward.expAmount` add pet XP through `RewardManager.addPetExp()`, then check for level/evolution changes.
+- `CoinReward`, `StreakReward`, and `ChestReward` coin amounts add coins through `StatisticsRepository`.
+- `ExpReward` and `ChestReward.expAmount` add pet XP through `RewardManager.addPetExp()`, then check for level/evolution changes.
 - `ChestReward` grants customization through `InventoryItemRepository.grantItemByItemId()` or `grantItem()`.
+- `CustomizationReward` grants a configured customization item through `InventoryItemRepository.grantItemByItemId()`.
 - `LevelUpReward` currently adds coins in `RewardManager`; habit ViewModels also award level-up base coins directly before queueing `LevelUpReward`. Treat level-up coin double-award as an audit point when editing reward/economy logic.
 - `AchievementReward` is already processed by `AchievementRewardProcessor`; `RewardManager` ignores its coin/exp fields to avoid double-processing.
 
@@ -202,8 +209,8 @@ Reward processing rules:
   - `CHEST_OPENED`
   - `STREAK_MILESTONE`
   - `FIRST_DAILY_LOGIN`
-  - `DAILY_GOAL_COMPLETED`
   - `SURPRISE_REWARD`
+  - `CHALLENGE_COMPLETED`
   - `COMBO_MILESTONE`
   - `EVOLUTION_MILESTONE_NEARING`
 - `GameEventFactory` formats titles/descriptions/reward summaries.
@@ -273,7 +280,7 @@ Important components:
 - Reuse existing components before adding new UI:
   - `ProgressHeader`
   - `EvolutionTeaser`
-  - `DailyGoalCard`
+  - `ChallengeCard`
   - `CurrencyIcon`
   - `AssetPainter`
   - `AssetPreview`
@@ -286,7 +293,8 @@ Important components:
 ## Navigation
 
 - `NavGraph` owns the app shell and bottom navigation.
-- Bottom nav destinations: Home, Habits, Pet, Rewards, Achievements, Settings.
+- Bottom nav destinations: Home, Habits, Pet, Achievements, Settings.
+- Rewards is not a bottom nav destination. It opens from the shared header coin amount on the locked tab and from the Pet screen Attribute Card edit icon on the owned tab.
 - Detail/create/edit routes hide bottom nav:
   - `habit_detail/{habitId}`
   - `habit_creation`
@@ -322,7 +330,8 @@ Important components:
 ## Known documentation gaps / audit points
 
 - `ACCESSORIES.md` is legacy only. Use customization docs and `EquipableConfig`.
-- `DAILY_REWARDS.md`, `QUESTS.md`, and `ENDGAME.md` document absent systems. Do not treat daily login rewards, quests, or a defined endgame as implemented.
+- `QUESTS.md` and `ENDGAME.md` document absent systems. Do not treat quests or a defined endgame as implemented.
+- `DAILY_REWARDS.md` now documents the rotating challenge system and the migration from obsolete daily goals.
 - `JournalEntryEntity` is legacy and not used by current DAOs or repositories.
 - Level-up coin double-award risk exists in current implementation: habit ViewModels award level-up base coins directly and also queue `LevelUpReward`, which `RewardManager` processes. Audit before changing reward/economy behavior.
 - Some statistics are tracked but not prominently used/displayed (`bestStreak`, `rewardChestsAvailable`, `petAgeDays`, `lastStreakAwardedAt`).

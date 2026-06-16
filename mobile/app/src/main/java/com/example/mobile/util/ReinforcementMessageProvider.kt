@@ -33,7 +33,7 @@ object ReinforcementMessageProvider {
                 if (isInactiveUser(context)) UserBehavior.INACTIVE else UserBehavior.CONSISTENT
             }
             event.type == GameEventType.STREAK_MILESTONE.name -> UserBehavior.STREAK
-            event.type == GameEventType.DAILY_GOAL_COMPLETED.name -> {
+            event.type == GameEventType.CHALLENGE_COMPLETED.name -> {
                 if (isStreakUser(context)) UserBehavior.STREAK else UserBehavior.CONSISTENT
             }
             event.type == GameEventType.LEVEL_UP.name ||
@@ -49,10 +49,11 @@ object ReinforcementMessageProvider {
     fun rewardMessage(context: Context, reward: RewardUiEvent): String {
         val behavior = when (reward) {
             is RewardUiEvent.StreakReward,
-            is RewardUiEvent.DailyGoalReward,
             is RewardUiEvent.LevelUpReward,
             is RewardUiEvent.DragonEvolutionReward,
-            is RewardUiEvent.AchievementReward -> UserBehavior.STREAK
+            is RewardUiEvent.AchievementReward,
+            is RewardUiEvent.ExpReward,
+            is RewardUiEvent.CustomizationReward -> UserBehavior.STREAK
             is RewardUiEvent.ChestReward -> if (isStreakUser(context)) UserBehavior.STREAK else UserBehavior.CONSISTENT
             is RewardUiEvent.CoinReward -> UserBehavior.CONSISTENT
         }

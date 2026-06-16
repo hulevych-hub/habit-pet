@@ -22,9 +22,5 @@ data class StatisticsEntity(
     val lastStreakDate: Long = 0L,
     var currentCombo: Int = 0,
     var bestCombo: Int = 0,
-    var lastHabitCompletionTimestamp: Long = 0L,
-    var dailyGoalXp: Int = 300,
-    var dailyGoalProgressXp: Int = 0,
-    var dailyGoalDate: Long = 0L,
-    var dailyGoalCompletedDate: Long = 0L
+    var lastHabitCompletionTimestamp: Long = 0L
 )

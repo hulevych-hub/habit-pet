@@ -1,48 +1,148 @@
-# DAILY_REWARDS
+# Challenges
 
 ## Overview
 
-Habit Pet does not currently implement a standalone daily login bonus or daily reward system that provides rewards simply for opening the app each day. Daily progression is tied to activity-based systems rather than calendar-based rewards.
+Habit Pet uses lightweight rotating challenges instead of daily goals. Challenges are not calendar-based rewards and do not scale with player level or progression. They exist to encourage consistency and create small dopamine moments after ordinary play.
 
-## Current Implementation
+The current design is inspired by lightweight quest systems such as Duolingo quests, Pokémon GO field research, and Tamagotchi-style objectives.
 
-While there are several systems that operate on a daily basis, all reward mechanisms require player activity:
-- Streak-based rewards require completing habits on consecutive days
-- Achievement-based rewards require reaching specific milestones
-- Progress-based rewards (XP, coins) require habit completion
-- No rewards are granted solely based on calendar date or app opening
+## Core rules
 
-## Rules
+- The player has exactly one active challenge at a time.
+- Challenges are random and short-term.
+- Challenges are intended to take roughly 5–30 minutes of active play or 1–3 days of casual play.
+- Challenges must remain achievable for players with only 1–2 habits.
+- Challenge progress is never stressful and never impossible.
+- A completed challenge shows a claim button.
+- Claiming grants rewards exactly once, logs an activity event, and automatically reveals the next random challenge.
 
-### Activity-Based Daily Systems
-All daily progression systems require player activity:
-1. **Streak System**: Requires completing all habits each day to maintain/increase streak
-2. **Activity Timeline**: Logs gameplay moments based on actual habit completion and progression
-3. **Statistics Tracking**: daysActive counts days with at least one habit completion
+## Current challenge sources
 
-### Absence of Calendar-Based Rewards
-No systems exist that:
-- Grant rewards for simply opening the app
-- Provide login bonuses or daily gifts
-- Reset daily to provide new reward opportunities
-- Award based solely on date changes without activity requirements
+All reward mechanisms require player activity:
 
-## Configuration
+- Habit completions.
+- XP earned from habits or rewards.
+- Coins earned from habits or rewards.
+- Chest openings.
+- Customization unlocks.
+- Customization equips.
+- Streak milestones.
 
-Not applicable - no daily reward system exists to configure.
+No rewards are granted solely for opening the app or for a calendar date change.
 
-## Data Model
+## Challenge configuration
 
-Not applicable - no daily reward system data model exists.
+`ChallengeConfig.kt` is the single source of truth for challenge definitions.
 
-## Source Files
+Each definition supports:
 
-Not applicable - no daily reward system implementation exists.
+- `id`
+- `title`
+- `description`
+- `icon`
+- `ChallengeType`
+- `targetValue`
+- `rewards`
+- optional `weight`
+- optional `ChallengeAvailability`
 
-## Known Gaps
+Challenge definitions are intentionally simple. They do not require many habits and do not reference the player's level.
 
-1. **No Daily Login Bonus**: The game lacks a system to reward players for daily engagement regardless of activity level.
-2. **Activity Dependency**: All progression requires active habit completion; passive engagement yields no rewards.
-3. **No Daily Reset Mechanics**: Unlike many games, there are no daily reset cycles that refresh available rewards or challenges.
-4. **Limited Daily Variation**: Daily experience does not change based on calendar date (no daily events, rotating bonuses, etc.).
-5. **Missed Engagement Opportunity**: No mechanism to encourage daily app opens outside of habit completion motivation.
+## Example challenge pool
+
+Current examples include:
+
+- Complete 1 habit.
+- Complete 3 habits.
+- Complete 5 habits.
+- Earn 25 XP.
+- Earn 50 XP.
+- Earn 100 XP.
+- Earn 20 coins.
+- Earn 50 coins.
+- Open 1 chest.
+- Unlock 1 customization item.
+- Equip an outfit.
+- Equip an aura.
+- Change background once.
+- Reach a 2-day streak.
+- Reach a 3-day streak.
+
+## Randomization
+
+`ChallengeRepositoryImpl` selects the next challenge after a claim.
+
+Rules:
+
+1. The same `challengeId` is not repeated consecutively.
+2. When possible, the next challenge uses a different `ChallengeType`.
+3. Weighted random selection is used so common challenges appear more often.
+4. Availability checks prevent impossible challenges, such as equipping an owned aura when the player has no owned aura.
+
+## Rewards
+
+Challenge rewards are processed through the existing reward pipeline:
+
+`ChallengeEngine → RewardQueue → RewardManager`
+
+Supported reward types:
+
+- `CoinReward`
+- `ExpReward`
+- `ChestReward`
+- `CustomizationReward`
+
+Reward claiming is idempotent. The active challenge row is replaced only after the claim path succeeds, and the UI only shows the claim button for completed, unclaimed challenges.
+
+## Activity timeline
+
+Completed challenges are logged as `GameEventType.CHALLENGE_COMPLETED` by `ActivityTimelineEngine.logChallengeCompleted()`.
+
+The timeline event includes:
+
+- Challenge name.
+- Reward summary.
+- Reinforcement messaging from `ReinforcementMessageProvider`.
+
+## Statistics and persistence
+
+Challenge state is stored in `ChallengeEntity` (`table: challenges`).
+
+The row stores:
+
+- Active challenge ID.
+- Challenge definition ID.
+- Title, description, and icon.
+- Challenge type and target value.
+- Current progress.
+- Serialized reward list.
+- Completion and claim state.
+- Timestamps for creation, completion, and claim.
+
+`StatisticsEntity` no longer stores daily goal fields. It continues to track coins, streaks, completions, XP totals, combo state, and other progression metrics.
+
+## Migration note
+
+Existing users are migrated through `MIGRATION_17_18`.
+
+The migration:
+
+- Creates the `challenges` table.
+- Removes obsolete daily goal columns from `statistics`.
+- Converts existing daily XP progress into a safe `xp_30` challenge.
+- Marks the migrated challenge as completed only when old daily progress reached the old goal.
+- Marks the migrated challenge as claimed only when the old daily goal was already completed and claimed.
+
+## Source files
+
+- `domain/ChallengeConfig.kt`
+- `domain/ChallengeEngine.kt`
+- `domain/repository/ChallengeRepository.kt`
+- `data/repository/ChallengeRepositoryImpl.kt`
+- `data/local/entities/ChallengeEntity.kt`
+- `data/local/dao/ChallengeDao.kt`
+- `data/local/database/ChallengeMigration.kt`
+- `data/local/database/ChallengeDatabaseInitializer.kt`
+- `presentation/ui/components/ChallengeCard.kt`
+- `presentation/ui/screens/HomeScreenViewModel.kt`
+- `presentation/ui/screens/HabitsScreen.kt`

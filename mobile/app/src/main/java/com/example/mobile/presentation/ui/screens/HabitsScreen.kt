@@ -69,10 +69,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
+import com.example.mobile.presentation.ui.components.ChallengeCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
-import kotlin.math.ceil
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,22 +87,11 @@ fun HabitsScreen(
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
     val error by habitsViewModel.error.collectAsState(initial = null)
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
-    val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    val challengeUiState by homeScreenViewModel.challengeUiState.collectAsState()
     val sortedHabits = habits.sortedWith(
         compareBy<HabitEntity> { completedToday[it.id] == true }
             .thenBy { it.name.lowercase() }
     )
-
-    val dailyGoalProgress = if (progressUiState.dailyGoalXp > 0) {
-        (progressUiState.dailyGoalProgressXp.toFloat() / progressUiState.dailyGoalXp.toFloat()).coerceIn(0f, 1f)
-    } else {
-        0f
-    }
-    val dailyGoalSegments = if (dailyGoalProgress <= 0f) {
-        0
-    } else {
-        ceil(dailyGoalProgress * 3f).toInt().coerceIn(1, 3)
-    }
 
     Scaffold(
         containerColor = Color(0xFFFAFAFC), // Alabaster Premium Background matching home
@@ -143,12 +133,9 @@ fun HabitsScreen(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
             item {
-                HabitsHeader(
-                    streak = progressUiState.globalStreak,
-                    dailyGoalProgress = dailyGoalProgress,
-                    dailyGoalSegments = dailyGoalSegments,
-                    dailyGoalProgressXp = progressUiState.dailyGoalProgressXp,
-                    dailyGoalXp = progressUiState.dailyGoalXp,
+                ChallengeCard(
+                    state = challengeUiState,
+                    onClaim = homeScreenViewModel::claimChallenge,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                 )
             }
@@ -185,110 +172,6 @@ fun HabitsScreen(
         }
     }
 }
-}
-
-@Composable
-private fun HabitsHeader(
-    streak: Int,
-    dailyGoalProgress: Float,
-    dailyGoalSegments: Int,
-    dailyGoalProgressXp: Long,
-    dailyGoalXp: Int,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteHabits.HeaderCardBackground),
-        shape = RoundedCornerShape(28.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Modern flame container without rough boundaries
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(ColorPaletteHabits.AmberSoft, RoundedCornerShape(14.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.LocalFireDepartment,
-                            contentDescription = null,
-                            tint = ColorPaletteHabits.Amber,
-                            modifier = Modifier.size(26.dp)
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = "Current Streak: $streak Days",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ColorPaletteHabits.AmberDark
-                        )
-                        Text(
-                            text = "Rhythm is visibility.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = ColorPaletteHabits.Muted
-                        )
-                    }
-                }
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Daily Goal: $dailyGoalProgressXp / $dailyGoalXp XP to Bonus Chest",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = ColorPaletteHabits.Ink
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    LinearProgressIndicator(
-                        progress = { dailyGoalProgress },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(12.dp),
-                        color = ColorPaletteHabits.Violet,
-                        trackColor = ColorPaletteHabits.ProgressTrack
-                    )
-
-                    // Chest container asset showcase right next to progress indicator track
-                    Icon(
-                        imageVector = Icons.Default.ShoppingBag,
-                        contentDescription = "Bonus Chest",
-                        tint = ColorPaletteHabits.Amber,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                Text(
-                    text = "$dailyGoalSegments / 3 Tasks Done",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-                    color = ColorPaletteHabits.Muted,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)

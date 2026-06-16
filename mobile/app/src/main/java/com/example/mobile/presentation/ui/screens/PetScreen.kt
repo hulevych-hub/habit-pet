@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checkroom
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -105,7 +106,9 @@ class PetViewModel @Inject constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PetScreen(
     petViewModel: PetViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    onNavigateToRewardsLocked: () -> Unit,
+    onNavigateToRewardsOwned: () -> Unit
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
@@ -125,7 +128,8 @@ fun PetScreen(
                 streak = uiState.globalStreak,
                 coins = uiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
-                streakCompletedToday = uiState.globalStreakCompletedToday
+                streakCompletedToday = uiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked
             )
         }
     ) { padding ->
@@ -153,7 +157,7 @@ fun PetScreen(
                     level = pet.level,
                     name = pet.name.ifBlank { "Baby Dragon" },
                     mood = DragonMood.from(pet.mood).displayName,
-                    modifier = Modifier.fillMaxWidth().height(430.dp)
+                    modifier = Modifier.fillMaxWidth().height(320.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -163,7 +167,8 @@ fun PetScreen(
                     progressFraction = progressFraction,
                     currentLevelXp = currentLevelXp,
                     xpRequiredForNextLevel = xpRequiredForNextLevel,
-                    onRenameClick = { showRenameDialog = true }
+                    onRenameClick = { showRenameDialog = true },
+                    onEditCustomizationsClick = onNavigateToRewardsOwned
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -407,7 +412,8 @@ private fun PetDetailsPanel(
     progressFraction: Float,
     currentLevelXp: Long,
     xpRequiredForNextLevel: Long,
-    onRenameClick: () -> Unit
+    onRenameClick: () -> Unit,
+    onEditCustomizationsClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -446,7 +452,10 @@ private fun PetDetailsPanel(
 
         PetBondButton(onClick = onRenameClick)
 
-        AttributeCard(pet = pet)
+        AttributeCard(
+            pet = pet,
+            onEditClick = onEditCustomizationsClick
+        )
 
         LevelUpButton()
     }
@@ -485,7 +494,10 @@ private fun PetBondButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun AttributeCard(pet: PetEntity) {
+private fun AttributeCard(
+    pet: PetEntity,
+    onEditClick: () -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
@@ -496,14 +508,33 @@ private fun AttributeCard(pet: PetEntity) {
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = "Attribute Card",
-                color = PetPremiumColors.Text,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Attribute Card",
+                    color = PetPremiumColors.Text,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clickable(onClick = onEditClick),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit customizations",
+                        tint = PetPremiumColors.Gold,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
 
             AttributeRow(
                 icon = Icons.Default.Checkroom,
@@ -645,7 +676,8 @@ private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
     stageName: String,
-    streakCompletedToday: Boolean
+    streakCompletedToday: Boolean,
+    onCoinsClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -705,6 +737,7 @@ private fun GamifiedFixedHeader(
             }
 
             Row(
+                modifier = Modifier.clickable(onClick = onCoinsClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(7.dp)
             ) {

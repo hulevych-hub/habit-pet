@@ -116,7 +116,7 @@ object GameEventFactory {
         expAmount: Int = 0,
         hasCustomization: Boolean = false
     ): GameEventEntity {
-        val label = chestType.replaceFirstChar { it.uppercase() }
+        val label = chestType.lowercase().replaceFirstChar { it.uppercase() }
         return GameEventEntity(
             type = GameEventType.CHEST_OPENED.name,
             title = "$label chest opened",
@@ -134,7 +134,7 @@ object GameEventFactory {
     }
 
     fun streakMilestone(streak: Int, chestType: String): GameEventEntity {
-        val label = chestType.replaceFirstChar { it.uppercase() }
+        val label = chestType.lowercase().replaceFirstChar { it.uppercase() }
         return GameEventEntity(
             type = GameEventType.STREAK_MILESTONE.name,
             title = "$streak-day streak milestone",
@@ -148,17 +148,18 @@ object GameEventFactory {
         )
     }
 
-    fun dailyGoalCompleted(goalXp: Long, bonusCoins: Int, bonusExp: Long): GameEventEntity {
+    fun challengeCompleted(challengeName: String, rewardSummary: List<String>): GameEventEntity {
+        val safeChallengeName = challengeName.ifBlank { "Challenge" }
+        val rewardText = rewardSummary.joinToString(", ").ifBlank { "small rewards" }
         return GameEventEntity(
-            type = GameEventType.DAILY_GOAL_COMPLETED.name,
-            title = "Daily goal complete",
-            description = "You gathered $goalXp XP today and earned +$bonusExp XP plus $bonusCoins coins for your dragon.",
-            icon = "daily_goal_completed",
+            type = GameEventType.CHALLENGE_COMPLETED.name,
+            title = "Challenge complete",
+            description = "$safeChallengeName complete. Your dragon earned $rewardText.",
+            icon = "challenge_completed",
             rarity = GameEventRarity.RARE.name,
             payload = payloadOf(
-                "goalXp" to goalXp,
-                "coins" to bonusCoins,
-                "xp" to bonusExp
+                "challenge" to safeChallengeName,
+                "rewards" to rewardSummary
             )
         )
     }
@@ -169,7 +170,7 @@ object GameEventFactory {
         chestType: String,
         hasCustomization: Boolean
     ): GameEventEntity {
-        val label = chestType.replaceFirstChar { it.uppercase() }
+        val label = chestType.lowercase().replaceFirstChar { it.uppercase() }
         val customizationText = if (hasCustomization) " and a hidden customization item" else ""
         return GameEventEntity(
             type = GameEventType.SURPRISE_REWARD.name,

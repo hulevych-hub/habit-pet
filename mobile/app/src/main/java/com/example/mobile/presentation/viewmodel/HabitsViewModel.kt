@@ -56,6 +56,7 @@ class HabitsViewModel @Inject constructor(
     private val _optimisticCompletedHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _completingHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _error = MutableStateFlow<String?>(null)
+    private var surpriseCompletionsSinceLastReward = 0
 
     val error: StateFlow<String?> = _error
     val completingHabitIds: StateFlow<Set<Long>> = _completingHabitIds
@@ -118,9 +119,6 @@ class HabitsViewModel @Inject constructor(
                 val xpEarned = ExpConfig.CHECKBOX_HABIT_XP
                 val coinsEarned = EconomyConfig.CHECKBOX_HABIT_COINS
                 val today = getDayStart(System.currentTimeMillis())
-                val wasDailyGoalCompletedToday = statisticsRepository.getStatistics()
-                    .firstOrNull()
-                    ?.dailyGoalCompletedDate == today / 86_400_000L
 
                 val completionResult = habitCompletionRepository.addCompletionWithCombo(
                     HabitCompletionEntity(
@@ -161,9 +159,6 @@ class HabitsViewModel @Inject constructor(
                     )
                 }
                 streakEngine.evaluateTodayStreak(now)
-                if (dailyGoalCompletedAfterCompletion(today, wasDailyGoalCompletedToday)) {
-                    queueDailyGoalReward()
-                }
                 awardPetXpAndCoins(totalXpEarned, coinsEarned)
                 maybeTriggerHabitCompletionChest()
                 microFeedbackManager.triggerHabitCompleted(
@@ -197,30 +192,6 @@ class HabitsViewModel @Inject constructor(
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
         return calendar.timeInMillis
-    }
-
-    private suspend fun dailyGoalCompletedAfterCompletion(today: Long, wasCompletedToday: Boolean): Boolean {
-        val todayKey = today / 86_400_000L
-        val completedToday = statisticsRepository.getStatistics()
-            .firstOrNull()
-            ?.dailyGoalCompletedDate == todayKey
-
-        return completedToday && !wasCompletedToday
-    }
-
-    private fun queueDailyGoalReward() {
-        val reward = RewardUiEvent.DailyGoalReward(
-            goalXp = ExpConfig.DAILY_XP_GOAL,
-            bonusCoins = EconomyConfig.DAILY_GOAL_COIN_BONUS,
-            bonusExp = ExpConfig.DAILY_GOAL_BONUS_XP
-        )
-
-        rewardQueue.addReward(reward)
-        activityTimelineEngine.logDailyGoalCompleted(
-            goalXp = ExpConfig.DAILY_XP_GOAL,
-            bonusCoins = EconomyConfig.DAILY_GOAL_COIN_BONUS,
-            bonusExp = ExpConfig.DAILY_GOAL_BONUS_XP
-        )
     }
 
     private fun awardPetXpAndCoins(xpToAdd: Long, coinsToAdd: Int) {
@@ -294,6 +265,10 @@ class HabitsViewModel @Inject constructor(
     }
 
     private fun maybeTriggerHabitCompletionChest() {
+        surpriseCompletionsSinceLastReward++
+        if (surpriseCompletionsSinceLastReward < EconomyConfig.SURPRISE_MIN_COMPLETIONS_BEFORE_CHANCE) return
+
+        surpriseCompletionsSinceLastReward = 0
         if (!EconomyConfig.shouldTriggerHabitCompletionChest()) return
 
         viewModelScope.launch {

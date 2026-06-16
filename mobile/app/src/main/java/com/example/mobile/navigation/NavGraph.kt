@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
@@ -65,6 +64,8 @@ private object AppRoutes {
     const val HABITS = "habits"
     const val PET = "pet"
     const val REWARDS = "rewards"
+    const val REWARDS_LOCKED = "locked"
+    const val REWARDS_OWNED = "owned"
     const val ACHIEVEMENTS = "achievements"
     const val SETTINGS = "notification_settings"
     const val HABIT_CREATION = "habitCreation"
@@ -75,6 +76,7 @@ private object AppRoutes {
 
     fun habitDetail(habitId: Long) = "$HABIT_DETAIL/$habitId"
     fun habitEdit(habitId: Long) = "$HABIT_EDIT/$habitId"
+    fun rewards(collection: String) = "rewards/$collection"
 }
 
 private sealed class BottomDestination(
@@ -86,7 +88,6 @@ private sealed class BottomDestination(
     data object Home : BottomDestination(AppRoutes.HOME, "Home", Icons.Default.Home)
     data object Habits : BottomDestination(AppRoutes.HABITS, "Habits", Icons.Default.Checklist)
     data object Pet : BottomDestination(AppRoutes.PET, "Pet", Icons.Default.Pets)
-    data object Rewards : BottomDestination(AppRoutes.REWARDS, "Rewards", Icons.Default.CardGiftcard)
     data object Achievements : BottomDestination(
         route = AppRoutes.ACHIEVEMENTS,
         label = "Achievements",
@@ -100,7 +101,6 @@ private sealed class BottomDestination(
             Home,
             Habits,
             Pet,
-            Rewards,
             if (claimableAchievementCount > 0) {
                 AchievementsWithBadge(claimableAchievementCount)
             } else {
@@ -131,7 +131,8 @@ fun HabitPetNavGraph(
         val achievementViewModel: AchievementViewModel = hiltViewModel()
         val claimableAchievementCount by achievementViewModel.claimableAchievementCount.collectAsState()
         val bottomDestinations = BottomDestination.all(claimableAchievementCount)
-        val shouldShowBottomBar = bottomDestinations.any { currentRoute == it.route }
+        val shouldShowBottomBar = bottomDestinations.any { currentRoute == it.route } ||
+            currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true
 
         Scaffold(
             bottomBar = {
@@ -158,7 +159,8 @@ fun HabitPetNavGraph(
                 composable(AppRoutes.HOME) {
                     HomeScreen(
                         onNavigateToHabits = { navigateToBottomDestination(navController, BottomDestination.Habits, microFeedbackManager) },
-                        onNavigateToHabitDetail = { habitId -> navController.navigate(AppRoutes.habitDetail(habitId)) }
+                        onNavigateToHabitDetail = { habitId -> navController.navigate(AppRoutes.habitDetail(habitId)) },
+                        onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) }
                     )
                 }
                 composable(AppRoutes.HABITS) { HabitsScreen(navController = navController) }
@@ -190,12 +192,32 @@ fun HabitPetNavGraph(
                         onNavigateUp = { navController.popBackStack() }
                     )
                 }
-                composable(AppRoutes.PET) { PetScreen() }
-                composable(AppRoutes.REWARDS) { RewardsScreen() }
+                composable(AppRoutes.PET) {
+                    PetScreen(
+                        onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) },
+                        onNavigateToRewardsOwned = { navigateToRewards(navController, AppRoutes.REWARDS_OWNED, microFeedbackManager) }
+                    )
+                }
+                composable(
+                    route = "${AppRoutes.REWARDS}/{collection}",
+                    arguments = listOf(navArgument("collection") { type = NavType.StringType })
+                ) { entry ->
+                    val collection = entry.arguments?.getString("collection") ?: AppRoutes.REWARDS_OWNED
+                    RewardsScreen(
+                        initialCollection = collection,
+                        onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) }
+                    )
+                }
                 composable(AppRoutes.STATISTICS) { StatisticsScreen() }
-                composable(AppRoutes.ACHIEVEMENTS) { AchievementScreen() }
-                composable(AppRoutes.ACTIVITY) { ActivityTimelineScreen() }
-                composable(AppRoutes.SETTINGS) { NotificationSettingsScreen() }
+                composable(AppRoutes.ACHIEVEMENTS) {
+                    AchievementScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })
+                }
+                composable(AppRoutes.ACTIVITY) {
+                    ActivityTimelineScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })
+                }
+                composable(AppRoutes.SETTINGS) {
+                    NotificationSettingsScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })
+                }
             }
         }
     }
@@ -214,6 +236,17 @@ private fun navigateToBottomDestination(
         }
         launchSingleTop = true
         restoreState = true
+    }
+}
+
+private fun navigateToRewards(
+    navController: NavHostController,
+    collection: String,
+    microFeedbackManager: MicroFeedbackManager?
+) {
+    microFeedbackManager?.triggerTabSwitched()
+    navController.navigate(AppRoutes.rewards(collection)) {
+        launchSingleTop = true
     }
 }
 

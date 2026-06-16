@@ -78,6 +78,8 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 - Rarity filters are segmented chips with stronger selected borders and readable muted unselected text.
 - Rarity filters use their rarity color as a translucent unselected background and a fully saturated selected background.
 - Owned and locked collections are toggled with a segmented control.
+- The Rewards screen is entered from the shared header coin amount, opening directly to the locked collection tab.
+- The Pet screen Attribute Card has an edit icon that opens the Rewards screen to the owned collection tab.
 - Items display rarity color, source, price, equipped state, and immediate equip/unequip/purchase actions.
 
 ### Activity Timeline
@@ -104,7 +106,8 @@ The app-level palette is defined in `Color.kt` and `Theme.kt`:
 
 ### Bottom Navigation
 
-- The persistent app shell uses six primary destinations: Home, Habits, Pet, Rewards, Achievements, and Settings.
+- The persistent app shell uses five primary destinations: Home, Habits, Pet, Achievements, and Settings.
+- Rewards opens from the shared header coin amount and the Pet Attribute Card edit icon instead of the bottom navigation.
 - Navigation items use consistent icon and label spacing.
 - The selected item has an animated rounded active indicator using theme colors.
 - Achievement badge remains visible for claimable rewards.

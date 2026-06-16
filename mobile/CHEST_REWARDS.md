@@ -1,218 +1,190 @@
-# CHEST_REWARDS
+# Chest Rewards
 
 ## Overview
 
-Chest rewards are reward events in Habit Pet that players collect to receive coins, EXP, and occasional customization items. They are awarded from streak milestones, level-ups, and achievement chest rewards, with different chest types offering varying reward potential.
+Chest rewards are reward events that players collect to receive coins, EXP, and occasional customization items. They are awarded from streak milestones, level-ups, achievements, and surprise habit rewards.
 
-## Current Implementation
+Chests should feel exciting, but they must not break long-term progression pacing.
 
-The chest reward system consists of:
-- Chest reward events (`RewardUiEvent.ChestReward`) with a source string, coin amount, EXP amount, and optional stable equipable ID
-- Two UI presentations: interactive chest opening in `RewardScreen` and simple chest with collect button in `RewardOverlay`
-- Priority-based queuing in `RewardQueue` (priority level 4)
-- Automatic processing of collected coins, EXP, and customization items via `RewardManager`
-- Sources:
-  - Streak milestone rewards
-  - Level-up bonuses
-  - Achievement chest rewards
-  - Surprise habit reward chests
-- Four chest types: Normal, Rare, Epic, and Legendary
-- **Centralized configuration and construction: `EconomyConfig` + `ChestRewardConfigProvider` + `ChestRewardFactory`**
+## Source of truth
 
-## Rules
+Chest reward values are configured through:
 
-### Chest Reward Structure
+- `EconomyConfig.kt`
+- `ChestRewardConfigProvider.kt`
+- `ChestRewardFactory.kt`
+
+Runtime reward construction should use `ChestRewardFactory.buildChestReward(...)` instead of hardcoding chest contents.
+
+## Chest reward structure
+
+`RewardUiEvent.ChestReward` contains:
+
 - `rewardType: String` - identifies the source/reason for the chest
-- `amount: Any` - the coin reward content (stored as `Any` for backward compatibility)
-- `expAmount: Int` - the EXP reward amount
-- `customizationId: Long?` - local database item ID retained for backward compatibility
+- `amount: Any` - coin reward content, retained for backward compatibility
+- `expAmount: Int` - EXP reward amount
+- `customizationId: Long?` - legacy local database item ID
 - `equipableId: String?` - stable `EquipableConfig` item ID granted, if any
 
-### Chest Reward Sources
+## Chest reward sources
 
-1. **Streak Milestone Chests** (`StreakEngine.kt`):
-   - Awarded when the player crosses configured streak milestones
-   - Current milestones: 7, 14, 30, 60, 100
-   - Condition: `currentStreak >= milestone && milestone > lastStreakAwardedAt`
-   - Chest type is milestone-based, not random:
-     - 7 days → Normal
-     - 14 days → Rare
-     - 30 or 60 days → Epic
-     - 100 days → Legendary
-   - Reward type: `"global_streak_{streak}_{chest_type}"`
-   - Contents are built by `ChestRewardFactory` from the milestone chest type configuration
+### 1. Streak milestone chests
 
-2. **Level Up Chests** (`HabitDetailViewModel.kt`, `HabitsViewModel.kt`):
-   - Awarded every time the pet levels up
-   - Chest type is randomly determined using `EconomyConfig` probabilities
-   - Reward type: `"level_up_{chest_type}"`
-   - Contents are built by `ChestRewardFactory` from the selected chest type configuration
+Awarded when the player crosses configured streak milestones:
 
-3. **Achievement Chests** (`AchievementRewardProcessor.kt`):
-   - Awarded when an achievement grants an `AchievementReward.ChestReward`
-   - Chest type is read from `AchievementsConfig`
-   - Reward type: `"achievement_{chest_type}"`
-   - Contents are built by `ChestRewardFactory` from the selected chest type configuration
-   - The achievement reward popup is queued after the chest reward is prepared
+- 7 days → Normal chest
+- 14 days → Rare chest
+- 30 or 60 days → Epic chest
+- 100 days → Legendary chest
 
-4. **Surprise Habit Reward Chests** (`HabitDetailViewModel.kt`, `HabitsViewModel.kt`):
-   - Awarded only when the surprise reward trigger succeeds after a successful habit completion
-   - Trigger requires at least 3 successful habit completions since the previous surprise
-   - Trigger chance is 8%
-   - Surprise chests are always Rare, Epic, or Legendary
-   - Reward type: `"surprise_{chest_type}"`
-   - Contents are built by `ChestRewardFactory` from the selected chest type configuration
-   - The surprise chest is queued through `RewardQueue` and never blocks the habit completion flow
+Streak milestone chests use fixed chest types rather than random chest probabilities.
 
-### Reward Queue Priority
-Chest rewards have priority level 4 in the RewardQueue:
-- LevelUpReward: 1 (highest priority)
-- DragonEvolutionReward: 2
-- StreakReward: 3
-- ChestReward: 4
-- AchievementReward: 5 (lowest priority)
+### 2. Level-up chests
 
-### Reward Processing
+Awarded every time the pet levels up. Chest type is randomly determined using `EconomyConfig` probabilities:
+
+| Chest | Old probability | New probability |
+|---|---:|---:|
+| Normal | `55%` | `65%` |
+| Rare | `30%` | `25%` |
+| Epic | `12%` | `8%` |
+| Legendary | `3%` | `2%` |
+
+Level-up chests are queued as `RewardUiEvent.LevelUpReward` after the pet XP/level state is updated.
+
+### 3. Achievement chests
+
+Awarded when an achievement grants `AchievementReward.ChestReward`. The chest type is read from `AchievementsConfig`.
+
+Achievement chest rewards are intentionally milestone-based. XP achievements no longer award XP directly, so achievements do not bypass progression pacing.
+
+### 4. Surprise habit reward chests
+
+Awarded only when the surprise reward trigger succeeds after a successful habit completion.
+
+| Setting | Old value | New value |
+|---|---:|---:|
+| Minimum completions before another roll | None | `3` |
+| Surprise chest chance | `10%` per completion | `4%` after cooldown |
+| Surprise Rare probability | `80%` | `85%` |
+| Surprise Epic probability | `18%` | `13%` |
+| Surprise Legendary probability | implied `2%` | implied `2%` |
+
+The cooldown is session-scoped in `HabitDetailViewModel` and `HabitsViewModel`.
+
+## Reward queue priority
+
+Chest rewards have priority level `4` in the `RewardQueue`:
+
+1. `LevelUpReward`: `1`
+2. `DragonEvolutionReward`: `2`
+3. `StreakReward`: `3`
+4. `ChestReward`: `4`
+5. `AchievementReward`: `5`
+
+## Reward processing
+
 When a chest reward is collected:
-- RewardManager extracts coin amount: `(current.amount as? Int) ?: 0` and adds it to player statistics
-- RewardManager adds EXP amount to the pet's total EXP: `current.expAmount`
-- RewardManager grants customization item by resolving `equipableId` through `InventoryItemRepository.grantItemByItemId`
-- If an older event only contains `customizationId`, RewardManager falls back to `inventoryItemRepository.grantItem(current.customizationId)`
-- Non-Int coin amounts result in 0 coins awarded
 
-### Customization Grant Logic
-- Chest customization rewards target a rarity, not a specific type
-- Selection uses `inventoryItemRepository.getUnownedItemsByRarity()`
-- The DAO query prefers locked items first and then unowned purchased-eligible items:
-  - `isPurchased = 0`
-  - ordered by `isUnlocked ASC, type, name`
-- Chest rewards exclude `unlockSource = "ACHIEVEMENT"` items because those are granted only by achievement reward flow
-- If all target-rarity items are already purchased or achievement-only, the chest falls back to coin/EXP rewards
-- Duplicate purchased rewards are avoided whenever possible
+1. `RewardManager` extracts the coin amount and adds it to player statistics.
+2. `RewardManager` adds EXP to the pet.
+3. `RewardManager` updates pet level and evolution stage from the new XP.
+4. If the new level or evolution stage increases, `RewardManager` queues level-up or evolution reward events.
+5. If the chest contains a customization item, `RewardManager` grants it through `InventoryItemRepository.grantItemByItemId(...)`.
 
-### Outfit, Background, and Aura Reward Probabilities
+## Customization grant logic
 
-The current implementation is type-neutral. Chests target a rarity, then randomly choose among available unpurchased items of that rarity.
+Chest customization rewards target a rarity, not a specific type.
 
-Default chest-sourced inventory excludes shop and achievement-only items. Current chest candidates are:
+- Selection uses `inventoryItemRepository.getUnownedItemsByRarity()`.
+- The DAO query prefers locked items first and then unowned purchasable items.
+- Chest rewards exclude `unlockSource = "ACHIEVEMENT"` items because those are granted only by achievement reward flow.
+- If all target-rarity items are already purchased or achievement-only, the chest falls back to coin/EXP rewards.
+- Duplicate purchased rewards are avoided whenever possible.
+
+Default chest-sourced inventory:
 
 - Rare: `fire_aura`
 - Epic: `knight_outfit`, `background_mountains`
 - Legendary: `ninja_outfit`, `background_night_sky`
 
-Chests remain type-neutral within the selected rarity, so the actual type odds depend on which unpurchased chest-sourced items remain.
+## Chest contents
 
-## Configuration
+### Coin ranges
 
-Chest reward values are configured through `ChestRewardConfigProvider`, which sources values from `EconomyConfig`:
+| Chest | Old range | New range |
+|---|---:|---:|
+| Normal | `10-30` | `5-15` |
+| Rare | `30-80` | `15-35` |
+| Epic | `80-180` | `35-75` |
+| Legendary | `180-400` | `75-150` |
 
-### Coin Ranges (from `EconomyConfig`)
-- **Normal Chest**: 10-30 coins
-- **Rare Chest**: 30-80 coins
-- **Epic Chest**: 80-180 coins
-- **Legendary Chest**: 180-400 coins
+### EXP ranges
 
-### EXP Ranges (from `EconomyConfig`)
-- **Normal Chest**: 0-0 EXP
-- **Rare Chest**: 50-150 EXP
-- **Epic Chest**: 150-350 EXP
-- **Legendary Chest**: 350-800 EXP
+| Chest | Old range | New range |
+|---|---:|---:|
+| Normal | `0-0` | `0-0` |
+| Rare | `50-150` | `8-20` |
+| Epic | `150-350` | `20-50` |
+| Legendary | `350-800` | `50-100` |
 
-### Customization Drop Chances (from `EconomyConfig`)
-- **Rare Chest**: 15% chance for a Rare customization item
-- **Epic Chest**: 30% chance for an Epic customization item
-- **Legendary Chest**: 50% chance for a Legendary customization item
-- **Normal Chest**: 0% (no customization item drops)
+### Customization drop chances
 
-### Chest Type Probabilities (from `EconomyConfig`)
+| Chest | Old chance | New chance |
+|---|---:|---:|
+| Normal | `0%` | `0%` |
+| Rare | `15%` | `8%` |
+| Epic | `30%` | `18%` |
+| Legendary | `50%` | `35%` |
 
-Used by level-up and achievement-configured chests:
+## Expected value
 
-- **Normal**: 55%
-- **Rare**: 30%
-- **Epic**: 12%
-- **Legendary**: 3%
+| Chest type | Probability | Avg coins | Avg EXP | Customization EV* |
+|---|---:|---:|---:|---:|
+| Normal | `65%` | `10` | `0` | `0` |
+| Rare | `25%` | `25` | `14` | `32` coin-equivalent |
+| Epic | `8%` | `55` | `35` | `180` coin-equivalent |
+| Legendary | `2%` | `112.5` | `75` | `1050` coin-equivalent |
 
-Streak milestone chests use the fixed milestone mapping instead of these probabilities.
+\*Customization EV = drop chance × customization price (`Rare=400`, `Epic=1000`, `Legendary=3000`).
 
-## Data Model
+Weighted randomized chest value:
 
-No persistent data model for chest rewards; they are transient events.
-The `RewardUiEvent.ChestReward` data class defines the structure:
-- `rewardType: String` - identifies the source and chest type
-- `amount: Any` - coin reward (backward compatibility)
-- `expAmount: Int` - EXP reward amount
-- `customizationId: Long?` - local database item ID retained for backward compatibility
-- `equipableId: String?` - stable `EquipableConfig` item ID granted (null if none)
+- Avg coins: `19.4`
+- Avg EXP: `7.8`
+- Customization EV: about `43.4` coin-equivalent
 
-## Source Files
-
-- app/src/main/java/com/example/mobile/domain/ChestType.kt
-- app/src/main/java/com/example/mobile/domain/ChestRewardConfig.kt
-- app/src/main/java/com/example/mobile/domain/ChestRewardConfigProvider.kt
-- app/src/main/java/com/example/mobile/domain/ChestRewardFactory.kt
-- app/src/main/java/com/example/mobile/domain/EconomyConfig.kt (centralized economy values)
-- app/src/main/java/com/example/mobile/domain/EquipableConfig.kt
-- app/src/main/java/com/example/mobile/domain/StreakEngine.kt
-- app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt
-- app/src/main/java/com/example/mobile/domain/AchievementsConfig.kt
-- app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
-- app/src/main/java/com/example/mobile/domain/repository/InventoryItemRepository.kt
-- app/src/main/java/com/example/mobile/data/repository/InventoryItemRepositoryImpl.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt
-- app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlay.kt
-- app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt
-- app/src/main/java/com/example/mobile/domain/GameEventFactory.kt
-- app/src/main/java/com/example/mobile/domain/GameEventType.kt
-- app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt
-
-## Known Gaps
-
-1. **Visual Differentiation**: All chest rewards use the same chest image regardless of chest type; future work could add visual differentiation based on `chestType`.
-2. **Particle Effects**: No particle effects or animations specific to chest rewards beyond the basic opening animation.
-3. **Configuration Flexibility**: While a configuration system exists, values are still hardcoded in `EconomyConfig`; future work could load configurations from remote sources or allow tuning.
-4. **Type-Specific Drop Tables**: The current system targets rarity only. Outfit, background, and aura probabilities are balanced by inventory composition rather than explicit per-type drop tables.
-
-## Balance Validation
-
-### Expected Value Per Randomized Chest (Average)
-
-| Chest Type | Probability | Avg Coins | Avg EXP | Customization EV* |
-|------------|-------------|-----------|---------|-------------------|
-| Normal | 55% | 20 | 0 | 0 |
-| Rare | 30% | 55 | 100 | 0.15 × Rare customization item |
-| Epic | 12% | 130 | 250 | 0.30 × Epic customization item |
-| Legendary | 3% | 290 | 575 | 0.50 × Legendary customization item |
-
-\*Customization EV = Drop chance × customization value (approx. coin equivalent: Rare=300, Epic=800, Legendary=2000)
-
-### Combined Expected Value
-
-- **Weighted avg coins per randomized chest**: ~52 coins
-- **Weighted avg EXP per randomized chest**: ~77 EXP
-- **Weighted customization item value per randomized chest**: ~72 coin-equivalent
-- **Combined randomized chest value**: ~52 coins + ~77 EXP + ~72 coin-equivalent
-
-### Surprise Chest Expected Value
+## Surprise chest expected value
 
 Surprise chests use a special rarity distribution:
-- Rare: 80%
-- Epic: 18%
-- Legendary: 2%
+
+| Chest type | Probability | Avg coins | Avg EXP | Customization EV |
+|---|---:|---:|---:|---:|
+| Rare | `85%` | `25` | `14` | `32` coin-equivalent |
+| Epic | `13%` | `55` | `35` | `180` coin-equivalent |
+| Legendary | `2%` | `112.5` | `75` | `1050` coin-equivalent |
 
 Approximate surprise chest EV:
-- Coins: ~73 coins
-- EXP: ~137 EXP
-- Customization EV: ~99 coin-equivalent
 
-Because surprise chests require a 3-completion cooldown and an 8% chance roll, their long-term economy impact stays small.
+- Coins: `30.65`
+- EXP: `17.95`
+- Customization EV: about `71.5` coin-equivalent
 
-### Progression Impact
+Because surprise chests require a 3-completion cooldown and a 4% chance roll, their long-term economy impact stays small.
 
-- Level-up chest every level → ~52 coins + ~77 EXP average
-- Streak milestone chests are milestone-based and become stronger at larger milestones
-- With 3 checkbox habits/day plus recurring level-up and streak chests, early-game economy stays near the ~100 coins/day target
-- Duplicate-preventing selection keeps customization rewards from inflating coin-equivalent value after items are already purchased
+## Balance validation
+
+- Level-up chest every level → about `19.4 coins` + `7.8 EXP` + `43.4` coin-equivalent customization value on average.
+- Streak milestone chests are milestone-based and become stronger at larger milestones.
+- Surprise chests are rare, rate-limited, and always Rare/Epic/Legendary.
+- Legendary rewards remain rare and memorable.
+- Normal rewards remain useful without inflating progression.
+- Chest EXP is capped at `100 XP` even for Legendary chests.
+- Chests do not award evolution coins or XP milestones that bypass the configured progression curve.
+
+## Known gaps
+
+1. Visual differentiation: all chest rewards use the same chest image regardless of chest type.
+2. Particle effects: chest rewards do not yet have chest-type-specific particle effects.
+3. Type-specific drop tables: chests target rarity only; outfit/background/aura odds depend on inventory composition.
+4. Configuration flexibility: values are still centralized in `EconomyConfig`, not remotely tunable.

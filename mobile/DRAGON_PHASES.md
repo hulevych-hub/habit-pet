@@ -1,111 +1,136 @@
-# DRAGON_PHASES
+# Dragon Phases
 
 ## Overview
 
-The dragon phase system in Habit Pet tracks the pet's evolution through five distinct stages based on accumulated XP. Each stage represents a visual transformation of the pet and influences how it is displayed in the game.
+The dragon phase system tracks the pet's evolution through five stages based on accumulated XP. Each stage represents a visual transformation of the pet and should feel like a meaningful milestone in the player's long-term attachment to the dragon.
 
-## Current Implementation
+## Source of truth
 
-The dragon phase system consists of:
-- Evolution stage stored in PetEntity (evolution_stage field: 0-4)
-- Stage determination based on XP thresholds (**NOW CONSISTENT - single source in `ExpConfig`**)
-- Visual representation through different pet images for each stage
-- Lightweight idle animations for each stage using subtle scale, rotation, and vertical translation
-- Dragon mood state persisted in `PetEntity.mood` with values: `Happy`, `Calm`, `Excited`, `Proud`, and `Lonely`
-- Mood-driven idle intensity, alpha, and speed adjustments in `AnimatedPet.kt`
-- One-time phase transition animations for adjacent evolution stages using crossfade, scale, and vertical shift
-- ActivityTimeline logging of evolution and evolution milestone nearing events
-- Reward-overlay phase transition screen that appears after level-up rewards for evolution events
-- Evolution stage rewards (DragonEvolutionReward - currently 0 coins)
-- Display in UI showing stage name alongside level
-- Evolution teasing UI through `EvolutionTeaser`, showing the next stage name and XP needed to reach it
-- Evolution milestone timeline events through `ActivityTimelineEngine.logEvolutionMilestoneNearing()` when progress reaches 80% toward a locked stage
-- **Centralized configuration: `ExpConfig`** (single source of truth)
+Evolution stages are centralized in `ExpConfig.kt`:
 
-## Rules
+- `ExpConfig.EVOLUTION_THRESHOLDS`
+- `ExpConfig.EVOLUTION_STAGE_NAMES`
+- `ExpConfig.calculateEvolutionStageFromXp()`
+- `ExpConfig.evolutionStageName()`
+- `ExpConfig.xpThresholdForStage()`
 
-### Evolution Stages
-The pet has five evolution stages, represented by integer values:
-- **Stage 0: Egg** - Initial form
-- **Stage 1: Hatchling** - First evolution
-- **Stage 2: Young Dragon** - Second evolution
-- **Stage 3: Adult Dragon** - Third evolution
-- **Stage 4: Ancient Dragon** - Final form
+Runtime code should not hardcode evolution thresholds.
 
-### Evolution Stage Calculation (NOW CONSISTENT)
+## Evolution stages
 
-**Single source of truth: `ExpConfig.calculateEvolutionStageFromXp()`**
+The pet has five evolution stages:
 
-| Stage | Name | XP Range | Threshold |
-|-------|------|----------|-----------|
-| 0 | Egg | 0 - 499 | 0 |
-| 1 | Hatchling | 500 - 1,499 | 500 |
-| 2 | Young Dragon | 1,500 - 2,999 | 1,500 |
-| 3 | Adult Dragon | 3,000 - 5,999 | 3,000 |
-| 4 | Ancient Dragon | 6,000+ | 6,000 |
+| Stage | Name | XP Range |
+|---:|---|---:|
+| 0 | Egg | `0-74` |
+| 1 | Hatchling | `75-299` |
+| 2 | Young Dragon | `300-899` |
+| 3 | Adult Dragon | `900-2499` |
+| 4 | Ancient Dragon | `2500+` |
 
-*Previously inconsistent between HabitCompletionRepositoryImpl and HabitDetailViewModel - now unified in ExpConfig*
+## Rebalanced thresholds
 
-### Visual Representation
+| Evolution | Old threshold | New threshold | Old pacing at 100 XP/habit | New pacing, mostly checkbox habits |
+|---|---:|---:|---:|---:|
+| Egg → Hatchling | `500 XP` | `75 XP` | 5 habits / ~1.7 days at 3/day | 2-3 days at 3-5/day |
+| Hatchling → Young Dragon | `1500 XP` | `300 XP` | 15 habits / ~5 days at 3/day | 5-8 more days |
+| Young Dragon → Adult Dragon | `3000 XP` | `900 XP` | 30 habits / ~10 days at 3/day | 12-20 more days |
+| Adult Dragon → Ancient Dragon | `6000 XP` | `2500 XP` | 60 habits / ~20 days at 3/day | 32-54 more days |
+
+Ancient Dragon is now a long-term attachment goal for mostly checkbox play.
+
+## Expected progression timeline
+
+Assumptions:
+
+- 3-5 habits completed per day
+- Mostly checkbox habits
+- 5-15 minutes of daily play
+- Challenge completion may add a small amount of bonus XP but does not reset daily
+- No heavy timer-habit grinding
+
+| Stage | Total XP required | Total checkbox habits | Days at 3/day | Days at 5/day | Balance intent |
+|---|---:|---:|---:|---:|---|
+| Egg | `0` | 0 | 0 | 0 | Immediate onboarding form. |
+| Hatchling | `75` | 8 | 2-3 | 1-2 | Achievable within the first few days. |
+| Young Dragon | `300` | 30 | 6-10 | 4-6 | Sustained early engagement. |
+| Adult Dragon | `900` | 90 | 18-30 | 12-18 | Long-term play milestone. |
+| Ancient Dragon | `2500` | 250 | 50-83 | 33-50 | Weeks-to-months endgame achievement. |
+
+## Evolution triggers
+
+Evolution stage increases when:
+
+1. XP crosses a threshold in `ExpConfig.EVOLUTION_THRESHOLDS`.
+2. The pet object is updated through one of the progression paths:
+   - `HabitCompletionRepositoryImpl.updatePetProgress()`
+   - `HabitDetailViewModel.awardPetXpAndCoins()`
+   - `RewardManager.addPetExp()` for reward-flow XP
+
+## Evolution events
+
+When evolution stage increases:
+
+1. A `DragonEvolutionReward` event is added to the reward queue.
+2. `ActivityTimelineEngine` logs a dragon evolution event with previous stage, reached stage, and current XP.
+3. `ActivityTimelineEngine` logs the next evolution milestone nearing event when progress reaches 80%.
+4. The reward overlay shows a phase transition screen after level-up rewards, then the pet settles into the new idle animation.
+5. UI displays the new stage name, e.g. `"Luna Lv. 5 Adult Dragon"`.
+
+Evolution itself remains reward-neutral. It does not generate coins, XP, or economy-changing rewards.
+
+## Visual representation
+
 Each evolution stage loads its dragon base from the matching phase asset folder:
 
-- Stage 0 (Egg): `res/drawable/egg/default`.
-- Stage 1 (Hatchling): `res/drawable/hatchling/default`.
-- Stage 2 (Young Dragon): `res/drawable/young_dragon/default`.
-- Stage 3 (Adult Dragon): `res/drawable/adult_dragon/default` if present.
-- Stage 4 (Ancient Dragon): `res/drawable/ancient_dragon/default` if present.
+- Stage 0 (Egg): `res/drawable/egg/default`
+- Stage 1 (Hatchling): `res/drawable/hatchling/default`
+- Stage 2 (Young Dragon): `res/drawable/young/default`
+- Stage 3 (Adult Dragon): `res/drawable/adult/default`
+- Stage 4 (Ancient Dragon): `res/drawable/ancient/default`
 
 `AssetResolver` always looks for the phase `default` first, then accepts a phase-named default alias if one exists. If an aura or outfit has `phase = null` in `EquipableConfig`, it is treated as usable at any dragon phase and the resolver searches all phase folders. Otherwise, the resolver tries the configured phase folder first and falls back to the phase default when the aura asset is missing. If no dragon base asset exists, the dragon base layer is skipped and the missing asset is logged; the app does not crash.
 
-Idle animation behavior is handled in `AnimatedPet.kt` with Compose infinite transitions so the static drawables feel alive without frame swapping:
-- Stage 0 (Egg): slow breathing scale, gentle left-right tilt, and very subtle bounce
-- Stage 1 (Hatchling): breathing scale plus vertical motion with slow idle sway
-- Stage 2 (Young Dragon): breathing scale plus vertical motion with slower idle sway
-- Stage 3 (Adult Dragon): calmer breathing scale plus vertical motion and slower sway
-- Stage 4 (Ancient Dragon): slowest and smallest breathing scale, vertical motion, and sway
+## Rendering order
 
-Phase transition behavior is shared through `PetPhaseTransition` in `AnimatedPet.kt`. When `PetEntity.evolutionStage` changes to a new adjacent stage, the previous stage image crossfades into the next stage image with easing-based scale and vertical shift. The reward overlay uses the same component for evolution reward screens. The transitions are:
+The rendering order is fixed:
+
+1. Background
+2. Dragon base image or aura image
+3. Outfit overlay
+
+If an aura is equipped, the aura image replaces the dragon base image. Outfit overlay is always rendered above the dragon or aura.
+
+## Idle animations
+
+Idle animation behavior is handled in `AnimatedPet.kt` with Compose infinite transitions.
+
+- Egg: slow breathing scale, gentle left-right tilt, and very subtle bounce
+- Hatchling: breathing scale plus vertical motion with slow idle sway
+- Young Dragon: breathing scale plus vertical motion with slower idle sway
+- Adult Dragon: calmer breathing scale plus vertical motion and slower sway
+- Ancient Dragon: slowest and smallest breathing scale, vertical motion, and sway
+
+## Phase transitions
+
+Phase transition behavior is shared through `PetPhaseTransition` in `AnimatedPet.kt`. When `PetEntity.evolutionStage` changes to a new adjacent stage, the previous stage image crossfades into the next stage image with easing-based scale and vertical shift.
+
+Transitions:
+
 - Stage 0 → 1: Egg → Hatchling
 - Stage 1 → 2: Hatchling → Young Dragon
 - Stage 2 → 3: Young Dragon → Adult Dragon
 - Stage 3 → 4: Adult Dragon → Ancient Dragon
 
-### Evolution Triggers
-Evolution stage increases when:
-1. XP crosses a threshold in `ExpConfig.EVOLUTION_THRESHOLDS`
-2. The pet object is updated via `HabitCompletionRepositoryImpl.updatePetProgress()` OR `HabitDetailViewModel.awardPetXpAndCoins()` (both now use `ExpConfig`)
+## Mood
 
-### Evolution Events
-When evolution stage increases:
-1. **Reward**: A DragonEvolutionReward event is added to the reward queue (currently provides 0 coins)
-2. **Timeline Event**: ActivityTimelineEngine logs a dragon evolution event with the previous stage, reached stage, and current XP
-3. **Milestone Nearing Event**: XP reward paths call `ActivityTimelineEngine.logEvolutionMilestoneNearing()` for the next locked stage; it records one event when that stage reaches 80% progress
-4. **Visual Update**: The reward overlay shows a phase transition screen after level-up rewards, then the pet settles into the new idle animation
-5. **UI Update**: Display shows new stage name (e.g., "Level 5 Ancient Dragon")
-
-### Display Format
-In the home screen and pet screen, the pet is displayed as:
-"{pet.name} Lv. {pet.level} {evolution stage name}"
-Example: "Luna Lv. 5 Ancient Dragon"
-
-Stage names are sourced from `ExpConfig.EVOLUTION_STAGE_NAMES`. `ProgressHeader` shows a compact next evolution label and evolution percentage, while `EvolutionTeaser` shows the next stage name, a progress bar, and the XP needed to reach it.
-
-### Dragon Mood
-`DragonMood` defines the current mood state used by the dragon rendering system:
-
-- `HAPPY` / `Happy`
-- `CALM` / `Calm`
-- `EXCITED` / `Excited`
-- `PROUD` / `Proud`
-- `LONELY` / `Lonely`
-
-Mood is calculated by `DragonMoodEngine` from three inputs:
+Mood is calculated by `DragonMoodEngine` from:
 
 1. `currentStreak` from `StatisticsRepository`
 2. Last activity timestamp from recent habit completions
 3. Recent habit completion count within the last 72 hours
 
-Calculation priority:
+Mood states:
 
 - `Lonely`: last activity is older than 36 hours
 - `Proud`: current streak is at least 7 days
@@ -113,98 +138,11 @@ Calculation priority:
 - `Happy`: current streak is greater than 0
 - `Calm`: default state when no stronger mood applies
 
-Mood is persisted in `PetEntity.mood`. `DragonMoodEngine.refreshMood()` is called on app open, habit completion, and streak changes. `PetDao.resetPet()` resets the stored mood to `Calm`.
+Mood is persisted in `PetEntity.mood`. `DragonMoodEngine.refreshMood()` is called on app open, habit completion, and streak changes.
 
-### Mood Rendering
-`AnimatedPet.kt` applies mood to the dragon rendering system without changing evolution logic:
+## Known gaps
 
-- `PetAnimations.applyMoodModifier()` adjusts idle scale, vertical motion, rotation, and bounce amplitude.
-- `PetAnimations.moodDurationMultiplier()` adjusts idle animation speed.
-- `PetAnimations.moodIntensity()` applies a subtle alpha/brightness-style intensity modifier to the pet image.
-- Home and Pet screens display the current mood label from `DragonMood.from(pet.mood).displayName`.
-
-## Configuration
-
-Evolution stage thresholds are now centralized in `ExpConfig`:
-- `ExpConfig.EVOLUTION_THRESHOLDS` - XP thresholds for each stage
-- `ExpConfig.EVOLUTION_STAGE_NAMES` - Display names for each stage
-- `ExpConfig.calculateEvolutionStageFromXp()` - Single calculation function
-- `ExpConfig.evolutionStageName()` - Single name lookup function
-- `ExpConfig.xpThresholdForStage()` - Single XP threshold lookup function used by evolution teasing UI and timeline milestone events
-
-Visual asset resolution and animation behavior are handled by:
-- `AssetResolver.kt` (phase/default/aura/outfit/background asset discovery and fallback paths)
-- `AnimatedPet.kt` (background-first rendering, dragon base rendering, outfit overlays, stage-specific idle animations, and shared phase transitions)
-- `AssetPainter.kt` (runtime bitmap decoding for packaged drawable-subfolder assets)
-- `RewardOverlay.kt` (evolution and chest asset rendering)
-- `PetTransitionPrefs.kt` (SharedPreferences keys that prevent completed phase transitions from replaying)
-- `RewardScreen.kt` (reward-overlay phase transition screen)
-- `RewardManager.kt` and `RewardOverlayHost.kt` (current pet state passed into reward screens)
-
-## Data Model
-
-**PetEntity** (app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt):
-- `evolutionStage: Int` - current evolution stage (0-4)
-- `mood: String` - current dragon mood (`Happy`, `Calm`, `Excited`, `Proud`, or `Lonely`)
-- Comments indicate mapping: 0: Egg, 1: Hatchling, 2: Young Dragon, 3: Adult Dragon, 4: Ancient Dragon
-
-## Source Files
-
-- app/src/main/java/com/example/mobile/data/local/entities/PetEntity.kt
-- app/src/main/java/com/example/mobile/data/repository/HabitCompletionRepositoryImpl.kt
-- app/src/main/java/com/example/mobile/presentation/viewmodel/HabitDetailViewModel.kt
-- app/src/main/java/com/example/mobile/presentation/viewmodel/HabitsViewModel.kt
-- app/src/main/java/com/example/mobile/presentation/ui/components/AnimatedPet.kt
-- app/src/main/java/com/example/mobile/presentation/ui/animations/PetAnimations.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt
-- app/src/main/java/com/example/mobile/presentation/ui/reward/RewardOverlayHost.kt
-- app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt
-- app/src/main/java/com/example/mobile/util/PetTransitionPrefs.kt
-- app/src/main/java/com/example/mobile/domain/ExpConfig.kt (centralized configuration)
-- app/src/main/java/com/example/mobile/domain/ActivityTimelineEngine.kt
-- app/src/main/java/com/example/mobile/domain/GameEventFactory.kt
-- app/src/main/java/com/example/mobile/domain/DragonMood.kt
-- app/src/main/java/com/example/mobile/domain/DragonMoodEngine.kt
-- app/src/main/java/com/example/mobile/domain/StreakEngine.kt
-- app/src/main/java/com/example/mobile/MainActivity.kt
-- app/src/main/java/com/example/mobile/data/local/dao/PetDao.kt
-- app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt
-- app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt
-
-## Known Gaps (UPDATED)
-
-1. ✅ **FIXED: Inconsistent Evolution Calculation** - Now single source in `ExpConfig.calculateEvolutionStageFromXp()`
-2. **Valueless Evolution**: DragonEvolutionReward provides 0 coins, making evolution stages progression-reward neutral.
-3. ✅ **FIXED: Stage Names Hardcoded in UI** - Stage names now use `ExpConfig.evolutionStageName()`, and `EvolutionTeaser` uses the same centralized stage names.
-4. **No Evolution Effects**: Beyond visual changes and journal entries, evolution stages don't affect gameplay mechanics (no stat boosts, special abilities, etc.).
-5. ✅ **FIXED: Evolution Teasing Visibility** - Home, pet, and progress header surfaces now show the next evolution stage and XP needed to reach it.
-6. ✅ **FIXED: Evolution Milestone Timeline Visibility** - XP reward paths now create activity timeline events when a locked evolution stage reaches 80% progress.
-7. ✅ **FIXED: Stage-specific customization rendering**: Equipped auras and outfits now resolve from the current phase folder, with missing assets falling back or skipping instead of using global placeholders.
-8. **No Evolution Requirements**: No additional requirements beyond XP (e.g., specific habits, time periods, or items) needed to evolve.
-
-## Progression Timeline
-
-| Stage | XP Required | Est. Checkbox Habits | Est. Days (3/day) |
-|-------|-------------|---------------------|-------------------|
-| Egg (0) | 0 | 0 | 0 |
-| Hatchling (1) | 500 | 5 | ~1.5 |
-| Young Dragon (2) | 1,500 | 15 | ~5 |
-| Adult Dragon (3) | 3,000 | 30 | ~10 |
-| Ancient Dragon (4) | 6,000 | 60 | ~20 |
-
-*Assumes 100 XP per checkbox habit completion*
-
-## Progression Timing Validation
-
-The evolution timeline is intentionally tied to the same EXP values used for level progression:
-
-| Stage | XP Threshold | Est. Checkbox Habits | Est. Days (3/day) | Balance Intent |
-|-------|-------------|---------------------|-------------------|----------------|
-| Egg (0) | 0 | 0 | 0 | Immediate onboarding form |
-| Hatchling (1) | 500 | 5 | ~1.7 | First visible evolution early enough to feel rewarding |
-| Young Dragon (2) | 1,500 | 15 | ~5 | Second evolution within the first week |
-| Adult Dragon (3) | 3,000 | 30 | ~10 | Mid-game milestone for consistent players |
-| Ancient Dragon (4) | 6,000 | 60 | ~20 | Long-term goal that remains reachable |
-
-Timer habits accelerate this timeline, while chest EXP can add small additional progression bumps. Evolution itself remains reward-neutral; it does not generate coins or change economy balance.
+1. Evolution rewards are progression-neutral and do not grant coins or XP.
+2. Evolution stages do not change gameplay mechanics beyond visuals, mood, and reward-overlay presentation.
+3. No additional evolution requirements exist beyond XP.
+4. Some late achievement-only customization rewards may become no-ops if the item was already unlocked earlier.

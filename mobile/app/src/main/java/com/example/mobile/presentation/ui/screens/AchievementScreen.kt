@@ -1,6 +1,7 @@
 package com.example.mobile.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,7 +60,8 @@ import com.example.mobile.presentation.viewmodel.AchievementViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 fun AchievementScreen(
     achievementViewModel: AchievementViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    onNavigateToRewardsLocked: () -> Unit
 ) {
     val achievements by achievementViewModel.achievements.collectAsState()
     val isLoading by achievementViewModel.isLoading.collectAsState()
@@ -73,7 +75,8 @@ fun AchievementScreen(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
-                streakCompletedToday = progressUiState.globalStreakCompletedToday
+                streakCompletedToday = progressUiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked
             )
         }
     ) { padding ->
@@ -139,7 +142,8 @@ private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
     stageName: String,
-    streakCompletedToday: Boolean
+    streakCompletedToday: Boolean,
+    onCoinsClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -197,6 +201,7 @@ private fun GamifiedFixedHeader(
             }
 
             Row(
+                modifier = Modifier.clickable(onClick = onCoinsClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {

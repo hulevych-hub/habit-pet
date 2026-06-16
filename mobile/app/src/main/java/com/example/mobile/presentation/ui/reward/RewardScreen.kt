@@ -122,10 +122,14 @@ fun RewardScreen(
                     onConfirm = onRewardCompleted
                 )
 
-                is RewardUiEvent.DailyGoalReward -> DailyGoalRewardContent(
-                    goalXp = reward.goalXp,
-                    bonusCoins = reward.bonusCoins,
-                    bonusExp = reward.bonusExp,
+                is RewardUiEvent.ExpReward -> ExpRewardContent(
+                    amount = reward.amount,
+                    reinforcementMessage = reinforcementMessage,
+                    emphasisTier = emphasisTier
+                )
+
+                is RewardUiEvent.CustomizationReward -> CustomizationRewardContent(
+                    equipableId = reward.equipableId,
                     reinforcementMessage = reinforcementMessage,
                     emphasisTier = emphasisTier
                 )
@@ -204,19 +208,16 @@ private fun LevelUpRewardContent(
     }
 }
 
-// Daily Goal Reward Screen
 @Composable
-private fun DailyGoalRewardContent(
-    goalXp: Long,
-    bonusCoins: Int,
-    bonusExp: Long,
+private fun ExpRewardContent(
+    amount: Long,
     reinforcementMessage: String,
     emphasisTier: RewardEmphasisTier
 ) {
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "DAILY GOAL COMPLETE!",
+                text = "XP BOOST!",
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White
             )
@@ -226,11 +227,58 @@ private fun DailyGoalRewardContent(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .background(Color(0xFFFFB74D), CircleShape),
+                    .background(Color(0xFF60A5FA), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(72.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "+$amount XP",
+                color = Color(0xFF34D399),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ReinforcementMessage(reinforcementMessage)
+        }
+    }
+}
+
+@Composable
+private fun CustomizationRewardContent(
+    equipableId: String,
+    reinforcementMessage: String,
+    emphasisTier: RewardEmphasisTier
+) {
+    val name = EquipableConfig.definition(equipableId)?.name ?: "Customization"
+
+    RewardEmphasisFrame(tier = emphasisTier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "NEW LOOK!",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .background(Color(0xFFC084FC), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "$goalXp XP",
+                    text = name.take(2).uppercase(),
                     color = Color.White,
                     style = MaterialTheme.typography.headlineMedium
                 )
@@ -239,7 +287,7 @@ private fun DailyGoalRewardContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "+$bonusCoins coins  +$bonusExp XP",
+                text = name,
                 color = Color(0xFF34D399),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -516,7 +564,7 @@ private fun buildLegacyRewardText(
     }
 
     if (!chestType.isNullOrBlank()) {
-        val label = chestType.substring(0, 1).uppercase() + chestType.substring(1)
+        val label = chestType.lowercase().replaceFirstChar { it.uppercase() }
         rewardText.add("$label chest")
     }
 
@@ -573,7 +621,8 @@ private fun RewardUiEvent.emphasisTier(): RewardEmphasisTier = when (this) {
     is RewardUiEvent.LevelUpReward -> RewardEmphasisTier.RARE
     is RewardUiEvent.DragonEvolutionReward -> RewardEmphasisTier.EPIC
     is RewardUiEvent.StreakReward -> if (streak >= 30) RewardEmphasisTier.EPIC else RewardEmphasisTier.RARE
-    is RewardUiEvent.DailyGoalReward -> RewardEmphasisTier.RARE
+    is RewardUiEvent.ExpReward -> RewardEmphasisTier.RARE
+    is RewardUiEvent.CustomizationReward -> RewardEmphasisTier.RARE
     is RewardUiEvent.ChestReward -> chestEmphasisTier(
         rewardType = rewardType,
         amount = amount,

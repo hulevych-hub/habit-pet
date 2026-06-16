@@ -2,6 +2,7 @@ package com.example.mobile.presentation.ui.screens
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,7 +56,8 @@ import com.example.mobile.util.NotificationPrefs
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationSettingsScreen(
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    onNavigateToRewardsLocked: () -> Unit
 ) {
     val context = LocalContext.current
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
@@ -73,7 +75,8 @@ fun NotificationSettingsScreen(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
-                streakCompletedToday = progressUiState.globalStreakCompletedToday
+                streakCompletedToday = progressUiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked
             )
         }
     ) { padding ->
@@ -203,7 +206,8 @@ private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
     stageName: String,
-    streakCompletedToday: Boolean
+    streakCompletedToday: Boolean,
+    onCoinsClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -261,6 +265,7 @@ private fun GamifiedFixedHeader(
             }
 
             Row(
+                modifier = Modifier.clickable(onClick = onCoinsClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {

@@ -2,9 +2,11 @@ package com.example.mobile.domain
 
 import android.content.Context
 import android.util.Log
+import com.example.mobile.domain.repository.ChallengeRepository
 import com.example.mobile.domain.repository.GameEventRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.domain.ChallengeRewardDefinition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.reward.RewardEventBus
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,6 +24,7 @@ class ActivityTimelineEngine @Inject constructor(
     private val rewardEventBus: RewardEventBus,
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
+    private val challengeRepository: ChallengeRepository,
     @ApplicationContext private val context: Context
 ) {
 
@@ -130,18 +133,6 @@ class ActivityTimelineEngine @Inject constructor(
         }
     }
 
-    fun logDailyGoalCompleted(goalXp: Long, bonusCoins: Int, bonusExp: Long) {
-        scope.launch {
-            gameEventRepository.logEvent(
-                GameEventFactory.dailyGoalCompleted(
-                    goalXp = goalXp,
-                    bonusCoins = bonusCoins,
-                    bonusExp = bonusExp
-                )
-            )
-        }
-    }
-
     fun logSurpriseReward(
         coins: Int,
         xp: Long,
@@ -160,12 +151,24 @@ class ActivityTimelineEngine @Inject constructor(
         }
     }
 
+    fun logChallengeCompleted(challengeName: String, rewards: List<ChallengeRewardDefinition>) {
+        scope.launch {
+            gameEventRepository.logEvent(
+                GameEventFactory.challengeCompleted(
+                    challengeName = challengeName,
+                    rewardSummary = rewards.map { it.rewardLabel() }
+                )
+            )
+        }
+    }
+
     private fun observeRewardEvents() {
         scope.launch {
             rewardEventBus.rewardEvents.collect { event ->
                 if (event is RewardUiEvent.ChestReward) {
                     val coins = (event.amount as? Int) ?: 0
                     val chestType = event.rewardType.split('_').lastOrNull() ?: "normal"
+                    challengeRepository.recordChestOpened()
                     gameEventRepository.logEvent(
                         GameEventFactory.chestOpened(
                             rewardType = event.rewardType,

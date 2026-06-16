@@ -1,6 +1,7 @@
 package com.example.mobile.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +72,8 @@ import java.util.Calendar
 @Composable
 fun ActivityTimelineScreen(
     activityTimelineViewModel: ActivityTimelineViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    onNavigateToRewardsLocked: () -> Unit
 ) {
     val events by activityTimelineViewModel.events.collectAsState()
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
@@ -96,7 +98,8 @@ fun ActivityTimelineScreen(
                 streak = progressUiState.globalStreak,
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
-                streakCompletedToday = progressUiState.globalStreakCompletedToday
+                streakCompletedToday = progressUiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked
             )
         }
     ) { padding ->
@@ -176,7 +179,8 @@ private fun GamifiedFixedHeader(
     streak: Int,
     coins: Int,
     stageName: String,
-    streakCompletedToday: Boolean
+    streakCompletedToday: Boolean,
+    onCoinsClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -234,6 +238,7 @@ private fun GamifiedFixedHeader(
             }
 
             Row(
+                modifier = Modifier.clickable(onClick = onCoinsClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
@@ -316,7 +321,7 @@ private fun ActivityTimelineItem(
     val isMilestone = event.type == GameEventType.DRAGON_EVOLUTION.name ||
             event.type == GameEventType.LEVEL_UP.name ||
             event.type == GameEventType.STREAK_MILESTONE.name ||
-            event.type == GameEventType.DAILY_GOAL_COMPLETED.name ||
+            event.type == GameEventType.CHALLENGE_COMPLETED.name ||
             event.type == GameEventType.SURPRISE_REWARD.name ||
             event.type == GameEventType.COMBO_MILESTONE.name
 
@@ -536,7 +541,7 @@ private fun rewardPreview(event: GameEventEntity): String = when (event.type) {
     GameEventType.DRAGON_EVOLUTION.name -> "Evolution Moment"
     GameEventType.CHEST_OPENED.name -> "Treasure Unlock"
     GameEventType.STREAK_MILESTONE.name -> "Streak Reward"
-    GameEventType.DAILY_GOAL_COMPLETED.name -> "Daily Bonus"
+    GameEventType.CHALLENGE_COMPLETED.name -> "Challenge Reward"
     GameEventType.SURPRISE_REWARD.name -> "Surprise Buff"
     GameEventType.COMBO_MILESTONE.name -> "Momentum Buff"
     GameEventType.FIRST_DAILY_LOGIN.name -> "Daily Welcome"
@@ -550,7 +555,7 @@ private fun iconForEvent(type: String) = when (type) {
     GameEventType.DRAGON_EVOLUTION.name -> Icons.Default.Pets
     GameEventType.CHEST_OPENED.name -> Icons.Default.CardGiftcard
     GameEventType.STREAK_MILESTONE.name -> Icons.Default.FavoriteBorder
-    GameEventType.DAILY_GOAL_COMPLETED.name -> Icons.Default.CheckCircle
+    GameEventType.CHALLENGE_COMPLETED.name -> Icons.Default.Star
     GameEventType.SURPRISE_REWARD.name -> Icons.Default.Star
     GameEventType.COMBO_MILESTONE.name -> Icons.Default.Star
     GameEventType.FIRST_DAILY_LOGIN.name -> Icons.Default.Book

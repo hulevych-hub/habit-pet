@@ -15,11 +15,8 @@ sealed class RewardUiEvent {
         val coins: Int,
         val rewardSummary: List<String> = emptyList()
     ) : RewardUiEvent()
-    data class DailyGoalReward(
-        val goalXp: Long,
-        val bonusCoins: Int,
-        val bonusExp: Long
-    ) : RewardUiEvent()
+    data class ExpReward(val amount: Long) : RewardUiEvent()
+    data class CustomizationReward(val equipableId: String) : RewardUiEvent()
     data class AchievementReward(
         val achievementName: String,
         val rewards: List<ConfigAchievementReward> = emptyList(),

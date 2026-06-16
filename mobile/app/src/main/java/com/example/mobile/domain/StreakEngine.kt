@@ -2,6 +2,7 @@ package com.example.mobile.domain
 
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ChestRewardFactory
+import com.example.mobile.domain.repository.ChallengeRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
@@ -17,7 +18,8 @@ class StreakEngine(
     private val rewardQueue: RewardQueue,
     private val inventoryItemRepository: InventoryItemRepository,
     private val activityTimelineEngine: ActivityTimelineEngine,
-    private val dragonMoodEngine: DragonMoodEngine
+    private val dragonMoodEngine: DragonMoodEngine,
+    private val challengeRepository: ChallengeRepository
 ) {
 
     companion object {
@@ -60,6 +62,7 @@ class StreakEngine(
 
             val stats = statisticsRepository.getStatistics().firstOrNull()
             val currentStreak = stats?.currentStreak ?: 0
+            challengeRepository.recordStreak(currentStreak)
             val lastStreakAwardedAt = stats?.lastStreakAwardedAt ?: 0
             val milestone = STREAK_MILESTONES
                 .filter { currentStreak >= it && it > lastStreakAwardedAt }

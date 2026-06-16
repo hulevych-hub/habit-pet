@@ -7,7 +7,7 @@ enum class GameEventType(val displayName: String) {
     DRAGON_EVOLUTION("Dragon Evolution"),
     CHEST_OPENED("Chest Opened"),
     STREAK_MILESTONE("Streak Milestone"),
-    DAILY_GOAL_COMPLETED("Daily Goal Complete"),
+    CHALLENGE_COMPLETED("Challenge Complete"),
     FIRST_DAILY_LOGIN("Daily Welcome"),
     SURPRISE_REWARD("Surprise Reward"),
     COMBO_MILESTONE("Combo Milestone")

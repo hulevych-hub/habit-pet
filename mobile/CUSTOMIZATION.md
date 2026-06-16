@@ -83,7 +83,7 @@ Backgrounds are loaded by file name from `backgrounds/`. Outfits and auras use t
 
 ## Collection Screen
 
-The bottom navigation tab is named `Collection`. It displays:
+The Rewards collection screen is opened from the shared header coin amount for the locked tab and from the Pet screen Attribute Card edit icon for the owned tab. It displays:
 
 - Owned and locked tabs.
 - Rarity filter.
@@ -100,15 +100,15 @@ Chest rewards use `ChestRewardConfig.customizationRarity` and `customizationDrop
 
 The database initializer synchronizes `EquipableConfig` entries into `inventory_items` on startup. Existing player-owned, purchased, and equipped states are preserved; catalog metadata such as name, type, asset path, price, rarity, unlock source, and `isUnlocked` is refreshed from config. New config entries are inserted automatically.
 
-Current equipables are defined in `EquipableConfig`:
+Current equipables are defined in `EquipableConfig`. The catalog currently has 16 unique equipables:
 
 - Outfits: `wizard_outfit`, `adventure_outfit`, `knight_outfit`, `ninja_outfit`, `royal_outfit`.
 - Auras: `sakura_aura`, `fire_aura`, `icy_aura`.
-- Backgrounds: `background_forest`, `background_beach`, `background_mountains`, `background_night_sky`.
+- Backgrounds: `background_forest`, `background_majestic`, `background_volcanic`, `background_sakura`, `background_icelandic`, `background_beach`, `background_mountains`, `background_night_sky`.
 
 Unlock source examples:
-- Shop: `wizard_outfit`.
-- Chest: `knight_outfit`, `fire_aura`, `background_mountains`, `ninja_outfit`, `background_night_sky`.
+- Shop: `wizard_outfit`, `background_majestic`, `background_volcanic`, `background_sakura`, `background_icelandic`.
+- Chest: `knight_outfit`, `ninja_outfit`, `fire_aura`, `background_mountains`, `background_night_sky`.
 - Achievement: `royal_outfit`, `sakura_aura`, `icy_aura`, `background_forest`, `background_beach`, `adventure_outfit`.
 
 A `phase = null` value means the item is not phase-specific and can be equipped at any dragon phase. Backgrounds currently use `phase = null`. Shop-sourced equipables are immediately purchasable only when `price` is not `null`. Chest-sourced and achievement-only equipables keep `price = null`, remain visible as locked catalog items, and are not purchasable with coins.

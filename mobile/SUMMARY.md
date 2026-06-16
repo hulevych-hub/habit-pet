@@ -9,8 +9,8 @@
 | CUSTOMIZATION.md | Fully documented        | Documents outfits, backgrounds, auras, ownership, rendering, assets, and reward integration |
 | ECONOMY.md       | Fully documented        | Documents coin sources, customization spending, economy flow, and balance validation |
 | DRAGON_PHASES.md | Fully documented        | Documents evolution stages, visual representation, animations, and progression timing validation |
-| DAILY_REWARDS.md | Not implemented         | No daily login bonus or calendar-based reward system exists |
-| QUESTS.md        | Not implemented         | No quest system exists beyond core habit tracking and achievements |
+| DAILY_REWARDS.md | Challenges documented | Documents the lightweight rotating challenge system, migration from daily goals, randomization, rewards, and persistence |
+| QUESTS.md        | Not implemented         | No quest system exists beyond core habit tracking, achievements, and rotating challenges |
 | STATISTICS.md    | Fully documented        | Documents all tracked statistics, their usage, and known gaps |
 | NOTIFICATIONS.md | Fully documented        | Documents reminder system (daily, streak, pet) and user preferences |
 | DATA_MODEL.md    | Fully documented        | Documents all Room entities, relationships, and data flow |
@@ -20,7 +20,7 @@
 ## Overall Statistics
 
 - **Files analyzed**: 14 documentation files created/updated
-- **Systems fully documented**: 12/14 (86%)
+- **Systems fully documented**: 13/14 (93%)
 - **Legacy documentation notes**: 1/14 (7%)
 - **Systems not implemented**: 2/14 (14%)
 - **Total source files reviewed**: 40+ Kotlin files across the codebase
@@ -28,14 +28,16 @@
   - Dual evolution stage calculation methods (HabitCompletionRepositoryImpl vs HabitDetailViewModel) - resolved by ExpConfig
   - Dual level calculation methods (multiple locations) - resolved by ExpConfig
   - Redundant statistics tracking (some fields unused)
+  - Daily goal system replaced by rotating challenges
   - Accessory system replaced by the customization system
-- **Missing systems identified**: Daily rewards, quests, defined endgame
+- **Missing systems identified**: Quests, defined endgame
 
 ## Systems by Implementation Status
 
 **Fully Documented Systems**:
 - EXP (Experience Points)
 - Chest Rewards
+- Challenges
 - Achievements
 - Customization
 - Economy
@@ -46,7 +48,6 @@
 - Events
 
 **Not Implemented Systems**:
-- Daily Rewards
 - Quests
 - Endgame (defined completion state)
 

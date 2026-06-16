@@ -146,7 +146,7 @@ object EquipableConfig {
             drawableName = SAKURA_AURA,
             rarity = Rarity.NORMAL,
             price = null,
-            unlockSource = UnlockSources.CHEST
+            unlockSource = UnlockSources.ACHIEVEMENT
         ),
         EquipableDefinition(
             id = FIRE_AURA,
@@ -180,7 +180,7 @@ object EquipableConfig {
         ),
         EquipableDefinition(
             id = BACKGROUND_MAJESTIC,
-            name = "Forest Background",
+            name = "Majestic Background",
             type = EquipableType.BACKGROUND,
             phase = null,
             drawableName = BACKGROUND_MAJESTIC,
@@ -200,7 +200,7 @@ object EquipableConfig {
         ),
         EquipableDefinition(
             id = BACKGROUND_SAKURA,
-            name = "Forest Background",
+            name = "Sakura Background",
             type = EquipableType.BACKGROUND,
             phase = null,
             drawableName = BACKGROUND_SAKURA,
@@ -209,18 +209,8 @@ object EquipableConfig {
             unlockSource = UnlockSources.SHOP
         ),
         EquipableDefinition(
-            id = BACKGROUND_VOLCANIC,
-            name = "Forest Background",
-            type = EquipableType.BACKGROUND,
-            phase = null,
-            drawableName = BACKGROUND_VOLCANIC,
-            rarity = Rarity.NORMAL,
-            price = EconomyConfig.customizationPrice(Rarity.NORMAL),
-            unlockSource = UnlockSources.SHOP
-        ),
-        EquipableDefinition(
             id = BACKGROUND_ICELANDIC,
-            name = "Forest Background",
+            name = "Icelandic Background",
             type = EquipableType.BACKGROUND,
             phase = null,
             drawableName = BACKGROUND_ICELANDIC,

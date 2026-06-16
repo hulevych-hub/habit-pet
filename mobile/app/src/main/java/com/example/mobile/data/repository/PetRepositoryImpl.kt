@@ -3,6 +3,7 @@ package com.example.mobile.data.repository
 import com.example.mobile.data.local.dao.PetDao
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.CustomizationTypes
+import com.example.mobile.domain.repository.ChallengeRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 class PetRepositoryImpl @Inject constructor(
     private val petDao: PetDao,
-    private val inventoryItemRepository: InventoryItemRepository
+    private val inventoryItemRepository: InventoryItemRepository,
+    private val challengeRepository: ChallengeRepository
 ) : PetRepository {
     override fun getPet(): Flow<PetEntity> =
         petDao.getPet().map { it ?: PetEntity(id = 0) }
@@ -48,6 +50,7 @@ class PetRepositoryImpl @Inject constructor(
             val updatedInventoryItem = inventoryItem.copy(isEquipped = true)
             inventoryItemRepository.updateItem(updatedInventoryItem)
             petDao.updatePet(updatedPet.copy(id = 1))
+            challengeRepository.recordCustomizationEquipped(itemType, itemId)
             1
         } catch (e: Exception) {
             -1

@@ -31,14 +31,15 @@ The timeline currently supports:
 - `STREAK_MILESTONE`
 - `FIRST_DAILY_LOGIN`
 - `SURPRISE_REWARD`
-- `DAILY_GOAL_COMPLETED`
+- `CHALLENGE_COMPLETED`
 - `COMBO_MILESTONE`
 
 New event types can be added to `GameEventType` and mapped in `GameEventFactory` without changing the table schema.
 
 ## Event Sources
 
-- `HabitDetailViewModel` and `HabitsViewModel` log `HABIT_COMPLETED`, `LEVEL_UP`, `DRAGON_EVOLUTION`, `SURPRISE_REWARD`, `DAILY_GOAL_COMPLETED`, and `COMBO_MILESTONE`.
+- `HabitDetailViewModel` and `HabitsViewModel` log `HABIT_COMPLETED`, `LEVEL_UP`, `DRAGON_EVOLUTION`, `SURPRISE_REWARD`, and `COMBO_MILESTONE`.
+- `ChallengeEngine` logs `CHALLENGE_COMPLETED` when a completed challenge is claimed.
 - `AchievementEngine` logs `ACHIEVEMENT_UNLOCKED` when an achievement transitions from locked to unlocked.
 - `StreakEngine` logs `STREAK_MILESTONE` when a streak chest milestone is awarded.
 - `RewardManager` emits collected chest rewards through `RewardEventBus`; `ActivityTimelineEngine` observes that bus and logs `CHEST_OPENED`.
@@ -61,11 +62,15 @@ New event types can be added to `GameEventType` and mapped in `GameEventFactory`
 - Yesterday
 - Earlier
 
-The timeline now renders as a central story path. Event cards alternate left and right around the path, with a colored node for each event. Event cards show an icon, title, time-ago label, description, reinforcement message, and a lightweight reward preview. Level-up, evolution, streak milestone, daily goal, surprise reward, and combo milestone events use larger milestone-style cards with stronger tinting. The `FIRST_DAILY_LOGIN` event appears as a "Welcome back" card in the timeline.
+The timeline now renders as a central story path. Event cards alternate left and right around the path, with a colored node for each event. Event cards show an icon, title, time-ago label, description, reinforcement message, and a lightweight reward preview. Level-up, evolution, streak milestone, challenge completion, surprise reward, and combo milestone events use larger milestone-style cards with stronger tinting. The `FIRST_DAILY_LOGIN` event appears as a "Welcome back" card in the timeline.
 
 ## Surprise Reward
 
 `HabitDetailViewModel` and `HabitsViewModel` log a `SURPRISE_REWARD` event when the surprise reward trigger succeeds after a successful habit completion. The event includes bonus coins, bonus XP, surprise chest rarity, and whether the surprise chest granted a customization item. The extra surprise chest is still logged as `CHEST_OPENED` when it is collected through the existing reward queue.
+
+## Challenge Completion
+
+`ChallengeEngine` logs a `CHALLENGE_COMPLETED` event when the player claims a completed challenge. The event includes the challenge title and reward summary, then the active challenge row is replaced by a new random challenge.
 
 ## First Daily Login
 
