@@ -215,7 +215,7 @@ fun HabitPetNavGraph(
                 }
                 composable(AppRoutes.STATISTICS) { StatisticsScreen() }
                 composable(AppRoutes.ACHIEVEMENTS) {
-                    AchievementScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })
+                    AchievementScreen()
                 }
                 composable(AppRoutes.ACTIVITY) {
                     ActivityTimelineScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })

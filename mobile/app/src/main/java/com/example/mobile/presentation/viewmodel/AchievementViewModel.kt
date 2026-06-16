@@ -136,6 +136,18 @@ class AchievementViewModel @Inject constructor(
         }
     }
 
+    fun claimAllAchievements() {
+        val claimableIds = _achievements.value
+            .filter { achievement ->
+                val definition = AchievementsConfig.achievementById(achievement.id)
+                val targetReached = definition?.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
+                achievement.isUnlocked && !achievement.isClaimed && targetReached
+            }
+            .map { it.id }
+
+        claimableIds.forEach { achievementId -> claimAchievement(achievementId) }
+    }
+
     fun progressFor(
         achievement: AchievementEntity,
         stats: StatisticsEntity,
