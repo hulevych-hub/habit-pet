@@ -41,7 +41,8 @@ private const val PET_SCALE_FRACTION = 0.86f
 fun AnimatedPet(
     pet: PetEntity,
     modifier: Modifier = Modifier,
-    showNameOverlay: Boolean = true
+    showNameOverlay: Boolean = true,
+    backgroundContentScale: ContentScale = ContentScale.Crop
 ) {
     val evolutionStage = pet.evolutionStage.takeIf { it in 0..4 } ?: 0
 
@@ -64,7 +65,7 @@ fun AnimatedPet(
                 painter = backgroundPainter,
                 contentDescription = "Pet background",
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = backgroundContentScale
             )
         }
 

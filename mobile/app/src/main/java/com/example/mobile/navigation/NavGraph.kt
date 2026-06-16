@@ -131,15 +131,20 @@ fun HabitPetNavGraph(
         val achievementViewModel: AchievementViewModel = hiltViewModel()
         val claimableAchievementCount by achievementViewModel.claimableAchievementCount.collectAsState()
         val bottomDestinations = BottomDestination.all(claimableAchievementCount)
-        val shouldShowBottomBar = bottomDestinations.any { currentRoute == it.route } ||
+        val isRewardsRoute = currentRoute == AppRoutes.REWARDS ||
             currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true
+        val selectedBottomRoute = when {
+            currentRoute?.startsWith("${AppRoutes.REWARDS}/${AppRoutes.REWARDS_OWNED}") == true -> BottomDestination.Pet.route
+            else -> currentRoute
+        }
+        val shouldShowBottomBar = bottomDestinations.any { currentRoute == it.route } || isRewardsRoute
 
         Scaffold(
             bottomBar = {
                 if (shouldShowBottomBar) {
                     HabitPetBottomBar(
                         destinations = bottomDestinations,
-                        currentRoute = currentRoute,
+                        currentRoute = selectedBottomRoute,
                         onNavigate = { destination ->
                             navigateToBottomDestination(navController, destination, microFeedbackManager)
                         }
