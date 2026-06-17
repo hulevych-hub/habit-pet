@@ -75,6 +75,7 @@ import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -128,7 +129,7 @@ fun PetScreen(
     val progressFraction = (currentLevelXp.toFloat() / xpRequiredForNextLevel.toFloat()).coerceIn(0f, 1f)
 
     Scaffold(
-        containerColor = PetPremiumColors.Background,
+        containerColor = AppTheme.current.background,
         topBar = {
             GamifiedFixedHeader(
                 streak = uiState.globalStreak,
@@ -154,7 +155,7 @@ fun PetScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(PetPremiumColors.Background)
+                    .background(AppTheme.current.background)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -207,7 +208,7 @@ private fun PetShowcase(
     Box(
         modifier = modifier
             .clip(showcaseShape)
-            .background(PetPremiumColors.ShowcaseBase),
+            .background(AppTheme.current.surface),
         contentAlignment = Alignment.Center
     ) {
         AnimatedPet(
@@ -226,8 +227,8 @@ private fun PetShowcase(
                     Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            PetPremiumColors.Background.copy(alpha = 0.72f),
-                            PetPremiumColors.Background
+                            AppTheme.current.background.copy(alpha = 0.72f),
+                            AppTheme.current.background
                         )
                     )
                 )
@@ -261,8 +262,8 @@ private fun PetShowcase(
 @Composable
 private fun MedallionConnectors(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
-        val gold = PetPremiumColors.Gold
-        val goldHighlight = PetPremiumColors.GoldLight
+        val gold = AppTheme.current.gold
+        val goldHighlight = AppTheme.current.goldDark
         val strokeWidth = 2.5.dp.toPx()
         val centerY = size.height / 2f
         val centerX = size.width / 2f
@@ -343,14 +344,14 @@ private fun PetMedallion(
             ) {
                 Text(
                     text = "Lv. $level",
-                    color = PetPremiumColors.GoldLight,
+                    color = AppTheme.current.goldDark,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.6.sp
                 )
                 Text(
                     text = name,
-                    color = Color.White,
+                    color = AppTheme.current.headerOnSurface,
                     fontSize = 23.sp,
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1,
@@ -373,8 +374,8 @@ private fun LevelBadge(
             .width(138.dp)
             .height(78.dp),
         shape = RoundedCornerShape(24.dp),
-        color = PetPremiumColors.Header,
-        border = BorderStroke(2.dp, PetPremiumColors.Gold),
+        color = AppTheme.current.headerSurface,
+        border = BorderStroke(2.dp, AppTheme.current.gold),
         shadowElevation = 14.dp
     ) {
         Column(
@@ -384,14 +385,14 @@ private fun LevelBadge(
         ) {
             Text(
                 text = "Lv. $level",
-                color = PetPremiumColors.Amber,
+                color = AppTheme.current.amber,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified
             )
             Text(
                 text = name,
-                color = Color.White,
+                color = AppTheme.current.headerOnSurface,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
@@ -410,8 +411,8 @@ private fun MoodPill(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(999.dp),
-        color = PetPremiumColors.MoodBackground,
-        border = BorderStroke(1.dp, PetPremiumColors.MoodBorder)
+        color = AppTheme.current.mintSurfaceActive,
+        border = BorderStroke(1.dp, AppTheme.current.success)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
@@ -421,12 +422,12 @@ private fun MoodPill(
             Icon(
                 imageVector = Icons.Default.FavoriteBorder,
                 contentDescription = null,
-                tint = PetPremiumColors.Green,
+                tint = AppTheme.current.mint,
                 modifier = Modifier.size(16.dp)
             )
             Text(
                 text = mood,
-                color = PetPremiumColors.Green,
+                color = AppTheme.current.mint,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -453,7 +454,7 @@ private fun PetDetailsPanel(
     ) {
         Text(
             text = "$currentLevelXp / $xpRequiredForNextLevel XP",
-            color = PetPremiumColors.Text,
+            color = AppTheme.current.ink,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
@@ -463,7 +464,7 @@ private fun PetDetailsPanel(
                 .fillMaxWidth()
                 .height(8.dp)
                 .clip(RoundedCornerShape(999.dp))
-                .background(PetPremiumColors.ProgressTrack)
+                .background(AppTheme.current.progressTrack)
         ) {
             Box(
                 modifier = Modifier
@@ -472,7 +473,7 @@ private fun PetDetailsPanel(
                     .clip(RoundedCornerShape(999.dp))
                     .background(
                         Brush.horizontalGradient(
-                            colors = listOf(PetPremiumColors.GoldDark, PetPremiumColors.GoldLight)
+                            colors = listOf(AppTheme.current.goldDark, AppTheme.current.goldDark)
                         )
                     )
             )
@@ -496,8 +497,8 @@ private fun PetBondButton(onClick: () -> Unit) {
             .fillMaxWidth()
             .height(48.dp)
             .clip(RoundedCornerShape(999.dp))
-            .background(PetPremiumColors.Card)
-            .border(1.5.dp, PetPremiumColors.Gold.copy(alpha = 0.62f), RoundedCornerShape(999.dp))
+            .background(AppTheme.current.card)
+            .border(1.5.dp, AppTheme.current.gold.copy(alpha = 0.62f), RoundedCornerShape(999.dp))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -508,12 +509,12 @@ private fun PetBondButton(onClick: () -> Unit) {
             Icon(
                 imageVector = Icons.Default.FavoriteBorder,
                 contentDescription = null,
-                tint = PetPremiumColors.Gold,
+                tint = AppTheme.current.gold,
                 modifier = Modifier.size(18.dp)
             )
             Text(
                 text = "Pet bond",
-                color = PetPremiumColors.Text,
+                color = AppTheme.current.ink,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -529,8 +530,8 @@ private fun AttributeCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
-        color = PetPremiumColors.Card,
-        border = BorderStroke(1.dp, PetPremiumColors.CardBorder)
+        color = AppTheme.current.card,
+        border = BorderStroke(1.dp, AppTheme.current.outline)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
@@ -543,7 +544,7 @@ private fun AttributeCard(
             ) {
                 Text(
                     text = "Attribute Card",
-                    color = PetPremiumColors.Text,
+                    color = AppTheme.current.ink,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center
@@ -558,7 +559,7 @@ private fun AttributeCard(
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit customizations",
-                        tint = PetPremiumColors.Gold,
+                        tint = AppTheme.current.gold,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -568,24 +569,24 @@ private fun AttributeCard(
                 icon = Icons.Default.Checkroom,
                 label = "Outfit",
                 value = customizationDisplayName(pet.equippedOutfit, CustomizationTypes.OUTFIT),
-                iconTint = PetPremiumColors.OutfitIcon,
-                valueColor = PetPremiumColors.Text
+                iconTint = AppTheme.current.blue,
+                valueColor = AppTheme.current.ink
             )
             AttributeRow(
                 icon = Icons.Default.Landscape,
                 label = "Scene",
                 value = customizationDisplayName(pet.equippedBackground, CustomizationTypes.BACKGROUND),
-                iconTint = PetPremiumColors.SceneIcon,
-                valueColor = PetPremiumColors.Text
+                iconTint = AppTheme.current.mint,
+                valueColor = AppTheme.current.ink
             )
             AttributeRow(
                 icon = Icons.Default.LocalFlorist,
                 label = "Aura",
                 value = customizationDisplayName(pet.equippedAura, CustomizationTypes.AURA),
                 secondaryText = if (!pet.equippedAura.isNullOrBlank()) "(Equipped)" else null,
-                iconTint = PetPremiumColors.AuraIcon,
-                valueColor = PetPremiumColors.Text,
-                secondaryColor = PetPremiumColors.Green
+                iconTint = AppTheme.current.purple,
+                valueColor = AppTheme.current.ink,
+                secondaryColor = AppTheme.current.mint
             )
         }
     }
@@ -599,7 +600,7 @@ private fun AttributeRow(
     iconTint: Color,
     valueColor: Color,
     secondaryText: String? = null,
-    secondaryColor: Color = PetPremiumColors.Muted
+    secondaryColor: Color = AppTheme.current.muted
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -626,7 +627,7 @@ private fun AttributeRow(
             }
             Text(
                 text = label,
-                color = PetPremiumColors.Muted,
+                color = AppTheme.current.muted,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -666,18 +667,18 @@ private fun LevelUpButton() {
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        PetPremiumColors.ButtonDark,
-                        PetPremiumColors.ButtonMid,
-                        PetPremiumColors.ButtonLight
+                        AppTheme.current.goldSoft,
+                        AppTheme.current.gold,
+                        AppTheme.current.goldDark
                     )
                 )
             )
-            .border(1.dp, PetPremiumColors.ButtonBorder, RoundedCornerShape(18.dp)),
+            .border(1.dp, AppTheme.current.goldDark, RoundedCornerShape(18.dp)),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "Level Up",
-            color = PetPremiumColors.ButtonText,
+            color = AppTheme.current.onSecondary,
             fontSize = 18.sp,
             fontWeight = FontWeight.ExtraBold
         )
@@ -709,10 +710,10 @@ private fun GamifiedFixedHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = PetPremiumColors.Header,
+        color = AppTheme.current.headerSurface,
         shadowElevation = 1.dp
     ) {
-        val streakTint = if (streakCompletedToday) PetPremiumColors.Amber else Color(0xFF7D7894)
+        val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
 
         Row(
             modifier = Modifier
@@ -734,7 +735,7 @@ private fun GamifiedFixedHeader(
                 )
                 Text(
                     text = "$streak d",
-                    color = Color.White,
+                    color = AppTheme.current.headerOnSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
@@ -742,7 +743,7 @@ private fun GamifiedFixedHeader(
 
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = PetPremiumColors.HeaderPill
+                color = AppTheme.current.surfaceVariant
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
@@ -752,12 +753,12 @@ private fun GamifiedFixedHeader(
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = PetPremiumColors.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(15.dp)
                     )
                     Text(
                         text = stageName,
-                        color = Color.White,
+                        color = AppTheme.current.headerOnSurface,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -771,11 +772,11 @@ private fun GamifiedFixedHeader(
             ) {
                 CoinIcon(
                     modifier = Modifier.size(20.dp),
-                    tint = PetPremiumColors.Amber
+                    tint = AppTheme.current.amber
                 )
                 Text(
                     text = "$coins",
-                    color = Color.White,
+                    color = AppTheme.current.headerOnSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
@@ -826,22 +827,22 @@ internal fun PetRenameDialog(
                     isError = nameError != null,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = PetPremiumColors.Violet,
-                        unfocusedBorderColor = PetPremiumColors.CardBorder,
-                        focusedLabelColor = PetPremiumColors.Violet,
-                        unfocusedLabelColor = PetPremiumColors.Muted
+                        focusedBorderColor = AppTheme.current.violet,
+                        unfocusedBorderColor = AppTheme.current.outline,
+                        focusedLabelColor = AppTheme.current.violet,
+                        unfocusedLabelColor = AppTheme.current.muted
                     )
                 )
                 helperText?.let {
-                    Text(text = it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = it, style = MaterialTheme.typography.bodySmall, color = AppTheme.current.muted)
                 }
                 nameError?.let {
-                    Text(text = it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    Text(text = it, color = AppTheme.current.danger, style = MaterialTheme.typography.bodySmall)
                 }
                 Text(
                     text = "${nameDraft.length}/$MAX_PET_NAME_LENGTH",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = AppTheme.current.muted,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.End
                 )
@@ -849,7 +850,7 @@ internal fun PetRenameDialog(
         },
         confirmButton = {
             Button(
-                colors = ButtonDefaults.buttonColors(containerColor = PetPremiumColors.Violet),
+                colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.violet),
                 onClick = {
                     val error = validatePetName(nameDraft)
                     if (error == null) {
@@ -865,38 +866,9 @@ internal fun PetRenameDialog(
         dismissButton = {
             if (allowDismiss) {
                 TextButton(onClick = onDismissRequest) {
-                    Text("Cancel", color = PetPremiumColors.Muted)
+                    Text("Cancel", color = AppTheme.current.muted)
                 }
             }
         }
     )
-}
-
-private object PetPremiumColors {
-    val Background = Color(0xFF0B1028)
-    val Header = Color(0xFF0F1735)
-    val HeaderPill = Color(0xFF1A2549)
-    val ShowcaseBase = Color(0xFF121A36)
-    val Card = Color(0xFF121A36)
-    val Medallion = Color(0xFF111A38)
-    val CardBorder = Color(0xFF2A355D)
-    val Text = Color(0xFFF6F0FF)
-    val Muted = Color(0xFFA9A4BD)
-    val Gold = Color(0xFFD6A84F)
-    val GoldLight = Color(0xFFFFD878)
-    val GoldDark = Color(0xFF9A6A23)
-    val ButtonDark = Color(0xFF9A6A23)
-    val ButtonMid = Color(0xFFD6A84F)
-    val ButtonLight = Color(0xFFFFE29A)
-    val ButtonBorder = Color(0xFFFFE29A)
-    val ButtonText = Color(0xFF2A1B05)
-    val Amber = Color(0xFFFFB84D)
-    val Violet = Color(0xFF8A76F9)
-    val ProgressTrack = Color(0xFF2A355D)
-    val Green = Color(0xFF72E69B)
-    val MoodBackground = Color(0xFF123A2A)
-    val MoodBorder = Color(0xFF2D6B4A)
-    val OutfitIcon = Color(0xFF7DD3FC)
-    val SceneIcon = Color(0xFF86EFAC)
-    val AuraIcon = Color(0xFFC084FC)
 }

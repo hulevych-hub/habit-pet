@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.mobile.ui.theme.AppTheme
 
 @Composable
 fun EmptyStateCard(
@@ -33,7 +34,7 @@ fun EmptyStateCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.28f)
+            containerColor = AppTheme.current.primaryContainer.copy(alpha = 0.28f)
         ),
         shape = RoundedCornerShape(24.dp)
     ) {
@@ -47,19 +48,19 @@ fun EmptyStateCard(
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = AppTheme.current.violet,
                 modifier = Modifier.size(32.dp)
             )
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = AppTheme.current.violet,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = AppTheme.current.muted,
                 textAlign = TextAlign.Center
             )
             if (hint != null) {
@@ -67,7 +68,7 @@ fun EmptyStateCard(
                 Text(
                     text = hint,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = AppTheme.current.amber,
                     textAlign = TextAlign.Center
                 )
             }
@@ -83,7 +84,7 @@ fun LoadingStateCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.28f)
+            containerColor = AppTheme.current.primaryContainer.copy(alpha = 0.28f)
         ),
         shape = RoundedCornerShape(24.dp)
     ) {
@@ -96,13 +97,13 @@ fun LoadingStateCard(
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
-                color = MaterialTheme.colorScheme.primary
+                color = AppTheme.current.violet
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = AppTheme.current.muted,
                 textAlign = TextAlign.Center
             )
         }
@@ -118,7 +119,7 @@ fun ErrorStateCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.28f)
+            containerColor = AppTheme.current.dangerSoft.copy(alpha = 0.28f)
         ),
         shape = RoundedCornerShape(24.dp)
     ) {
@@ -132,13 +133,13 @@ fun ErrorStateCard(
             Text(
                 text = "Something needs attention",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.error,
+                color = AppTheme.current.danger,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onErrorContainer,
+                color = AppTheme.current.danger,
                 textAlign = TextAlign.Center
             )
             if (onRetry != null) {

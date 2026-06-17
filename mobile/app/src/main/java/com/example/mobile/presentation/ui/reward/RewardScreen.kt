@@ -58,6 +58,7 @@ import com.example.mobile.util.ReinforcementMessageProvider
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
+import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 
 @Composable
@@ -80,9 +81,9 @@ fun RewardScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF0F172A),
-                        Color(0xFF1E293B),
-                        Color(0xFF334155)
+                        AppTheme.current.rewardBackdropStart,
+                        AppTheme.current.rewardBackdropCenter,
+                        AppTheme.current.rewardBackdropEnd
                     )
                 )
             )
@@ -178,7 +179,7 @@ private fun LevelUpRewardContent(
             Text(
                 text = "LEVEL UP!",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color.White
+                color = AppTheme.current.rewardText
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -186,12 +187,12 @@ private fun LevelUpRewardContent(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .background(Color(0xFF3B82F6), CircleShape),
+                    .background(AppTheme.current.blue, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = level.toString(),
-                    color = Color.White,
+                    color = AppTheme.current.rewardText,
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
@@ -200,7 +201,7 @@ private fun LevelUpRewardContent(
 
             Text(
                 text = "+$coinsEarned coins",
-                color = Color(0xFF34D399)
+                color = AppTheme.current.mint
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -219,7 +220,7 @@ private fun ExpRewardContent(
             Text(
                 text = "XP BOOST!",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color.White
+                color = AppTheme.current.rewardText
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -227,13 +228,13 @@ private fun ExpRewardContent(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .background(Color(0xFF60A5FA), CircleShape),
+                    .background(AppTheme.current.blue, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = AppTheme.current.rewardText,
                     modifier = Modifier.size(72.dp)
                 )
             }
@@ -242,7 +243,7 @@ private fun ExpRewardContent(
 
             Text(
                 text = "+$amount XP",
-                color = Color(0xFF34D399),
+                color = AppTheme.current.mint,
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -266,7 +267,7 @@ private fun CustomizationRewardContent(
             Text(
                 text = "NEW LOOK!",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color.White
+                color = AppTheme.current.rewardText
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -274,12 +275,12 @@ private fun CustomizationRewardContent(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .background(Color(0xFFC084FC), CircleShape),
+                    .background(AppTheme.current.purple, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = name.take(2).uppercase(),
-                    color = Color.White,
+                    color = AppTheme.current.rewardText,
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
@@ -288,7 +289,7 @@ private fun CustomizationRewardContent(
 
             Text(
                 text = name,
-                color = Color(0xFF34D399),
+                color = AppTheme.current.mint,
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -361,7 +362,7 @@ private fun ChestRewardContent(
 
                 Text(
                     text = rewardType,
-                    color = Color.White.copy(alpha = 0.7f)
+                    color = AppTheme.current.rewardText.copy(alpha = 0.7f)
                 )
             }
 
@@ -423,7 +424,7 @@ private fun StreakRewardContent(
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Streak celebration",
-                tint = Color(0xFFFF4D6D),
+                tint = AppTheme.current.danger,
                 modifier = Modifier
                     .size((96 * mainScale.value * emphasisTier.rewardScale).dp)
                     .offset(y = (mainFloat.value * emphasisTier.rewardScale).dp)
@@ -434,13 +435,13 @@ private fun StreakRewardContent(
             Text(
                 text = "GLOBAL STREAK!",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color(0xFFFFD166)
+                color = AppTheme.current.gold
             )
 
             Text(
                 text = "$streak DAY STREAK",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color.White
+                color = AppTheme.current.rewardText
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -448,7 +449,7 @@ private fun StreakRewardContent(
             displayedSummary.forEach { rewardLine ->
                 Text(
                     text = rewardLine,
-                    color = Color(0xFF34D399),
+                    color = AppTheme.current.mint,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -491,7 +492,7 @@ private fun HeartOrbit(
         Icon(
             imageVector = Icons.Default.Favorite,
             contentDescription = null,
-            tint = Color(0xFFFF4D6D).copy(alpha = alpha.value),
+            tint = AppTheme.current.danger.copy(alpha = alpha.value),
             modifier = Modifier
                 .offset(x = x, y = y)
                 .size((30 * scale.value).dp)
@@ -530,12 +531,12 @@ private fun AchievementRewardContent(
 
             Text(
                 text = "ACHIEVEMENT UNLOCKED",
-                color = Color.White
+                color = AppTheme.current.rewardText
             )
 
             Text(
                 text = achievementName,
-                color = Color(0xFF818CF8),
+                color = AppTheme.current.blue,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -591,25 +592,25 @@ private enum class RewardEmphasisTier(
     val emphasisDurationMillis: Long
 ) {
     SMALL(
-        rewardColor = Color(0xFF34D399),
-        chestTint = Color(0xFFFFD166),
-        glowColor = Color(0xFFFFD166),
+        rewardColor = AppTheme.current.mint,
+        chestTint = AppTheme.current.gold,
+        glowColor = AppTheme.current.gold,
         rewardScale = 1.0f,
         chestSizeMultiplier = 1.0f,
         emphasisDurationMillis = 650L
     ),
     RARE(
-        rewardColor = Color(0xFF60A5FA),
-        chestTint = Color(0xFF60A5FA),
-        glowColor = Color(0xFF60A5FA),
+        rewardColor = AppTheme.current.blue,
+        chestTint = AppTheme.current.blue,
+        glowColor = AppTheme.current.blue,
         rewardScale = 1.06f,
         chestSizeMultiplier = 1.08f,
         emphasisDurationMillis = 950L
     ),
     EPIC(
-        rewardColor = Color(0xFFC084FC),
-        chestTint = Color(0xFFC084FC),
-        glowColor = Color(0xFFC084FC),
+        rewardColor = AppTheme.current.purple,
+        chestTint = AppTheme.current.purple,
+        glowColor = AppTheme.current.purple,
         rewardScale = 1.12f,
         chestSizeMultiplier = 1.16f,
         emphasisDurationMillis = 1300L
@@ -723,7 +724,7 @@ private fun ReinforcementMessage(message: String) {
 
     Text(
         text = message,
-        color = Color.White.copy(alpha = 0.88f),
+        color = AppTheme.current.rewardText.copy(alpha = 0.88f),
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center
     )
@@ -732,7 +733,7 @@ private fun ReinforcementMessage(message: String) {
 
     Text(
         text = "Tap to continue",
-        color = Color.White.copy(alpha = 0.7f),
+        color = AppTheme.current.rewardText.copy(alpha = 0.7f),
         style = MaterialTheme.typography.labelMedium
     )
 }
@@ -750,7 +751,7 @@ private fun CoinRewardContent(
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
-                tint = Color(0xFFFFD700),
+                tint = AppTheme.current.gold,
                 modifier = Modifier.size((64 * emphasisTier.rewardScale).dp)
             )
 
@@ -759,12 +760,12 @@ private fun CoinRewardContent(
             Text(
                 text = "+$amount",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color(0xFF34D399)
+                color = AppTheme.current.mint
             )
 
             Text(
                 text = "Coins earned",
-                color = Color.White.copy(alpha = 0.8f)
+                color = AppTheme.current.rewardText.copy(alpha = 0.8f)
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -809,7 +810,7 @@ private fun DragonEvolutionRewardContent(
             Text(
                 text = if (isTransitionComplete) "Evolution Complete!" else "Watch your dragon evolve",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.White
+                color = AppTheme.current.rewardText
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -817,7 +818,7 @@ private fun DragonEvolutionRewardContent(
             if (!isTransitionComplete) {
                 Text(
                     text = "Tap after the transformation to continue",
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = AppTheme.current.rewardText.copy(alpha = 0.7f),
                     fontSize = 16.sp
                 )
             }

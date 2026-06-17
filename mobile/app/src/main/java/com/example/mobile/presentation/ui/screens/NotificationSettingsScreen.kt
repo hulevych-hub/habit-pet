@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -51,6 +52,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.AppThemeOption
+import com.example.mobile.ui.theme.AppThemePrefs
 import com.example.mobile.util.NotificationPrefs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,9 +71,10 @@ fun NotificationSettingsScreen(
     var isDailyEnabled by remember { mutableStateOf(NotificationPrefs.isDailyReminderEnabled(context)) }
     var isStreakEnabled by remember { mutableStateOf(NotificationPrefs.isStreakReminderEnabled(context)) }
     var isPetEnabled by remember { mutableStateOf(NotificationPrefs.isPetReminderEnabled(context)) }
+    var selectedTheme by remember { mutableStateOf(AppThemePrefs.currentTheme()) }
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC),
+        containerColor = AppTheme.current.background,
         topBar = {
             GamifiedFixedHeader(
                 streak = progressUiState.globalStreak,
@@ -101,6 +106,16 @@ fun NotificationSettingsScreen(
             ) {
             item {
                 SettingsHero()
+            }
+
+            item {
+                ThemeSelectionSection(
+                    selectedTheme = selectedTheme,
+                    onThemeSelected = { option ->
+                        AppThemePrefs.setTheme(context, option)
+                        selectedTheme = option
+                    }
+                )
             }
 
             item {
@@ -172,13 +187,68 @@ fun NotificationSettingsScreen(
 }
 
 @Composable
+private fun ThemeSelectionSection(
+    selectedTheme: AppThemeOption,
+    onThemeSelected: (AppThemeOption) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
+        shape = RoundedCornerShape(20.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "App Color Palette",
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                color = AppTheme.current.ink
+            )
+
+            AppThemeOption.values().forEach { option ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onThemeSelected(option) }
+                        .padding(vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    RadioButton(
+                        selected = selectedTheme == option,
+                        onClick = { onThemeSelected(option) }
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            text = option.label,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = AppTheme.current.ink
+                        )
+                        Text(
+                            text = option.description,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = AppTheme.current.muted
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun CopyrightFooter() {
     Text(
         text = "Copyright © 2026 Hulevych Enterprises. All rights to cuddle Vanessa Baron reserved.",
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        color = Color(0xFF7A7786),
+        color = AppTheme.current.muted,
         fontSize = 10.sp,
         lineHeight = 12.sp,
         maxLines = 1,
@@ -211,10 +281,10 @@ private fun GamifiedFixedHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color(0xFFFFFFFF),
+        color = AppTheme.current.headerSurface,
         shadowElevation = 1.dp
     ) {
-        val streakTint = if (streakCompletedToday) ColorPaletteSettings.Flame else Color(0xFFA9A3B8)
+        val streakTint = if (streakCompletedToday) AppTheme.current.danger else AppTheme.current.headerStreakInactive
 
         Row(
             modifier = Modifier
@@ -237,13 +307,13 @@ private fun GamifiedFixedHeader(
                 Text(
                     text = "$streak d",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteSettings.Ink
+                    color = AppTheme.current.ink
                 )
             }
 
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = ColorPaletteSettings.Violet.copy(alpha = 0.1f)
+                color = AppTheme.current.violet.copy(alpha = 0.1f)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
@@ -253,13 +323,13 @@ private fun GamifiedFixedHeader(
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = ColorPaletteSettings.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = stageName,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteSettings.Violet
+                        color = AppTheme.current.violet
                     )
                 }
             }
@@ -271,12 +341,12 @@ private fun GamifiedFixedHeader(
             ) {
                 CoinIcon(
                     modifier = Modifier.size(22.dp),
-                    tint = ColorPaletteSettings.Amber
+                    tint = AppTheme.current.amber
                 )
                 Text(
                     text = "$coins",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteSettings.Ink
+                    color = AppTheme.current.ink
                 )
             }
         }
@@ -287,7 +357,7 @@ private fun GamifiedFixedHeader(
 private fun SettingsHero() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteSettings.Ink),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary),
         shape = RoundedCornerShape(24.dp)
     ) {
         Box(
@@ -295,7 +365,7 @@ private fun SettingsHero() {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(ColorPaletteSettings.Ink, Color(0xFF231D3D))
+                        colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
                 .padding(20.dp)
@@ -312,25 +382,25 @@ private fun SettingsHero() {
                     Text(
                         text = "Gentle Nudges",
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White
+                        color = AppTheme.current.onPrimary
                     )
                     Text(
                         text = "Keep reminders warm and supportive. Your companion invites you back without pressure.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.65f)
+                        color = AppTheme.current.onPrimary.copy(alpha = 0.65f)
                     )
                 }
 
                 Box(
                     modifier = Modifier
                         .size(56.dp)
-                        .background(Color.White.copy(alpha = 0.06f), CircleShape),
+                        .background(AppTheme.current.onPrimary.copy(alpha = 0.06f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = null,
-                        tint = ColorPaletteSettings.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -350,9 +420,9 @@ private fun SettingRow(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteSettings.Card),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteSettings.Line.copy(alpha = 0.4f)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
     ) {
         Row(
@@ -365,13 +435,13 @@ private fun SettingRow(
             Box(
                 modifier = Modifier
                     .size(42.dp)
-                    .background(ColorPaletteSettings.Violet.copy(alpha = 0.08f), RoundedCornerShape(12.dp)),
+                    .background(AppTheme.current.violet.copy(alpha = 0.08f), RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = ColorPaletteSettings.Violet,
+                    tint = AppTheme.current.violet,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -383,12 +453,12 @@ private fun SettingRow(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteSettings.Ink
+                    color = AppTheme.current.ink
                 )
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = ColorPaletteSettings.Muted,
+                    color = AppTheme.current.muted,
                     lineHeight = 16.sp
                 )
             }
@@ -397,23 +467,13 @@ private fun SettingRow(
                 checked = isChecked,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White,
-                    checkedTrackColor = ColorPaletteSettings.Violet,
-                    uncheckedThumbColor = Color.White,
-                    uncheckedTrackColor = ColorPaletteSettings.Line,
+                    checkedThumbColor = AppTheme.current.onPrimary,
+                    checkedTrackColor = AppTheme.current.violet,
+                    uncheckedThumbColor = AppTheme.current.onPrimary,
+                    uncheckedTrackColor = AppTheme.current.outline,
                     uncheckedBorderColor = Color.Transparent
                 )
             )
         }
     }
-}
-
-private object ColorPaletteSettings {
-    val Card = Color(0xFFFFFFFF)
-    val Violet = Color(0xFF8A76F9)
-    val Flame = Color(0xFFFF6B35)
-    val Amber = Color(0xFFFFB84D)
-    val Line = Color(0xFFEBE9F5)
-    val Muted = Color(0xFF8E8A9F)
-    val Ink = Color(0xFF1E1A34)
 }

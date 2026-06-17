@@ -1,59 +1,98 @@
 package com.example.mobile.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import android.app.Activity
+import android.os.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 @Composable
 fun HabitPetTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    appTheme: AppThemeOption = AppThemePrefs.currentTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> darkColorScheme(
-            primary = ColorPalette.CosmicLavender,
-            onPrimary = Color.White,
-            primaryContainer = ColorPalette.SoftAmethyst.copy(alpha = 0.24f),
-            onPrimaryContainer = Color.White,
-            secondary = ColorPalette.MintGrass,
-            onSecondary = ColorPalette.DeepViolet,
-            secondaryContainer = ColorPalette.MintGrass.copy(alpha = 0.18f),
-            onSecondaryContainer = ColorPalette.SoftInk,
-            tertiary = ColorPalette.HoneyAmber,
-            onTertiary = ColorPalette.SoftInk,
-            background = Color(0xFF151225),
-            onBackground = ColorPalette.CardWhite,
-            surface = Color(0xFF1D1A31),
-            onSurface = ColorPalette.CardWhite,
-            surfaceVariant = Color(0xFF2A2642),
-            onSurfaceVariant = Color(0xFFE6E0F7),
-            outline = Color(0xFF5A537D),
-            error = ColorPalette.Danger
+    val palette = appTheme.colors
+    val colorScheme = if (appTheme == AppThemeOption.DARK) {
+        darkColorScheme(
+            primary = palette.primary,
+            onPrimary = palette.onPrimary,
+            primaryContainer = palette.primaryContainer,
+            onPrimaryContainer = palette.onPrimaryContainer,
+            secondary = palette.secondary,
+            onSecondary = palette.onSecondary,
+            secondaryContainer = palette.secondaryContainer,
+            onSecondaryContainer = palette.onSecondaryContainer,
+            tertiary = palette.tertiary,
+            onTertiary = palette.onTertiary,
+            tertiaryContainer = palette.tertiaryContainer,
+            onTertiaryContainer = palette.onTertiaryContainer,
+            background = palette.background,
+            onBackground = palette.onBackground,
+            surface = palette.surface,
+            onSurface = palette.onSurface,
+            error = palette.danger,
+            onError = palette.onSurface,
+            outline = palette.outline,
+            outlineVariant = palette.outlineVariant,
+            surfaceVariant = palette.surfaceVariant,
+            onSurfaceVariant = palette.onSurfaceVariant,
+            inverseSurface = palette.onSurface,
+            inverseOnSurface = palette.surface,
+            inversePrimary = palette.primary
         )
-        else -> lightColorScheme(
-            primary = ColorPalette.CosmicLavender,
-            onPrimary = Color.White,
-            primaryContainer = ColorPalette.SoftAmethyst.copy(alpha = 0.20f),
-            onPrimaryContainer = ColorPalette.SoftInk,
-            secondary = ColorPalette.MintGrass,
-            onSecondary = ColorPalette.DeepViolet,
-            secondaryContainer = ColorPalette.MintGrass.copy(alpha = 0.18f),
-            onSecondaryContainer = ColorPalette.SoftInk,
-            tertiary = ColorPalette.HoneyAmber,
-            onTertiary = ColorPalette.SoftInk,
-            background = ColorPalette.WarmAlabaster,
-            onBackground = ColorPalette.SoftInk,
-            surface = ColorPalette.CardWhite,
-            onSurface = ColorPalette.SoftInk,
-            surfaceVariant = Color(0xFFF1EDFF),
-            onSurfaceVariant = Color(0xFF5F5A78),
-            outline = Color(0xFFC9C2E3),
-            error = ColorPalette.Danger
+    } else {
+        lightColorScheme(
+            primary = palette.primary,
+            onPrimary = palette.onPrimary,
+            primaryContainer = palette.primaryContainer,
+            onPrimaryContainer = palette.onPrimaryContainer,
+            secondary = palette.secondary,
+            onSecondary = palette.onSecondary,
+            secondaryContainer = palette.secondaryContainer,
+            onSecondaryContainer = palette.onSecondaryContainer,
+            tertiary = palette.tertiary,
+            onTertiary = palette.onTertiary,
+            tertiaryContainer = palette.tertiaryContainer,
+            onTertiaryContainer = palette.onTertiaryContainer,
+            background = palette.background,
+            onBackground = palette.onBackground,
+            surface = palette.surface,
+            onSurface = palette.onSurface,
+            error = palette.danger,
+            onError = palette.onSurface,
+            outline = palette.outline,
+            outlineVariant = palette.outlineVariant,
+            surfaceVariant = palette.surfaceVariant,
+            onSurfaceVariant = palette.onSurfaceVariant,
+            inverseSurface = palette.onSurface,
+            inverseOnSurface = palette.surface,
+            inversePrimary = palette.primary
         )
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = palette.background.toArgb()
+            window.navigationBarColor = Color.Transparent.toArgb()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.navigationBarDividerColor = Color.Transparent.toArgb()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                window.isStatusBarContrastEnforced = false
+                window.isNavigationBarContrastEnforced = false
+            }
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = appTheme != AppThemeOption.DARK
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = appTheme != AppThemeOption.DARK
+        }
     }
 
     MaterialTheme(

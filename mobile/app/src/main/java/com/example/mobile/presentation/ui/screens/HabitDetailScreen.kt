@@ -54,7 +54,7 @@ import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.viewmodel.HabitDetailViewModel
-import com.example.mobile.ui.theme.HabitPetTheme
+import com.example.mobile.ui.theme.AppTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -76,10 +76,9 @@ fun HabitDetailScreen(
         }
     }
 
-    HabitPetTheme {
-        Scaffold(
-            containerColor = Color(0xFFFAFAFC)
-        ) { padding ->
+    Scaffold(
+        containerColor = AppTheme.current.background
+    ) { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -93,7 +92,7 @@ fun HabitDetailScreen(
                     InlineScreenHeader(
                         title = "Quest Chronicles",
                         onNavigateUp = onNavigateUp,
-                        accentColor = ColorPaletteDetails.Violet
+                        accentColor = AppTheme.current.primary
                     )
                     HabitDetailContent(
                         viewModel = viewModel,
@@ -103,7 +102,6 @@ fun HabitDetailScreen(
             }
         }
     }
-}
 
 @Composable
 private fun HabitDetailContent(
@@ -163,7 +161,7 @@ private fun HabitDetailContent(
                 Text(
                     text = "Chronicle Ledger History",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp),
-                    color = ColorPaletteDetails.Muted,
+                    color = AppTheme.current.muted,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -193,7 +191,7 @@ private fun HabitDetailContent(
 private fun HabitHeader(habit: HabitEntity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteDetails.Ink),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary),
         shape = RoundedCornerShape(24.dp)
     ) {
         Box(
@@ -201,7 +199,7 @@ private fun HabitHeader(habit: HabitEntity) {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(ColorPaletteDetails.Ink, Color(0xFF231D3D))
+                        colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
                 .padding(20.dp)
@@ -214,7 +212,7 @@ private fun HabitHeader(habit: HabitEntity) {
                 Box(
                     modifier = Modifier
                         .size(68.dp)
-                        .background(Color.White.copy(alpha = 0.08f), RoundedCornerShape(18.dp)),
+                        .background(AppTheme.current.onPrimary.copy(alpha = 0.12f), RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -230,7 +228,7 @@ private fun HabitHeader(habit: HabitEntity) {
                     Text(
                         text = habit.name,
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White
+                        color = AppTheme.current.onPrimary
                     )
 
                     Row(
@@ -239,12 +237,12 @@ private fun HabitHeader(habit: HabitEntity) {
                     ) {
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = ColorPaletteDetails.Violet.copy(alpha = 0.2f)
+                            color = AppTheme.current.primaryContainer
                         ) {
                             Text(
                                 text = habit.type.uppercase(),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
-                                color = ColorPaletteDetails.Violet,
+                                color = AppTheme.current.onPrimaryContainer,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                             )
                         }
@@ -252,12 +250,12 @@ private fun HabitHeader(habit: HabitEntity) {
                         if (habit.type == "TIMER") {
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = Color.White.copy(alpha = 0.06f)
+                                color = AppTheme.current.surfaceVariant
                             ) {
                                 Text(
                                     text = "🎯 Target: ${habit.minimumDurationMinutes}m",
                                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                                    color = Color.White.copy(alpha = 0.7f),
+                                    color = AppTheme.current.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
                             }
@@ -283,12 +281,12 @@ private fun CompletionStatus(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isCompletedToday) ColorPaletteDetails.Mint.copy(alpha = 0.03f) else ColorPaletteDetails.Card
+            containerColor = if (isCompletedToday) AppTheme.current.success.copy(alpha = 0.03f) else AppTheme.current.card
         ),
         shape = RoundedCornerShape(22.dp),
         border = androidx.compose.foundation.BorderStroke(
             width = 1.dp,
-            color = if (isCompletedToday) ColorPaletteDetails.Mint.copy(alpha = 0.2f) else ColorPaletteDetails.Line.copy(alpha = 0.4f)
+            color = if (isCompletedToday) AppTheme.current.success.copy(alpha = 0.2f) else AppTheme.current.outline.copy(alpha = 0.4f)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
     ) {
@@ -301,14 +299,14 @@ private fun CompletionStatus(
             Text(
                 text = "Today's Quest Objective",
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = ColorPaletteDetails.Ink
+                color = AppTheme.current.ink
             )
 
             if (isCompletedToday) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(ColorPaletteDetails.Mint.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
+                        .background(AppTheme.current.success.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
                         .padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -316,19 +314,19 @@ private fun CompletionStatus(
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = "Completed",
-                        tint = ColorPaletteDetails.Mint,
+                        tint = AppTheme.current.success,
                         modifier = Modifier.size(24.dp)
                     )
                     Column {
                         Text(
                             text = "Objective Secured!",
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ColorPaletteDetails.Mint
+                            color = AppTheme.current.success
                         )
                         Text(
                             text = "Your companion has stored this core memory.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = ColorPaletteDetails.Muted
+                            color = AppTheme.current.muted
                         )
                     }
                 }
@@ -359,11 +357,11 @@ private fun CheckboxCompletion(onComplete: () -> Unit) {
         Text(
             text = "Pending actions remain...",
             style = MaterialTheme.typography.bodySmall,
-            color = ColorPaletteDetails.Muted
+            color = AppTheme.current.muted
         )
         Button(
             onClick = onComplete,
-            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteDetails.Violet),
+            colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.primary),
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier.height(44.dp)
         ) {
@@ -394,7 +392,7 @@ private fun TimerCompletion(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ColorPaletteDetails.Line.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                .background(AppTheme.current.outline.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
                 .padding(vertical = 20.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -402,7 +400,7 @@ private fun TimerCompletion(
                 Text(
                     text = timeString,
                     style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Black),
-                    color = if (isTimerRunning) ColorPaletteDetails.Mint else ColorPaletteDetails.Ink
+                    color = if (isTimerRunning) AppTheme.current.success else AppTheme.current.ink
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Row(
@@ -412,13 +410,13 @@ private fun TimerCompletion(
                     Icon(
                         imageVector = Icons.Default.HourglassEmpty,
                         contentDescription = null,
-                        tint = ColorPaletteDetails.Muted,
+                        tint = AppTheme.current.muted,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = "Required: ${habit.minimumDurationMinutes}:00",
                         style = MaterialTheme.typography.bodySmall,
-                        color = ColorPaletteDetails.Muted
+                        color = AppTheme.current.muted
                     )
                 }
             }
@@ -431,7 +429,7 @@ private fun TimerCompletion(
             if (!isTimerRunning) {
                 Button(
                     onClick = onStartTimer,
-                    colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteDetails.Violet),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.primary),
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.weight(1f).height(46.dp)
                 ) {
@@ -442,7 +440,7 @@ private fun TimerCompletion(
             } else {
                 Button(
                     onClick = onStopTimer,
-                    colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteDetails.Ink),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.ink),
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.weight(1f).height(46.dp)
                 ) {
@@ -454,8 +452,8 @@ private fun TimerCompletion(
                 OutlinedButton(
                     onClick = onResetTimer,
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = ColorPaletteDetails.Muted),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteDetails.Line),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = AppTheme.current.muted),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline),
                     modifier = Modifier.height(46.dp)
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null)
@@ -466,7 +464,7 @@ private fun TimerCompletion(
         if (isTimerRunning && hasMetMinimum) {
             Button(
                 onClick = onStopTimer,
-                colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteDetails.Mint),
+                colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.success),
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -491,24 +489,24 @@ private fun CompletionHistoryItem(completion: HabitCompletionEntity) {
             Box(
                 modifier = Modifier
                     .size(14.dp)
-                    .background(ColorPaletteDetails.Mint.copy(alpha = 0.2f), CircleShape),
+                    .background(AppTheme.current.success.copy(alpha = 0.2f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Box(modifier = Modifier.size(8.dp).background(ColorPaletteDetails.Mint, CircleShape))
+                Box(modifier = Modifier.size(8.dp).background(AppTheme.current.success, CircleShape))
             }
             Box(
                 modifier = Modifier
                     .width(2.dp)
                     .height(42.dp)
-                    .background(ColorPaletteDetails.Line)
+                    .background(AppTheme.current.outline)
             )
         }
 
         Card(
             modifier = Modifier.weight(1f),
-            colors = CardDefaults.cardColors(containerColor = ColorPaletteDetails.Card),
+            colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
             shape = RoundedCornerShape(16.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteDetails.Line.copy(alpha = 0.4f))
+            border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f))
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -519,23 +517,23 @@ private fun CompletionHistoryItem(completion: HabitCompletionEntity) {
                     Text(
                         text = formatDate(completion.date),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteDetails.Ink
+                        color = AppTheme.current.ink
                     )
                     Text(
                         text = "Synchronized Journey Event",
                         style = MaterialTheme.typography.bodySmall,
-                        color = ColorPaletteDetails.Muted
+                        color = AppTheme.current.muted
                     )
                 }
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = ColorPaletteDetails.Mint.copy(alpha = 0.1f)
+                    color = AppTheme.current.success.copy(alpha = 0.1f)
                 ) {
                     Text(
                         text = "+${completion.xpEarned} XP",
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteDetails.Mint,
+                        color = AppTheme.current.success,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
@@ -555,10 +553,10 @@ private fun CenteredProgressIndicator() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFC)),
+            .background(AppTheme.current.background),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = ColorPaletteDetails.Violet)
+        CircularProgressIndicator(color = AppTheme.current.primary)
     }
 }
 
@@ -570,7 +568,7 @@ private fun ErrorMessage(message: String) {
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = message, color = Color.Red, textAlign = TextAlign.Center)
+        Text(text = message, color = AppTheme.current.danger, textAlign = TextAlign.Center)
     }
 }
 
@@ -597,16 +595,7 @@ private fun InlineScreenHeader(
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-            color = ColorPaletteDetails.Ink
+            color = AppTheme.current.ink
         )
     }
-}
-
-private object ColorPaletteDetails {
-    val Card = Color(0xFFFFFFFF)
-    val Violet = Color(0xFF8A76F9)
-    val Mint = Color(0xFF1E9453)
-    val Line = Color(0xFFEBE9F5)
-    val Muted = Color(0xFF8E8A9F)
-    val Ink = Color(0xFF1E1A34)
 }

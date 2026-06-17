@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.mobile.presentation.ui.events.MicroFeedbackEvent
+import com.example.mobile.ui.theme.AppTheme
 import kotlinx.coroutines.delay
 import java.util.Locale
 
@@ -141,8 +142,8 @@ private fun MicroFeedbackXpPulse(progress: Float) {
         modifier = Modifier
             .fillMaxWidth()
             .height(5.dp),
-        color = MaterialTheme.colorScheme.tertiary,
-        trackColor = MaterialTheme.colorScheme.tertiaryContainer
+        color = AppTheme.current.mint,
+        trackColor = AppTheme.current.mintSurfaceActive
     )
 
     Spacer(modifier = Modifier.height(2.dp))
@@ -165,8 +166,8 @@ private fun labelForEvent(event: MicroFeedbackEvent): String = when (event) {
 
 @Composable
 private fun colorForEvent(event: MicroFeedbackEvent): Color = when (event) {
-    is MicroFeedbackEvent.HabitCompleted -> MaterialTheme.colorScheme.primary
-    is MicroFeedbackEvent.XpGained -> Color(0xFF10B981)
-    is MicroFeedbackEvent.CoinGained -> Color(0xFFF59E0B)
-    MicroFeedbackEvent.TabSwitched -> MaterialTheme.colorScheme.secondary
+    is MicroFeedbackEvent.HabitCompleted -> AppTheme.current.violet
+    is MicroFeedbackEvent.XpGained -> AppTheme.current.mint
+    is MicroFeedbackEvent.CoinGained -> AppTheme.current.amber
+    MicroFeedbackEvent.TabSwitched -> AppTheme.current.secondary
 }

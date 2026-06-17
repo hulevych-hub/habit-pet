@@ -73,6 +73,7 @@ import com.example.mobile.presentation.ui.components.ChallengeCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.domain.repository.ChallengeUiState
+import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
 
 @Composable
@@ -94,12 +95,12 @@ fun HabitsScreen(
     )
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC), // Alabaster Premium Background matching home
+        containerColor = AppTheme.current.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("habitCreation") },
-                containerColor = ColorPaletteHabits.Violet,
-                contentColor = Color.White,
+                containerColor = AppTheme.current.violet,
+                contentColor = AppTheme.current.onPrimary,
                 shape = RoundedCornerShape(999.dp),
                 modifier = Modifier.padding(bottom = 16.dp, end = 8.dp)
             ) {
@@ -191,7 +192,7 @@ private fun HabitItem(
     var swipeOffset by remember { mutableStateOf(0f) }
     var showSwipeActions by remember { mutableStateOf(false) }
     val category = habitCategory(habit)
-    val itemBackground = if (completed) ColorPaletteHabits.MintSurfaceActive else ColorPaletteHabits.DefaultItemCardBackground
+    val itemBackground = if (completed) AppTheme.current.mintSurfaceActive else AppTheme.current.card
 
     Surface(
         modifier = Modifier
@@ -251,14 +252,14 @@ private fun HabitItem(
                     Text(
                         text = habit.name,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteHabits.Ink,
+                        color = AppTheme.current.ink,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = category,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = ColorPaletteHabits.Muted.copy(alpha = 0.7f),
+                        color = AppTheme.current.muted.copy(alpha = 0.7f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -266,7 +267,7 @@ private fun HabitItem(
                         Text(
                             text = "Skipped for this session",
                             style = MaterialTheme.typography.labelSmall,
-                            color = ColorPaletteHabits.Danger
+                            color = AppTheme.current.danger
                         )
                     }
                 }
@@ -320,7 +321,7 @@ private fun HabitItem(
                         showDeleteDialog = false
                         onDelete()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteHabits.Danger)
+                    colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.danger)
                 ) {
                     Text("Delete")
                 }
@@ -343,7 +344,7 @@ private fun SwipeActionsOverlay(
         modifier = Modifier
             .padding(top = 6.dp, end = 20.dp),
         shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
-        color = Color.White,
+        color = AppTheme.current.surface,
         shadowElevation = 4.dp
     ) {
         Column(
@@ -353,12 +354,12 @@ private fun SwipeActionsOverlay(
         ) {
             SwipeActionButton(
                 icon = Icons.Default.Edit,
-                color = ColorPaletteHabits.Violet,
+                color = AppTheme.current.violet,
                 onClick = onEdit
             )
             SwipeActionButton(
                 icon = Icons.Default.Delete,
-                color = ColorPaletteHabits.Danger,
+                color = AppTheme.current.danger,
                 onClick = onDelete
             )
         }
@@ -393,7 +394,7 @@ private fun SwipeActionButton(
 private fun StreakBadge(streak: Int) {
     Surface(
         shape = RoundedCornerShape(999.dp),
-        color = ColorPaletteHabits.AmberSoft.copy(alpha = 0.6f)
+        color = AppTheme.current.amberSoft.copy(alpha = 0.6f)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -403,13 +404,13 @@ private fun StreakBadge(streak: Int) {
             Icon(
                 imageVector = Icons.Default.LocalFireDepartment,
                 contentDescription = null,
-                tint = ColorPaletteHabits.Amber,
+                tint = AppTheme.current.amber,
                 modifier = Modifier.size(14.dp)
             )
             Text(
                 text = "${streak}d streak",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = ColorPaletteHabits.AmberDark
+                color = AppTheme.current.amberDark
             )
         }
     }
@@ -421,8 +422,8 @@ private fun IconBadge(
     completed: Boolean,
     fallbackIcon: ImageVector
 ) {
-    val tintColor = if (completed) ColorPaletteHabits.Success else ColorPaletteHabits.Violet
-    val ambientBg = if (completed) ColorPaletteHabits.Success.copy(alpha = 0.12f) else ColorPaletteHabits.Violet.copy(alpha = 0.08f)
+    val tintColor = if (completed) AppTheme.current.success else AppTheme.current.violet
+    val ambientBg = if (completed) AppTheme.current.success.copy(alpha = 0.12f) else AppTheme.current.violet.copy(alpha = 0.08f)
 
     Surface(
         modifier = Modifier.size(46.dp),
@@ -463,13 +464,13 @@ private fun CompletionButton(
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
                 strokeWidth = 2.5.dp,
-                color = ColorPaletteHabits.Violet
+                color = AppTheme.current.violet
             )
         } else {
             Icon(
                 imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
                 contentDescription = null,
-                tint = if (completed) ColorPaletteHabits.Success else ColorPaletteHabits.Violet.copy(alpha = 0.6f),
+                tint = if (completed) AppTheme.current.success else AppTheme.current.violet.copy(alpha = 0.6f),
                 modifier = Modifier.size(30.dp)
             )
         }
@@ -501,14 +502,14 @@ private fun HabitActionsDialog(
         dismissButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp), tint = ColorPaletteHabits.Danger)
+                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp), tint = AppTheme.current.danger)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Delete", color = ColorPaletteHabits.Danger)
+                    Text("Delete", color = AppTheme.current.danger)
                 }
                 TextButton(onClick = onSkip) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = null, modifier = Modifier.size(18.dp), tint = ColorPaletteHabits.Muted)
+                    Icon(Icons.Default.FavoriteBorder, contentDescription = null, modifier = Modifier.size(18.dp), tint = AppTheme.current.muted)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Skip", color = ColorPaletteHabits.Muted)
+                    Text("Skip", color = AppTheme.current.muted)
                 }
             }
         }
@@ -540,19 +541,4 @@ private fun habitIcon(habit: HabitEntity) = when (habitCategory(habit)) {
     "FOCUS" -> Icons.Default.RadioButtonUnchecked
     "CARE" -> Icons.Default.Pets
     else -> Icons.Default.Pets
-}
-
-private object ColorPaletteHabits {
-    val HeaderCardBackground = Color(0xFFEBE5FC) // Creamy lavender header block
-    val DefaultItemCardBackground = Color(0xFFFFFFFF) // Clean pristine card base
-    val MintSurfaceActive = Color(0xFFD7F5E6) // Smooth Mint Green active feedback
-    val ProgressTrack = Color(0xFFDDD5F3)
-    val Violet = Color(0xFF8A76F9)
-    val Amber = Color(0xFFFFB84D)
-    val AmberSoft = Color(0xFFFFF2DC)
-    val AmberDark = Color(0xFFB57416)
-    val Success = Color(0xFF2EA366)
-    val Danger = Color(0xFFFF6B6B)
-    val Muted = Color(0xFF635E7A)
-    val Ink = Color(0xFF1B172E)
 }

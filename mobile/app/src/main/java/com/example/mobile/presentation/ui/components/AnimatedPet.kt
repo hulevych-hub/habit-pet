@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.presentation.ui.animations.PetAnimations
 import com.example.mobile.util.AssetResolver
+import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.util.PetTransitionPrefs
 
 private const val PET_SCALE_FRACTION = 0.86f
@@ -82,11 +83,11 @@ fun AnimatedPet(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp)
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f))
+                    .background(AppTheme.current.background.copy(alpha = 0.7f))
             ) {
                 Text(
                     text = "${pet.name}\nLv.${pet.level}",
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = AppTheme.current.onBackground,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall
                 )

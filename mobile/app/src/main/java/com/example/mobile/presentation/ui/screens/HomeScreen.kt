@@ -54,6 +54,7 @@ import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 
@@ -76,7 +77,7 @@ fun HomeScreen(
     LaunchedEffect(pet.name) { petNameDraft = pet.name }
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC),
+        containerColor = AppTheme.current.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             GamifiedFixedHeader(
@@ -151,8 +152,8 @@ fun HomeScreen(
                             homeScreenViewModel.resetAllGameData()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
+                            containerColor = AppTheme.current.danger,
+                            contentColor = AppTheme.current.onPrimary
                         )
                     ) {
                         Text("Reset")
@@ -172,7 +173,7 @@ fun HomeScreen(
 private fun PetSummary(pet: PetEntity) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = ColorPaletteHome.Card,
+        color = AppTheme.current.card,
         shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
         shadowElevation = 1.dp
     ) {
@@ -186,7 +187,7 @@ private fun PetSummary(pet: PetEntity) {
                     .height(320.dp)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(ColorPaletteHome.LavenderSoft.copy(alpha = 0.4f), Color.Transparent)
+                            colors = listOf(AppTheme.current.lavenderSoft.copy(alpha = 0.4f), Color.Transparent)
                         )
                     ),
                 contentAlignment = Alignment.Center
@@ -208,7 +209,7 @@ private fun PetSummary(pet: PetEntity) {
                 Text(
                     text = pet.name.ifBlank { "Baby Dragon" },
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteHome.Ink,
+                    color = AppTheme.current.ink,
                     maxLines = 1,
                     modifier = Modifier.weight(1f)
                 )
@@ -219,23 +220,23 @@ private fun PetSummary(pet: PetEntity) {
                 ) {
                     Surface(
                         shape = RoundedCornerShape(999.dp),
-                        color = ColorPaletteHome.Amber
+                        color = AppTheme.current.amber
                     ) {
                         Text(
                             text = "Lv. ${pet.level}",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                            color = Color.White,
+                            color = AppTheme.current.onSecondary,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
                     Surface(
                         shape = RoundedCornerShape(999.dp),
-                        color = ColorPaletteHome.Mint.copy(alpha = 0.16f)
+                        color = AppTheme.current.mint.copy(alpha = 0.16f)
                     ) {
                         Text(
                             text = DragonMood.from(pet.mood).displayName,
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ColorPaletteHome.Green,
+                            color = AppTheme.current.success,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
@@ -255,10 +256,10 @@ private fun GamifiedFixedHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color(0xFFFFFFFF),
+        color = AppTheme.current.headerSurface,
         shadowElevation = 1.dp
     ) {
-        val streakTint = if (streakCompletedToday) ColorPaletteHome.Honey else Color(0xFFA9A3B8)
+        val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
 
         Row(
             modifier = Modifier
@@ -281,13 +282,13 @@ private fun GamifiedFixedHeader(
                 Text(
                     text = "$streak d",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteHome.Ink
+                    color = AppTheme.current.ink
                 )
             }
 
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = ColorPaletteHome.Violet.copy(alpha = 0.1f)
+                color = AppTheme.current.violet.copy(alpha = 0.1f)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
@@ -297,13 +298,13 @@ private fun GamifiedFixedHeader(
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = ColorPaletteHome.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = stageName,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteHome.Violet
+                        color = AppTheme.current.violet
                     )
                 }
             }
@@ -315,12 +316,12 @@ private fun GamifiedFixedHeader(
             ) {
                 CoinIcon(
                     modifier = Modifier.size(22.dp),
-                    tint = ColorPaletteHome.Amber
+                    tint = AppTheme.current.amber
                 )
                 Text(
                     text = "$coins",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteHome.Ink
+                    color = AppTheme.current.ink
                 )
             }
         }
@@ -336,8 +337,8 @@ private fun ResetGameButton(
         onClick = onResetClick,
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFFF6B6B),
-            contentColor = Color.White
+            containerColor = AppTheme.current.danger,
+            contentColor = AppTheme.current.onSurface
         ),
         shape = RoundedCornerShape(18.dp)
     ) {
@@ -372,12 +373,12 @@ private fun TodayNourishmentSection(
             Text(
                 text = "Today's Quest",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                color = ColorPaletteHome.Ink
+                color = AppTheme.current.ink
             )
             Text(
                 text = "Manage",
                 style = MaterialTheme.typography.labelLarge.copy(
-                    color = ColorPaletteHome.Violet,
+                    color = AppTheme.current.violet,
                     fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.clickable { onNavigateToHabits() }
@@ -405,7 +406,7 @@ private fun NextUnlockText() {
     Text(
         text = "✨ Next Unlock: Dragon Nest Background at Lv. 3",
         style = MaterialTheme.typography.bodySmall,
-        color = ColorPaletteHome.Ink.copy(alpha = 0.5f),
+        color = AppTheme.current.ink.copy(alpha = 0.5f),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth()
     )
@@ -416,27 +417,27 @@ private fun EmptyHomeQuest(onNavigateToHabits: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ColorPaletteHome.Card, RoundedCornerShape(24.dp))
+            .background(AppTheme.current.card, RoundedCornerShape(24.dp))
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = Icons.Default.Star,
             contentDescription = null,
-            tint = ColorPaletteHome.Amber,
+            tint = AppTheme.current.amber,
             modifier = Modifier.size(36.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Your dragon is ready for its first tiny quest.",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-            color = ColorPaletteHome.Ink,
+            color = AppTheme.current.ink,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(14.dp))
         Button(
             onClick = onNavigateToHabits,
-            colors = ButtonDefaults.buttonColors(containerColor = ColorPaletteHome.Violet),
+            colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.violet),
             shape = RoundedCornerShape(999.dp)
         ) {
             Text("Create first habit", modifier = Modifier.padding(horizontal = 8.dp))
@@ -456,7 +457,7 @@ private fun HomeHabitItem(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
-        color = if (completed) ColorPaletteHome.Mint.copy(alpha = 0.15f) else ColorPaletteHome.Card,
+        color = if (completed) AppTheme.current.mint.copy(alpha = 0.15f) else AppTheme.current.card,
         shadowElevation = 0.dp
     ) {
         Row(
@@ -469,7 +470,7 @@ private fun HomeHabitItem(
             Icon(
                 imageVector = if (completed) Icons.Default.CheckCircle else habitIcon(habit),
                 contentDescription = null,
-                tint = if (completed) ColorPaletteHome.Green else ColorPaletteHome.Violet,
+                tint = if (completed) AppTheme.current.success else AppTheme.current.violet,
                 modifier = Modifier.size(28.dp)
             )
             Column(
@@ -479,25 +480,25 @@ private fun HomeHabitItem(
                 Text(
                     text = habit.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = ColorPaletteHome.Ink
+                    color = AppTheme.current.ink
                 )
                 Text(
                     text = if (completed) "Nourished for today" else "${habit.type} • ${habit.currentStreak}d streak",
                     style = MaterialTheme.typography.bodySmall,
-                    color = ColorPaletteHome.Ink.copy(alpha = 0.6f)
+                    color = AppTheme.current.ink.copy(alpha = 0.6f)
                 )
             }
             if (completed) {
                 Text(
                     text = "+${completedXp ?: 0L} XP",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteHome.Green
+                    color = AppTheme.current.success
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.RadioButtonUnchecked,
                     contentDescription = null,
-                    tint = ColorPaletteHome.Violet.copy(alpha = 0.4f),
+                    tint = AppTheme.current.violet.copy(alpha = 0.4f),
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -510,17 +511,4 @@ private fun habitIcon(habit: HabitEntity) = when {
     habit.icon.contains("star", ignoreCase = true) -> Icons.Default.Star
     habit.icon.contains("pet", ignoreCase = true) || habit.icon.contains("dragon", ignoreCase = true) -> Icons.Default.Pets
     else -> Icons.Default.RadioButtonUnchecked
-}
-
-private object ColorPaletteHome {
-    val Card = Color(0xFFFFFFFF)
-    val LavenderSoft = Color(0xFFF2EEFF)
-    val AmethystSoft = Color(0xFFE5DDFF)
-    val Violet = Color(0xFF8A76F9)
-    val Amber = Color(0xFFFFB84D)
-    val Honey = Color(0xFFFF9F1C)
-    val Mint = Color(0xFF4EDB95)
-    val Green = Color(0xFF27A86B)
-    val Line = Color(0xFFEBE9F5)
-    val Ink = Color(0xFF1C1930)
 }

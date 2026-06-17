@@ -317,7 +317,7 @@ private fun AchievementHallCard(
             colors = listOf(Color(0xFFFFF2CC), Color(0xFFF6C85F), Color(0xFFD69A2D))
         )
         else -> Brush.linearGradient(
-            colors = listOf(Color(0xFF5A514B), Color(0xFF3F3936))
+            colors = listOf(Color(0xFF4A4240), Color(0xFF2E2928))
         )
     }
 

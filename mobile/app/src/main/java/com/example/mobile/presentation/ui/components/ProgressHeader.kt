@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.ui.theme.AppTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.Locale
@@ -98,7 +99,7 @@ fun ProgressHeader(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+            containerColor = AppTheme.current.primaryContainer.copy(alpha = 0.35f)
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -128,7 +129,7 @@ fun ProgressHeader(
                 Text(
                     text = nextEvolutionText,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = AppTheme.current.violet
                 )
             }
 
@@ -186,7 +187,7 @@ fun EvolutionTeaser(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.35f)
+            containerColor = AppTheme.current.secondaryContainer.copy(alpha = 0.35f)
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -204,12 +205,12 @@ fun EvolutionTeaser(
                 Text(
                     text = "Next evolution",
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = AppTheme.current.onSurfaceVariant
                 )
                 Text(
                     text = nextStageName,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = AppTheme.current.violet
                 )
             }
 
@@ -227,7 +228,7 @@ fun EvolutionTeaser(
                     "$xpNeeded XP to reach $nextStageName"
                 },
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = AppTheme.current.onSurfaceVariant
             )
         }
     }
@@ -244,14 +245,14 @@ private fun ProgressChip(
         color = if (achieved && accentColor != null) {
             accentColor.copy(alpha = 0.16f)
         } else {
-            MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+            AppTheme.current.surface.copy(alpha = 0.85f)
         }
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium,
             color = accentColor?.takeIf { achieved }
-                ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                ?: AppTheme.current.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
         )
     }
@@ -264,10 +265,10 @@ private data class StreakVisualState(
 )
 
 private val STREAK_MILESTONE_MARKERS = listOf(3, 7, 14, 30, 60, 100)
-private val LOW_STREAK_COLOR = Color(0xFFFFB74D)
-private val STABLE_STREAK_COLOR = Color(0xFF42A5F5)
-private val STRONG_STREAK_COLOR = Color(0xFFFF6F61)
-private val COMBO_COLOR = Color(0xFF7C4DFF)
+private val LOW_STREAK_COLOR = AppTheme.current.amber
+private val STABLE_STREAK_COLOR = AppTheme.current.blue
+private val STRONG_STREAK_COLOR = AppTheme.current.danger
+private val COMBO_COLOR = AppTheme.current.purple
 
 @Composable
 private fun StreakIndicator(
@@ -294,7 +295,7 @@ private fun StreakIndicator(
             Text(
                 text = visualState.title,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = AppTheme.current.onSurfaceVariant
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -320,7 +321,7 @@ private fun StreakIndicator(
             Text(
                 text = protectionText,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = AppTheme.current.onSurfaceVariant
             )
         }
     }
@@ -342,7 +343,7 @@ private fun StreakMilestoneMarkers(
         Text(
             text = "Markers",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = AppTheme.current.onSurfaceVariant
         )
         STREAK_MILESTONE_MARKERS.forEach { marker ->
             ProgressChip(

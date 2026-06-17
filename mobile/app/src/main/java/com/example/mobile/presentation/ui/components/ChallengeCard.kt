@@ -38,6 +38,7 @@ import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.EquipableType
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.domain.rewardLabel
+import com.example.mobile.ui.theme.AppTheme
 
 @Composable
 fun ChallengeCard(
@@ -51,7 +52,7 @@ fun ChallengeCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f)
+            containerColor = AppTheme.current.surfaceVariant.copy(alpha = 0.72f)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -68,13 +69,13 @@ fun ChallengeCard(
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFFD166)),
+                        .background(AppTheme.current.gold),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = challenge?.icon?.challengeIcon() ?: Icons.Default.Star,
                         contentDescription = null,
-                        tint = Color(0xFF1F2937),
+                        tint = AppTheme.current.onSecondary,
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -83,12 +84,12 @@ fun ChallengeCard(
                     Text(
                         text = challenge?.title ?: "No challenge yet",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = AppTheme.current.ink
                     )
                     Text(
                         text = challenge?.description ?: "A fresh challenge will appear after you claim your current one.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = AppTheme.current.muted
                     )
                 }
             }
@@ -102,12 +103,12 @@ fun ChallengeCard(
                     Text(
                         text = state.progressLabel,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = AppTheme.current.ink
                     )
                     Text(
                         text = if (state.isCompleted) "Ready to claim" else "Soft objective",
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (state.isCompleted) Color(0xFF10B981) else MaterialTheme.colorScheme.primary
+                        color = if (state.isCompleted) AppTheme.current.success else AppTheme.current.violet
                     )
                 }
 
@@ -117,8 +118,8 @@ fun ChallengeCard(
                         .fillMaxWidth()
                         .height(10.dp)
                         .clip(RoundedCornerShape(999.dp)),
-                    color = if (state.isCompleted) Color(0xFF10B981) else MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.surface
+                    color = if (state.isCompleted) AppTheme.current.success else AppTheme.current.violet,
+                    trackColor = AppTheme.current.progressTrack
                 )
             }
 
@@ -157,7 +158,7 @@ private fun RewardPreview(
             Text(
                 text = "Rewards will appear here",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = AppTheme.current.muted
             )
         } else {
             rewards.forEach { reward ->
@@ -172,7 +173,7 @@ private fun RewardChip(reward: ChallengeRewardDefinition) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
-            .background(Color(0xFF111827).copy(alpha = 0.06f))
+            .background(AppTheme.current.violet.copy(alpha = 0.08f))
             .padding(horizontal = 10.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -183,13 +184,13 @@ private fun RewardChip(reward: ChallengeRewardDefinition) {
             Icon(
                 imageVector = reward.icon(),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = AppTheme.current.violet,
                 modifier = Modifier.size(16.dp)
             )
             Text(
                 text = reward.label(),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = AppTheme.current.muted
             )
         }
     }

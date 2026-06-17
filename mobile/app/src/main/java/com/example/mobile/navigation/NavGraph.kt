@@ -57,6 +57,9 @@ import com.example.mobile.presentation.ui.screens.PetScreen
 import com.example.mobile.presentation.ui.screens.RewardsScreen
 import com.example.mobile.presentation.ui.screens.StatisticsScreen
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
+import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.AppThemeOption
+import com.example.mobile.ui.theme.AppThemePrefs
 import com.example.mobile.ui.theme.HabitPetTheme
 
 private object AppRoutes {
@@ -123,9 +126,10 @@ private data class AchievementsWithBadge(
 @Composable
 fun HabitPetNavGraph(
     navController: NavHostController = rememberNavController(),
+    appTheme: AppThemeOption = AppThemePrefs.currentTheme(),
     microFeedbackManager: MicroFeedbackManager? = null
 ) {
-    HabitPetTheme {
+    HabitPetTheme(appTheme = appTheme) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
         val achievementViewModel: AchievementViewModel = hiltViewModel()
@@ -263,7 +267,7 @@ private fun HabitPetBottomBar(
     onNavigate: (BottomDestination) -> Unit
 ) {
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = AppTheme.current.headerSurface,
         tonalElevation = 0.dp
     ) {
         Row(
@@ -302,7 +306,7 @@ private fun HabitPetBottomNavItem(
                 .width(indicatorWidth)
                 .height(40.dp)
                 .background(
-                    if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                    if (selected) AppTheme.current.primaryContainer.copy(alpha = 0.55f) else Color.Transparent,
                     RoundedCornerShape(20.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -311,11 +315,11 @@ private fun HabitPetBottomNavItem(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                BottomBarIcon(destination)
+                BottomBarIcon(destination, selected)
                 Text(
                     text = destination.label,
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (selected) AppTheme.current.violet else AppTheme.current.muted
                 )
             }
         }
@@ -323,7 +327,7 @@ private fun HabitPetBottomNavItem(
 }
 
 @Composable
-private fun BottomBarIcon(destination: BottomDestination) {
+private fun BottomBarIcon(destination: BottomDestination, selected: Boolean) {
     val isAchievementBadgeVisible = destination.route == AppRoutes.ACHIEVEMENTS && destination.badgeCount > 0
     val contentDescription = if (isAchievementBadgeVisible) {
         "${destination.label}, ${destination.badgeCount} achievements ready to claim"
@@ -336,18 +340,19 @@ private fun BottomBarIcon(destination: BottomDestination) {
             Icon(
                 imageVector = destination.icon,
                 contentDescription = contentDescription,
+                tint = if (selected) AppTheme.current.violet else AppTheme.current.muted,
                 modifier = Modifier.padding(end = 8.dp)
             )
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .size(16.dp) // Adjusted slightly smaller for visual elegance
-                    .background(MaterialTheme.colorScheme.tertiary, CircleShape),
+                    .background(AppTheme.current.success, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = destination.badgeCount.toString(),
-                    color = MaterialTheme.colorScheme.onTertiary,
+                    color = AppTheme.current.onPrimary,
                     style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 )
             }
@@ -355,7 +360,8 @@ private fun BottomBarIcon(destination: BottomDestination) {
     } else {
         Icon(
             imageVector = destination.icon,
-            contentDescription = contentDescription
+            contentDescription = contentDescription,
+            tint = if (selected) AppTheme.current.violet else AppTheme.current.muted
         )
     }
 }

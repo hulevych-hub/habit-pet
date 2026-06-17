@@ -1,45 +1,411 @@
 package com.example.mobile.ui.theme
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Immutable
-object ColorPalette {
-    // Premium Habit Pet palette
-    val CosmicLavender = Color(0xFF8A76F9)
-    val SoftAmethyst = Color(0xFFA393EB)
-    val DeepViolet = Color(0xFF5F4FD9)
-    val MintGrass = Color(0xFF4EDB95)
-    val WarmAlabaster = Color(0xFFFAFAFC)
-    val CardWhite = Color(0xFFFFFFFF)
-    val HoneyAmber = Color(0xFFFFB84D)
-    val CoralReward = Color(0xFFFF7A90)
-    val SkyMist = Color(0xFFBDE7FF)
-    val MysteryInk = Color(0xFF3F3A6B)
-    val SoftInk = Color(0xFF302B4A)
-    val MutedInk = Color(0xFF6F6A8A)
-    val DividerMist = Color(0xFFEAE7F7)
+object AppTheme {
+    val current: AppThemeColors
+        get() = AppThemePrefs.currentTheme().colors
+}
 
-    // Status colors
-    val Success = Color(0xFF4EDB95)
-    val Warning = Color(0xFFFFB84D)
-    val Danger = Color(0xFFFF6B6B)
-    val Rare = Color(0xFF4BA3FF)
-    val Epic = Color(0xFFB26CFF)
-    val Legendary = Color(0xFFFFB84D)
-    val Mythic = Color(0xFFFF5EA2)
+enum class AppThemeOption(
+    val id: String,
+    val label: String,
+    val description: String,
+    val colors: AppThemeColors
+) {
+    PET_CHALLENGE(
+        id = "pet_challenge",
+        label = "Pet & Challenge",
+        description = "Premium dragon palette used by the pet and challenges screens",
+        colors = AppThemeColors(
+            background = Color(0xFF111827),
+            onBackground = Color(0xFFF8F5FF),
+            surface = Color(0xFF1F2937),
+            onSurface = Color(0xFFF8F5FF),
+            surfaceVariant = Color(0xFF2A2444),
+            onSurfaceVariant = Color(0xFFE7E0FF),
+            primary = Color(0xFF8A76F9),
+            onPrimary = Color(0xFFFFFFFF),
+            primaryContainer = Color(0xFF3B3468),
+            onPrimaryContainer = Color(0xFFF1ECFF),
+            secondary = Color(0xFFFFB84D),
+            onSecondary = Color(0xFF1E1A34),
+            secondaryContainer = Color(0xFFFFD99B),
+            onSecondaryContainer = Color(0xFF1E1A34),
+            tertiary = Color(0xFF4EDB95),
+            onTertiary = Color(0xFF0B1F16),
+            tertiaryContainer = Color(0xFFBDF6D9),
+            onTertiaryContainer = Color(0xFF0B1F16),
+            card = Color(0xFF1C2540),
+            cardElevated = Color(0xFF24304D),
+            headerSurface = Color(0xFF2A2444),
+            headerOnSurface = Color(0xFFF8F5FF),
+            headerGradientStart = Color(0xFF2A2444),
+            headerGradientEnd = Color(0xFF3B3468),
+            outline = Color(0xFF3E3A59),
+            outlineVariant = Color(0xFF514A70),
+            divider = Color(0xFF3E3A59),
+            muted = Color(0xFFB8B2CC),
+            mutedStrong = Color(0xFFD6D0EA),
+            ink = Color(0xFFF8F5FF),
+            softInk = Color(0xFFD6D0EA),
+            violet = Color(0xFF9B8CFF),
+            violetMuted = Color(0xFF8E8A9F),
+            lavenderSoft = Color(0xFF352E5B),
+            amethystSoft = Color(0xFF473E73),
+            mint = Color(0xFF4EDB95),
+            mintSurfaceActive = Color(0xFF1B5A42),
+            success = Color(0xFF4EDB95),
+            successSoft = Color(0xFF1B5A42),
+            danger = Color(0xFFFF6B6B),
+            dangerSoft = Color(0xFF5A2630),
+            amber = Color(0xFFFFB84D),
+            amberSoft = Color(0xFF5A3A16),
+            amberDark = Color(0xFFFFD99B),
+            gold = Color(0xFFFFD166),
+            goldSoft = Color(0xFF5A4210),
+            goldDark = Color(0xFFFFE08A),
+            pink = Color(0xFFFF7AB6),
+            pinkSoft = Color(0xFF5A263D),
+            pinkDark = Color(0xFFFFAED4),
+            blue = Color(0xFF60A5FA),
+            blueSoft = Color(0xFF1E3A5F),
+            purple = Color(0xFFC084FC),
+            purpleSoft = Color(0xFF4A315F),
+            progressTrack = Color(0xFF4A436B),
+            inactiveIcon = Color(0xFF8E8A9F),
+            headerStreakInactive = Color(0xFF8E8A9F),
+            iconBadgeCompletedBackground = Color(0xFF1B5A42),
+            rewardBackdropStart = Color(0xFF0F172A),
+            rewardBackdropCenter = Color(0xFF1E293B),
+            rewardBackdropEnd = Color(0xFF334155),
+            rewardSurface = Color(0xFF1F2937),
+            rewardText = Color(0xFFF8F5FF),
+            rewardTextMuted = Color(0xFFD6D0EA),
+            rewardAccent = Color(0xFFFFD166),
+            overlayBackground = Color(0xFF000000)
+        )
+    ),
+    LIGHT(
+        id = "light",
+        label = "Light",
+        description = "Clean cream background with lavender, mint, and gold accents",
+        colors = AppThemeColors(
+            background = Color(0xFFFAFAFC),
+            onBackground = Color(0xFF1C1930),
+            surface = Color(0xFFFFFFFF),
+            onSurface = Color(0xFF1C1930),
+            surfaceVariant = Color(0xFFF2EEFF),
+            onSurfaceVariant = Color(0xFF1C1930),
+            primary = Color(0xFF8A76F9),
+            onPrimary = Color(0xFFFFFFFF),
+            primaryContainer = Color(0xFFF2EEFF),
+            onPrimaryContainer = Color(0xFF1C1930),
+            secondary = Color(0xFFFFB84D),
+            onSecondary = Color(0xFF1C1930),
+            secondaryContainer = Color(0xFFFFF2DC),
+            onSecondaryContainer = Color(0xFF1C1930),
+            tertiary = Color(0xFF4EDB95),
+            onTertiary = Color(0xFF0B1F16),
+            tertiaryContainer = Color(0xFFD7F5E6),
+            onTertiaryContainer = Color(0xFF0B1F16),
+            card = Color(0xFFFFFFFF),
+            cardElevated = Color(0xFFFFFFFF),
+            headerSurface = Color(0xFFFFFFFF),
+            headerOnSurface = Color(0xFF1C1930),
+            headerGradientStart = Color(0xFFF8F6FF),
+            headerGradientEnd = Color(0xFFEEEAFF),
+            outline = Color(0xFFEBE9F5),
+            outlineVariant = Color(0xFFDDD5F3),
+            divider = Color(0xFFEBE9F5),
+            muted = Color(0xFF8E8A9F),
+            mutedStrong = Color(0xFF635E7A),
+            ink = Color(0xFF1C1930),
+            softInk = Color(0xFF635E7A),
+            violet = Color(0xFF8A76F9),
+            violetMuted = Color(0xFF635E7A),
+            lavenderSoft = Color(0xFFF2EEFF),
+            amethystSoft = Color(0xFFE5DDFF),
+            mint = Color(0xFF4EDB95),
+            mintSurfaceActive = Color(0xFFD7F5E6),
+            success = Color(0xFF2EA366),
+            successSoft = Color(0xFFD7F5E6),
+            danger = Color(0xFFFF6B6B),
+            dangerSoft = Color(0xFFFFE0E0),
+            amber = Color(0xFFFFB84D),
+            amberSoft = Color(0xFFFFF2DC),
+            amberDark = Color(0xFFB57416),
+            gold = Color(0xFFFFD166),
+            goldSoft = Color(0xFFFFF6D6),
+            goldDark = Color(0xFFB57416),
+            pink = Color(0xFFFF6FB3),
+            pinkSoft = Color(0xFFFFE1EF),
+            pinkDark = Color(0xFF8B2851),
+            blue = Color(0xFF3B82F6),
+            blueSoft = Color(0xFFE8F1FF),
+            purple = Color(0xFFC084FC),
+            purpleSoft = Color(0xFFF3E8FF),
+            progressTrack = Color(0xFFDDD5F3),
+            inactiveIcon = Color(0xFFA9A3B8),
+            headerStreakInactive = Color(0xFFA9A3B8),
+            iconBadgeCompletedBackground = Color(0xFFD7F5E6),
+            rewardBackdropStart = Color(0xFFF8F6FF),
+            rewardBackdropCenter = Color(0xFFF2EEFF),
+            rewardBackdropEnd = Color(0xFFEEEAFF),
+            rewardSurface = Color(0xFFFFFFFF),
+            rewardText = Color(0xFF1C1930),
+            rewardTextMuted = Color(0xFF635E7A),
+            rewardAccent = Color(0xFF8A76F9),
+            overlayBackground = Color(0xFF1C1930)
+        )
+    ),
+    GIRLY(
+        id = "girly",
+        label = "Girly",
+        description = "Soft pink and lavender palette with visible dark text on light surfaces",
+        colors = AppThemeColors(
+            background = Color(0xFFFFF7FB),
+            onBackground = Color(0xFF3A1028),
+            surface = Color(0xFFFFFCFF),
+            onSurface = Color(0xFF3A1028),
+            surfaceVariant = Color(0xFFFFE1EF),
+            onSurfaceVariant = Color(0xFF3A1028),
+            primary = Color(0xFFFF6FB3),
+            onPrimary = Color(0xFFFFFFFF),
+            primaryContainer = Color(0xFFFFE1EF),
+            onPrimaryContainer = Color(0xFF3A1028),
+            secondary = Color(0xFFFF9CC7),
+            onSecondary = Color(0xFF3A1028),
+            secondaryContainer = Color(0xFFFFEBF4),
+            onSecondaryContainer = Color(0xFF3A1028),
+            tertiary = Color(0xFF9B7BFF),
+            onTertiary = Color(0xFFFFFFFF),
+            tertiaryContainer = Color(0xFFEDE7FF),
+            onTertiaryContainer = Color(0xFF24183A),
+            card = Color(0xFFFFF9FC),
+            cardElevated = Color(0xFFFFFCFF),
+            headerSurface = Color(0xFFFFFCFF),
+            headerOnSurface = Color(0xFF3A1028),
+            headerGradientStart = Color(0xFFFFE1EF),
+            headerGradientEnd = Color(0xFFFFF1F7),
+            outline = Color(0xFFFFD4E5),
+            outlineVariant = Color(0xFFFFC2DA),
+            divider = Color(0xFFFFD4E5),
+            muted = Color(0xFF8B6A7A),
+            mutedStrong = Color(0xFF6B4557),
+            ink = Color(0xFF3A1028),
+            softInk = Color(0xFF6B4557),
+            violet = Color(0xFF9B7BFF),
+            violetMuted = Color(0xFF8B6A7A),
+            lavenderSoft = Color(0xFFFFE1EF),
+            amethystSoft = Color(0xFFEDE7FF),
+            mint = Color(0xFF8EE6C1),
+            mintSurfaceActive = Color(0xFFD7F5E6),
+            success = Color(0xFF2EA366),
+            successSoft = Color(0xFFD7F5E6),
+            danger = Color(0xFFFF5C7A),
+            dangerSoft = Color(0xFFFFE0E6),
+            amber = Color(0xFFFFB86B),
+            amberSoft = Color(0xFFFFF0DD),
+            amberDark = Color(0xFF9A5B20),
+            gold = Color(0xFFFFD166),
+            goldSoft = Color(0xFFFFF6D6),
+            goldDark = Color(0xFF9A6A12),
+            pink = Color(0xFFFF6FB3),
+            pinkSoft = Color(0xFFFFE1EF),
+            pinkDark = Color(0xFF8B2851),
+            blue = Color(0xFF8AA7FF),
+            blueSoft = Color(0xFFE8EEFF),
+            purple = Color(0xFFB794F4),
+            purpleSoft = Color(0xFFF1EAFF),
+            progressTrack = Color(0xFFFFD4E5),
+            inactiveIcon = Color(0xFFB99AAC),
+            headerStreakInactive = Color(0xFFB99AAC),
+            iconBadgeCompletedBackground = Color(0xFFD7F5E6),
+            rewardBackdropStart = Color(0xFFFFE1EF),
+            rewardBackdropCenter = Color(0xFFFFF1F7),
+            rewardBackdropEnd = Color(0xFFFFF7FB),
+            rewardSurface = Color(0xFFFFFCFF),
+            rewardText = Color(0xFF3A1028),
+            rewardTextMuted = Color(0xFF6B4557),
+            rewardAccent = Color(0xFFFF6FB3),
+            overlayBackground = Color(0xFF3A1028)
+        )
+    ),
+    DARK(
+        id = "dark",
+        label = "Dark",
+        description = "Deep navy background with bright lavender, gold, and mint accents",
+        colors = AppThemeColors(
+            background = Color(0xFF0B1020),
+            onBackground = Color(0xFFF8F5FF),
+            surface = Color(0xFF111827),
+            onSurface = Color(0xFFF8F5FF),
+            surfaceVariant = Color(0xFF1A2338),
+            onSurfaceVariant = Color(0xFFE7E0FF),
+            primary = Color(0xFF9B8CFF),
+            onPrimary = Color(0xFF120B2E),
+            primaryContainer = Color(0xFF2A2455),
+            onPrimaryContainer = Color(0xFFF1ECFF),
+            secondary = Color(0xFFFFD166),
+            onSecondary = Color(0xFF1A1020),
+            secondaryContainer = Color(0xFF4A3A10),
+            onSecondaryContainer = Color(0xFFFFE8A3),
+            tertiary = Color(0xFF4EDB95),
+            onTertiary = Color(0xFF0B1F16),
+            tertiaryContainer = Color(0xFF1B5A42),
+            onTertiaryContainer = Color(0xFFBDF6D9),
+            card = Color(0xFF151F33),
+            cardElevated = Color(0xFF1C2940),
+            headerSurface = Color(0xFF151F33),
+            headerOnSurface = Color(0xFFF8F5FF),
+            headerGradientStart = Color(0xFF151F33),
+            headerGradientEnd = Color(0xFF2A2455),
+            outline = Color(0xFF2A3550),
+            outlineVariant = Color(0xFF3A4868),
+            divider = Color(0xFF2A3550),
+            muted = Color(0xFFAEB6CC),
+            mutedStrong = Color(0xFFD5DAE8),
+            ink = Color(0xFFF8F5FF),
+            softInk = Color(0xFFD5DAE8),
+            violet = Color(0xFF9B8CFF),
+            violetMuted = Color(0xFFAEB6CC),
+            lavenderSoft = Color(0xFF1A2338),
+            amethystSoft = Color(0xFF2A2455),
+            mint = Color(0xFF4EDB95),
+            mintSurfaceActive = Color(0xFF1B5A42),
+            success = Color(0xFF4EDB95),
+            successSoft = Color(0xFF1B5A42),
+            danger = Color(0xFFFF6B6B),
+            dangerSoft = Color(0xFF5A2630),
+            amber = Color(0xFFFFD166),
+            amberSoft = Color(0xFF4A3A10),
+            amberDark = Color(0xFFFFE8A3),
+            gold = Color(0xFFFFD166),
+            goldSoft = Color(0xFF4A3A10),
+            goldDark = Color(0xFFFFE8A3),
+            pink = Color(0xFFFF7AB6),
+            pinkSoft = Color(0xFF5A263D),
+            pinkDark = Color(0xFFFFAED4),
+            blue = Color(0xFF8AA7FF),
+            blueSoft = Color(0xFF1E3A5F),
+            purple = Color(0xFFC084FC),
+            purpleSoft = Color(0xFF3A2A55),
+            progressTrack = Color(0xFF2A3550),
+            inactiveIcon = Color(0xFFAEB6CC),
+            headerStreakInactive = Color(0xFFAEB6CC),
+            iconBadgeCompletedBackground = Color(0xFF1B5A42),
+            rewardBackdropStart = Color(0xFF050816),
+            rewardBackdropCenter = Color(0xFF0B1020),
+            rewardBackdropEnd = Color(0xFF151F33),
+            rewardSurface = Color(0xFF111827),
+            rewardText = Color(0xFFF8F5FF),
+            rewardTextMuted = Color(0xFFD5DAE8),
+            rewardAccent = Color(0xFFFFD166),
+            overlayBackground = Color(0xFF000000)
+        )
+    )
+}
 
-    // Legacy aliases used by existing code
-    val Purple500 = CosmicLavender
-    val Purple50 = Color(0xFFF3EFFF)
-    val Purple900 = DeepViolet
-    val Teal200 = MintGrass
-    val Teal900 = Color(0xFF123B34)
-    val Background = WarmAlabaster
-    val Surface = CardWhite
-    val Red700 = Danger
-    val Green500 = Success
-    val Yellow500 = HoneyAmber
-    val White = CardWhite
-    val Black = Color(0xFF171421)
+@Immutable
+data class AppThemeColors(
+    val background: Color,
+    val onBackground: Color,
+    val surface: Color,
+    val onSurface: Color,
+    val surfaceVariant: Color,
+    val onSurfaceVariant: Color,
+    val primary: Color,
+    val onPrimary: Color,
+    val primaryContainer: Color,
+    val onPrimaryContainer: Color,
+    val secondary: Color,
+    val onSecondary: Color,
+    val secondaryContainer: Color,
+    val onSecondaryContainer: Color,
+    val tertiary: Color,
+    val onTertiary: Color,
+    val tertiaryContainer: Color,
+    val onTertiaryContainer: Color,
+    val card: Color,
+    val cardElevated: Color,
+    val headerSurface: Color,
+    val headerOnSurface: Color,
+    val headerGradientStart: Color,
+    val headerGradientEnd: Color,
+    val outline: Color,
+    val outlineVariant: Color,
+    val divider: Color,
+    val muted: Color,
+    val mutedStrong: Color,
+    val ink: Color,
+    val softInk: Color,
+    val violet: Color,
+    val violetMuted: Color,
+    val lavenderSoft: Color,
+    val amethystSoft: Color,
+    val mint: Color,
+    val mintSurfaceActive: Color,
+    val success: Color,
+    val successSoft: Color,
+    val danger: Color,
+    val dangerSoft: Color,
+    val amber: Color,
+    val amberSoft: Color,
+    val amberDark: Color,
+    val gold: Color,
+    val goldSoft: Color,
+    val goldDark: Color,
+    val pink: Color,
+    val pinkSoft: Color,
+    val pinkDark: Color,
+    val blue: Color,
+    val blueSoft: Color,
+    val purple: Color,
+    val purpleSoft: Color,
+    val progressTrack: Color,
+    val inactiveIcon: Color,
+    val headerStreakInactive: Color,
+    val iconBadgeCompletedBackground: Color,
+    val rewardBackdropStart: Color,
+    val rewardBackdropCenter: Color,
+    val rewardBackdropEnd: Color,
+    val rewardSurface: Color,
+    val rewardText: Color,
+    val rewardTextMuted: Color,
+    val rewardAccent: Color,
+    val overlayBackground: Color
+)
+
+object AppThemePrefs {
+    private const val PREFS_NAME = "habit_pet_app_theme"
+    private const val KEY_THEME = "selected_theme"
+    private const val DEFAULT_THEME_ID = "pet_challenge"
+
+    private val _theme = MutableStateFlow(AppThemeOption.PET_CHALLENGE)
+    val theme: StateFlow<AppThemeOption> = _theme.asStateFlow()
+
+    fun initialize(context: Context) {
+        _theme.value = fromId(prefs(context).getString(KEY_THEME, DEFAULT_THEME_ID))
+    }
+
+    fun setTheme(context: Context, option: AppThemeOption) {
+        prefs(context).edit().putString(KEY_THEME, option.id).apply()
+        _theme.value = option
+    }
+
+    fun currentTheme(): AppThemeOption = _theme.value
+
+    private fun prefs(context: Context): SharedPreferences =
+        context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    private fun fromId(id: String?): AppThemeOption =
+        AppThemeOption.values().firstOrNull { it.id == id } ?: AppThemeOption.PET_CHALLENGE
 }

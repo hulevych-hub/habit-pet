@@ -66,6 +66,7 @@ import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
 import com.example.mobile.util.ReinforcementMessageProvider
+import com.example.mobile.ui.theme.AppTheme
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +93,7 @@ fun ActivityTimelineScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC),
+        containerColor = AppTheme.current.background,
         topBar = {
             GamifiedFixedHeader(
                 streak = progressUiState.globalStreak,
@@ -140,8 +141,8 @@ fun ActivityTimelineScreen(
                         onClick = { activityTimelineViewModel.loadMore() },
                         enabled = !isLoadingMore,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ColorPaletteActivity.Violet,
-                            disabledContainerColor = ColorPaletteActivity.Violet.copy(alpha = 0.5f)
+                            containerColor = AppTheme.current.violet,
+                            disabledContainerColor = AppTheme.current.violet.copy(alpha = 0.5f)
                         ),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
@@ -156,7 +157,7 @@ fun ActivityTimelineScreen(
                             if (isLoadingMore) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(18.dp),
-                                    color = Color.White,
+                                    color = AppTheme.current.onPrimary,
                                     strokeWidth = 2.dp
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
@@ -184,10 +185,10 @@ private fun GamifiedFixedHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color(0xFFFFFFFF),
+        color = AppTheme.current.headerSurface,
         shadowElevation = 1.dp
     ) {
-        val streakTint = if (streakCompletedToday) ColorPaletteActivity.Flame else Color(0xFFA9A3B8)
+        val streakTint = if (streakCompletedToday) AppTheme.current.danger else AppTheme.current.headerStreakInactive
 
         Row(
             modifier = Modifier
@@ -210,13 +211,13 @@ private fun GamifiedFixedHeader(
                 Text(
                     text = "$streak d",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteActivity.Ink
+                    color = AppTheme.current.ink
                 )
             }
 
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = ColorPaletteActivity.Violet.copy(alpha = 0.1f)
+                color = AppTheme.current.violet.copy(alpha = 0.1f)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
@@ -226,13 +227,13 @@ private fun GamifiedFixedHeader(
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = ColorPaletteActivity.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = stageName,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteActivity.Violet
+                        color = AppTheme.current.violet
                     )
                 }
             }
@@ -244,12 +245,12 @@ private fun GamifiedFixedHeader(
             ) {
                 CoinIcon(
                     modifier = Modifier.size(22.dp),
-                    tint = ColorPaletteActivity.Amber
+                    tint = AppTheme.current.amber
                 )
                 Text(
                     text = "$coins",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteActivity.Ink
+                    color = AppTheme.current.ink
                 )
             }
         }
@@ -260,7 +261,7 @@ private fun GamifiedFixedHeader(
 private fun ActivityHeader() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteActivity.Ink),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary),
         shape = RoundedCornerShape(24.dp)
     ) {
         Box(
@@ -268,7 +269,7 @@ private fun ActivityHeader() {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(ColorPaletteActivity.Ink, Color(0xFF231D3D))
+                        colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
                 .padding(20.dp)
@@ -277,12 +278,12 @@ private fun ActivityHeader() {
                 Text(
                     text = "Dragon Story Path",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White
+                    color = AppTheme.current.onPrimary
                 )
                 Text(
                     text = "Every productive rhythm becomes a timeless chronicle your companion carries forward.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.65f)
+                    color = AppTheme.current.onPrimary.copy(alpha = 0.65f)
                 )
             }
         }
@@ -300,9 +301,9 @@ private fun DayHeader(label: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
-            color = ColorPaletteActivity.Violet,
+            color = AppTheme.current.violet,
             modifier = Modifier
-                .background(ColorPaletteActivity.Violet.copy(alpha = 0.1f), RoundedCornerShape(999.dp))
+                .background(AppTheme.current.violet.copy(alpha = 0.1f), RoundedCornerShape(999.dp))
                 .padding(horizontal = 14.dp, vertical = 4.dp)
         )
     }
@@ -341,7 +342,7 @@ private fun ActivityTimelineItem(
                 modifier = Modifier
                     .weight(1f)
                     .width(2.dp)
-                    .background(ColorPaletteActivity.Line)
+                    .background(AppTheme.current.outline)
             )
         }
 
@@ -387,7 +388,7 @@ private fun TimelineNode(accent: Color) {
                 Box(
                     modifier = Modifier
                         .size(4.dp)
-                        .background(Color.White, CircleShape)
+                        .background(AppTheme.current.onSurface, CircleShape)
                         .align(Alignment.Center)
                 )
             }
@@ -406,12 +407,12 @@ private fun TimelineEventCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isMilestone) accent.copy(alpha = 0.04f) else ColorPaletteActivity.Card
+            containerColor = if (isMilestone) accent.copy(alpha = 0.04f) else AppTheme.current.card
         ),
         shape = RoundedCornerShape(20.dp),
         border = androidx.compose.foundation.BorderStroke(
             width = 1.dp,
-            color = if (isMilestone) accent.copy(alpha = 0.3f) else ColorPaletteActivity.Line.copy(alpha = 0.4f)
+            color = if (isMilestone) accent.copy(alpha = 0.3f) else AppTheme.current.outline.copy(alpha = 0.4f)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isMilestone) 2.dp else 0.5.dp)
     ) {
@@ -449,7 +450,7 @@ private fun TimelineEventCard(
                         Text(
                             text = event.title,
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ColorPaletteActivity.Ink
+                            color = AppTheme.current.ink
                         )
                         Surface(
                             shape = RoundedCornerShape(4.dp),
@@ -468,27 +469,27 @@ private fun TimelineEventCard(
                 Text(
                     text = timeAgo(event.timestamp),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                    color = ColorPaletteActivity.Muted
+                    color = AppTheme.current.muted
                 )
             }
 
             Text(
                 text = event.description,
                 style = MaterialTheme.typography.bodySmall,
-                color = ColorPaletteActivity.Ink.copy(alpha = 0.75f),
+                color = AppTheme.current.ink.copy(alpha = 0.75f),
                 lineHeight = 18.sp
             )
 
             if (reinforcementMessage.isNotBlank()) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
-                    color = ColorPaletteActivity.Amber.copy(alpha = 0.08f),
+                    color = AppTheme.current.amber.copy(alpha = 0.08f),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "💬 $reinforcementMessage",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-                        color = ColorPaletteActivity.AmberText,
+                        color = AppTheme.current.amberDark,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     )
                 }
@@ -564,10 +565,10 @@ private fun iconForEvent(type: String) = when (type) {
 
 @Composable
 private fun rarityColor(rarity: String): Color = when (rarity) {
-    GameEventRarity.LEGENDARY.name -> Color(0xFFFF9F1C)
-    GameEventRarity.EPIC.name -> Color(0xFFA14BFF)
-    GameEventRarity.RARE.name -> Color(0xFF3B91FF)
-    else -> Color(0xFF6F6A8A)
+    GameEventRarity.LEGENDARY.name -> AppTheme.current.amber
+    GameEventRarity.EPIC.name -> AppTheme.current.purple
+    GameEventRarity.RARE.name -> AppTheme.current.blue
+    else -> AppTheme.current.violetMuted
 }
 
 private data class TimelineGroup(
@@ -576,14 +577,3 @@ private data class TimelineGroup(
 )
 
 private const val DAY_MILLIS = 24L * 60L * 60L * 1000L
-
-private object ColorPaletteActivity {
-    val Card = Color(0xFFFFFFFF)
-    val Violet = Color(0xFF8A76F9)
-    val Flame = Color(0xFFFF6B35)
-    val Amber = Color(0xFFFFB84D)
-    val AmberText = Color(0xFFB37400)
-    val Line = Color(0xFFEBE9F5)
-    val Muted = Color(0xFF8E8A9F)
-    val Ink = Color(0xFF1E1A34)
-}

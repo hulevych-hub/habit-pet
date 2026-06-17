@@ -64,6 +64,7 @@ import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
+import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.CoinPill
@@ -169,7 +170,7 @@ fun RewardsScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC),
+        containerColor = AppTheme.current.background,
         topBar = {
             GamifiedFixedHeader(
                 streak = progressUiState.globalStreak,
@@ -313,11 +314,11 @@ private fun InventoryItemGridSquare(
             .fillMaxWidth()
             .border(
                 width = if (isSelected) 3.dp else if (isEquipped) 2.dp else 0.dp,
-                color = if (isSelected) ColorPaletteRewards.Violet else if (isEquipped) ColorPaletteRewards.Mint else Color.Transparent,
+                color = if (isSelected) AppTheme.current.violet else if (isEquipped) AppTheme.current.mint else Color.Transparent,
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteRewards.Card),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased && !isSelected) 1.dp else 0.dp)
     ) {
@@ -349,13 +350,13 @@ private fun InventoryItemGridSquare(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(ColorPaletteRewards.Ink.copy(alpha = 0.08f)),
+                        .background(AppTheme.current.ink.copy(alpha = 0.08f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Locked",
-                        tint = Color.White.copy(alpha = 0.6f),
+                        tint = AppTheme.current.onPrimary.copy(alpha = 0.6f),
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -365,13 +366,13 @@ private fun InventoryItemGridSquare(
                         .align(Alignment.TopEnd)
                         .padding(8.dp)
                         .size(16.dp)
-                        .background(ColorPaletteRewards.Mint, CircleShape),
+                        .background(AppTheme.current.mint, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = AppTheme.current.onPrimary,
                         modifier = Modifier.size(10.dp)
                     )
                 }
@@ -401,7 +402,7 @@ private fun ItemInspectDrawer(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 16.dp),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteRewards.Card),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
     ) {
@@ -429,12 +430,12 @@ private fun ItemInspectDrawer(
                     Text(
                         text = item.name,
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteRewards.Ink
+                        color = AppTheme.current.ink
                     )
                 }
 
                 TextButton(onClick = onClose) {
-                    Text("Close", color = ColorPaletteRewards.Muted)
+                    Text("Close", color = AppTheme.current.muted)
                 }
             }
 
@@ -444,11 +445,11 @@ private fun ItemInspectDrawer(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Source", style = MaterialTheme.typography.labelMedium, color = ColorPaletteRewards.Muted)
+                    Text("Source", style = MaterialTheme.typography.labelMedium, color = AppTheme.current.muted)
                     Text(
                         text = item.unlockSource.ifBlank { "Standard Shop Asset" },
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                        color = ColorPaletteRewards.Ink
+                        color = AppTheme.current.ink
                     )
                 }
 
@@ -467,12 +468,12 @@ private fun ItemInspectDrawer(
                 enabled = isEquipped || item.isPurchased || isPurchasable,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = when {
-                        isEquipped -> ColorPaletteRewards.Ink.copy(alpha = 0.08f)
-                        item.isPurchased -> ColorPaletteRewards.Violet
-                        isPurchasable -> ColorPaletteRewards.Amber
-                        else -> ColorPaletteRewards.Muted
+                        isEquipped -> AppTheme.current.ink.copy(alpha = 0.08f)
+                        item.isPurchased -> AppTheme.current.violet
+                        isPurchasable -> AppTheme.current.amber
+                        else -> AppTheme.current.muted
                     },
-                    contentColor = if (isEquipped) ColorPaletteRewards.Ink else Color.White
+                    contentColor = if (isEquipped) AppTheme.current.ink else AppTheme.current.onPrimary
                 ),
                 shape = RoundedCornerShape(999.dp),
                 modifier = Modifier.fillMaxWidth().height(48.dp)
@@ -500,7 +501,7 @@ private fun CollectionTypeTabs(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ColorPaletteRewards.Ink.copy(alpha = 0.04f), RoundedCornerShape(999.dp))
+            .background(AppTheme.current.ink.copy(alpha = 0.04f), RoundedCornerShape(999.dp))
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -511,7 +512,7 @@ private fun CollectionTypeTabs(
                     .weight(1f)
                     .height(38.dp)
                     .clip(RoundedCornerShape(999.dp))
-                    .background(if (isSelected) ColorPaletteRewards.Violet else Color.Transparent)
+                    .background(if (isSelected) AppTheme.current.violet else Color.Transparent)
                     .clickable { onTypeSelected(tab) },
                 contentAlignment = Alignment.Center
             ) {
@@ -522,13 +523,13 @@ private fun CollectionTypeTabs(
                     Icon(
                         imageVector = tab.icon,
                         contentDescription = null,
-                        tint = if (isSelected) Color.White else ColorPaletteRewards.Muted,
+                        tint = if (isSelected) AppTheme.current.onPrimary else AppTheme.current.muted,
                         modifier = Modifier.size(15.dp)
                     )
                     Text(
                         text = tab.label,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = if (isSelected) Color.White else ColorPaletteRewards.Muted
+                        color = if (isSelected) AppTheme.current.onPrimary else AppTheme.current.muted
                     )
                 }
             }
@@ -553,14 +554,14 @@ private fun CollectionToggle(
                     .height(44.dp)
                     .clickable { onSelected(tab) },
                 shape = RoundedCornerShape(16.dp),
-                color = if (isSelected) ColorPaletteRewards.Violet else ColorPaletteRewards.Violet.copy(alpha = 0.08f),
+                color = if (isSelected) AppTheme.current.violet else AppTheme.current.violet.copy(alpha = 0.08f),
                 border = borderStrokeFix(isSelected)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = "${tab.label} Inventory",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = if (isSelected) Color.White else ColorPaletteRewards.Violet
+                        color = if (isSelected) AppTheme.current.onPrimary else AppTheme.current.violet
                     )
                 }
             }
@@ -579,7 +580,7 @@ private fun RarityFilter(
     ) {
         RarityChip(
             label = "All",
-            chipColor = ColorPaletteRewards.Muted,
+            chipColor = AppTheme.current.muted,
             isSelected = selectedRarity == null,
             onClick = { onRaritySelected(null) },
             modifier = Modifier.weight(1f)
@@ -616,7 +617,7 @@ private fun RarityChip(
             Text(
                 text = label.replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = if (isSelected) Color.White else chipColor
+                color = if (isSelected) AppTheme.current.onPrimary else chipColor
             )
         }
     }
@@ -632,10 +633,10 @@ private fun GamifiedFixedHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color(0xFFFFFFFF),
+        color = AppTheme.current.headerSurface,
         shadowElevation = 1.dp
     ) {
-        val streakTint = if (streakCompletedToday) ColorPaletteRewards.Honey else Color(0xFFA9A3B8)
+        val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
 
         Row(
             modifier = Modifier
@@ -658,13 +659,13 @@ private fun GamifiedFixedHeader(
                 Text(
                     text = "$streak d",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteRewards.Ink
+                    color = AppTheme.current.ink
                 )
             }
 
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = ColorPaletteRewards.Violet.copy(alpha = 0.1f)
+                color = AppTheme.current.violet.copy(alpha = 0.1f)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
@@ -674,13 +675,13 @@ private fun GamifiedFixedHeader(
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
-                        tint = ColorPaletteRewards.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
                         text = stageName,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteRewards.Violet
+                        color = AppTheme.current.violet
                     )
                 }
             }
@@ -692,19 +693,19 @@ private fun GamifiedFixedHeader(
             ) {
                 CoinIcon(
                     modifier = Modifier.size(22.dp),
-                    tint = ColorPaletteRewards.Amber
+                    tint = AppTheme.current.amber
                 )
                 Text(
                     text = "$coins",
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteRewards.Ink
+                    color = AppTheme.current.ink
                 )
             }
         }
     }
 }
 
-private fun borderStrokeFix(selected: Boolean, color: Color = ColorPaletteRewards.Violet) =
+private fun borderStrokeFix(selected: Boolean, color: Color = AppTheme.current.violet) =
     if (selected) androidx.compose.foundation.BorderStroke(1.5.dp, color) else null
 
 private fun CollectionTypeTab.itemsFlow(viewModel: RewardsViewModel) = when (this) {
@@ -714,10 +715,10 @@ private fun CollectionTypeTab.itemsFlow(viewModel: RewardsViewModel) = when (thi
 }
 
 private fun rarityColor(rarity: Rarity): Color = when (rarity) {
-    Rarity.NORMAL -> Color(0xFF6F6A8A)
-    Rarity.RARE -> Color(0xFF4EDB95)
-    Rarity.EPIC -> Color(0xFF3B91FF)
-    Rarity.LEGENDARY -> Color(0xFFB26CFF)
+    Rarity.NORMAL -> AppTheme.current.violetMuted
+    Rarity.RARE -> AppTheme.current.mint
+    Rarity.EPIC -> AppTheme.current.blue
+    Rarity.LEGENDARY -> AppTheme.current.purple
 }
 
 private enum class CollectionTypeTab(val label: String, val icon: ImageVector) {
@@ -737,15 +738,4 @@ private enum class CollectionTab(val label: String) {
             else -> Owned
         }
     }
-}
-
-private object ColorPaletteRewards {
-    val Card = Color(0xFFFFFFFF)
-    val Line = Color(0xFFD9D4EA)
-    val Violet = Color(0xFF8A76F9)
-    val Amber = Color(0xFFFFB84D)
-    val Honey = Color(0xFFFF9F1C)
-    val Mint = Color(0xFF23A160)
-    val Muted = Color(0xFF6A6581)
-    val Ink = Color(0xFF1E1A34)
 }

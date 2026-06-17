@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 import com.example.mobile.presentation.ui.components.rememberAssetPainter
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.util.AssetResolver
 
 @Composable
@@ -77,7 +78,7 @@ private fun RewardDialog(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
+            .background(AppTheme.current.overlayBackground)
             .clickable { onDismiss() }
     ) {
         AnimatedVisibility(
@@ -91,7 +92,7 @@ private fun RewardDialog(
                     .width(280.dp)
                     .padding(24.dp)
                     .background(
-                        MaterialTheme.colorScheme.surface,
+                        AppTheme.current.rewardSurface,
                         shape = RoundedCornerShape(16.dp)
                     )
             ) {
@@ -167,7 +168,7 @@ private fun CoinRewardContent(
             imageVector = Icons.Default.AddCircle,
             contentDescription = "Coin",
             modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = AppTheme.current.amber
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -175,7 +176,7 @@ private fun CoinRewardContent(
         Text(
             text = "+$amount",
             style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.primary
+            color = AppTheme.current.amber
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -203,7 +204,7 @@ private fun LevelUpRewardContent(
             imageVector = Icons.Default.Emergency,
             contentDescription = "Level Up",
             modifier = Modifier.size(72.dp),
-            tint = MaterialTheme.colorScheme.secondary
+            tint = AppTheme.current.violet
         )
 
         Text("Level $level")
@@ -225,7 +226,7 @@ private fun StreakRewardContent(
         Icon(
             imageVector = Icons.Default.LocalFireDepartment,
             contentDescription = "Streak",
-            tint = Color.Red
+            tint = AppTheme.current.danger
         )
 
         Text("$streak Day Streak")
@@ -246,7 +247,7 @@ private fun ExpRewardContent(
         Icon(
             imageVector = Icons.Default.Star,
             contentDescription = "EXP",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = AppTheme.current.amber,
             modifier = Modifier.size(56.dp)
         )
 
@@ -268,7 +269,7 @@ private fun CustomizationRewardContent(
         Icon(
             imageVector = Icons.Default.ShoppingBag,
             contentDescription = "Customization",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = AppTheme.current.amber,
             modifier = Modifier.size(56.dp)
         )
 
@@ -300,7 +301,7 @@ private fun AchievementRewardContent(
         Icon(
             imageVector = Icons.Default.EmojiEvents,
             contentDescription = "Achievement",
-            tint = MaterialTheme.colorScheme.tertiary
+            tint = AppTheme.current.purple
         )
 
         Text("Achievement Unlocked!")
@@ -401,7 +402,7 @@ private fun ChestRewardContent(
             if (rewardText.isNotEmpty()) {
                 Text(
                     text = rewardText.joinToString("\n"),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = AppTheme.current.rewardText
                 )
             }
 
@@ -455,13 +456,13 @@ private fun DragonEvolutionRewardContent(
         Text(
             text = if (isEvolved) "Evolution Complete!" else "Tap to evolve",
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = AppTheme.current.rewardText
         )
 
         if (!isEvolved) {
             Text(
                 text = "Your pet is transforming...",
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                color = AppTheme.current.rewardText.copy(alpha = 0.7f),
                 fontSize = 16.sp
             )
         }

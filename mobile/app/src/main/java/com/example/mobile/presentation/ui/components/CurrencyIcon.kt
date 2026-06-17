@@ -17,11 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.mobile.R
+import com.example.mobile.ui.theme.AppTheme
 
 @Composable
 fun CoinIcon(
     modifier: Modifier = Modifier,
-    tint: Color = Color(0xFFFFB84D)
+    tint: Color = AppTheme.current.amber
 ) {
     Icon(
         painter = painterResource(id = R.drawable.ic_coin),
@@ -38,22 +39,22 @@ fun CoinPill(
 ) {
     Surface(
         shape = CircleShape,
-        color = Color(0xFFFFB84D).copy(alpha = 0.12f)
+        color = AppTheme.current.amberSoft
     ) {
         Row(
             modifier = modifier
-                .background(Color(0xFFFFB84D).copy(alpha = 0.12f), CircleShape)
+                .background(AppTheme.current.amberSoft, CircleShape)
                 .padding(horizontal = 8.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CoinIcon(
                 modifier = Modifier.size(15.dp),
-                tint = Color(0xFFFFB84D)
+                tint = AppTheme.current.amber
             )
             Text(
                 text = amount.toString(),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color(0xFF7A4A00)
+                color = AppTheme.current.amberDark
             )
         }
     }

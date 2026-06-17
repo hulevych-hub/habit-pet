@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.ui.theme.AppTheme
 
 @Composable
 fun RewardOverlayHost(
@@ -30,7 +30,7 @@ fun RewardOverlayHost(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
+                .background(AppTheme.current.overlayBackground)
                 .then(backgroundModifier)
         ) {
             RewardScreen(

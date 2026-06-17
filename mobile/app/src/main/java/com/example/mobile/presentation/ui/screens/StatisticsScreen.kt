@@ -55,6 +55,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -86,17 +87,17 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
     val isLoading by statisticsViewModel.isLoading.collectAsState()
 
     Scaffold(
-        containerColor = Color(0xFFFAFAFC),
+        containerColor = AppTheme.current.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = "Journey Insights",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteStats.Ink
+                        color = AppTheme.current.ink
                     )
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = AppTheme.current.headerSurface),
                 modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
             )
         }
@@ -133,7 +134,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
                 Text(
                     text = "Lifetime Milestones",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp),
-                    color = ColorPaletteStats.Muted,
+                    color = AppTheme.current.muted,
                     modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
                 )
             }
@@ -144,7 +145,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
                     label = "Total Actions",
                     value = "${stats.totalCompletions}",
                     icon = Icons.Default.CheckCircle,
-                    accentColor = ColorPaletteStats.Mint
+                    accentColor = AppTheme.current.success
                 )
             }
             item {
@@ -152,7 +153,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
                     label = "Experience Gained",
                     value = "${stats.totalXp} XP",
                     icon = Icons.Default.AutoAwesome,
-                    accentColor = ColorPaletteStats.Violet
+                    accentColor = AppTheme.current.violet
                 )
             }
             item {
@@ -160,7 +161,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
                     label = "Days Active",
                     value = "${stats.daysActive} d",
                     icon = Icons.Default.CalendarMonth,
-                    accentColor = ColorPaletteStats.Ocean
+                    accentColor = AppTheme.current.blue
                 )
             }
             item {
@@ -168,7 +169,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
                     label = "Habits Formed",
                     value = "${stats.totalHabitsCompleted}",
                     icon = Icons.Default.TaskAlt,
-                    accentColor = ColorPaletteStats.Lavender
+                    accentColor = AppTheme.current.purple
                 )
             }
 
@@ -178,7 +179,7 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
             }
         }
     }
-}
+    }
 }
 
 @Composable
@@ -189,14 +190,14 @@ private fun HeroStreakCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteStats.Ink)
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(ColorPaletteStats.Ink, Color(0xFF272144))
+                        colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
                 .padding(24.dp)
@@ -209,7 +210,7 @@ private fun HeroStreakCard(
                     .offset(x = 20.dp, y = (-10).dp)
                     .background(
                         brush = Brush.radialGradient(
-                            colors = listOf(ColorPaletteStats.Flame.copy(alpha = 0.18f), Color.Transparent)
+                            colors = listOf(AppTheme.current.danger.copy(alpha = 0.18f), Color.Transparent)
                         ),
                         shape = CircleShape
                     )
@@ -228,20 +229,20 @@ private fun HeroStreakCard(
                         Icon(
                             imageVector = Icons.Default.LocalFireDepartment,
                             contentDescription = null,
-                            tint = ColorPaletteStats.Flame,
+                            tint = AppTheme.current.danger,
                             modifier = Modifier.size(20.dp)
                         )
                         Text(
                             text = "CURRENT STREAK",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
-                            color = ColorPaletteStats.Flame
+                            color = AppTheme.current.danger
                         )
                     }
 
                     Text(
                         text = "$currentStreak Days",
                         style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Black),
-                        color = Color.White
+                        color = AppTheme.current.onPrimary
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -250,19 +251,19 @@ private fun HeroStreakCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier
-                            .background(Color.White.copy(alpha = 0.07f), RoundedCornerShape(999.dp))
+                            .background(AppTheme.current.onPrimary.copy(alpha = 0.12f), RoundedCornerShape(999.dp))
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.MilitaryTech,
                             contentDescription = null,
-                            tint = ColorPaletteStats.Gold,
+                            tint = AppTheme.current.gold,
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
                             text = "Personal Best: $bestStreak days",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = Color.White.copy(alpha = 0.85f)
+                            color = AppTheme.current.onPrimary.copy(alpha = 0.85f)
                         )
                     }
                 }
@@ -271,13 +272,13 @@ private fun HeroStreakCard(
                 Box(
                     modifier = Modifier
                         .size(72.dp)
-                        .background(ColorPaletteStats.Flame.copy(alpha = 0.12f), CircleShape),
+                        .background(AppTheme.current.danger.copy(alpha = 0.12f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocalFireDepartment,
                         contentDescription = null,
-                        tint = ColorPaletteStats.Flame,
+                        tint = AppTheme.current.danger,
                         modifier = Modifier.size(42.dp)
                     )
                 }
@@ -296,7 +297,7 @@ private fun StatBentoCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteStats.Card),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
@@ -323,12 +324,12 @@ private fun StatBentoCard(
                 Text(
                     text = value,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteStats.Ink
+                    color = AppTheme.current.ink
                 )
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                    color = ColorPaletteStats.Muted
+                    color = AppTheme.current.muted
                 )
             }
         }
@@ -342,7 +343,7 @@ private fun PetLifecycleCard(ageDays: Int) {
             .fillMaxWidth()
             .padding(top = 6.dp),
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(containerColor = ColorPaletteStats.Card),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -359,13 +360,13 @@ private fun PetLifecycleCard(ageDays: Int) {
                 Box(
                     modifier = Modifier
                         .size(46.dp)
-                        .background(ColorPaletteStats.Gold.copy(alpha = 0.12f), CircleShape),
+                        .background(AppTheme.current.gold.copy(alpha = 0.12f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Cake,
                         contentDescription = null,
-                        tint = ColorPaletteStats.Gold,
+                        tint = AppTheme.current.gold,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -374,12 +375,12 @@ private fun PetLifecycleCard(ageDays: Int) {
                     Text(
                         text = "Companion Bond Age",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteStats.Ink
+                        color = AppTheme.current.ink
                     )
                     Text(
                         text = "Total days spent nurturing your dragon companion",
                         style = MaterialTheme.typography.bodySmall,
-                        color = ColorPaletteStats.Muted
+                        color = AppTheme.current.muted
                     )
                 }
             }
@@ -387,22 +388,8 @@ private fun PetLifecycleCard(ageDays: Int) {
             Text(
                 text = "$ageDays d",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black),
-                color = ColorPaletteStats.Gold
+                color = AppTheme.current.gold
             )
         }
     }
-}
-
-private object ColorPaletteStats {
-    val Card = Color(0xFFFFFFFF)
-    val Ink = Color(0xFF1E1A34)
-    val Muted = Color(0xFF7E7A94)
-
-    // Theme Accent Markers
-    val Flame = Color(0xFFFF6B35)
-    val Gold = Color(0xFFFFB84D)
-    val Mint = Color(0xFF23A160)
-    val Violet = Color(0xFF8A76F9)
-    val Ocean = Color(0xFF3B91FF)
-    val Lavender = Color(0xFFB26CFF)
 }

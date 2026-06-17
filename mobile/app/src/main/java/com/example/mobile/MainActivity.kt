@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -16,6 +18,7 @@ import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.feedback.MicroFeedbackOverlay
 import com.example.mobile.presentation.ui.reward.RewardManager
 import com.example.mobile.presentation.ui.reward.RewardOverlayHost
+import com.example.mobile.ui.theme.AppThemePrefs
 import com.example.mobile.ui.theme.HabitPetTheme
 import com.example.mobile.util.NotificationPrefs
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,12 +62,16 @@ class MainActivity : ComponentActivity() {
         }
         onBackPressedDispatcher.addCallback(rewardBackPressedCallback!!)
 
+        AppThemePrefs.initialize(this)
+
         setContent {
-            HabitPetTheme {
+            val selectedTheme by AppThemePrefs.theme.collectAsState()
+            HabitPetTheme(appTheme = selectedTheme) {
 
                 androidx.compose.foundation.layout.Box {
 
                     HabitPetNavGraph(
+                        appTheme = selectedTheme,
                         microFeedbackManager = microFeedbackManager
                     )
 

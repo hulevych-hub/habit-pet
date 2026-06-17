@@ -61,7 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.presentation.viewmodel.HabitCreationViewModel
-import com.example.mobile.ui.theme.HabitPetTheme
+import com.example.mobile.ui.theme.AppTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,10 +77,9 @@ fun HabitCreationScreen(
         }
     }
 
-    HabitPetTheme {
-        Scaffold(
-            containerColor = Color(0xFFFAFAFC)
-        ) { padding ->
+    Scaffold(
+        containerColor = AppTheme.current.background
+    ) { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -94,14 +93,13 @@ fun HabitCreationScreen(
                     InlineScreenHeader(
                         title = "New Quest Blueprint",
                         onNavigateUp = onNavigateUp,
-                        accentColor = ColorPaletteCreate.Violet
+                        accentColor = AppTheme.current.violet
                     )
                     HabitCreationForm(viewModel = viewModel)
                 }
             }
         }
     }
-}
 
 @Composable
 private fun InlineScreenHeader(
@@ -126,7 +124,7 @@ private fun InlineScreenHeader(
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-            color = ColorPaletteCreate.Ink
+            color = AppTheme.current.ink
         )
     }
 }
@@ -156,9 +154,9 @@ private fun HabitCreationForm(
         // Name Input Card
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = ColorPaletteCreate.Card),
+            colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
             shape = RoundedCornerShape(22.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteCreate.Line.copy(alpha = 0.4f))
+            border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f))
         ) {
             Column(modifier = Modifier.padding(18.dp)) {
                 OutlinedTextField(
@@ -170,10 +168,10 @@ private fun HabitCreationForm(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = ColorPaletteCreate.Violet,
-                        unfocusedBorderColor = ColorPaletteCreate.Line,
-                        focusedLabelColor = ColorPaletteCreate.Violet,
-                        unfocusedLabelColor = ColorPaletteCreate.Muted
+                        focusedBorderColor = AppTheme.current.violet,
+                        unfocusedBorderColor = AppTheme.current.outline,
+                        focusedLabelColor = AppTheme.current.violet,
+                        unfocusedLabelColor = AppTheme.current.muted
                     )
                 )
             }
@@ -182,22 +180,22 @@ private fun HabitCreationForm(
         // Expanded Icon Picker Selector Card
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = ColorPaletteCreate.Card),
+            colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
             shape = RoundedCornerShape(22.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteCreate.Line.copy(alpha = 0.4f))
+            border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f))
         ) {
             Column(modifier = Modifier.padding(18.dp)) {
                 Text(
                     text = "Visual Totem Symbol",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteCreate.Ink
+                    color = AppTheme.current.ink
                 )
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(ColorPaletteCreate.Line.copy(alpha = 0.25f), RoundedCornerShape(16.dp))
+                        .background(AppTheme.current.outline.copy(alpha = 0.25f), RoundedCornerShape(16.dp))
                         .clickable { showBottomSheet = true }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -210,8 +208,8 @@ private fun HabitCreationForm(
                         Box(
                             modifier = Modifier
                                 .size(50.dp)
-                                .background(Color.White, RoundedCornerShape(12.dp))
-                                .border(1.dp, ColorPaletteCreate.Line, RoundedCornerShape(12.dp)),
+                                .background(AppTheme.current.surface, RoundedCornerShape(12.dp))
+                                .border(1.dp, AppTheme.current.outline, RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(icon.ifBlank { HabitCreationViewModel.DEFAULT_ICON }, fontSize = 24.sp)
@@ -220,19 +218,19 @@ private fun HabitCreationForm(
                             Text(
                                 text = "Selected Emblem",
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ColorPaletteCreate.Ink
+                                color = AppTheme.current.ink
                             )
                             Text(
                                 text = "Default target icon ready • tap to change",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = ColorPaletteCreate.Muted
+                                color = AppTheme.current.muted
                             )
                         }
                     }
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Change Icon",
-                        tint = ColorPaletteCreate.Violet,
+                        tint = AppTheme.current.violet,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -242,15 +240,15 @@ private fun HabitCreationForm(
         // Type Selection Card
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = ColorPaletteCreate.Card),
+            colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
             shape = RoundedCornerShape(22.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteCreate.Line.copy(alpha = 0.4f))
+            border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f))
         ) {
             Column(modifier = Modifier.padding(18.dp)) {
                 Text(
                     text = "Verification Method",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = ColorPaletteCreate.Ink
+                    color = AppTheme.current.ink
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 TypeSelection(
@@ -264,15 +262,15 @@ private fun HabitCreationForm(
         if (type == "TIMER") {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = ColorPaletteCreate.Card),
+                colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
                 shape = RoundedCornerShape(22.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteCreate.Line.copy(alpha = 0.4f))
+                border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f))
             ) {
                 Column(modifier = Modifier.padding(18.dp)) {
                     Text(
                         text = "Minimum Activation Duration",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteCreate.Ink
+                        color = AppTheme.current.ink
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     DurationSelection(
@@ -288,12 +286,12 @@ private fun HabitCreationForm(
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
-                color = ColorPaletteCreate.Coral.copy(alpha = 0.08f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ColorPaletteCreate.Coral.copy(alpha = 0.2f))
+                color = AppTheme.current.danger.copy(alpha = 0.08f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.danger.copy(alpha = 0.2f))
             ) {
                 Text(
                     text = it,
-                    color = ColorPaletteCreate.Coral,
+                    color = AppTheme.current.danger,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                     modifier = Modifier.padding(14.dp)
                 )
@@ -307,8 +305,8 @@ private fun HabitCreationForm(
             onClick = { viewModel.createHabit() },
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = ColorPaletteCreate.Violet,
-                disabledContainerColor = ColorPaletteCreate.Violet.copy(alpha = 0.5f)
+                containerColor = AppTheme.current.violet,
+                disabledContainerColor = AppTheme.current.violet.copy(alpha = 0.5f)
             ),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
@@ -320,7 +318,7 @@ private fun HabitCreationForm(
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     strokeWidth = 2.5.dp,
-                    color = Color.White
+                    color = AppTheme.current.onPrimary
                 )
             } else {
                 Text(
@@ -335,13 +333,13 @@ private fun HabitCreationForm(
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            containerColor = Color.White,
+            containerColor = AppTheme.current.surface,
             dragHandle = {
                 Box(
                     modifier = Modifier
                         .padding(top = 16.dp, bottom = 8.dp)
                         .size(width = 36.dp, height = 4.dp)
-                        .background(ColorPaletteCreate.Line, CircleShape)
+                        .background(AppTheme.current.outline, CircleShape)
                 )
             },
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
@@ -382,7 +380,7 @@ private fun EmojiVaultContent(
         Text(
             text = "Select Blueprint Icon",
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-            color = ColorPaletteCreate.Ink
+            color = AppTheme.current.ink
         )
 
         Column(
@@ -396,7 +394,7 @@ private fun EmojiVaultContent(
                     Text(
                         text = categoryName,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ColorPaletteCreate.Muted
+                        color = AppTheme.current.muted
                     )
 
                     LazyVerticalGrid(
@@ -412,12 +410,12 @@ private fun EmojiVaultContent(
                                 modifier = Modifier
                                     .aspectRatio(1f)
                                     .background(
-                                        color = if (isSelected) ColorPaletteCreate.Violet.copy(alpha = 0.12f) else ColorPaletteCreate.Line.copy(alpha = 0.15f),
+                                        color = if (isSelected) AppTheme.current.violet.copy(alpha = 0.12f) else AppTheme.current.outline.copy(alpha = 0.15f),
                                         shape = RoundedCornerShape(12.dp)
                                     )
                                     .border(
                                         width = 1.dp,
-                                        color = if (isSelected) ColorPaletteCreate.Violet else Color.Transparent,
+                                        color = if (isSelected) AppTheme.current.violet else Color.Transparent,
                                         shape = RoundedCornerShape(12.dp)
                                     )
                                     .clickable { onEmojiSelected(emoji) },
@@ -450,12 +448,12 @@ private fun TypeSelection(
                     .weight(1f)
                     .clickable { onTypeSelected(value) },
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isSelected) ColorPaletteCreate.Violet.copy(alpha = 0.04f) else Color.White
+                    containerColor = if (isSelected) AppTheme.current.violet.copy(alpha = 0.04f) else AppTheme.current.surface
                 ),
                 shape = RoundedCornerShape(14.dp),
                 border = androidx.compose.foundation.BorderStroke(
                     width = 1.5.dp,
-                    color = if (isSelected) ColorPaletteCreate.Violet else ColorPaletteCreate.Line.copy(alpha = 0.6f)
+                    color = if (isSelected) AppTheme.current.violet else AppTheme.current.outline.copy(alpha = 0.6f)
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
@@ -470,7 +468,7 @@ private fun TypeSelection(
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                         ),
-                        color = if (isSelected) ColorPaletteCreate.Violet else ColorPaletteCreate.Ink
+                        color = if (isSelected) AppTheme.current.violet else AppTheme.current.ink
                     )
                 }
             }
@@ -486,7 +484,7 @@ private fun DurationSelection(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ColorPaletteCreate.Line.copy(alpha = 0.3f), RoundedCornerShape(14.dp))
+            .background(AppTheme.current.outline.copy(alpha = 0.3f), RoundedCornerShape(14.dp))
             .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -495,16 +493,16 @@ private fun DurationSelection(
             onClick = { onDurationChanged((duration - 5).coerceAtLeast(1)) },
             enabled = duration > 5,
             modifier = Modifier
-                .background(Color.White, CircleShape)
+                .background(AppTheme.current.surface, CircleShape)
                 .size(36.dp)
         ) {
-            Icon(Icons.Default.Remove, contentDescription = "Decrease", tint = ColorPaletteCreate.Ink, modifier = Modifier.size(18.dp))
+            Icon(Icons.Default.Remove, contentDescription = "Decrease", tint = AppTheme.current.ink, modifier = Modifier.size(18.dp))
         }
 
         Text(
             text = "$duration minutes",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = ColorPaletteCreate.Ink,
+            color = AppTheme.current.ink,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f)
         )
@@ -513,19 +511,10 @@ private fun DurationSelection(
             onClick = { onDurationChanged(duration + 5) },
             enabled = duration < 180,
             modifier = Modifier
-                .background(Color.White, CircleShape)
+                .background(AppTheme.current.surface, CircleShape)
                 .size(36.dp)
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Increase", tint = ColorPaletteCreate.Ink, modifier = Modifier.size(18.dp))
+            Icon(Icons.Default.Add, contentDescription = "Increase", tint = AppTheme.current.ink, modifier = Modifier.size(18.dp))
         }
     }
-}
-
-private object ColorPaletteCreate {
-    val Card = Color(0xFFFFFFFF)
-    val Violet = Color(0xFF8A76F9)
-    val Line = Color(0xFFD9D4EA)
-    val Muted = Color(0xFF5F5A78)
-    val Coral = Color(0xFFE65C5C)
-    val Ink = Color(0xFF1E1A34)
 }
