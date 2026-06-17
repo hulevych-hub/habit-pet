@@ -14,16 +14,43 @@ object AppTheme {
         get() = AppThemePrefs.currentTheme().colors
 }
 
+object AutumnColors {
+    val stoneBase = Color(0xFF4A423D)
+    val stoneLineDark = Color(0xFF2F2A2A)
+    val stoneLineLight = Color(0xFFFFF1C7)
+    val headerGoldTop = Color(0xFFFFE6A0)
+    val headerGoldMiddle = Color(0xFFF2B94A)
+    val headerGoldBottom = Color(0xFFC98224)
+    val goldLight = Color(0xFFFFF1A8)
+    val gold = Color(0xFFFFD45A)
+    val goldDark = Color(0xFF9A620E)
+    val amber = Color(0xFFFFB84D)
+    val claimablePink = Color(0xFFF472B6)
+    val auraPurple = Color(0xFF7C3AED)
+    val deepInk = Color(0xFF2A1B08)
+    val creamInk = Color(0xFFFFF7ED)
+    val claimedInk = Color(0xFF26332A)
+    val claimedMuted = Color(0xFF5D6B62)
+    val disabledText = Color(0xFFD8C7A8)
+    val lockedStart = Color(0xFF4A4240)
+    val lockedEnd = Color(0xFF2E2928)
+    val progressTrack = Color(0xFF2B2422)
+    val disabledStart = Color(0xFF5A514B)
+    val disabledEnd = Color(0xFF3A3431)
+}
+
 enum class AppThemeOption(
     val id: String,
     val label: String,
     val description: String,
+    val isDark: Boolean,
     val colors: AppThemeColors
 ) {
     PET_CHALLENGE(
         id = "pet_challenge",
         label = "Pet & Challenge",
         description = "Premium dragon palette used by the pet and challenges screens",
+        isDark = true,
         colors = AppThemeColors(
             background = Color(0xFF111827),
             onBackground = Color(0xFFF8F5FF),
@@ -93,10 +120,85 @@ enum class AppThemeOption(
             overlayBackground = Color(0xFF000000)
         )
     ),
+    AUTUMN(
+        id = "autumn",
+        label = "Autumn",
+        description = "Warm milestone-hall palette with amber, gold, and violet accents",
+        isDark = true,
+        colors = AppThemeColors(
+            background = AutumnColors.stoneBase,
+            onBackground = AutumnColors.creamInk,
+            surface = Color(0xFF5A4A42),
+            onSurface = AutumnColors.creamInk,
+            surfaceVariant = Color(0xFF6B4A32),
+            onSurfaceVariant = AutumnColors.goldLight,
+            primary = AutumnColors.auraPurple,
+            onPrimary = Color.White,
+            primaryContainer = Color(0xFF4A315F),
+            onPrimaryContainer = AutumnColors.goldLight,
+            secondary = AutumnColors.gold,
+            onSecondary = AutumnColors.deepInk,
+            secondaryContainer = AutumnColors.headerGoldBottom,
+            onSecondaryContainer = AutumnColors.deepInk,
+            tertiary = Color(0xFF4EDB95),
+            onTertiary = Color(0xFF0B1F16),
+            tertiaryContainer = Color(0xFF1B5A42),
+            onTertiaryContainer = Color(0xFFBDF6D9),
+            card = Color(0xFF5A4A42),
+            cardElevated = Color(0xFF6B5548),
+            headerSurface = AutumnColors.stoneBase,
+            headerOnSurface = AutumnColors.creamInk,
+            headerGradientStart = AutumnColors.headerGoldTop,
+            headerGradientEnd = AutumnColors.headerGoldBottom,
+            outline = Color(0xFF8A6A45),
+            outlineVariant = Color(0xFFB08A5A),
+            divider = Color(0xFF8A6A45),
+            muted = AutumnColors.disabledText,
+            mutedStrong = AutumnColors.headerGoldTop,
+            ink = AutumnColors.creamInk,
+            softInk = AutumnColors.disabledText,
+            violet = AutumnColors.auraPurple,
+            violetMuted = Color(0xFFB794F4),
+            lavenderSoft = Color(0xFF6B4A32),
+            amethystSoft = Color(0xFF4A315F),
+            mint = Color(0xFF4EDB95),
+            mintSurfaceActive = Color(0xFF1B5A42),
+            success = Color(0xFF4EDB95),
+            successSoft = Color(0xFF1B5A42),
+            danger = Color(0xFFFF6B6B),
+            dangerSoft = Color(0xFF5A2630),
+            amber = AutumnColors.amber,
+            amberSoft = Color(0xFF5A3A16),
+            amberDark = Color(0xFFD99A31),
+            gold = AutumnColors.gold,
+            goldSoft = Color(0xFF5A4210),
+            goldDark = AutumnColors.goldDark,
+            pink = AutumnColors.claimablePink,
+            pinkSoft = Color(0xFFFFE4F3),
+            pinkDark = Color(0xFF8B2851),
+            blue = Color(0xFF60A5FA),
+            blueSoft = Color(0xFF2A3A4A),
+            purple = Color(0xFFC084FC),
+            purpleSoft = Color(0xFF4A315F),
+            progressTrack = AutumnColors.progressTrack,
+            inactiveIcon = AutumnColors.disabledText,
+            headerStreakInactive = AutumnColors.disabledText,
+            iconBadgeCompletedBackground = Color(0xFF1B5A42),
+            rewardBackdropStart = AutumnColors.lockedEnd,
+            rewardBackdropCenter = AutumnColors.stoneBase,
+            rewardBackdropEnd = Color(0xFF6B4A32),
+            rewardSurface = Color(0xFF5A4A42),
+            rewardText = AutumnColors.creamInk,
+            rewardTextMuted = AutumnColors.disabledText,
+            rewardAccent = AutumnColors.gold,
+            overlayBackground = Color(0xFF1E1714)
+        )
+    ),
     LIGHT(
         id = "light",
         label = "Light",
         description = "Clean cream background with lavender, mint, and gold accents",
+        isDark = false,
         colors = AppThemeColors(
             background = Color(0xFFFAFAFC),
             onBackground = Color(0xFF1C1930),
@@ -170,6 +272,7 @@ enum class AppThemeOption(
         id = "girly",
         label = "Girly",
         description = "Soft pink and lavender palette with visible dark text on light surfaces",
+        isDark = false,
         colors = AppThemeColors(
             background = Color(0xFFFFF7FB),
             onBackground = Color(0xFF3A1028),
@@ -243,6 +346,7 @@ enum class AppThemeOption(
         id = "dark",
         label = "Dark",
         description = "Deep navy background with bright lavender, gold, and mint accents",
+        isDark = true,
         colors = AppThemeColors(
             background = Color(0xFF0B1020),
             onBackground = Color(0xFFF8F5FF),
@@ -387,9 +491,9 @@ data class AppThemeColors(
 object AppThemePrefs {
     private const val PREFS_NAME = "habit_pet_app_theme"
     private const val KEY_THEME = "selected_theme"
-    private const val DEFAULT_THEME_ID = "pet_challenge"
+    private const val DEFAULT_THEME_ID = "autumn"
 
-    private val _theme = MutableStateFlow(AppThemeOption.PET_CHALLENGE)
+    private val _theme = MutableStateFlow(AppThemeOption.AUTUMN)
     val theme: StateFlow<AppThemeOption> = _theme.asStateFlow()
 
     fun initialize(context: Context) {
@@ -407,5 +511,5 @@ object AppThemePrefs {
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     private fun fromId(id: String?): AppThemeOption =
-        AppThemeOption.values().firstOrNull { it.id == id } ?: AppThemeOption.PET_CHALLENGE
+        AppThemeOption.values().firstOrNull { it.id == id } ?: AppThemeOption.AUTUMN
 }

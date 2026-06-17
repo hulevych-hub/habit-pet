@@ -19,7 +19,7 @@ fun HabitPetTheme(
     content: @Composable () -> Unit
 ) {
     val palette = appTheme.colors
-    val colorScheme = if (appTheme == AppThemeOption.DARK) {
+    val colorScheme = if (appTheme.isDark) {
         darkColorScheme(
             primary = palette.primary,
             onPrimary = palette.onPrimary,
@@ -90,8 +90,8 @@ fun HabitPetTheme(
                 window.isStatusBarContrastEnforced = false
                 window.isNavigationBarContrastEnforced = false
             }
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = appTheme != AppThemeOption.DARK
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = appTheme != AppThemeOption.DARK
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !appTheme.isDark
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !appTheme.isDark
         }
     }
 

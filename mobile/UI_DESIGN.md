@@ -6,14 +6,15 @@ Habit Pet uses a warm mobile-game visual language centered on the dragon as the 
 
 ### Color Palette
 
-The app-level palette is defined in `Color.kt` and `Theme.kt`:
+The app-level palettes are defined in `Color.kt` and `Theme.kt`. The default palette is `Autumn`, derived from the achievements milestone hall:
 
-- Primary: Cosmic Lavender `#8A76F9`
-- Secondary: Soft Amethyst `#A393EB`
+- Primary: Aurora Violet `#7C3AED`
+- Secondary: Hall Gold `#FFD45A`
 - Success: Mint Grass `#4EDB95`
-- Background: Warm Alabaster `#FAFAFC`
-- Cards: Elevated Card White `#FFFFFF`
-- Accent: Honey Amber `#FFB84D`
+- Background: Milestone Stone `#4A423D`
+- Cards: Warm Stone `#5A4A42`
+- Accent: Harvest Amber `#FFB84D`
+- Gradients: Hall Gold Top `#FFE6A0` → Honey Gold `#F2B94A` → Burnt Amber `#C98224`
 - Rarity colors: Normal `#6F6A8A`, Rare `#4EDB95`, Epic `#3B91FF`, Legendary `#B26CFF`
 
 ### Shape and Spacing

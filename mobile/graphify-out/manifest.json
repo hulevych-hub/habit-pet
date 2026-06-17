@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt": {
-    "mtime": 1781701324.5227623,
-    "ast_hash": "d42367bca60e15e935f8727231e1c6ec",
+    "mtime": 1781707460.019403,
+    "ast_hash": "a587e5491f9cf8285b3fc69461fb3361",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt": {
@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1781701438.9465017,
-    "ast_hash": "c4fdf7c2f7aa514f133ea334f6638096",
+    "mtime": 1781708891.7819066,
+    "ast_hash": "935622262f7f4930d3a062354458df6f",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781701472.5898201,
-    "ast_hash": "a823162f88c7e6773f346f54a6140f28",
+    "mtime": 1781709943.1669252,
+    "ast_hash": "32559b7da2fdd70beb1ad698511b628f",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
@@ -345,13 +345,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/ui/theme/Color.kt": {
-    "mtime": 1781701154.422488,
-    "ast_hash": "f60502bc59865b417351206d36a19e92",
+    "mtime": 1781720657.4997237,
+    "ast_hash": "1dd20cde7d0e6ecb3ca5418379872b6b",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/ui/theme/Theme.kt": {
-    "mtime": 1781700511.5066323,
-    "ast_hash": "d1396e84b70dde231dacff85bad23944",
+    "mtime": 1781720414.705987,
+    "ast_hash": "afe9cf5354866084fc8bc22bef599a41",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/util/BootCompletedReceiver.kt": {
@@ -725,8 +725,8 @@
     "semantic_hash": ""
   },
   "UI_DESIGN.md": {
-    "mtime": 1781701839.5644803,
-    "ast_hash": "e8edca3f0ef136a3cf76df781d0657aa",
+    "mtime": 1781720446.1057754,
+    "ast_hash": "c3d8d18c0a68a7b6cc04356abf6d5ee8",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/AssetPreview.kt": {
@@ -1045,8 +1045,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/ChallengeCard.kt": {
-    "mtime": 1781701427.4084735,
-    "ast_hash": "61cba8c9210c15c6027aa31af9034810",
+    "mtime": 1781708309.291641,
+    "ast_hash": "f668661a378ca7291db8329ef76c2228",
     "semantic_hash": ""
   },
   "app/src/main/res/drawable/baby_dragon/default.png": {
