@@ -53,6 +53,11 @@ import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
+import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.AppThemeColors
+import com.example.mobile.ui.theme.AutumnColors
+import com.example.mobile.ui.theme.AppThemeOption
+import com.example.mobile.ui.theme.AppThemePrefs
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,22 +68,27 @@ fun AchievementScreen(
     val isLoading by achievementViewModel.isLoading.collectAsState()
     val error by achievementViewModel.error.collectAsState()
     val claimableCount by achievementViewModel.claimableAchievementCount.collectAsState()
+    val palette = AchievementHallPalette.current()
 
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
             ClaimAllRewardsBar(
                 claimableCount = claimableCount,
-                onClick = achievementViewModel::claimAllAchievements
+                onClick = achievementViewModel::claimAllAchievements,
+                palette = palette
             )
         }
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MilestoneHallColors.stoneBase)
+                .background(brush = Brush.linearGradient(colors = palette.backgroundGradient))
         ) {
-            StoneWallOverlay(modifier = Modifier.matchParentSize())
+            ThemeHallOverlay(
+                palette = palette,
+                modifier = Modifier.matchParentSize()
+            )
 
             LazyColumn(
                 modifier = Modifier
@@ -93,7 +103,7 @@ fun AchievementScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 item {
-                    GrandMilestoneHeader()
+                    GrandMilestoneHeader(palette = palette)
                 }
 
                 when {
@@ -104,7 +114,7 @@ fun AchievementScreen(
                                 .padding(32.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(color = MilestoneHallColors.gold)
+                            CircularProgressIndicator(color = palette.gold)
                         }
                     }
                     !error.isNullOrBlank() -> item {
@@ -153,7 +163,8 @@ fun AchievementScreen(
                             achievement
                         ),
                         rewards = achievementViewModel.rewardLabels(achievement),
-                        onClaim = { achievementViewModel.claimAchievement(achievement.id) }
+                        onClaim = { achievementViewModel.claimAchievement(achievement.id) },
+                        palette = palette
                     )
                 }
             }
@@ -162,16 +173,20 @@ fun AchievementScreen(
 }
 
 @Composable
-private fun StoneWallOverlay(modifier: Modifier = Modifier) {
+private fun ThemeHallOverlay(
+    palette: AchievementHallPalette,
+    modifier: Modifier = Modifier
+) {
     Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
         val line = 1.dp.toPx()
+        val lightLineAlpha = if (palette.isAutumn) 0.045f else 0.08f
 
         repeat(18) { index ->
             val y = (index + 1) * height / 19f
             drawLine(
-                color = Color(0xFF2F2A2A).copy(alpha = 0.24f),
+                color = palette.overlayLineDark.copy(alpha = 0.24f),
                 start = Offset(0f, y),
                 end = Offset(width, y),
                 strokeWidth = line
@@ -181,7 +196,7 @@ private fun StoneWallOverlay(modifier: Modifier = Modifier) {
         repeat(7) { index ->
             val x = (index + 1) * width / 8f
             drawLine(
-                color = Color(0xFFFFF1C7).copy(alpha = 0.045f),
+                color = palette.overlayLineLight.copy(alpha = lightLineAlpha),
                 start = Offset(x, 0f),
                 end = Offset(x, height),
                 strokeWidth = line
@@ -192,18 +207,17 @@ private fun StoneWallOverlay(modifier: Modifier = Modifier) {
 
 @Composable
 private fun GrandMilestoneHeader(
+    palette: AchievementHallPalette,
     modifier: Modifier = Modifier
 ) {
     val plaqueShape = RoundedCornerShape(22.dp)
-    val goldBorder = Brush.linearGradient(
-        colors = listOf(MilestoneHallColors.goldLight, MilestoneHallColors.gold, MilestoneHallColors.goldDark)
-    )
+    val headerBorder = Brush.linearGradient(colors = palette.headerBorder)
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(108.dp)
-            .border(width = 2.dp, brush = goldBorder, shape = plaqueShape),
+            .border(width = 2.dp, brush = headerBorder, shape = plaqueShape),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = plaqueShape,
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
@@ -212,13 +226,7 @@ private fun GrandMilestoneHeader(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            MilestoneHallColors.headerGoldTop,
-                            MilestoneHallColors.headerGoldMiddle,
-                            MilestoneHallColors.headerGoldBottom
-                        )
-                    ),
+                    brush = Brush.linearGradient(colors = palette.headerGradient),
                     shape = plaqueShape
                 )
                 .padding(16.dp)
@@ -236,7 +244,7 @@ private fun GrandMilestoneHeader(
                         text = "Grand",
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            color = MilestoneHallColors.deepInk
+                            color = palette.headerInk
                         ),
                         maxLines = 1
                     )
@@ -244,7 +252,7 @@ private fun GrandMilestoneHeader(
                         text = "Milestone Hall",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            color = MilestoneHallColors.deepInk
+                            color = palette.headerInk
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -256,7 +264,7 @@ private fun GrandMilestoneHeader(
                         .size(76.dp)
                         .border(
                             width = 1.dp,
-                            color = Color(0xFFFFF3C4).copy(alpha = 0.62f),
+                            color = palette.trophyBorder.copy(alpha = if (palette.isAutumn) 0.62f else 0.42f),
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -280,45 +288,26 @@ private fun AchievementHallCard(
     progressFraction: Float,
     progressLabel: String,
     rewards: List<String>,
-    onClaim: () -> Unit
+    onClaim: () -> Unit,
+    palette: AchievementHallPalette
 ) {
     val isClaimed = achievement.isClaimed
     val isUnlocked = achievement.isUnlocked
     val isClaimable = isUnlocked && !isClaimed && progressFraction >= 0.999f
     val cardShape = RoundedCornerShape(20.dp)
     val borderBrush = when {
-        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> Brush.linearGradient(
-            colors = listOf(MilestoneHallColors.goldLight, MilestoneHallColors.gold, MilestoneHallColors.goldDark)
-        )
-        isClaimed -> Brush.linearGradient(
-            colors = listOf(Color(0xFFE8EEF2), Color(0xFFB9C2C8), Color(0xFF8F9AA3))
-        )
-        isClaimable -> Brush.linearGradient(
-            colors = listOf(MilestoneHallColors.goldLight, Color(0xFFE879F9), MilestoneHallColors.auraPurple)
-        )
-        isUnlocked -> Brush.linearGradient(
-            colors = listOf(MilestoneHallColors.gold, MilestoneHallColors.amber)
-        )
-        else -> Brush.linearGradient(
-            colors = listOf(Color(0xFF4A4240), Color(0xFF2E2928))
-        )
+        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> Brush.linearGradient(colors = palette.crownBorder)
+        isClaimed -> Brush.linearGradient(colors = palette.claimedBorder)
+        isClaimable -> Brush.linearGradient(colors = palette.claimableBorder)
+        isUnlocked -> Brush.linearGradient(colors = palette.unlockedBorder)
+        else -> Brush.linearGradient(colors = palette.lockedBorder)
     }
     val backgroundBrush = when {
-        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> Brush.linearGradient(
-            colors = listOf(Color(0xFFFFE7A3), Color(0xFFF4C76B), Color(0xFFD99A31))
-        )
-        isClaimed -> Brush.linearGradient(
-            colors = listOf(Color(0xFFF7FAFC), Color(0xFFDDE5EA), Color(0xFFB8C4CC))
-        )
-        isClaimable -> Brush.linearGradient(
-            colors = listOf(Color(0xFFFFE4F3), Color(0xFFF472B6), Color(0xFF7C3AED))
-        )
-        isUnlocked -> Brush.linearGradient(
-            colors = listOf(Color(0xFFFFF2CC), Color(0xFFF6C85F), Color(0xFFD69A2D))
-        )
-        else -> Brush.linearGradient(
-            colors = listOf(Color(0xFF4A4240), Color(0xFF2E2928))
-        )
+        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> Brush.linearGradient(colors = palette.crownBackground)
+        isClaimed -> Brush.linearGradient(colors = palette.claimedBackground)
+        isClaimable -> Brush.linearGradient(colors = palette.claimableBackground)
+        isUnlocked -> Brush.linearGradient(colors = palette.unlockedBackground)
+        else -> Brush.linearGradient(colors = palette.lockedBackground)
     }
 
     Card(
@@ -345,7 +334,11 @@ private fun AchievementHallCard(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    HallIconBox(achievement = achievement, isClaimed = isClaimed)
+                    HallIconBox(
+                        achievement = achievement,
+                        isClaimed = isClaimed,
+                        palette = palette
+                    )
 
                     Column(
                         modifier = Modifier.weight(1f),
@@ -355,7 +348,7 @@ private fun AchievementHallCard(
                             text = title,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = if (isClaimed) MilestoneHallColors.claimedInk else Color.White
+                                color = if (isClaimed) palette.claimedInk else palette.cardInk
                             ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -363,7 +356,7 @@ private fun AchievementHallCard(
                         Text(
                             text = description,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = if (isClaimed) MilestoneHallColors.claimedMuted else Color(0xFFFFF7ED).copy(alpha = 0.86f)
+                                color = if (isClaimed) palette.claimedMuted else palette.cardMuted
                             ),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
@@ -374,18 +367,18 @@ private fun AchievementHallCard(
                         Surface(
                             shape = RoundedCornerShape(999.dp),
                             color = if (achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION) {
-                                Color(0xFF6B3F0C).copy(alpha = 0.24f)
+                                palette.crownBadgeSurface
                             } else {
-                                Color(0xFF24332A).copy(alpha = 0.16f)
+                                palette.claimedBadgeSurface
                             }
                         ) {
                             Text(
                                 text = "Claimed",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = if (achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION) {
-                                    Color(0xFF7A4A12)
+                                    palette.crownBadgeText
                                 } else {
-                                    Color(0xFF1F6B45)
+                                    palette.claimedBadgeText
                                 },
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                             )
@@ -401,7 +394,7 @@ private fun AchievementHallCard(
                     Text(
                         text = progressLabel,
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = if (isClaimed) MilestoneHallColors.claimedMuted else Color(0xFFFFF7ED).copy(alpha = 0.86f),
+                        color = if (isClaimed) palette.claimedMuted else palette.cardMuted,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -409,7 +402,7 @@ private fun AchievementHallCard(
                     Text(
                         text = rewards.joinToString(" • "),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = if (isClaimed) MilestoneHallColors.goldDark else Color(0xFFFFF7ED),
+                        color = if (isClaimed) palette.claimedAccent else palette.cardInk,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -420,7 +413,7 @@ private fun AchievementHallCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
-                            .background(Color(0xFF2B2422).copy(alpha = 0.22f), RoundedCornerShape(999.dp))
+                            .background(palette.progressTrack.copy(alpha = palette.progressTrackAlpha), RoundedCornerShape(999.dp))
                     ) {
                         Box(
                             modifier = Modifier
@@ -428,13 +421,9 @@ private fun AchievementHallCard(
                                 .height(8.dp)
                                 .background(
                                     brush = if (isClaimable) {
-                                        Brush.linearGradient(
-                                            colors = listOf(MilestoneHallColors.goldLight, Color(0xFFF472B6), MilestoneHallColors.auraPurple)
-                                        )
+                                        Brush.linearGradient(colors = palette.claimableProgress)
                                     } else {
-                                        Brush.linearGradient(
-                                            colors = listOf(MilestoneHallColors.gold, MilestoneHallColors.amber)
-                                        )
+                                        Brush.linearGradient(colors = palette.unlockedProgress)
                                     },
                                     RoundedCornerShape(999.dp)
                                 )
@@ -449,20 +438,21 @@ private fun AchievementHallCard(
 @Composable
 private fun HallIconBox(
     achievement: com.example.mobile.data.local.entities.AchievementEntity,
-    isClaimed: Boolean
+    isClaimed: Boolean,
+    palette: AchievementHallPalette
 ) {
     val iconTint = when {
-        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> MilestoneHallColors.goldDark
-        isClaimed -> Color(0xFF1F6B45)
-        achievement.isUnlocked -> Color.White
-        else -> Color.White.copy(alpha = 0.55f)
+        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> palette.crownIconTint
+        isClaimed -> palette.claimedIconTint
+        achievement.isUnlocked -> palette.unlockedIconTint
+        else -> palette.lockedIconTint
     }
     val iconBackground = when {
-        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> Color(0xFFFFE7A3)
-        isClaimed -> Color(0xFFE8F3EC)
-        achievement.id == AchievementsConfig.FIRST_AURA_GLOW -> Color.Transparent
-        achievement.isUnlocked -> Color(0xFF7C3AED).copy(alpha = 0.32f)
-        else -> Color(0xFF2B2422).copy(alpha = 0.34f)
+        isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> palette.crownIconBackground
+        isClaimed -> palette.claimedIconBackground
+        achievement.id == AchievementsConfig.FIRST_AURA_GLOW -> if (palette.isAutumn) Color.Transparent else palette.auraIconBackground
+        achievement.isUnlocked -> palette.unlockedIconBackground
+        else -> palette.lockedIconBackground
     }
 
     Box(
@@ -510,16 +500,13 @@ private fun HallIconBox(
 private fun ClaimAllRewardsBar(
     claimableCount: Int,
     onClick: () -> Unit,
+    palette: AchievementHallPalette,
     modifier: Modifier = Modifier
 ) {
     val enabled = claimableCount > 0
     val buttonShape = RoundedCornerShape(24.dp)
-    val goldBrush = Brush.linearGradient(
-        colors = listOf(MilestoneHallColors.goldLight, MilestoneHallColors.gold, MilestoneHallColors.goldDark)
-    )
-    val disabledBrush = Brush.linearGradient(
-        colors = listOf(Color(0xFF5A514B), Color(0xFF3A3431))
-    )
+    val enabledBrush = Brush.linearGradient(colors = palette.buttonGradient)
+    val disabledBrush = Brush.linearGradient(colors = palette.disabledButton)
 
     Box(
         modifier = modifier
@@ -534,8 +521,8 @@ private fun ClaimAllRewardsBar(
                 .height(76.dp)
                 .clickable(enabled = enabled, onClick = onClick)
                 .clip(buttonShape)
-                .border(width = 2.dp, brush = if (enabled) goldBrush else disabledBrush, shape = buttonShape)
-                .background(if (enabled) goldBrush else disabledBrush, buttonShape)
+                .border(width = 2.dp, brush = if (enabled) enabledBrush else disabledBrush, shape = buttonShape)
+                .background(if (enabled) enabledBrush else disabledBrush, buttonShape)
                 .padding(horizontal = 18.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -556,7 +543,7 @@ private fun ClaimAllRewardsBar(
                     text = "Claim All Rewards",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = if (enabled) MilestoneHallColors.deepInk else Color(0xFFD8C7A8)
+                        color = if (enabled) palette.buttonText else palette.disabledText
                     ),
                     textAlign = TextAlign.Center,
                     maxLines = 1
@@ -586,17 +573,170 @@ private fun CoinSparkle(left: Boolean) {
     }
 }
 
-private object MilestoneHallColors {
-    val stoneBase = Color(0xFF4A423D)
-    val headerGoldTop = Color(0xFFFFE6A0)
-    val headerGoldMiddle = Color(0xFFF2B94A)
-    val headerGoldBottom = Color(0xFFC98224)
-    val goldLight = Color(0xFFFFF1A8)
-    val gold = Color(0xFFFFD45A)
-    val goldDark = Color(0xFF9A620E)
-    val amber = Color(0xFFFFB84D)
-    val auraPurple = Color(0xFF7C3AED)
-    val deepInk = Color(0xFF2A1B08)
-    val claimedInk = Color(0xFF26332A)
-    val claimedMuted = Color(0xFF5D6B62)
+private data class AchievementHallPalette(
+    val id: String,
+    val isAutumn: Boolean,
+    val gold: Color,
+    val backgroundGradient: List<Color>,
+    val overlayLineDark: Color,
+    val overlayLineLight: Color,
+    val headerBorder: List<Color>,
+    val headerGradient: List<Color>,
+    val headerInk: Color,
+    val trophyBorder: Color,
+    val crownBorder: List<Color>,
+    val crownBackground: List<Color>,
+    val crownIconTint: Color,
+    val crownIconBackground: Color,
+    val crownBadgeSurface: Color,
+    val crownBadgeText: Color,
+    val claimedBorder: List<Color>,
+    val claimedBackground: List<Color>,
+    val claimedIconTint: Color,
+    val claimedIconBackground: Color,
+    val claimedBadgeSurface: Color,
+    val claimedBadgeText: Color,
+    val claimedInk: Color,
+    val claimedMuted: Color,
+    val claimedAccent: Color,
+    val claimableBorder: List<Color>,
+    val claimableBackground: List<Color>,
+    val claimableProgress: List<Color>,
+    val unlockedBorder: List<Color>,
+    val unlockedBackground: List<Color>,
+    val unlockedProgress: List<Color>,
+    val lockedBorder: List<Color>,
+    val lockedBackground: List<Color>,
+    val lockedIconTint: Color,
+    val lockedIconBackground: Color,
+    val unlockedIconTint: Color,
+    val unlockedIconBackground: Color,
+    val auraIconBackground: Color,
+    val cardInk: Color,
+    val cardMuted: Color,
+    val progressTrack: Color,
+    val progressTrackAlpha: Float,
+    val disabledButton: List<Color>,
+    val buttonText: Color,
+    val disabledText: Color,
+    val buttonGradient: List<Color>
+) {
+    companion object {
+        fun current(): AchievementHallPalette =
+            if (AppThemePrefs.currentTheme() == AppThemeOption.AUTUMN) autumn else fromTheme(AppTheme.current)
+
+        val autumn: AchievementHallPalette = AchievementHallPalette(
+            id = "autumn",
+            isAutumn = true,
+            gold = AutumnColors.gold,
+            backgroundGradient = listOf(AutumnColors.stoneBase, AutumnColors.stoneBase),
+            overlayLineDark = AutumnColors.stoneLineDark,
+            overlayLineLight = AutumnColors.stoneLineLight,
+            headerBorder = listOf(AutumnColors.goldLight, AutumnColors.gold, AutumnColors.goldDark),
+            headerGradient = listOf(AutumnColors.headerGoldTop, AutumnColors.headerGoldMiddle, AutumnColors.headerGoldBottom),
+            headerInk = AutumnColors.deepInk,
+            trophyBorder = Color(0xFFFFF3C4),
+            crownBorder = listOf(AutumnColors.goldLight, AutumnColors.gold, AutumnColors.goldDark),
+            crownBackground = listOf(Color(0xFFFFE7A3), Color(0xFFF4C76B), Color(0xFFD99A31)),
+            crownIconTint = AutumnColors.goldDark,
+            crownIconBackground = Color(0xFFFFE7A3),
+            crownBadgeSurface = Color(0xFF6B3F0C).copy(alpha = 0.24f),
+            crownBadgeText = Color(0xFF7A4A12),
+            claimedBorder = listOf(Color(0xFFE8EEF2), Color(0xFFB9C2C8), Color(0xFF8F9AA3)),
+            claimedBackground = listOf(Color(0xFFF7FAFC), Color(0xFFDDE5EA), Color(0xFFB8C4CC)),
+            claimedIconTint = Color(0xFF1F6B45),
+            claimedIconBackground = Color(0xFFE8F3EC),
+            claimedBadgeSurface = Color(0xFF24332A).copy(alpha = 0.16f),
+            claimedBadgeText = Color(0xFF1F6B45),
+            claimedInk = AutumnColors.claimedInk,
+            claimedMuted = AutumnColors.claimedMuted,
+            claimedAccent = AutumnColors.goldDark,
+            claimableBorder = listOf(AutumnColors.goldLight, Color(0xFFF472B6), AutumnColors.auraPurple),
+            claimableBackground = listOf(Color(0xFFFFE4F3), Color(0xFFF472B6), Color(0xFF7C3AED)),
+            claimableProgress = listOf(AutumnColors.goldLight, Color(0xFFF472B6), AutumnColors.auraPurple),
+            unlockedBorder = listOf(AutumnColors.gold, AutumnColors.amber),
+            unlockedBackground = listOf(Color(0xFFFFF2CC), Color(0xFFF6C85F), Color(0xFFD69A2D)),
+            unlockedProgress = listOf(AutumnColors.gold, AutumnColors.amber),
+            lockedBorder = listOf(Color(0xFF4A4240), Color(0xFF2E2928)),
+            lockedBackground = listOf(Color(0xFF4A4240), Color(0xFF2E2928)),
+            lockedIconTint = Color.White.copy(alpha = 0.55f),
+            lockedIconBackground = Color(0xFF2B2422).copy(alpha = 0.34f),
+            unlockedIconTint = Color.White,
+            unlockedIconBackground = Color(0xFF7C3AED).copy(alpha = 0.32f),
+            auraIconBackground = Color.Transparent,
+            cardInk = Color.White,
+            cardMuted = Color(0xFFFFF7ED).copy(alpha = 0.86f),
+            progressTrack = Color(0xFF2B2422),
+            progressTrackAlpha = 0.22f,
+            disabledButton = listOf(Color(0xFF5A514B), Color(0xFF3A3431)),
+            buttonText = AutumnColors.deepInk,
+            disabledText = AutumnColors.disabledText,
+            buttonGradient = listOf(AutumnColors.goldLight, AutumnColors.gold, AutumnColors.goldDark)
+        )
+
+        private fun fromTheme(colors: AppThemeColors): AchievementHallPalette {
+            val isDarkTheme = AppThemePrefs.currentTheme().isDark
+            val claimedInk = if (isDarkTheme) colors.headerOnSurface else colors.ink
+            val claimedMuted = if (isDarkTheme) colors.mutedStrong else colors.softInk
+            val lockedIconBackground = colors.outline.copy(alpha = if (isDarkTheme) 0.28f else 0.22f)
+            val progressTrackAlpha = if (isDarkTheme) 0.55f else 0.75f
+
+            return AchievementHallPalette(
+                id = AppThemePrefs.currentTheme().id,
+                isAutumn = false,
+                gold = colors.gold,
+                backgroundGradient = listOf(colors.rewardBackdropStart, colors.rewardBackdropCenter, colors.rewardBackdropEnd),
+                overlayLineDark = if (isDarkTheme) colors.primaryContainer else colors.primary,
+                overlayLineLight = colors.gold,
+                headerBorder = listOf(colors.primary, colors.gold, colors.secondary),
+                headerGradient = listOf(colors.headerGradientStart, colors.primaryContainer, colors.headerGradientEnd),
+                headerInk = colors.headerOnSurface,
+                trophyBorder = colors.gold,
+                crownBorder = listOf(colors.goldSoft, colors.gold, colors.goldDark),
+                crownBackground = listOf(colors.goldSoft, colors.gold, colors.amberDark),
+                crownIconTint = colors.goldDark,
+                crownIconBackground = colors.goldSoft,
+                crownBadgeSurface = colors.amber.copy(alpha = 0.20f),
+                crownBadgeText = colors.goldDark,
+                claimedBorder = if (isDarkTheme) {
+                    listOf(colors.primaryContainer, colors.lavenderSoft, colors.amethystSoft)
+                } else {
+                    listOf(colors.surface, colors.goldSoft, colors.lavenderSoft)
+                },
+                claimedBackground = if (isDarkTheme) {
+                    listOf(colors.primaryContainer, colors.lavenderSoft, colors.amethystSoft)
+                } else {
+                    listOf(colors.surface, colors.goldSoft, colors.lavenderSoft)
+                },
+                claimedIconTint = colors.success,
+                claimedIconBackground = colors.successSoft,
+                claimedBadgeSurface = colors.success.copy(alpha = 0.16f),
+                claimedBadgeText = colors.success,
+                claimedInk = claimedInk,
+                claimedMuted = claimedMuted,
+                claimedAccent = colors.goldDark,
+                claimableBorder = listOf(colors.goldSoft, colors.pink, colors.primary),
+                claimableBackground = listOf(colors.pinkSoft, colors.pink, colors.primary),
+                claimableProgress = listOf(colors.goldSoft, colors.pink, colors.primary),
+                unlockedBorder = listOf(colors.gold, colors.amber),
+                unlockedBackground = listOf(colors.secondaryContainer, colors.gold, colors.amber),
+                unlockedProgress = listOf(colors.gold, colors.amber),
+                lockedBorder = if (isDarkTheme) listOf(colors.background, colors.surfaceVariant) else listOf(colors.outline, colors.surfaceVariant),
+                lockedBackground = listOf(colors.background, colors.surfaceVariant),
+                lockedIconTint = colors.inactiveIcon,
+                lockedIconBackground = lockedIconBackground,
+                unlockedIconTint = Color.White,
+                unlockedIconBackground = colors.primary.copy(alpha = 0.32f),
+                auraIconBackground = colors.primary.copy(alpha = 0.20f),
+                cardInk = Color.White,
+                cardMuted = Color.White.copy(alpha = 0.86f),
+                progressTrack = colors.progressTrack,
+                progressTrackAlpha = progressTrackAlpha,
+                disabledButton = if (isDarkTheme) listOf(colors.inactiveIcon, colors.violetMuted) else listOf(colors.outline, colors.purpleSoft),
+                buttonText = colors.onSecondary,
+                disabledText = colors.muted,
+                buttonGradient = listOf(colors.goldSoft, colors.gold, colors.goldDark)
+            )
+        }
+    }
 }
