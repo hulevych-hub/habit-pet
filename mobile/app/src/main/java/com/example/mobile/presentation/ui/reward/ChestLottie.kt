@@ -1,5 +1,11 @@
 package com.example.mobile.presentation.ui.reward
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,9 +34,10 @@ fun AnimatedRewardChest(
     tint: Color,
     onOpened: () -> Unit = {},
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    stateKey: String = "reward-chest"
 ) {
-    var isOpen by rememberSaveable { mutableStateOf(false) }
+    var isOpen by rememberSaveable(stateKey) { mutableStateOf(false) }
 
     val chestRadiusPx = with(LocalDensity.current) { size.toPx() * 0.62f }
 
@@ -45,15 +52,46 @@ fun AnimatedRewardChest(
             },
         contentAlignment = Alignment.Center
     ) {
-        DotLottieAnimation(
-            source = if (isOpen) CHEST_OPEN_URL else CHEST_CLOSED_URL,
-            autoplay = true,
-            loop = !isOpen,
-            speed = REWARD_LOTTIE_SPEED,
-            useFrameInterpolation = false,
-            playMode = Mode.FORWARD,
-            modifier = Modifier.background(Color.Transparent).size(size)
-        )
+        AnimatedVisibility(
+            visible = !isOpen,
+            enter = scaleIn(
+                animationSpec = tween(durationMillis = 220),
+                initialScale = 0.86f
+            ) + fadeIn(animationSpec = tween(durationMillis = 180)),
+            exit = scaleOut(
+                animationSpec = tween(durationMillis = 180),
+                targetScale = 0.72f
+            ) + fadeOut(animationSpec = tween(durationMillis = 160))
+        ) {
+            DotLottieAnimation(
+                source = CHEST_CLOSED_URL,
+                autoplay = true,
+                loop = true,
+                speed = REWARD_LOTTIE_SPEED,
+                useFrameInterpolation = false,
+                playMode = Mode.FORWARD,
+                modifier = Modifier.background(Color.Transparent).size(size)
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isOpen,
+            enter = scaleIn(
+                animationSpec = tween(durationMillis = 360),
+                initialScale = 0.24f
+            ) + fadeIn(animationSpec = tween(durationMillis = 260)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 160))
+        ) {
+            DotLottieAnimation(
+                source = CHEST_OPEN_URL,
+                autoplay = true,
+                loop = false,
+                speed = REWARD_LOTTIE_SPEED,
+                useFrameInterpolation = false,
+                playMode = Mode.FORWARD,
+                modifier = Modifier.background(Color.Transparent).size(size)
+            )
+        }
 
         Box(
             modifier = Modifier

@@ -1090,7 +1090,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "mobile_mainactivity",
-      "community": 113,
+      "community": 134,
       "norm_label": "mainactivity.kt"
     },
     {
@@ -1100,7 +1100,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity",
-      "community": 113,
+      "community": 134,
       "norm_label": "mainactivity"
     },
     {
@@ -1110,7 +1110,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "componentactivity",
-      "community": 113,
+      "community": 134,
       "norm_label": "componentactivity"
     },
     {
@@ -1120,7 +1120,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_rewardmanager",
-      "community": 113,
+      "community": 134,
       "norm_label": "rewardmanager"
     },
     {
@@ -1130,7 +1130,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "activitytimelineengine",
-      "community": 113,
+      "community": 134,
       "norm_label": "activitytimelineengine"
     },
     {
@@ -1140,7 +1140,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_microfeedbackmanager",
-      "community": 113,
+      "community": 134,
       "norm_label": "microfeedbackmanager"
     },
     {
@@ -1150,7 +1150,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_dragonmoodengine",
-      "community": 113,
+      "community": 134,
       "norm_label": "dragonmoodengine"
     },
     {
@@ -1160,7 +1160,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_statisticsrepository",
-      "community": 113,
+      "community": 134,
       "norm_label": "statisticsrepository"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "onbackpressedcallback",
-      "community": 113,
+      "community": 134,
       "norm_label": "onbackpressedcallback"
     },
     {
@@ -1180,7 +1180,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity_oncreate",
-      "community": 113,
+      "community": 134,
       "norm_label": ".oncreate()"
     },
     {
@@ -1190,7 +1190,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "bundle",
-      "community": 113,
+      "community": 134,
       "norm_label": "bundle"
     },
     {
@@ -5677,7 +5677,7 @@
       "label": "AchievementRewardProcessor",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L19",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "domain_achievementrewardprocessor_achievementrewardprocessor",
       "community": 98,
@@ -5687,7 +5687,7 @@
       "label": ".process()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "domain_achievementrewardprocessor_achievementrewardprocessor_process",
       "community": 98,
@@ -5697,7 +5697,7 @@
       "label": "AchievementsConfig",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_achievementsconfig",
       "community": 98,
@@ -5707,7 +5707,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_string",
       "community": 98,
@@ -5717,7 +5717,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_boolean",
       "community": 98,
@@ -5727,7 +5727,7 @@
       "label": ".addPetExp()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L94",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "domain_achievementrewardprocessor_achievementrewardprocessor_addpetexp",
       "community": 98,
@@ -5737,7 +5737,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L94",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_int",
       "community": 98,
@@ -5747,7 +5747,7 @@
       "label": ".grantCustomization()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L99",
+      "source_location": "L100",
       "_origin": "ast",
       "id": "domain_achievementrewardprocessor_achievementrewardprocessor_grantcustomization",
       "community": 98,
@@ -5757,7 +5757,7 @@
       "label": "AchievementReward",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L99",
+      "source_location": "L100",
       "_origin": "ast",
       "id": "achievementreward",
       "community": 98,
@@ -5767,7 +5767,7 @@
       "label": ".toRewardUiEvent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L120",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "domain_achievementrewardprocessor_achievementrewardprocessor_torewarduievent",
       "community": 98,
@@ -5777,27 +5777,17 @@
       "label": "RewardUiEvent",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L120",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_rewarduievent",
       "community": 98,
       "norm_label": "rewarduievent"
     },
     {
-      "label": ".rewardPriority()",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L127",
-      "_origin": "ast",
-      "id": "domain_achievementrewardprocessor_achievementrewardprocessor_rewardpriority",
-      "community": 98,
-      "norm_label": ".rewardpriority()"
-    },
-    {
       "label": "PreparedAchievementReward",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L138",
+      "source_location": "L128",
       "_origin": "ast",
       "id": "domain_achievementrewardprocessor_preparedachievementreward",
       "community": 98,
@@ -9220,7 +9210,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes",
-      "community": 135,
+      "community": 134,
       "norm_label": "approutes"
     },
     {
@@ -9230,7 +9220,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes_habitdetail",
-      "community": 135,
+      "community": 134,
       "norm_label": ".habitdetail()"
     },
     {
@@ -9240,7 +9230,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_long",
-      "community": 135,
+      "community": 134,
       "norm_label": "long"
     },
     {
@@ -9250,7 +9240,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes_habitedit",
-      "community": 135,
+      "community": 134,
       "norm_label": ".habitedit()"
     },
     {
@@ -9260,7 +9250,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes_rewards",
-      "community": 135,
+      "community": 134,
       "norm_label": ".rewards()"
     },
     {
@@ -9270,7 +9260,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_string",
-      "community": 135,
+      "community": 134,
       "norm_label": "string"
     },
     {
@@ -9380,7 +9370,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "navigation_navgraph_habitpetnavgraph",
-      "community": 135,
+      "community": 134,
       "norm_label": "habitpetnavgraph()"
     },
     {
@@ -9390,7 +9380,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_navhostcontroller",
-      "community": 135,
+      "community": 134,
       "norm_label": "navhostcontroller"
     },
     {
@@ -9400,7 +9390,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_appthemeoption",
-      "community": 135,
+      "community": 134,
       "norm_label": "appthemeoption"
     },
     {
@@ -9410,7 +9400,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_microfeedbackmanager",
-      "community": 135,
+      "community": 134,
       "norm_label": "microfeedbackmanager"
     },
     {
@@ -9420,7 +9410,7 @@
       "source_location": "L240",
       "_origin": "ast",
       "id": "navigation_navgraph_navigatetobottomdestination",
-      "community": 135,
+      "community": 134,
       "norm_label": "navigatetobottomdestination()"
     },
     {
@@ -9430,7 +9420,7 @@
       "source_location": "L267",
       "_origin": "ast",
       "id": "navigation_navgraph_navigatetorewards",
-      "community": 135,
+      "community": 134,
       "norm_label": "navigatetorewards()"
     },
     {
@@ -9880,7 +9870,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_challengecard",
-      "community": 131,
+      "community": 113,
       "norm_label": "challengecard.kt"
     },
     {
@@ -9890,7 +9880,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "components_challengecard_challengecard",
-      "community": 131,
+      "community": 113,
       "norm_label": "challengecard()"
     },
     {
@@ -9900,7 +9890,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_challengeuistate",
-      "community": 131,
+      "community": 113,
       "norm_label": "challengeuistate"
     },
     {
@@ -9910,7 +9900,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_modifier",
-      "community": 131,
+      "community": 113,
       "norm_label": "modifier"
     },
     {
@@ -9920,7 +9910,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "components_challengecard_rewardpreview",
-      "community": 131,
+      "community": 113,
       "norm_label": "rewardpreview()"
     },
     {
@@ -9930,7 +9920,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_list",
-      "community": 131,
+      "community": 113,
       "norm_label": "list"
     },
     {
@@ -9940,7 +9930,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_challengerewarddefinition",
-      "community": 131,
+      "community": 113,
       "norm_label": "challengerewarddefinition"
     },
     {
@@ -9950,7 +9940,7 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "components_challengecard_rewardchip",
-      "community": 131,
+      "community": 113,
       "norm_label": "rewardchip()"
     },
     {
@@ -9960,7 +9950,7 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "components_challengecard_challengeicon",
-      "community": 131,
+      "community": 113,
       "norm_label": "challengeicon()"
     },
     {
@@ -9970,7 +9960,7 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "components_challengecard_icon",
-      "community": 21,
+      "community": 113,
       "norm_label": "icon()"
     },
     {
@@ -9980,7 +9970,7 @@
       "source_location": "L215",
       "_origin": "ast",
       "id": "components_challengecard_label",
-      "community": 131,
+      "community": 113,
       "norm_label": "label()"
     },
     {
@@ -9990,7 +9980,7 @@
       "source_location": "L215",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_string",
-      "community": 131,
+      "community": 113,
       "norm_label": "string"
     },
     {
@@ -10000,7 +9990,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_currencyicon",
-      "community": 42,
+      "community": 93,
       "norm_label": "currencyicon.kt"
     },
     {
@@ -10010,7 +10000,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "components_currencyicon_coinicon",
-      "community": 42,
+      "community": 93,
       "norm_label": "coinicon()"
     },
     {
@@ -10020,7 +10010,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_currencyicon_kt_modifier",
-      "community": 42,
+      "community": 93,
       "norm_label": "modifier"
     },
     {
@@ -10030,7 +10020,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_currencyicon_kt_color",
-      "community": 42,
+      "community": 93,
       "norm_label": "color"
     },
     {
@@ -10040,7 +10030,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "components_currencyicon_coinpill",
-      "community": 42,
+      "community": 93,
       "norm_label": "coinpill()"
     },
     {
@@ -10050,7 +10040,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_currencyicon_kt_int",
-      "community": 42,
+      "community": 93,
       "norm_label": "int"
     },
     {
@@ -10060,7 +10050,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_emptystatecard",
-      "community": 93,
+      "community": 131,
       "norm_label": "emptystatecard.kt"
     },
     {
@@ -10070,7 +10060,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "components_emptystatecard_emptystatecard",
-      "community": 93,
+      "community": 131,
       "norm_label": "emptystatecard()"
     },
     {
@@ -10080,7 +10070,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_modifier",
-      "community": 93,
+      "community": 131,
       "norm_label": "modifier"
     },
     {
@@ -10090,7 +10080,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_string",
-      "community": 93,
+      "community": 131,
       "norm_label": "string"
     },
     {
@@ -10100,7 +10090,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "components_emptystatecard_loadingstatecard",
-      "community": 93,
+      "community": 131,
       "norm_label": "loadingstatecard()"
     },
     {
@@ -10110,7 +10100,7 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "components_emptystatecard_errorstatecard",
-      "community": 93,
+      "community": 131,
       "norm_label": "errorstatecard()"
     },
     {
@@ -10120,7 +10110,7 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_unit",
-      "community": 93,
+      "community": 131,
       "norm_label": "unit"
     },
     {
@@ -10484,6 +10474,26 @@
       "norm_label": "chestreward"
     },
     {
+      "label": "rewardPriority()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt",
+      "source_location": "L49",
+      "_origin": "ast",
+      "id": "events_rewarduievent_rewardpriority",
+      "community": 48,
+      "norm_label": "rewardpriority()"
+    },
+    {
+      "label": "Int",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt",
+      "source_location": "L49",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_events_rewarduievent_kt_int",
+      "community": 48,
+      "norm_label": "int"
+    },
+    {
       "label": "MicroFeedbackManager.kt",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/feedback/MicroFeedbackManager.kt",
@@ -10600,7 +10610,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay",
-      "community": 145,
+      "community": 134,
       "norm_label": "microfeedbackoverlay.kt"
     },
     {
@@ -10610,7 +10620,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_microfeedbackoverlay",
-      "community": 145,
+      "community": 134,
       "norm_label": "microfeedbackoverlay()"
     },
     {
@@ -10620,7 +10630,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_microfeedbackmanager",
-      "community": 145,
+      "community": 134,
       "norm_label": "microfeedbackmanager"
     },
     {
@@ -10630,7 +10640,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_microfeedbackpulse",
-      "community": 145,
+      "community": 134,
       "norm_label": "microfeedbackpulse()"
     },
     {
@@ -10640,7 +10650,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_microfeedbackevent",
-      "community": 145,
+      "community": 134,
       "norm_label": "microfeedbackevent"
     },
     {
@@ -10650,7 +10660,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_microfeedbackxppulse",
-      "community": 145,
+      "community": 134,
       "norm_label": "microfeedbackxppulse()"
     },
     {
@@ -10660,7 +10670,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_float",
-      "community": 145,
+      "community": 134,
       "norm_label": "float"
     },
     {
@@ -10670,7 +10680,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_labelforevent",
-      "community": 145,
+      "community": 134,
       "norm_label": "labelforevent()"
     },
     {
@@ -10680,7 +10690,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_string",
-      "community": 145,
+      "community": 134,
       "norm_label": "string"
     },
     {
@@ -10690,7 +10700,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_colorforevent",
-      "community": 145,
+      "community": 134,
       "norm_label": "colorforevent()"
     },
     {
@@ -10700,7 +10710,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_color",
-      "community": 145,
+      "community": 134,
       "norm_label": "color"
     },
     {
@@ -10710,58 +10720,68 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "reward_chestlottie",
-      "community": 146,
+      "community": 34,
       "norm_label": "chestlottie.kt"
     },
     {
       "label": "AnimatedRewardChest()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
-      "source_location": "L25",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "reward_chestlottie_animatedrewardchest",
-      "community": 146,
+      "community": 34,
       "norm_label": "animatedrewardchest()"
     },
     {
       "label": "Dp",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
-      "source_location": "L25",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "dp",
-      "community": 146,
+      "community": 34,
       "norm_label": "dp"
     },
     {
       "label": "Color",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
-      "source_location": "L25",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_color",
-      "community": 146,
+      "community": 34,
       "norm_label": "color"
     },
     {
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
-      "source_location": "L25",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_modifier",
-      "community": 146,
+      "community": 34,
       "norm_label": "modifier"
     },
     {
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
-      "source_location": "L25",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_boolean",
-      "community": 146,
+      "community": 34,
       "norm_label": "boolean"
+    },
+    {
+      "label": "String",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_string",
+      "community": 34,
+      "norm_label": "string"
     },
     {
       "label": "RewardEventBus.kt",
@@ -10827,7 +10847,7 @@
       "label": "RewardManager",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager",
       "community": 132,
@@ -10840,14 +10860,14 @@
       "source_location": "",
       "_origin": "ast",
       "id": "viewmodel",
-      "community": 4,
+      "community": 144,
       "norm_label": "viewmodel"
     },
     {
       "label": "StateFlow",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L35",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_stateflow",
       "community": 132,
@@ -10857,7 +10877,7 @@
       "label": "RewardUiEvent",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L35",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_rewarduievent",
       "community": 132,
@@ -10867,7 +10887,7 @@
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L38",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_petentity",
       "community": 132,
@@ -10877,7 +10897,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L41",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_boolean",
       "community": 132,
@@ -10887,7 +10907,7 @@
       "label": ".addReward()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L58",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_addreward",
       "community": 132,
@@ -10897,7 +10917,7 @@
       "label": ".rewardCompleted()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L62",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_rewardcompleted",
       "community": 132,
@@ -10907,7 +10927,7 @@
       "label": ".chestRewardSubEvents()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L126",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_chestrewardsubevents",
       "community": 132,
@@ -10917,47 +10937,37 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L126",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_list",
       "community": 132,
       "norm_label": "list"
     },
     {
-      "label": ".rewardPriority()",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L150",
-      "_origin": "ast",
-      "id": "reward_rewardmanager_rewardmanager_rewardpriority",
-      "community": 132,
-      "norm_label": ".rewardpriority()"
-    },
-    {
-      "label": "Int",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L150",
-      "_origin": "ast",
-      "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_int",
-      "community": 132,
-      "norm_label": "int"
-    },
-    {
       "label": ".addPetExp()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L161",
+      "source_location": "L151",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_addpetexp",
       "community": 132,
       "norm_label": ".addpetexp()"
     },
     {
+      "label": "Int",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
+      "source_location": "L151",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_int",
+      "community": 132,
+      "norm_label": "int"
+    },
+    {
       "label": "Pair",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L161",
+      "source_location": "L151",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_pair",
       "community": 132,
@@ -10967,7 +10977,7 @@
       "label": ".queueLevelAndEvolutionRewards()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L173",
+      "source_location": "L163",
       "_origin": "ast",
       "id": "reward_rewardmanager_rewardmanager_queuelevelandevolutionrewards",
       "community": 132,
@@ -11190,7 +11200,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "reward_rewardoverlayhost",
-      "community": 113,
+      "community": 134,
       "norm_label": "rewardoverlayhost.kt"
     },
     {
@@ -11200,7 +11210,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "reward_rewardoverlayhost_rewardoverlayhost",
-      "community": 113,
+      "community": 134,
       "norm_label": "rewardoverlayhost()"
     },
     {
@@ -11210,7 +11220,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardoverlayhost_kt_rewardmanager",
-      "community": 113,
+      "community": 134,
       "norm_label": "rewardmanager"
     },
     {
@@ -11227,7 +11237,7 @@
       "label": "RewardQueue",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt",
-      "source_location": "L12",
+      "source_location": "L13",
       "_origin": "ast",
       "id": "reward_rewardqueue_rewardqueue",
       "community": 51,
@@ -11237,7 +11247,7 @@
       "label": ".addReward()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt",
-      "source_location": "L39",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "reward_rewardqueue_rewardqueue_addreward",
       "community": 51,
@@ -11247,7 +11257,7 @@
       "label": "RewardUiEvent",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt",
-      "source_location": "L39",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardqueue_kt_rewarduievent",
       "community": 51,
@@ -11257,7 +11267,7 @@
       "label": ".emitNextIfPossible()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt",
-      "source_location": "L49",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "reward_rewardqueue_rewardqueue_emitnextifpossible",
       "community": 51,
@@ -11267,7 +11277,7 @@
       "label": ".rewardDismissed()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardQueue.kt",
-      "source_location": "L62",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "reward_rewardqueue_rewardqueue_rewarddismissed",
       "community": 51,
@@ -11317,7 +11327,7 @@
       "label": "RewardDotLottie()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L185",
+      "source_location": "L186",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewarddotlottie",
       "community": 17,
@@ -11327,7 +11337,7 @@
       "label": "DotLottieSource",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L185",
+      "source_location": "L186",
       "_origin": "ast",
       "id": "dotlottiesource",
       "community": 17,
@@ -11337,7 +11347,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L185",
+      "source_location": "L186",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_boolean",
       "community": 17,
@@ -11347,17 +11357,27 @@
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L185",
+      "source_location": "L186",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_modifier",
       "community": 17,
       "norm_label": "modifier"
     },
     {
-      "label": "LevelUpRewardContent()",
+      "label": "XpBoostAnimation()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L203",
+      "_origin": "ast",
+      "id": "reward_rewardscreen_xpboostanimation",
+      "community": 17,
+      "norm_label": "xpboostanimation()"
+    },
+    {
+      "label": "LevelUpRewardContent()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L242",
       "_origin": "ast",
       "id": "reward_rewardscreen_leveluprewardcontent",
       "community": 17,
@@ -11367,7 +11387,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L203",
+      "source_location": "L242",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_int",
       "community": 17,
@@ -11377,7 +11397,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L203",
+      "source_location": "L242",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string",
       "community": 17,
@@ -11387,7 +11407,7 @@
       "label": "RewardEmphasisTier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L203",
+      "source_location": "L242",
       "_origin": "ast",
       "id": "rewardemphasistier",
       "community": 17,
@@ -11397,7 +11417,7 @@
       "label": "ExpRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L232",
+      "source_location": "L279",
       "_origin": "ast",
       "id": "reward_rewardscreen_exprewardcontent",
       "community": 17,
@@ -11407,7 +11427,7 @@
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L232",
+      "source_location": "L279",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long",
       "community": 17,
@@ -11417,7 +11437,7 @@
       "label": "CustomizationRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L269",
+      "source_location": "L314",
       "_origin": "ast",
       "id": "reward_rewardscreen_customizationrewardcontent",
       "community": 17,
@@ -11427,7 +11447,7 @@
       "label": "ChestRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L314",
+      "source_location": "L359",
       "_origin": "ast",
       "id": "reward_rewardscreen_chestrewardcontent",
       "community": 17,
@@ -11437,7 +11457,7 @@
       "label": "Any",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L314",
+      "source_location": "L359",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any",
       "community": 17,
@@ -11447,7 +11467,7 @@
       "label": "StreakRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L415",
+      "source_location": "L479",
       "_origin": "ast",
       "id": "reward_rewardscreen_streakrewardcontent",
       "community": 17,
@@ -11457,7 +11477,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L415",
+      "source_location": "L479",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_list",
       "community": 17,
@@ -11467,7 +11487,7 @@
       "label": "AchievementRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L483",
+      "source_location": "L547",
       "_origin": "ast",
       "id": "reward_rewardscreen_achievementrewardcontent",
       "community": 17,
@@ -11477,7 +11497,7 @@
       "label": "ConfigAchievementReward",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L483",
+      "source_location": "L547",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_configachievementreward",
       "community": 17,
@@ -11487,7 +11507,7 @@
       "label": "buildLegacyRewardText()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L538",
+      "source_location": "L602",
       "_origin": "ast",
       "id": "reward_rewardscreen_buildlegacyrewardtext",
       "community": 17,
@@ -11497,7 +11517,7 @@
       "label": "rewardLabel()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L557",
+      "source_location": "L621",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardlabel",
       "community": 17,
@@ -11507,7 +11527,7 @@
       "label": "RewardEmphasisTier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L568",
+      "source_location": "L632",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardemphasistier",
       "community": 17,
@@ -11517,17 +11537,27 @@
       "label": "emphasisTier()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L602",
+      "source_location": "L666",
       "_origin": "ast",
       "id": "reward_rewardscreen_emphasistier",
       "community": 17,
       "norm_label": "emphasistier()"
     },
     {
+      "label": "chestStateKey()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L690",
+      "_origin": "ast",
+      "id": "reward_rewardscreen_cheststatekey",
+      "community": 17,
+      "norm_label": "cheststatekey()"
+    },
+    {
       "label": "chestEmphasisTier()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L626",
+      "source_location": "L698",
       "_origin": "ast",
       "id": "reward_rewardscreen_chestemphasistier",
       "community": 17,
@@ -11537,7 +11567,7 @@
       "label": "RewardEmphasisFrame()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L653",
+      "source_location": "L725",
       "_origin": "ast",
       "id": "reward_rewardscreen_rewardemphasisframe",
       "community": 17,
@@ -11547,7 +11577,7 @@
       "label": "ReinforcementMessage()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L703",
+      "source_location": "L775",
       "_origin": "ast",
       "id": "reward_rewardscreen_reinforcementmessage",
       "community": 17,
@@ -11557,7 +11587,7 @@
       "label": "CoinRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L726",
+      "source_location": "L798",
       "_origin": "ast",
       "id": "reward_rewardscreen_coinrewardcontent",
       "community": 17,
@@ -11567,7 +11597,7 @@
       "label": "DragonEvolutionRewardContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
-      "source_location": "L763",
+      "source_location": "L835",
       "_origin": "ast",
       "id": "reward_rewardscreen_dragonevolutionrewardcontent",
       "community": 17,
@@ -12060,7 +12090,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habitcreationscreen",
-      "community": 144,
+      "community": 134,
       "norm_label": "habitcreationscreen.kt"
     },
     {
@@ -12070,7 +12100,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_habitcreationscreen",
-      "community": 144,
+      "community": 134,
       "norm_label": "habitcreationscreen()"
     },
     {
@@ -12080,7 +12110,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_inlinescreenheader",
-      "community": 144,
+      "community": 134,
       "norm_label": "inlinescreenheader()"
     },
     {
@@ -12090,7 +12120,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_string",
-      "community": 144,
+      "community": 134,
       "norm_label": "string"
     },
     {
@@ -12100,7 +12130,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_color",
-      "community": 144,
+      "community": 134,
       "norm_label": "color"
     },
     {
@@ -12110,7 +12140,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_habitcreationform",
-      "community": 144,
+      "community": 134,
       "norm_label": "habitcreationform()"
     },
     {
@@ -12120,7 +12150,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "habitcreationviewmodel",
-      "community": 144,
+      "community": 134,
       "norm_label": "habitcreationviewmodel"
     },
     {
@@ -12130,7 +12160,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_modifier",
-      "community": 144,
+      "community": 134,
       "norm_label": "modifier"
     },
     {
@@ -12140,7 +12170,7 @@
       "source_location": "L358",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_emojivaultcontent",
-      "community": 144,
+      "community": 134,
       "norm_label": "emojivaultcontent()"
     },
     {
@@ -12150,7 +12180,7 @@
       "source_location": "L435",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_typeselection",
-      "community": 144,
+      "community": 134,
       "norm_label": "typeselection()"
     },
     {
@@ -12160,7 +12190,7 @@
       "source_location": "L479",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_durationselection",
-      "community": 144,
+      "community": 134,
       "norm_label": "durationselection()"
     },
     {
@@ -12170,7 +12200,7 @@
       "source_location": "L479",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_int",
-      "community": 144,
+      "community": 134,
       "norm_label": "int"
     },
     {
@@ -12510,7 +12540,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habitsscreen",
-      "community": 43,
+      "community": 91,
       "norm_label": "habitsscreen.kt"
     },
     {
@@ -12520,7 +12550,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitsscreen",
-      "community": 43,
+      "community": 131,
       "norm_label": "habitsscreen()"
     },
     {
@@ -12530,7 +12560,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_navhostcontroller",
-      "community": 43,
+      "community": 131,
       "norm_label": "navhostcontroller"
     },
     {
@@ -12540,7 +12570,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "habitsviewmodel",
-      "community": 43,
+      "community": 131,
       "norm_label": "habitsviewmodel"
     },
     {
@@ -12550,7 +12580,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_homescreenviewmodel",
-      "community": 43,
+      "community": 131,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -12560,7 +12590,7 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "screens_habitsscreen_habititem",
-      "community": 43,
+      "community": 91,
       "norm_label": "habititem()"
     },
     {
@@ -12570,7 +12600,7 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_habitentity",
-      "community": 43,
+      "community": 91,
       "norm_label": "habitentity"
     },
     {
@@ -12580,7 +12610,7 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_boolean",
-      "community": 43,
+      "community": 91,
       "norm_label": "boolean"
     },
     {
@@ -12590,7 +12620,7 @@
       "source_location": "L338",
       "_origin": "ast",
       "id": "screens_habitsscreen_swipeactionsoverlay",
-      "community": 43,
+      "community": 91,
       "norm_label": "swipeactionsoverlay()"
     },
     {
@@ -12600,7 +12630,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "screens_habitsscreen_swipeactionbutton",
-      "community": 43,
+      "community": 91,
       "norm_label": "swipeactionbutton()"
     },
     {
@@ -12610,7 +12640,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_imagevector",
-      "community": 43,
+      "community": 91,
       "norm_label": "imagevector"
     },
     {
@@ -12620,7 +12650,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_color",
-      "community": 43,
+      "community": 131,
       "norm_label": "color"
     },
     {
@@ -12630,7 +12660,7 @@
       "source_location": "L393",
       "_origin": "ast",
       "id": "screens_habitsscreen_streakbadge",
-      "community": 43,
+      "community": 91,
       "norm_label": "streakbadge()"
     },
     {
@@ -12640,7 +12670,7 @@
       "source_location": "L393",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_int",
-      "community": 43,
+      "community": 91,
       "norm_label": "int"
     },
     {
@@ -12650,7 +12680,7 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "screens_habitsscreen_iconbadge",
-      "community": 43,
+      "community": 91,
       "norm_label": "iconbadge()"
     },
     {
@@ -12660,7 +12690,7 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_string",
-      "community": 43,
+      "community": 91,
       "norm_label": "string"
     },
     {
@@ -12670,7 +12700,7 @@
       "source_location": "L459",
       "_origin": "ast",
       "id": "screens_habitsscreen_completionbutton",
-      "community": 43,
+      "community": 91,
       "norm_label": "completionbutton()"
     },
     {
@@ -12680,7 +12710,7 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitactionsdialog",
-      "community": 43,
+      "community": 91,
       "norm_label": "habitactionsdialog()"
     },
     {
@@ -12690,7 +12720,7 @@
       "source_location": "L527",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitcategory",
-      "community": 43,
+      "community": 91,
       "norm_label": "habitcategory()"
     },
     {
@@ -12700,7 +12730,7 @@
       "source_location": "L543",
       "_origin": "ast",
       "id": "screens_habitsscreen_habiticon",
-      "community": 43,
+      "community": 91,
       "norm_label": "habiticon()"
     },
     {
@@ -12717,7 +12747,7 @@
       "label": "HomeScreen()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L61",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "screens_homescreen_homescreen",
       "community": 42,
@@ -12727,7 +12757,7 @@
       "label": "HomeScreenViewModel",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L61",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_homescreenviewmodel",
       "community": 42,
@@ -12737,7 +12767,7 @@
       "label": "PetSummary()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L172",
+      "source_location": "L170",
       "_origin": "ast",
       "id": "screens_homescreen_petsummary",
       "community": 42,
@@ -12747,7 +12777,7 @@
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L172",
+      "source_location": "L170",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_petentity",
       "community": 42,
@@ -12757,7 +12787,7 @@
       "label": "GamifiedFixedHeader()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L249",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "screens_homescreen_gamifiedfixedheader",
       "community": 42,
@@ -12767,7 +12797,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L249",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_int",
       "community": 42,
@@ -12777,7 +12807,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L249",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_string",
       "community": 42,
@@ -12787,7 +12817,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L249",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_boolean",
       "community": 42,
@@ -12797,7 +12827,7 @@
       "label": "ResetGameButton()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L332",
+      "source_location": "L330",
       "_origin": "ast",
       "id": "screens_homescreen_resetgamebutton",
       "community": 42,
@@ -12807,7 +12837,7 @@
       "label": "TodayNourishmentSection()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L352",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "screens_homescreen_todaynourishmentsection",
       "community": 42,
@@ -12817,7 +12847,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L352",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_list",
       "community": 42,
@@ -12827,7 +12857,7 @@
       "label": "HabitEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L352",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_habitentity",
       "community": 42,
@@ -12837,7 +12867,7 @@
       "label": "Map",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L352",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_map",
       "community": 42,
@@ -12847,27 +12877,17 @@
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L352",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreen_kt_long",
       "community": 42,
       "norm_label": "long"
     },
     {
-      "label": "NextUnlockText()",
-      "file_type": "code",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L404",
-      "_origin": "ast",
-      "id": "screens_homescreen_nextunlocktext",
-      "community": 42,
-      "norm_label": "nextunlocktext()"
-    },
-    {
       "label": "EmptyHomeQuest()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L415",
+      "source_location": "L402",
       "_origin": "ast",
       "id": "screens_homescreen_emptyhomequest",
       "community": 42,
@@ -12877,7 +12897,7 @@
       "label": "HomeHabitItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L448",
+      "source_location": "L435",
       "_origin": "ast",
       "id": "screens_homescreen_homehabititem",
       "community": 42,
@@ -12887,7 +12907,7 @@
       "label": "habitIcon()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L509",
+      "source_location": "L496",
       "_origin": "ast",
       "id": "screens_homescreen_habiticon",
       "community": 42,
@@ -13100,7 +13120,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen",
-      "community": 91,
+      "community": 43,
       "norm_label": "notificationsettingsscreen.kt"
     },
     {
@@ -13110,7 +13130,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_notificationsettingsscreen",
-      "community": 91,
+      "community": 43,
       "norm_label": "notificationsettingsscreen()"
     },
     {
@@ -13120,7 +13140,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_homescreenviewmodel",
-      "community": 91,
+      "community": 43,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -13130,7 +13150,7 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_themeselectionsection",
-      "community": 91,
+      "community": 43,
       "norm_label": "themeselectionsection()"
     },
     {
@@ -13140,7 +13160,7 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_appthemeoption",
-      "community": 91,
+      "community": 43,
       "norm_label": "appthemeoption"
     },
     {
@@ -13150,7 +13170,7 @@
       "source_location": "L244",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_copyrightfooter",
-      "community": 91,
+      "community": 43,
       "norm_label": "copyrightfooter()"
     },
     {
@@ -13160,7 +13180,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_savenotificationsetting",
-      "community": 91,
+      "community": 43,
       "norm_label": "savenotificationsetting()"
     },
     {
@@ -13170,7 +13190,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_context",
-      "community": 91,
+      "community": 43,
       "norm_label": "context"
     },
     {
@@ -13180,7 +13200,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_boolean",
-      "community": 91,
+      "community": 43,
       "norm_label": "boolean"
     },
     {
@@ -13190,7 +13210,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_string",
-      "community": 91,
+      "community": 43,
       "norm_label": "string"
     },
     {
@@ -13200,7 +13220,7 @@
       "source_location": "L274",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_gamifiedfixedheader",
-      "community": 91,
+      "community": 43,
       "norm_label": "gamifiedfixedheader()"
     },
     {
@@ -13210,7 +13230,7 @@
       "source_location": "L274",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_int",
-      "community": 91,
+      "community": 43,
       "norm_label": "int"
     },
     {
@@ -13220,7 +13240,7 @@
       "source_location": "L356",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_settingshero",
-      "community": 91,
+      "community": 43,
       "norm_label": "settingshero()"
     },
     {
@@ -13230,7 +13250,7 @@
       "source_location": "L412",
       "_origin": "ast",
       "id": "screens_notificationsettingsscreen_settingrow",
-      "community": 91,
+      "community": 43,
       "norm_label": "settingrow()"
     },
     {
@@ -13240,7 +13260,7 @@
       "source_location": "L412",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_androidx",
-      "community": 91,
+      "community": 43,
       "norm_label": "androidx"
     },
     {
@@ -13250,7 +13270,7 @@
       "source_location": "L412",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_notificationsettingsscreen_kt_modifier",
-      "community": 91,
+      "community": 43,
       "norm_label": "modifier"
     },
     {
@@ -13860,7 +13880,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_statisticsscreen",
-      "community": 4,
+      "community": 133,
       "norm_label": "statisticsscreen.kt"
     },
     {
@@ -13870,7 +13890,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsviewmodel",
-      "community": 4,
+      "community": 144,
       "norm_label": "statisticsviewmodel"
     },
     {
@@ -13880,7 +13900,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_stateflow",
-      "community": 4,
+      "community": 144,
       "norm_label": "stateflow"
     },
     {
@@ -13890,7 +13910,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_boolean",
-      "community": 4,
+      "community": 144,
       "norm_label": "boolean"
     },
     {
@@ -13900,7 +13920,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsscreen",
-      "community": 4,
+      "community": 133,
       "norm_label": "statisticsscreen()"
     },
     {
@@ -13910,7 +13930,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "screens_statisticsscreen_herostreakcard",
-      "community": 4,
+      "community": 133,
       "norm_label": "herostreakcard()"
     },
     {
@@ -13920,7 +13940,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_int",
-      "community": 4,
+      "community": 133,
       "norm_label": "int"
     },
     {
@@ -13930,7 +13950,7 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statbentocard",
-      "community": 4,
+      "community": 133,
       "norm_label": "statbentocard()"
     },
     {
@@ -13940,7 +13960,7 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_string",
-      "community": 4,
+      "community": 133,
       "norm_label": "string"
     },
     {
@@ -13950,7 +13970,7 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_imagevector",
-      "community": 4,
+      "community": 133,
       "norm_label": "imagevector"
     },
     {
@@ -13960,7 +13980,7 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_color",
-      "community": 4,
+      "community": 133,
       "norm_label": "color"
     },
     {
@@ -13970,7 +13990,7 @@
       "source_location": "L339",
       "_origin": "ast",
       "id": "screens_statisticsscreen_petlifecyclecard",
-      "community": 4,
+      "community": 133,
       "norm_label": "petlifecyclecard()"
     },
     {
@@ -14200,7 +14220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel",
-      "community": 4,
+      "community": 135,
       "norm_label": "activitytimelineviewmodel.kt"
     },
     {
@@ -14210,7 +14230,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel",
-      "community": 4,
+      "community": 135,
       "norm_label": "activitytimelineviewmodel"
     },
     {
@@ -14220,7 +14240,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_stateflow",
-      "community": 4,
+      "community": 135,
       "norm_label": "stateflow"
     },
     {
@@ -14230,7 +14250,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_list",
-      "community": 4,
+      "community": 135,
       "norm_label": "list"
     },
     {
@@ -14240,7 +14260,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_gameevententity",
-      "community": 4,
+      "community": 135,
       "norm_label": "gameevententity"
     },
     {
@@ -14250,7 +14270,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_boolean",
-      "community": 4,
+      "community": 135,
       "norm_label": "boolean"
     },
     {
@@ -14260,7 +14280,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_string",
-      "community": 4,
+      "community": 135,
       "norm_label": "string"
     },
     {
@@ -14270,7 +14290,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel_loadmore",
-      "community": 4,
+      "community": 135,
       "norm_label": ".loadmore()"
     },
     {
@@ -15110,7 +15130,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel",
-      "community": 4,
+      "community": 137,
       "norm_label": "notificationsettingsviewmodel.kt"
     },
     {
@@ -15120,7 +15140,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel",
-      "community": 4,
+      "community": 137,
       "norm_label": "notificationsettingsviewmodel"
     },
     {
@@ -15130,7 +15150,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_stateflow",
-      "community": 4,
+      "community": 137,
       "norm_label": "stateflow"
     },
     {
@@ -15140,7 +15160,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_boolean",
-      "community": 4,
+      "community": 137,
       "norm_label": "boolean"
     },
     {
@@ -15150,7 +15170,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setdailyreminderenabled",
-      "community": 4,
+      "community": 137,
       "norm_label": ".setdailyreminderenabled()"
     },
     {
@@ -15160,7 +15180,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setstreakreminderenabled",
-      "community": 4,
+      "community": 137,
       "norm_label": ".setstreakreminderenabled()"
     },
     {
@@ -15170,7 +15190,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setpetreminderenabled",
-      "community": 4,
+      "community": 137,
       "norm_label": ".setpetreminderenabled()"
     },
     {
@@ -15340,7 +15360,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "theme_theme",
-      "community": 113,
+      "community": 134,
       "norm_label": "theme.kt"
     },
     {
@@ -15350,7 +15370,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "theme_theme_habitpettheme",
-      "community": 113,
+      "community": 134,
       "norm_label": "habitpettheme()"
     },
     {
@@ -15360,7 +15380,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_ui_theme_theme_kt_appthemeoption",
-      "community": 113,
+      "community": 134,
       "norm_label": "appthemeoption"
     },
     {
@@ -28011,16 +28031,6 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L127",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "domain_achievementrewardprocessor_achievementrewardprocessor",
-      "target": "domain_achievementrewardprocessor_achievementrewardprocessor_rewardpriority"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
       "source_location": "L120",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -28098,17 +28108,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L82",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "domain_achievementrewardprocessor_achievementrewardprocessor_process",
-      "target": "domain_achievementrewardprocessor_achievementrewardprocessor_rewardpriority"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
       "source_location": "L81",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -28141,17 +28140,6 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L127",
-      "weight": 1.0,
-      "context": "return_type",
-      "confidence_score": 1.0,
-      "source": "domain_achievementrewardprocessor_achievementrewardprocessor_rewardpriority",
-      "target": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_int"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
       "source_location": "L97",
       "weight": 1.0,
       "context": "parameter_type",
@@ -28168,17 +28156,6 @@
       "context": "return_type",
       "confidence_score": 1.0,
       "source": "domain_achievementrewardprocessor_achievementrewardprocessor_torewarduievent",
-      "target": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_rewarduievent"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/domain/AchievementRewardProcessor.kt",
-      "source_location": "L127",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "domain_achievementrewardprocessor_achievementrewardprocessor_rewardpriority",
       "target": "app_src_main_java_com_example_mobile_domain_achievementrewardprocessor_kt_rewarduievent"
     },
     {
@@ -36282,6 +36259,17 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L227",
+      "weight": 1.0,
+      "source": "reward_rewardscreen_xpboostanimation",
+      "target": "components_challengecard_icon"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
       "source_location": "L580",
       "weight": 1.0,
@@ -37909,6 +37897,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "events_rewarduievent",
+      "target": "events_rewarduievent_rewardpriority",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt",
       "source_location": "L7",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -38004,6 +38002,17 @@
       "confidence_score": 1.0,
       "source": "events_rewarduievent_streakreward",
       "target": "events_rewarduievent_rewarduievent"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt",
+      "source_location": "L49",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "events_rewarduievent_rewardpriority",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_events_rewarduievent_kt_int",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -38350,6 +38359,17 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
+      "source_location": "L31",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "reward_chestlottie_animatedrewardchest",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/ChestLottie.kt",
       "source_location": "L29",
       "weight": 1.0,
       "context": "parameter_type",
@@ -38548,16 +38568,6 @@
       "target": "reward_rewardmanager_rewardmanager_rewardcompleted"
     },
     {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L150",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "reward_rewardmanager_rewardmanager",
-      "target": "reward_rewardmanager_rewardmanager_rewardpriority"
-    },
-    {
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
@@ -38701,17 +38711,6 @@
     },
     {
       "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L150",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "confidence_score": 1.0,
-      "source": "reward_rewardmanager_rewardmanager_rewardpriority",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_rewarduievent"
-    },
-    {
-      "relation": "references",
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
@@ -38797,28 +38796,6 @@
       "confidence_score": 1.0,
       "source": "reward_rewardmanager_rewardmanager_chestrewardsubevents",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_list"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L147",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "reward_rewardmanager_rewardmanager_chestrewardsubevents",
-      "target": "reward_rewardmanager_rewardmanager_rewardpriority"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardManager.kt",
-      "source_location": "L150",
-      "weight": 1.0,
-      "context": "return_type",
-      "confidence_score": 1.0,
-      "source": "reward_rewardmanager_rewardmanager_rewardpriority",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardmanager_kt_int"
     },
     {
       "relation": "references",
@@ -39452,6 +39429,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L690",
+      "weight": 1.0,
+      "source": "reward_rewardscreen",
+      "target": "reward_rewardscreen_cheststatekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L246",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -39577,6 +39564,16 @@
       "confidence_score": 1.0,
       "source": "reward_rewardscreen",
       "target": "reward_rewardscreen_streakrewardcontent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L203",
+      "weight": 1.0,
+      "source": "reward_rewardscreen",
+      "target": "reward_rewardscreen_xpboostanimation",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -39813,6 +39810,28 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L203",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "reward_rewardscreen_xpboostanimation",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_modifier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L296",
+      "weight": 1.0,
+      "source": "reward_rewardscreen_exprewardcontent",
+      "target": "reward_rewardscreen_xpboostanimation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L102",
       "weight": 1.0,
       "context": "parameter_type",
@@ -39912,6 +39931,17 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L690",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "reward_rewardscreen_cheststatekey",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_int",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L246",
       "weight": 1.0,
       "context": "parameter_type",
@@ -39984,6 +40014,17 @@
       "confidence_score": 1.0,
       "source": "reward_rewardscreen_chestrewardcontent",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L690",
+      "weight": 1.0,
+      "context": "return_type",
+      "source": "reward_rewardscreen_cheststatekey",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -40173,6 +40214,17 @@
       "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L690",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "reward_rewardscreen_cheststatekey",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -40210,6 +40262,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L401",
+      "weight": 1.0,
+      "source": "reward_rewardscreen_chestrewardcontent",
+      "target": "reward_rewardscreen_cheststatekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L315",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -40237,6 +40300,17 @@
       "confidence_score": 1.0,
       "source": "reward_rewardscreen_chestemphasistier",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
+      "source_location": "L690",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "source": "reward_rewardscreen_cheststatekey",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -42962,16 +43036,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L313",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "screens_homescreen",
-      "target": "screens_homescreen_nextunlocktext"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
       "source_location": "L167",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -43030,17 +43094,6 @@
       "confidence_score": 1.0,
       "source": "screens_homescreen_homescreen",
       "target": "screens_homescreen_homehabititem"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt",
-      "source_location": "L104",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "screens_homescreen_homescreen",
-      "target": "screens_homescreen_nextunlocktext"
     },
     {
       "relation": "calls",
@@ -54126,5 +54179,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d3d9c922a972400ccbf2e4e3e314dc2a1db5a8a9"
+  "built_at_commit": "f18d9ea9068ed4b21c9708931966c9d7aefa28f2"
 }

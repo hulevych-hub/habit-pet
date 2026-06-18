@@ -1,6 +1,7 @@
 package com.example.mobile.presentation.ui.reward
 
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.events.rewardPriority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -13,17 +14,6 @@ import javax.inject.Singleton
 class RewardQueue @Inject constructor() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
-    private val rewardPriorities = mapOf(
-        RewardUiEvent.LevelUpReward::class.java to 1,
-        RewardUiEvent.DragonEvolutionReward::class.java to 2,
-        RewardUiEvent.StreakReward::class.java to 3,
-        RewardUiEvent.ChestReward::class.java to 4,
-        RewardUiEvent.AchievementReward::class.java to 5,
-        RewardUiEvent.ExpReward::class.java to 6,
-        RewardUiEvent.CustomizationReward::class.java to 7,
-        RewardUiEvent.CoinReward::class.java to 8
-    )
 
     private val buffer = mutableListOf<RewardUiEvent>()
 
@@ -39,9 +29,7 @@ class RewardQueue @Inject constructor() {
     fun addReward(event: RewardUiEvent) {
         buffer.add(event)
 
-        buffer.sortBy {
-            rewardPriorities[it::class.java] ?: Int.MAX_VALUE
-        }
+        buffer.sortBy { it.rewardPriority() }
 
         emitNextIfPossible()
     }

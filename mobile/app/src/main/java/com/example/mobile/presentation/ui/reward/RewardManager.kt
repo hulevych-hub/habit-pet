@@ -10,6 +10,7 @@ import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
+import com.example.mobile.presentation.ui.events.rewardPriority
 import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardEventBus
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -144,18 +145,7 @@ class RewardManager @Inject constructor(
             rewards.add(RewardUiEvent.CustomizationReward(equipableId))
         }
 
-        return rewards.sortedBy { rewardPriority(it) }
-    }
-
-    private fun rewardPriority(reward: RewardUiEvent): Int = when (reward) {
-        is RewardUiEvent.LevelUpReward -> 1
-        is RewardUiEvent.DragonEvolutionReward -> 2
-        is RewardUiEvent.StreakReward -> 3
-        is RewardUiEvent.ChestReward -> 4
-        is RewardUiEvent.AchievementReward -> 5
-        is RewardUiEvent.ExpReward -> 6
-        is RewardUiEvent.CustomizationReward -> 7
-        is RewardUiEvent.CoinReward -> 8
+        return rewards.sortedBy { it.rewardPriority() }
     }
 
     private suspend fun addPetExp(expAmount: Int): Pair<PetEntity, PetEntity> {

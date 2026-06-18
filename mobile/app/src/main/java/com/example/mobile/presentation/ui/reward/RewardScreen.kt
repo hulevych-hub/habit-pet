@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,9 +67,6 @@ private val COIN_REWARD_LOTTIE_URL: DotLottieSource by lazy {
     DotLottieSource.Url("https://lottie.host/7cc17b3d-9404-4630-a046-d72799cc98c4/jmIwdfBZBo.lottie")
 }
 
-private val XP_BOOST_LOTTIE_URL: DotLottieSource by lazy {
-    DotLottieSource.Url("https://lottie.host/2113fae4-ce2e-49cf-a7a9-787d86d3b739/cZdkKMDwJM.lottie")
-}
 private val STREAK_LOTTIE_URL: DotLottieSource by lazy {
     DotLottieSource.Url("https://lottie.host/fc31fca3-cd41-44da-8dba-80942d5ad3d3/eRS4EJkA29.lottie")
 }
@@ -116,6 +116,7 @@ fun RewardScreen(
             when (reward) {
 
                 is RewardUiEvent.LevelUpReward -> LevelUpRewardContent(
+                    level = reward.level,
                     coinsEarned = reward.coins,
                     reinforcementMessage = reinforcementMessage,
                     emphasisTier = emphasisTier
@@ -199,9 +200,48 @@ private fun RewardDotLottie(
     )
 }
 
+@Composable
+private fun XpBoostAnimation(
+    modifier: Modifier = Modifier
+) {
+    var isPulsing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            isPulsing = !isPulsing
+            delay(420)
+        }
+    }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isPulsing) 1.18f else 0.86f,
+        animationSpec = tween(420, easing = FastOutSlowInEasing),
+        label = "xp boost scale"
+    )
+    val rotation by animateFloatAsState(
+        targetValue = if (isPulsing) 18f else -18f,
+        animationSpec = tween(420, easing = FastOutSlowInEasing),
+        label = "xp boost rotation"
+    )
+
+    Icon(
+        imageVector = Icons.Default.Star,
+        contentDescription = "XP boost",
+        tint = AppTheme.current.primary,
+        modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                rotationZ = rotation
+            }
+            .background(Color.Transparent)
+    )
+}
+
 // Level Up Reward Screen
 @Composable
 private fun LevelUpRewardContent(
+    level: Int,
     coinsEarned: Int,
     reinforcementMessage: String,
     emphasisTier: RewardEmphasisTier
@@ -216,6 +256,13 @@ private fun LevelUpRewardContent(
             )
 
             Spacer(modifier = Modifier.height((-10).dp))
+
+            Text(
+                text = "LEVEL $level",
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold
+            )
 
             Text(
                 text = "+$coinsEarned coins",
@@ -246,9 +293,7 @@ private fun ExpRewardContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            RewardDotLottie(
-                source = XP_BOOST_LOTTIE_URL,
-                loop = true,
+            XpBoostAnimation(
                 modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
@@ -325,6 +370,11 @@ private fun ChestRewardContent(
     var isOpen by remember { mutableStateOf(false) }
     var areRewardsVisible by remember { mutableStateOf(false) }
 
+    LaunchedEffect(rewardType, amount, expAmount, customizationId, equipableId) {
+        isOpen = false
+        areRewardsVisible = false
+    }
+
     LaunchedEffect(isOpen) {
         if (isOpen) {
             delay(900)
@@ -340,73 +390,87 @@ private fun ChestRewardContent(
 
             val chestSize = (180 * emphasisTier.chestSizeMultiplier * REWARD_LOTTIE_SIZE_MULTIPLIER).dp
 
-            AnimatedRewardChest(
-                size = chestSize,
-                tint = emphasisTier.chestTint,
-                modifier = Modifier.fillMaxSize(),
-                onOpened = {
-                    isOpen = true
-                }
-            )
+            Box(
+                modifier = Modifier.size(chestSize),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                AnimatedRewardChest(
+                    size = chestSize,
+                    tint = emphasisTier.chestTint,
+                    modifier = Modifier.fillMaxSize(),
+                    stateKey = chestStateKey(rewardType, amount, expAmount, customizationId, equipableId),
+                    onOpened = {
+                        isOpen = true
+                    }
+                )
 
-            Spacer(modifier = Modifier.height((-12).dp))
+                if (areRewardsVisible) {
+                    val rewardText = mutableListOf<String>()
+                    val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
 
-            if (areRewardsVisible) {
-                val rewardText = mutableListOf<String>()
-                val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
+                    when (amount) {
+                        is Int -> if (amount > 0) rewardText.add("+$amount coins")
+                        is String -> if (!amount.isEmpty()) rewardText.add(amount)
+                    }
 
-                when (amount) {
-                    is Int -> if (amount > 0) rewardText.add("+$amount coins")
-                    is String -> if (!amount.isEmpty()) rewardText.add(amount)
-                }
+                    if (expAmount > 0) {
+                        rewardText.add("+$expAmount EXP")
+                    }
 
-                if (expAmount > 0) {
-                    rewardText.add("+$expAmount EXP")
-                }
+                    if (customizationId != null || equipableId != null) {
+                        val equipableName = equipableId
+                            ?.let { EquipableConfig.definition(it)?.name }
+                            ?: "Customization"
+                        rewardText.add("$equipableName unlocked!")
+                    }
 
-                if (customizationId != null || equipableId != null) {
-                    val equipableName = equipableId
-                        ?.let { EquipableConfig.definition(it)?.name }
-                        ?: "Customization"
-                    rewardText.add("$equipableName unlocked!")
-                }
-
-                customizationDefinition?.let { definition ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        contentAlignment = Alignment.Center
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(bottom = 8.dp)
                     ) {
-                        AssetPreview(
-                            itemType = definition.type.value,
-                            itemId = definition.id,
-                            imageUrl = definition.imageUrl,
-                            tintColor = emphasisTier.rewardColor,
-                            modifier = Modifier.size(96.dp)
+                        customizationDefinition?.let { definition ->
+                            AssetPreview(
+                                itemType = definition.type.value,
+                                itemId = definition.id,
+                                imageUrl = definition.imageUrl,
+                                tintColor = emphasisTier.rewardColor,
+                                modifier = Modifier.size(96.dp)
+                            )
+                        }
+
+                        if (rewardText.isNotEmpty()) {
+                            Text(
+                                text = rewardText.joinToString("\n"),
+                                color = AppTheme.current.primary,
+                                style = MaterialTheme.typography.headlineSmall,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Text(
+                            text = rewardType,
+                            color = AppTheme.current.primary.copy(alpha = 0.78f),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
+            }
 
-                if (rewardText.isNotEmpty()) {
-                    Text(
-                        text = rewardText.joinToString("\n"),
-                        color = AppTheme.current.primary,
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+            Spacer(modifier = Modifier.height(12.dp))
 
+            if (areRewardsVisible) {
+                ReinforcementMessage(reinforcementMessage)
+            } else {
                 Text(
-                    text = rewardType,
-                    color = AppTheme.current.primary.copy(alpha = 0.78f),
+                    text = "Tap the chest to open",
+                    color = AppTheme.current.primary.copy(alpha = 0.72f),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
             }
-
-            ReinforcementMessage(reinforcementMessage)
         }
     }
 }
@@ -622,6 +686,14 @@ private fun RewardUiEvent.emphasisTier(): RewardEmphasisTier = when (this) {
         RewardEmphasisTier.RARE
     }
 }
+
+private fun chestStateKey(
+    rewardType: String,
+    amount: Any,
+    expAmount: Int,
+    customizationId: Long?,
+    equipableId: String?
+): String = "$rewardType|$amount|$expAmount|$customizationId|$equipableId"
 
 private fun chestEmphasisTier(
     rewardType: String,

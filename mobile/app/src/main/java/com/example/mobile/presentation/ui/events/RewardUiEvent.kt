@@ -45,3 +45,14 @@ sealed class RewardUiEvent {
         val equipableId: String? = null
     ) : RewardUiEvent()
 }
+
+fun RewardUiEvent.rewardPriority(): Int = when (this) {
+    is RewardUiEvent.LevelUpReward -> 1
+    is RewardUiEvent.DragonEvolutionReward -> 2
+    is RewardUiEvent.StreakReward -> 3
+    is RewardUiEvent.ChestReward -> 4
+    is RewardUiEvent.AchievementReward -> 5
+    is RewardUiEvent.ExpReward -> 6
+    is RewardUiEvent.CustomizationReward -> 7
+    is RewardUiEvent.CoinReward -> 8
+}
