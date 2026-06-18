@@ -211,7 +211,9 @@ private fun PetShowcase(
     ) {
         AnimatedPet(
             pet = pet,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp, bottom = 6.dp),
             showNameOverlay = false,
             backgroundContentScale = ContentScale.Crop
         )
@@ -444,9 +446,9 @@ private fun PetDetailsPanel(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 10.dp, bottom = 8.dp),
+            .padding(top = 8.dp, bottom = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         PetBondButton(onClick = onRenameClick)
 
@@ -464,7 +466,7 @@ private fun PetBondButton(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(44.dp)
             .clip(RoundedCornerShape(999.dp))
             .background(AppTheme.current.card)
             .border(1.5.dp, AppTheme.current.gold.copy(alpha = 0.62f), RoundedCornerShape(999.dp))
@@ -473,18 +475,18 @@ private fun PetBondButton(onClick: () -> Unit) {
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.FavoriteBorder,
                 contentDescription = null,
                 tint = AppTheme.current.gold,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(16.dp)
             )
             Text(
                 text = "Pet bond",
                 color = AppTheme.current.ink,
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -503,8 +505,8 @@ private fun AttributeCard(
         border = BorderStroke(1.dp, AppTheme.current.outline)
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -514,14 +516,14 @@ private fun AttributeCard(
                 Text(
                     text = "Attribute Card",
                     color = AppTheme.current.ink,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center
                 )
 
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(32.dp)
                         .clickable(onClick = onEditClick),
                     contentAlignment = Alignment.Center
                 ) {
@@ -529,7 +531,7 @@ private fun AttributeCard(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit customizations",
                         tint = AppTheme.current.gold,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
@@ -578,12 +580,12 @@ private fun AttributeRow(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(30.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(9.dp))
                     .background(iconTint.copy(alpha = 0.13f)),
                 contentAlignment = Alignment.Center
             ) {
@@ -591,13 +593,13 @@ private fun AttributeRow(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(17.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
             Text(
                 text = label,
                 color = AppTheme.current.muted,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -609,7 +611,7 @@ private fun AttributeRow(
             Text(
                 text = value,
                 color = valueColor,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -618,7 +620,7 @@ private fun AttributeRow(
                 Text(
                     text = it,
                     color = secondaryColor,
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -631,7 +633,7 @@ private fun LevelUpButton(progressFraction: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(54.dp)
+            .height(48.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(AppTheme.current.goldSoft.copy(alpha = 0.25f))
             .border(1.dp, AppTheme.current.goldDark, RoundedCornerShape(18.dp)),
@@ -655,7 +657,7 @@ private fun LevelUpButton(progressFraction: Float) {
         Text(
             text = "Level Up",
             color = AppTheme.current.onSecondary,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.ExtraBold
         )
     }

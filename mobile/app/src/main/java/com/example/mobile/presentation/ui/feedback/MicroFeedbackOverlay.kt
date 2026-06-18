@@ -63,7 +63,7 @@ fun MicroFeedbackOverlay(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 88.dp, start = 16.dp, end = 16.dp),
+                .padding(bottom = 136.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {

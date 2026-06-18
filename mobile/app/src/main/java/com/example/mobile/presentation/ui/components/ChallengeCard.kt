@@ -57,17 +57,19 @@ fun ChallengeCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(52.dp)
                         .clip(CircleShape)
                         .background(AppTheme.current.gold),
                     contentAlignment = Alignment.Center
@@ -76,7 +78,7 @@ fun ChallengeCard(
                         imageVector = challenge?.icon?.challengeIcon() ?: Icons.Default.Star,
                         contentDescription = null,
                         tint = AppTheme.current.onSecondary,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(28.dp)
                     )
                 }
 
@@ -84,12 +86,16 @@ fun ChallengeCard(
                     Text(
                         text = challenge?.title ?: "No challenge yet",
                         style = MaterialTheme.typography.titleLarge,
-                        color = AppTheme.current.ink
+                        color = AppTheme.current.ink,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                     Text(
                         text = challenge?.description ?: "A fresh challenge will appear after you claim your current one.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = AppTheme.current.muted
+                        color = AppTheme.current.muted,
+                        maxLines = 2,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }
@@ -116,6 +122,7 @@ fun ChallengeCard(
                     progress = state.progressFraction,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 2.dp)
                         .height(10.dp)
                         .clip(RoundedCornerShape(999.dp)),
                     color = if (state.isCompleted) AppTheme.current.success else AppTheme.current.violet,
@@ -123,12 +130,17 @@ fun ChallengeCard(
                 )
             }
 
-            RewardPreview(rewards = state.rewards)
+            RewardPreview(
+                rewards = state.rewards,
+                modifier = Modifier.padding(horizontal = 2.dp)
+            )
 
             if (state.isCompleted && !state.isClaimed) {
                 Button(
                     onClick = onClaim,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(
