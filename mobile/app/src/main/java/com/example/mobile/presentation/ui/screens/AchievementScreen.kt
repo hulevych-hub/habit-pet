@@ -75,12 +75,14 @@ fun AchievementScreen(
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
-            ClaimAllRewardsBar(
-                claimableCount = claimableCount,
-                isClaiming = isClaiming,
-                onClick = achievementViewModel::claimAllAchievements,
-                palette = palette
-            )
+            if (claimableCount > 1) {
+                ClaimAllRewardsBar(
+                    claimableCount = claimableCount,
+                    isClaiming = isClaiming,
+                    onClick = achievementViewModel::claimAllAchievements,
+                    palette = palette
+                )
+            }
         }
     ) { padding ->
         Box(

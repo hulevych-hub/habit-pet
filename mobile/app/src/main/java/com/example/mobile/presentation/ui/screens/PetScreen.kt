@@ -172,8 +172,6 @@ fun PetScreen(
                 PetDetailsPanel(
                     pet = pet,
                     progressFraction = progressFraction,
-                    currentLevelXp = currentLevelXp,
-                    xpRequiredForNextLevel = xpRequiredForNextLevel,
                     onRenameClick = { showRenameDialog = true },
                     onEditCustomizationsClick = onNavigateToRewardsOwned
                 )
@@ -439,8 +437,6 @@ private fun MoodPill(
 private fun PetDetailsPanel(
     pet: PetEntity,
     progressFraction: Float,
-    currentLevelXp: Long,
-    xpRequiredForNextLevel: Long,
     onRenameClick: () -> Unit,
     onEditCustomizationsClick: () -> Unit
 ) {
@@ -452,33 +448,6 @@ private fun PetDetailsPanel(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Text(
-            text = "$currentLevelXp / $xpRequiredForNextLevel XP",
-            color = AppTheme.current.ink,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(999.dp))
-                .background(AppTheme.current.progressTrack)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(progressFraction)
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(999.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(AppTheme.current.goldDark, AppTheme.current.goldDark)
-                        )
-                    )
-            )
-        }
-
         PetBondButton(onClick = onRenameClick)
 
         AttributeCard(
@@ -486,7 +455,7 @@ private fun PetDetailsPanel(
             onEditClick = onEditCustomizationsClick
         )
 
-        LevelUpButton()
+        LevelUpButton(progressFraction = progressFraction)
     }
 }
 
@@ -658,24 +627,31 @@ private fun AttributeRow(
 }
 
 @Composable
-private fun LevelUpButton() {
+private fun LevelUpButton(progressFraction: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(54.dp)
             .clip(RoundedCornerShape(18.dp))
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(
-                        AppTheme.current.goldSoft,
-                        AppTheme.current.gold,
-                        AppTheme.current.goldDark
-                    )
-                )
-            )
+            .background(AppTheme.current.goldSoft.copy(alpha = 0.25f))
             .border(1.dp, AppTheme.current.goldDark, RoundedCornerShape(18.dp)),
         contentAlignment = Alignment.Center
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(progressFraction.coerceIn(0f, 1f))
+                .fillMaxSize()
+                .clip(RoundedCornerShape(18.dp))
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            AppTheme.current.gold,
+                            AppTheme.current.goldDark
+                        )
+                    )
+                )
+        )
+
         Text(
             text = "Level Up",
             color = AppTheme.current.onSecondary,

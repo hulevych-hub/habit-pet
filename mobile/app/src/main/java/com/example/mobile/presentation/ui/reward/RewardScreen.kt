@@ -50,20 +50,29 @@ import kotlinx.coroutines.delay
 import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 
 private const val REWARD_LOTTIE_SIZE_MULTIPLIER = 3.0f
-private const val REWARD_LOTTIE_SPEED = 3.0f
+private const val REWARD_LOTTIE_SPEED = 1.5f
 
 private val LEVEL_UP_LOTTIE_URL: DotLottieSource by lazy {
     DotLottieSource.Url("https://lottie.host/7fc1d557-213d-491f-bec9-9dcd074249fc/dw4NytzH9z.lottie")
+}
+
+private val EXP_LOTTIE_URL: DotLottieSource by lazy {
+    DotLottieSource.Url("https://lottie.host/13198b39-d865-446e-a6dc-57f28065f3a0/y4WegYS6fl.lottie")
 }
 
 private val COIN_REWARD_LOTTIE_URL: DotLottieSource by lazy {
     DotLottieSource.Url("https://lottie.host/7cc17b3d-9404-4630-a046-d72799cc98c4/jmIwdfBZBo.lottie")
 }
 
-private val XP_BOOST_LOTTIE_URL: DotLottieSource = LEVEL_UP_LOTTIE_URL
-private val CUSTOMIZATION_LOTTIE_URL: DotLottieSource = COIN_REWARD_LOTTIE_URL
-private val STREAK_LOTTIE_URL: DotLottieSource = LEVEL_UP_LOTTIE_URL
-private val ACHIEVEMENT_LOTTIE_URL: DotLottieSource = LEVEL_UP_LOTTIE_URL
+private val XP_BOOST_LOTTIE_URL: DotLottieSource by lazy {
+    DotLottieSource.Url("https://lottie.host/2113fae4-ce2e-49cf-a7a9-787d86d3b739/cZdkKMDwJM.lottie")
+}
+private val STREAK_LOTTIE_URL: DotLottieSource by lazy {
+    DotLottieSource.Url("https://lottie.host/fc31fca3-cd41-44da-8dba-80942d5ad3d3/eRS4EJkA29.lottie")
+}
+private val ACHIEVEMENT_LOTTIE_URL: DotLottieSource by lazy {
+    DotLottieSource.Url("https://lottie.host/a92142bc-ccbb-4df2-82b7-42247bc22610/i09Ybooztt.lottie")
+}
 
 @Composable
 fun RewardScreen(
@@ -263,7 +272,8 @@ private fun CustomizationRewardContent(
     reinforcementMessage: String,
     emphasisTier: RewardEmphasisTier
 ) {
-    val name = EquipableConfig.definition(equipableId)?.name ?: "Customization"
+    val definition = EquipableConfig.definition(equipableId)
+    val name = definition?.name ?: "Customization"
 
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -276,11 +286,15 @@ private fun CustomizationRewardContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            RewardDotLottie(
-                source = CUSTOMIZATION_LOTTIE_URL,
-                loop = true,
-                modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
-            )
+            definition?.let {
+                AssetPreview(
+                    itemType = definition.type.value,
+                    itemId = definition.id,
+                    imageUrl = definition.imageUrl,
+                    tintColor = emphasisTier.rewardColor,
+                    modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height((-10).dp))
 
@@ -290,16 +304,6 @@ private fun CustomizationRewardContent(
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
-
-            EquipableConfig.definition(equipableId)?.let { definition ->
-                AssetPreview(
-                    itemType = definition.type.value,
-                    itemId = definition.id,
-                    imageUrl = definition.imageUrl,
-                    tintColor = emphasisTier.rewardColor,
-                    modifier = Modifier.size(128.dp)
-                )
-            }
 
             ReinforcementMessage(reinforcementMessage)
         }

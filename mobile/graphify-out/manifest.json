@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/navigation/NavGraph.kt": {
-    "mtime": 1781686311.0148437,
-    "ast_hash": "16c2186359ba61d19bf804770054ec5c",
+    "mtime": 1781791441.9593835,
+    "ast_hash": "336a1a82cae5a068e37c76d9521caab5",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/animations/PetAnimations.kt": {
@@ -260,13 +260,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt": {
-    "mtime": 1781785961.5640798,
-    "ast_hash": "d601c31c7554bb35f781ba78faed66c4",
+    "mtime": 1781793664.5902183,
+    "ast_hash": "d1483f0157056c9136601ab50efa93ff",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt": {
-    "mtime": 1781785277.0839171,
-    "ast_hash": "61980efe8aac94436a33b6d88ff0df78",
+    "mtime": 1781790973.1876407,
+    "ast_hash": "3f8fc045ca8ce6527425e51701189fdf",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitCreationScreen.kt": {
@@ -305,12 +305,12 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781709943.1669252,
-    "ast_hash": "32559b7da2fdd70beb1ad698511b628f",
+    "mtime": 1781793749.2118502,
+    "ast_hash": "115dd200bfd585cc064ac63b39a366c0",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
-    "mtime": 1781694803.1407802,
+    "mtime": 1781791392.3270874,
     "ast_hash": "8d9307419da52726389ad7fb0b989957",
     "semantic_hash": ""
   },

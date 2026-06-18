@@ -150,7 +150,12 @@ fun HabitPetNavGraph(
                         destinations = bottomDestinations,
                         currentRoute = selectedBottomRoute,
                         onNavigate = { destination ->
-                            navigateToBottomDestination(navController, destination, microFeedbackManager)
+                            navigateToBottomDestination(
+                                navController = navController,
+                                destination = destination,
+                                currentRoute = currentRoute,
+                                microFeedbackManager = microFeedbackManager
+                            )
                         }
                     )
                 }
@@ -235,9 +240,20 @@ fun HabitPetNavGraph(
 private fun navigateToBottomDestination(
     navController: NavHostController,
     destination: BottomDestination,
-    microFeedbackManager: MicroFeedbackManager?
+    microFeedbackManager: MicroFeedbackManager?,
+    currentRoute: String? = null
 ) {
     microFeedbackManager?.triggerTabSwitched()
+    if (destination == BottomDestination.Pet && currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true) {
+        navController.navigate(destination.route) {
+            popUpTo(currentRoute) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+        return
+    }
+
     navController.navigate(destination.route) {
         popUpTo(navController.graph.startDestinationId) {
             inclusive = false

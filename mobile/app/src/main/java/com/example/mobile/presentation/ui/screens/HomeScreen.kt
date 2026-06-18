@@ -27,12 +27,12 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,16 +47,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
-import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.ui.theme.AppTheme
 
 @Composable
 fun HomeScreen(
@@ -112,7 +111,6 @@ fun HomeScreen(
                         .padding(top = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    NextUnlockText()
                     ResetGameButton(onResetClick = { showResetGameDialog = true })
                     TodayNourishmentSection(
                         habits = uiState.habits,
@@ -399,17 +397,6 @@ private fun TodayNourishmentSection(
         }
 
     }
-}
-
-@Composable
-private fun NextUnlockText() {
-    Text(
-        text = "✨ Next Unlock: Dragon Nest Background at Lv. 3",
-        style = MaterialTheme.typography.bodySmall,
-        color = AppTheme.current.ink.copy(alpha = 0.5f),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 
 @Composable
