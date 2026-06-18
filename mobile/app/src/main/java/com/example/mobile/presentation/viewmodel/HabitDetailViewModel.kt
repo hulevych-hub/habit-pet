@@ -8,6 +8,7 @@ import com.example.mobile.data.local.entities.HabitProgressEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ActivityTimelineEngine
+import com.example.mobile.domain.ChallengeEngine
 import com.example.mobile.domain.ChestRewardConfigProvider
 import com.example.mobile.domain.ChestRewardFactory
 import com.example.mobile.domain.DragonMoodEngine
@@ -53,7 +54,8 @@ class HabitDetailViewModel @Inject constructor(
     private val inventoryItemRepository: InventoryItemRepository,
     private val activityTimelineEngine: ActivityTimelineEngine,
     private val microFeedbackManager: MicroFeedbackManager,
-    private val dragonMoodEngine: DragonMoodEngine
+    private val dragonMoodEngine: DragonMoodEngine,
+    private val challengeEngine: ChallengeEngine
 ) : ViewModel() {
 
     // UI State
@@ -218,6 +220,7 @@ class HabitDetailViewModel @Inject constructor(
                 refreshCompletions(habitId)
 
                 awardPetXpAndCoins(totalXpEarned, coinsEarned)
+                challengeEngine.recordHabitCompleted(habitId, totalXpEarned, coinsEarned)
                 maybeTriggerHabitCompletionChest()
                 microFeedbackManager.triggerHabitCompleted(
                     xp = totalXpEarned,
@@ -292,7 +295,7 @@ class HabitDetailViewModel @Inject constructor(
                 if (total >= habit.minimumDurationMinutes) {
 
                     val xpEarned = (ExpConfig.TIMER_HABIT_BASE_XP + total * ExpConfig.TIMER_HABIT_XP_PER_MINUTE).toLong()
-                    val coinsEarned = EconomyConfig.TIMER_HABIT_BASE_COINS + sessionMinutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE
+                    val coinsEarned = EconomyConfig.TIMER_HABIT_BASE_COINS + total * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE
 
                     val completionResult = habitCompletionRepository.addCompletionWithCombo(
                         HabitCompletionEntity(
@@ -333,6 +336,7 @@ class HabitDetailViewModel @Inject constructor(
                     refreshCompletions(habitId)
 
                     awardPetXpAndCoins(totalXpEarned, coinsEarned)
+                    challengeEngine.recordHabitCompleted(habitId, totalXpEarned, coinsEarned)
                     maybeTriggerHabitCompletionChest()
                     microFeedbackManager.triggerHabitCompleted(
                         xp = totalXpEarned,
@@ -391,7 +395,11 @@ class HabitDetailViewModel @Inject constructor(
     // REWARDS
     // =========================
 
-    private fun awardPetXpAndCoins(xpToAdd: Long, coinsToAdd: Int) {
+    private fun awardPetXpAndCoins(
+        xpToAdd: Long,
+        coinsToAdd: Int,
+        trackChallenge: Boolean = false
+    ) {
         viewModelScope.launch {
             val current = _pet.value
             val updated = current.copy(xp = current.xp + xpToAdd)
@@ -407,14 +415,18 @@ class HabitDetailViewModel @Inject constructor(
             _pet.value = evolved
             microFeedbackManager.triggerXpGained(xpToAdd)
 
-            awardCoins(coinsToAdd)
+            awardCoins(coinsToAdd, trackChallenge)
 
             if (newLevel > current.level) {
                 val bonus = ExpConfig.levelUpCoins(newLevel)
-                awardCoins(bonus)
+                awardCoins(bonus, trackChallenge)
 
                 rewardQueue.addReward(
-                    RewardUiEvent.LevelUpReward(newLevel, bonus)
+                    RewardUiEvent.LevelUpReward(
+                        previousLevel = current.level,
+                        level = newLevel,
+                        coins = bonus
+                    )
                 )
                 activityTimelineEngine.logLevelUp(newLevel, bonus)
 
@@ -464,7 +476,12 @@ class HabitDetailViewModel @Inject constructor(
                 inventoryItemRepository = inventoryItemRepository
             )
 
-            awardPetXpAndCoins(EconomyConfig.SURPRISE_BONUS_XP, EconomyConfig.SURPRISE_BONUS_COINS)
+            awardPetXpAndCoins(
+                xpToAdd = EconomyConfig.SURPRISE_BONUS_XP,
+                coinsToAdd = EconomyConfig.SURPRISE_BONUS_COINS,
+                trackChallenge = true
+            )
+            challengeEngine.recordXpEarned(EconomyConfig.SURPRISE_BONUS_XP)
             activityTimelineEngine.logSurpriseReward(
                 coins = EconomyConfig.SURPRISE_BONUS_COINS,
                 xp = EconomyConfig.SURPRISE_BONUS_XP,
@@ -475,7 +492,7 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    private fun awardCoins(coins: Int) {
+    private fun awardCoins(coins: Int, trackChallenge: Boolean = false) {
         viewModelScope.launch {
             val stats = statisticsRepository.getStatistics().firstOrNull()
                 ?: StatisticsEntity()
@@ -488,6 +505,10 @@ class HabitDetailViewModel @Inject constructor(
                     lastUpdated = System.currentTimeMillis()
                 )
             )
+
+            if (trackChallenge && coins > 0) {
+                challengeEngine.recordCoinsEarned(coins)
+            }
         }
     }
 

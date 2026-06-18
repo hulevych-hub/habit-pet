@@ -49,24 +49,34 @@ class ChallengeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun recordHabitCompleted(habitId: Long, xpEarned: Long, coinsEarned: Int) {
-        val current = challengeDao.getActiveChallengeOnce() ?: return
+        val current = challengeDao.getActiveChallengeOnce()
+            ?: run {
+                ensureActiveChallenge()
+                challengeDao.getActiveChallengeOnce()
+            }
+            ?: return
         if (current.isClaimed) return
 
         val progress = when (ChallengeType.from(current.type)) {
             ChallengeType.HABIT_COMPLETION -> current.progressValue + 1
-            ChallengeType.XP_EARNED -> current.progressValue + xpEarned.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
-            ChallengeType.COINS_EARNED -> current.progressValue + coinsEarned
+            ChallengeType.XP_EARNED -> current.progressValue + xpEarned.coerceAtLeast(0L).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+            ChallengeType.COINS_EARNED -> current.progressValue + coinsEarned.coerceAtLeast(0)
             else -> current.progressValue
         }
         upsertProgress(current, progress)
     }
 
     override suspend fun recordXpEarned(amount: Long) {
-        val current = challengeDao.getActiveChallengeOnce() ?: return
+        val current = challengeDao.getActiveChallengeOnce()
+            ?: run {
+                ensureActiveChallenge()
+                challengeDao.getActiveChallengeOnce()
+            }
+            ?: return
         if (current.isClaimed) return
 
         val progress = if (ChallengeType.from(current.type) == ChallengeType.XP_EARNED) {
-            current.progressValue + amount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+            current.progressValue + amount.coerceAtLeast(0L).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
         } else {
             current.progressValue
         }
@@ -74,11 +84,16 @@ class ChallengeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun recordCoinsEarned(amount: Int) {
-        val current = challengeDao.getActiveChallengeOnce() ?: return
+        val current = challengeDao.getActiveChallengeOnce()
+            ?: run {
+                ensureActiveChallenge()
+                challengeDao.getActiveChallengeOnce()
+            }
+            ?: return
         if (current.isClaimed) return
 
         val progress = if (ChallengeType.from(current.type) == ChallengeType.COINS_EARNED) {
-            current.progressValue + amount
+            current.progressValue + amount.coerceAtLeast(0)
         } else {
             current.progressValue
         }
@@ -130,7 +145,12 @@ class ChallengeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun recordStreak(streak: Int) {
-        val current = challengeDao.getActiveChallengeOnce() ?: return
+        val current = challengeDao.getActiveChallengeOnce()
+            ?: run {
+                ensureActiveChallenge()
+                challengeDao.getActiveChallengeOnce()
+            }
+            ?: return
         if (current.isClaimed) return
 
         val progress = if (ChallengeType.from(current.type) == ChallengeType.STREAK) {

@@ -118,6 +118,10 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            challengeEngine.ensureActiveChallenge()
+        }
+
+        viewModelScope.launch {
             combine(
                 statistics,
                 habits,

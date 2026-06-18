@@ -156,21 +156,20 @@ class AchievementEngine @Inject constructor(
             }
     }
 
-    suspend fun claimAchievement(achievementId: String) {
-        claimMutex.withLock {
-            val achievement = achievementRepository.getAchievementById(achievementId).first() ?: return
-            val definition = AchievementsConfig.achievementById(achievement.id) ?: return
+    suspend fun claimAchievement(achievementId: String): Boolean = claimMutex.withLock {
+        val achievement = achievementRepository.getAchievementById(achievementId).firstOrNull() ?: return@withLock false
+        val definition = AchievementsConfig.achievementById(achievement.id) ?: return@withLock false
 
-            val targetReached = definition.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
-            if (!achievement.isUnlocked || !targetReached || achievement.isClaimed) return
+        val targetReached = definition.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
+        if (!achievement.isUnlocked || !targetReached || achievement.isClaimed) return@withLock false
 
-            val processed = achievementRewardProcessor.process(
-                definition = definition,
-                achievementId = achievement.id
-            )
-            if (!processed) return
+        val processed = achievementRewardProcessor.process(
+            definition = definition,
+            achievementId = achievement.id
+        )
+        if (!processed) return@withLock false
 
-            Log.d("ACHIEVEMENT", "Claimed: ${definition.name}")
-        }
+        Log.d("ACHIEVEMENT", "Claimed: ${definition.name}")
+        true
     }
 }

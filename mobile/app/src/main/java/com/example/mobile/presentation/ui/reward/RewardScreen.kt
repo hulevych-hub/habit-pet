@@ -1,14 +1,8 @@
 package com.example.mobile.presentation.ui.reward
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.InfiniteTransition
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,16 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,26 +29,41 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.mobile.R
+import com.dotlottie.dlplayer.Mode
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ChestType
 import com.example.mobile.domain.EquipableConfig
+import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.PetPhaseTransition
 import com.example.mobile.presentation.ui.events.RewardUiEvent
-import com.example.mobile.util.ReinforcementMessageProvider
-import kotlinx.coroutines.delay
-import kotlin.math.cos
-import kotlin.math.sin
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.util.ReinforcementMessageProvider
+import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import kotlinx.coroutines.delay
 import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
+
+private const val REWARD_LOTTIE_SIZE_MULTIPLIER = 3.0f
+private const val REWARD_LOTTIE_SPEED = 3.0f
+
+private val LEVEL_UP_LOTTIE_URL: DotLottieSource by lazy {
+    DotLottieSource.Url("https://lottie.host/7fc1d557-213d-491f-bec9-9dcd074249fc/dw4NytzH9z.lottie")
+}
+
+private val COIN_REWARD_LOTTIE_URL: DotLottieSource by lazy {
+    DotLottieSource.Url("https://lottie.host/7cc17b3d-9404-4630-a046-d72799cc98c4/jmIwdfBZBo.lottie")
+}
+
+private val XP_BOOST_LOTTIE_URL: DotLottieSource = LEVEL_UP_LOTTIE_URL
+private val CUSTOMIZATION_LOTTIE_URL: DotLottieSource = COIN_REWARD_LOTTIE_URL
+private val STREAK_LOTTIE_URL: DotLottieSource = LEVEL_UP_LOTTIE_URL
+private val ACHIEVEMENT_LOTTIE_URL: DotLottieSource = LEVEL_UP_LOTTIE_URL
 
 @Composable
 fun RewardScreen(
@@ -75,19 +79,23 @@ fun RewardScreen(
     }
     val emphasisTier = reward.emphasisTier()
 
+    var isChestOpen by remember(reward) { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        AppTheme.current.rewardBackdropStart,
-                        AppTheme.current.rewardBackdropCenter,
-                        AppTheme.current.rewardBackdropEnd
+                        AppTheme.current.background,
+                        AppTheme.current.surfaceVariant,
+                        AppTheme.current.background
                     )
                 )
             )
-            .clickable { onRewardCompleted() }
+            .clickable(enabled = reward !is RewardUiEvent.ChestReward || isChestOpen) {
+                onRewardCompleted()
+            }
     ) {
         Box(
             modifier = Modifier
@@ -99,7 +107,6 @@ fun RewardScreen(
             when (reward) {
 
                 is RewardUiEvent.LevelUpReward -> LevelUpRewardContent(
-                    level = reward.level,
                     coinsEarned = reward.coins,
                     reinforcementMessage = reinforcementMessage,
                     emphasisTier = emphasisTier
@@ -142,7 +149,8 @@ fun RewardScreen(
                     customizationId = reward.customizationId,
                     equipableId = reward.equipableId,
                     reinforcementMessage = reinforcementMessage,
-                    emphasisTier = emphasisTier
+                    emphasisTier = emphasisTier,
+                    onChestOpened = { isChestOpen = true }
                 )
 
                 is RewardUiEvent.AchievementReward -> AchievementRewardContent(
@@ -165,10 +173,26 @@ fun RewardScreen(
     }
 }
 
+@Composable
+private fun RewardDotLottie(
+    source: DotLottieSource,
+    loop: Boolean,
+    modifier: Modifier = Modifier
+) {
+    DotLottieAnimation(
+        source = source,
+        autoplay = true,
+        loop = loop,
+        speed = REWARD_LOTTIE_SPEED,
+        useFrameInterpolation = false,
+        playMode = Mode.FORWARD,
+        modifier = modifier.background(Color.Transparent)
+    )
+}
+
 // Level Up Reward Screen
 @Composable
 private fun LevelUpRewardContent(
-    level: Int,
     coinsEarned: Int,
     reinforcementMessage: String,
     emphasisTier: RewardEmphasisTier
@@ -176,32 +200,19 @@ private fun LevelUpRewardContent(
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Text(
-                text = "LEVEL UP!",
-                style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.rewardText
+            RewardDotLottie(
+                source = LEVEL_UP_LOTTIE_URL,
+                loop = false,
+                modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(AppTheme.current.blue, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = level.toString(),
-                    color = AppTheme.current.rewardText,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-10).dp))
 
             Text(
                 text = "+$coinsEarned coins",
-                color = AppTheme.current.mint
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -220,34 +231,26 @@ private fun ExpRewardContent(
             Text(
                 text = "XP BOOST!",
                 style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.rewardText
+                color = AppTheme.current.primary,
+                fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(AppTheme.current.blue, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = AppTheme.current.rewardText,
-                    modifier = Modifier.size(72.dp)
-                )
-            }
+            RewardDotLottie(
+                source = XP_BOOST_LOTTIE_URL,
+                loop = true,
+                modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
+            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-10).dp))
 
             Text(
                 text = "+$amount XP",
-                color = AppTheme.current.mint,
-                style = MaterialTheme.typography.titleLarge
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             ReinforcementMessage(reinforcementMessage)
         }
@@ -267,33 +270,36 @@ private fun CustomizationRewardContent(
             Text(
                 text = "NEW LOOK!",
                 style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.rewardText
+                color = AppTheme.current.primary,
+                fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(AppTheme.current.purple, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = name.take(2).uppercase(),
-                    color = AppTheme.current.rewardText,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
+            RewardDotLottie(
+                source = CUSTOMIZATION_LOTTIE_URL,
+                loop = true,
+                modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
+            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-10).dp))
 
             Text(
                 text = name,
-                color = AppTheme.current.mint,
-                style = MaterialTheme.typography.titleLarge
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            EquipableConfig.definition(equipableId)?.let { definition ->
+                AssetPreview(
+                    itemType = definition.type.value,
+                    itemId = definition.id,
+                    imageUrl = definition.imageUrl,
+                    tintColor = emphasisTier.rewardColor,
+                    modifier = Modifier.size(128.dp)
+                )
+            }
 
             ReinforcementMessage(reinforcementMessage)
         }
@@ -309,32 +315,41 @@ private fun ChestRewardContent(
     customizationId: Long? = null,
     equipableId: String? = null,
     reinforcementMessage: String,
-    emphasisTier: RewardEmphasisTier
+    emphasisTier: RewardEmphasisTier,
+    onChestOpened: () -> Unit
 ) {
     var isOpen by remember { mutableStateOf(false) }
+    var areRewardsVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isOpen) {
+        if (isOpen) {
+            delay(900)
+            areRewardsVisible = true
+            onChestOpened()
+        } else {
+            areRewardsVisible = false
+        }
+    }
 
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            val imageRes = if (isOpen) {
-                R.drawable.chest_open
-            } else {
-                R.drawable.chest_closed // ensure this exists in res/drawable
-            }
+            val chestSize = (180 * emphasisTier.chestSizeMultiplier * REWARD_LOTTIE_SIZE_MULTIPLIER).dp
 
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(emphasisTier.chestTint),
-                modifier = Modifier
-                    .size((180 * emphasisTier.chestSizeMultiplier).dp)
-                    .clickable { isOpen = true }
+            AnimatedRewardChest(
+                size = chestSize,
+                tint = emphasisTier.chestTint,
+                modifier = Modifier.fillMaxSize(),
+                onOpened = {
+                    isOpen = true
+                }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-12).dp))
 
-            if (isOpen) {
+            if (areRewardsVisible) {
                 val rewardText = mutableListOf<String>()
+                val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
 
                 when (amount) {
                     is Int -> if (amount > 0) rewardText.add("+$amount coins")
@@ -352,17 +367,38 @@ private fun ChestRewardContent(
                     rewardText.add("$equipableName unlocked!")
                 }
 
+                customizationDefinition?.let { definition ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AssetPreview(
+                            itemType = definition.type.value,
+                            itemId = definition.id,
+                            imageUrl = definition.imageUrl,
+                            tintColor = emphasisTier.rewardColor,
+                            modifier = Modifier.size(96.dp)
+                        )
+                    }
+                }
+
                 if (rewardText.isNotEmpty()) {
                     Text(
                         text = rewardText.joinToString("\n"),
-                        color = emphasisTier.rewardColor,
-                        style = MaterialTheme.typography.titleLarge
+                        color = AppTheme.current.primary,
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
                 Text(
                     text = rewardType,
-                    color = AppTheme.current.rewardText.copy(alpha = 0.7f)
+                    color = AppTheme.current.primary.copy(alpha = 0.78f),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -381,25 +417,6 @@ private fun StreakRewardContent(
     emphasisTier: RewardEmphasisTier,
     onConfirm: () -> Unit
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "streak hearts")
-    val mainScale = infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.18f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(650, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "main heart scale"
-    )
-    val mainFloat = infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = -14f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(900, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "main heart float"
-    )
     val displayedSummary = if (rewardSummary.isNotEmpty()) {
         rewardSummary
     } else {
@@ -415,88 +432,46 @@ private fun StreakRewardContent(
             .clickable { onConfirm() },
         contentAlignment = Alignment.Center
     ) {
-        HeartOrbit(infiniteTransition, emphasisTier)
+        RewardDotLottie(
+            source = STREAK_LOTTIE_URL,
+            loop = true,
+            modifier = Modifier.size((150 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Streak celebration",
-                tint = AppTheme.current.danger,
-                modifier = Modifier
-                    .size((96 * mainScale.value * emphasisTier.rewardScale).dp)
-                    .offset(y = (mainFloat.value * emphasisTier.rewardScale).dp)
-            )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height((-12).dp))
 
             Text(
                 text = "GLOBAL STREAK!",
-                style = MaterialTheme.typography.titleLarge,
-                color = AppTheme.current.gold
+                style = MaterialTheme.typography.headlineSmall,
+                color = AppTheme.current.primary,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "$streak DAY STREAK",
                 style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.rewardText
+                color = AppTheme.current.primary,
+                fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             displayedSummary.forEach { rewardLine ->
                 Text(
                     text = rewardLine,
-                    color = AppTheme.current.mint,
-                    style = MaterialTheme.typography.titleMedium
+                    color = AppTheme.current.primary,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
-
             ReinforcementMessage(reinforcementMessage)
         }
-    }
-}
-
-@Composable
-private fun HeartOrbit(
-    infiniteTransition: InfiniteTransition,
-    emphasisTier: RewardEmphasisTier
-) {
-    repeat(8) { index ->
-        val angle = (index * 45).toDouble() * (kotlin.math.PI / 180.0)
-        val x = (cos(angle) * 128 * emphasisTier.rewardScale).dp
-        val y = (sin(angle) * 86 * emphasisTier.rewardScale).dp
-        val scale = infiniteTransition.animateFloat(
-            initialValue = 0.65f,
-            targetValue = 1.15f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(700 + index * 70, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "orbit heart scale $index"
-        )
-        val alpha = infiniteTransition.animateFloat(
-            initialValue = 0.35f,
-            targetValue = 0.95f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(900 + index * 60, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "orbit heart alpha $index"
-        )
-
-        Icon(
-            imageVector = Icons.Default.Favorite,
-            contentDescription = null,
-            tint = AppTheme.current.danger.copy(alpha = alpha.value),
-            modifier = Modifier
-                .offset(x = x, y = y)
-                .size((30 * scale.value).dp)
-        )
     }
 }
 
@@ -515,37 +490,40 @@ private fun AchievementRewardContent(
         rewards.map { it.rewardLabel() }
     } else {
         buildLegacyRewardText(coinsEarned, expAmount, chestType)
-    }
+    }.ifEmpty { listOf("Reward unlocked") }
 
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Icon(
-                imageVector = Icons.Default.EmojiEvents,
-                contentDescription = null,
-                tint = emphasisTier.rewardColor,
-                modifier = Modifier.size((64 * emphasisTier.rewardScale).dp)
+            RewardDotLottie(
+                source = ACHIEVEMENT_LOTTIE_URL,
+                loop = true,
+                modifier = Modifier.size((116 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-10).dp))
 
             Text(
                 text = "ACHIEVEMENT UNLOCKED",
-                color = AppTheme.current.rewardText
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = achievementName,
-                color = AppTheme.current.blue,
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.titleLarge,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = rewardText.joinToString("\n"),
-                color = emphasisTier.rewardColor
+                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -720,21 +698,23 @@ private fun RewardEmphasisFrame(
 
 @Composable
 private fun ReinforcementMessage(message: String) {
-    Spacer(modifier = Modifier.height(12.dp))
+    Spacer(modifier = Modifier.height(4.dp))
 
     Text(
         text = message,
-        color = AppTheme.current.rewardText.copy(alpha = 0.88f),
-        style = MaterialTheme.typography.bodyLarge,
-        textAlign = TextAlign.Center
+        color = AppTheme.current.primary.copy(alpha = 0.92f),
+        style = MaterialTheme.typography.headlineSmall,
+        textAlign = TextAlign.Center,
+        fontWeight = FontWeight.Bold
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(4.dp))
 
     Text(
         text = "Tap to continue",
-        color = AppTheme.current.rewardText.copy(alpha = 0.7f),
-        style = MaterialTheme.typography.labelMedium
+        color = AppTheme.current.primary.copy(alpha = 0.72f),
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold
     )
 }
 
@@ -748,24 +728,26 @@ private fun CoinRewardContent(
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                tint = AppTheme.current.gold,
-                modifier = Modifier.size((64 * emphasisTier.rewardScale).dp)
+            RewardDotLottie(
+                source = COIN_REWARD_LOTTIE_URL,
+                loop = true,
+                modifier = Modifier.size((112 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-10).dp))
 
             Text(
                 text = "+$amount",
                 style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.mint
+                color = AppTheme.current.primary,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "Coins earned",
-                color = AppTheme.current.rewardText.copy(alpha = 0.8f)
+                color = AppTheme.current.primary.copy(alpha = 0.88f),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -809,8 +791,9 @@ private fun DragonEvolutionRewardContent(
 
             Text(
                 text = if (isTransitionComplete) "Evolution Complete!" else "Watch your dragon evolve",
-                style = MaterialTheme.typography.titleLarge,
-                color = AppTheme.current.rewardText
+                style = MaterialTheme.typography.headlineSmall,
+                color = AppTheme.current.primary,
+                fontWeight = FontWeight.Bold
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -818,8 +801,9 @@ private fun DragonEvolutionRewardContent(
             if (!isTransitionComplete) {
                 Text(
                     text = "Tap after the transformation to continue",
-                    color = AppTheme.current.rewardText.copy(alpha = 0.7f),
-                    fontSize = 16.sp
+                    color = AppTheme.current.primary.copy(alpha = 0.72f),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }

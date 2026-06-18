@@ -54,6 +54,9 @@ class AchievementViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private val _isClaiming = MutableStateFlow(false)
+    val isClaiming: StateFlow<Boolean> = _isClaiming
+
     fun clearError() {
         _error.value = null
     }
@@ -127,25 +130,55 @@ class AchievementViewModel @Inject constructor(
 
     fun claimAchievement(achievementId: String) {
         viewModelScope.launch {
-            _error.value = null
-            try {
-                achievementEngine.claimAchievement(achievementId)
-            } catch (e: Exception) {
-                _error.value = e.message ?: "Achievement could not be claimed"
+            val processed = claimAchievementId(achievementId)
+            if (!processed) {
+                _error.value = "This achievement reward is no longer available"
             }
         }
     }
 
     fun claimAllAchievements() {
-        val claimableIds = _achievements.value
-            .filter { achievement ->
-                val definition = AchievementsConfig.achievementById(achievement.id)
-                val targetReached = definition?.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
-                achievement.isUnlocked && !achievement.isClaimed && targetReached
-            }
-            .map { it.id }
+        viewModelScope.launch {
+            if (_isClaiming.value) return@launch
 
-        claimableIds.forEach { achievementId -> claimAchievement(achievementId) }
+            _isClaiming.value = true
+            _error.value = null
+            val claimableIds = _achievements.value
+                .filter { achievement ->
+                    val definition = AchievementsConfig.achievementById(achievement.id)
+                    val targetReached = definition?.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
+                    achievement.isUnlocked && !achievement.isClaimed && targetReached
+                }
+                .map { it.id }
+
+            try {
+                var processedAny = false
+                for (achievementId in claimableIds) {
+                    val processed = claimAchievementId(achievementId)
+                    if (processed) {
+                        processedAny = true
+                    } else {
+                        _error.value = "Some achievement rewards were not available"
+                        break
+                    }
+                }
+                if (!processedAny && claimableIds.isNotEmpty()) {
+                    _error.value = "No achievement rewards were available"
+                }
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Achievement rewards could not be claimed"
+            } finally {
+                _isClaiming.value = false
+            }
+        }
+    }
+
+    private suspend fun claimAchievementId(achievementId: String): Boolean = try {
+        _error.value = null
+        achievementEngine.claimAchievement(achievementId)
+    } catch (e: Exception) {
+        _error.value = e.message ?: "Achievement could not be claimed"
+        false
     }
 
     fun progressFor(

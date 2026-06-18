@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -75,11 +76,13 @@ private fun RewardDialog(
     reward: RewardUiEvent,
     onDismiss: () -> Unit
 ) {
+    var isChestOpen by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(AppTheme.current.overlayBackground)
-            .clickable { onDismiss() }
+            .clickable(enabled = reward !is RewardUiEvent.ChestReward || isChestOpen) { onDismiss() }
     ) {
         AnimatedVisibility(
             visible = true,
@@ -144,7 +147,8 @@ private fun RewardDialog(
                         amount = reward.amount,
                         expAmount = reward.expAmount,
                         customizationId = reward.customizationId,
-                        onConfirm = onDismiss
+                        onConfirm = onDismiss,
+                        onChestOpened = { isChestOpen = true }
                     )
                 }
             }
@@ -355,28 +359,34 @@ private fun ChestRewardContent(
     amount: Any,
     expAmount: Int = 0,
     customizationId: Long? = null,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    onChestOpened: () -> Unit = {}
 ) {
     var isOpen by remember { mutableStateOf(false) }
-    val assetManager = LocalContext.current.assets
-    val chestAssetPath = remember(isOpen) {
-        AssetResolver.assetPath(assetManager, "", if (isOpen) "chest_open" else "chest_closed")
+    var areRewardsVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isOpen) {
+        if (isOpen) {
+            kotlinx.coroutines.delay(900)
+            areRewardsVisible = true
+            onChestOpened()
+        } else {
+            areRewardsVisible = false
+        }
     }
-    val chestPainter = rememberAssetPainter(chestAssetPath, "chest")
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        if (chestPainter != null) {
-            Image(
-                painter = chestPainter,
-                contentDescription = "Chest",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clickable { isOpen = true }
-            )
-        }
+        AnimatedRewardChest(
+            size = 80.dp,
+            tint = AppTheme.current.amber,
+            modifier = Modifier.fillMaxSize(),
+            onOpened = {
+                isOpen = true
+            }
+        )
 
-        if (isOpen) {
+        if (areRewardsVisible) {
             Text("Chest Reward!")
             Text("Type: $rewardType")
 

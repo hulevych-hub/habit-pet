@@ -272,7 +272,7 @@ private fun HabitItem(
                     }
                 }
 
-                StreakBadge(streak = habit.currentStreak)
+                StreakBadge(streak = habit.currentStreak, activeToday = completed)
             }
 
             if (showSwipeActions) {
@@ -391,10 +391,18 @@ private fun SwipeActionButton(
 }
 
 @Composable
-private fun StreakBadge(streak: Int) {
+private fun StreakBadge(streak: Int, activeToday: Boolean) {
+    val badgeTint = if (activeToday) AppTheme.current.amber else AppTheme.current.muted
+    val badgeText = if (activeToday) AppTheme.current.amberDark else AppTheme.current.muted.copy(alpha = 0.78f)
+    val badgeSurface = if (activeToday) {
+        AppTheme.current.amberSoft.copy(alpha = 0.6f)
+    } else {
+        AppTheme.current.card.copy(alpha = 0.55f)
+    }
+
     Surface(
         shape = RoundedCornerShape(999.dp),
-        color = AppTheme.current.amberSoft.copy(alpha = 0.6f)
+        color = badgeSurface
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -404,13 +412,13 @@ private fun StreakBadge(streak: Int) {
             Icon(
                 imageVector = Icons.Default.LocalFireDepartment,
                 contentDescription = null,
-                tint = AppTheme.current.amber,
+                tint = badgeTint,
                 modifier = Modifier.size(14.dp)
             )
             Text(
                 text = "${streak}d streak",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = AppTheme.current.amberDark
+                color = badgeText
             )
         }
     }

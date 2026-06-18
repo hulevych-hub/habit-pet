@@ -66,11 +66,11 @@ class RewardManager @Inject constructor(
 
             val coinsToAdd = when (current) {
                 is RewardUiEvent.CoinReward -> current.amount
-                is RewardUiEvent.LevelUpReward -> current.coins
+                is RewardUiEvent.LevelUpReward -> 0
                 is RewardUiEvent.DragonEvolutionReward -> 0
                 is RewardUiEvent.StreakReward -> current.coins
                 is RewardUiEvent.AchievementReward -> 0
-                is RewardUiEvent.ChestReward -> (current.amount as? Int) ?: 0
+                is RewardUiEvent.ChestReward -> 0
                 is RewardUiEvent.ExpReward,
                 is RewardUiEvent.CustomizationReward -> 0
             }
@@ -107,34 +107,10 @@ class RewardManager @Inject constructor(
 
                 is RewardUiEvent.ChestReward -> {
                     rewardEventBus.emit(current)
+                    challengeRepository.recordChestOpened()
 
-                    if (current.expAmount > 0) {
-                        microFeedbackManager.triggerXpGained(current.expAmount.toLong())
-                        val (previousPet, updatedPet) = addPetExp(current.expAmount)
-                        challengeRepository.recordXpEarned(current.expAmount.toLong())
-                        queueLevelAndEvolutionRewards(previousPet, updatedPet)
-                    }
-
-                    val grantResult = when {
-                        !current.equipableId.isNullOrBlank() ->
-                            inventoryItemRepository.grantItemByItemId(current.equipableId)
-                        current.customizationId != null ->
-                            inventoryItemRepository.grantItem(current.customizationId)
-                        else -> 0
-                    }
-                    if (grantResult >= 0) {
-                        if (!current.equipableId.isNullOrBlank()) {
-                            challengeRepository.recordCustomizationUnlocked(current.equipableId)
-                        } else {
-                            current.customizationId?.let {
-                                inventoryItemRepository.getItemById(it).firstOrNull()?.let { item ->
-                                    challengeRepository.recordCustomizationUnlocked(item.itemId)
-                                }
-                            }
-                        }
-                    } else if (grantResult < 0) {
-                        current.customizationId?.let { inventoryItemRepository.grantItem(it) }
-                    }
+                    chestRewardSubEvents(current)
+                        .forEach { rewardQueue.addReward(it) }
                 }
 
                 else -> Unit
@@ -145,6 +121,41 @@ class RewardManager @Inject constructor(
 
             rewardQueue.rewardDismissed()
         }
+    }
+
+    private suspend fun chestRewardSubEvents(current: RewardUiEvent.ChestReward): List<RewardUiEvent> {
+        val rewards = mutableListOf<RewardUiEvent>()
+
+        when (val amount = current.amount) {
+            is Int -> if (amount > 0) rewards.add(RewardUiEvent.CoinReward(amount))
+            is String -> amount.toIntOrNull()?.takeIf { it > 0 }?.let { rewards.add(RewardUiEvent.CoinReward(it)) }
+        }
+
+        if (current.expAmount > 0) {
+            rewards.add(RewardUiEvent.ExpReward(current.expAmount.toLong()))
+        }
+
+        val equipableId = current.equipableId
+            ?: current.customizationId?.let { id ->
+                inventoryItemRepository.getItemById(id).firstOrNull()?.itemId
+            }
+
+        if (!equipableId.isNullOrBlank()) {
+            rewards.add(RewardUiEvent.CustomizationReward(equipableId))
+        }
+
+        return rewards.sortedBy { rewardPriority(it) }
+    }
+
+    private fun rewardPriority(reward: RewardUiEvent): Int = when (reward) {
+        is RewardUiEvent.LevelUpReward -> 1
+        is RewardUiEvent.DragonEvolutionReward -> 2
+        is RewardUiEvent.StreakReward -> 3
+        is RewardUiEvent.ChestReward -> 4
+        is RewardUiEvent.AchievementReward -> 5
+        is RewardUiEvent.ExpReward -> 6
+        is RewardUiEvent.CustomizationReward -> 7
+        is RewardUiEvent.CoinReward -> 8
     }
 
     private suspend fun addPetExp(expAmount: Int): Pair<PetEntity, PetEntity> {
@@ -159,10 +170,18 @@ class RewardManager @Inject constructor(
         return currentPet to updatedPet
     }
 
-    private fun queueLevelAndEvolutionRewards(previousPet: PetEntity, updatedPet: PetEntity) {
+    private suspend fun queueLevelAndEvolutionRewards(previousPet: PetEntity, updatedPet: PetEntity) {
         if (updatedPet.level > previousPet.level) {
             val coins = ExpConfig.levelUpCoins(updatedPet.level)
-            rewardQueue.addReward(RewardUiEvent.LevelUpReward(updatedPet.level, coins))
+            statisticsRepository.addCoins(coins)
+            challengeRepository.recordCoinsEarned(coins)
+            rewardQueue.addReward(
+                RewardUiEvent.LevelUpReward(
+                    previousLevel = previousPet.level,
+                    level = updatedPet.level,
+                    coins = coins
+                )
+            )
             activityTimelineEngine.logLevelUp(updatedPet.level, coins)
         }
 

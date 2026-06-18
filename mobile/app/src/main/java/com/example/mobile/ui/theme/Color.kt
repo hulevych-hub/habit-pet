@@ -46,10 +46,10 @@ enum class AppThemeOption(
     val isDark: Boolean,
     val colors: AppThemeColors
 ) {
-    PET_CHALLENGE(
-        id = "pet_challenge",
-        label = "Pet & Challenge",
-        description = "Premium dragon palette used by the pet and challenges screens",
+    DARK(
+        id = "dark",
+        label = "Dark",
+        description = "Deep navy background with bright lavender, gold, and mint accents",
         isDark = true,
         colors = AppThemeColors(
             background = Color(0xFF111827),
@@ -342,80 +342,6 @@ enum class AppThemeOption(
             overlayBackground = Color(0xFF3A1028)
         )
     ),
-    DARK(
-        id = "dark",
-        label = "Dark",
-        description = "Deep navy background with bright lavender, gold, and mint accents",
-        isDark = true,
-        colors = AppThemeColors(
-            background = Color(0xFF0B1020),
-            onBackground = Color(0xFFF8F5FF),
-            surface = Color(0xFF111827),
-            onSurface = Color(0xFFF8F5FF),
-            surfaceVariant = Color(0xFF1A2338),
-            onSurfaceVariant = Color(0xFFE7E0FF),
-            primary = Color(0xFF9B8CFF),
-            onPrimary = Color(0xFF120B2E),
-            primaryContainer = Color(0xFF2A2455),
-            onPrimaryContainer = Color(0xFFF1ECFF),
-            secondary = Color(0xFFFFD166),
-            onSecondary = Color(0xFF1A1020),
-            secondaryContainer = Color(0xFF4A3A10),
-            onSecondaryContainer = Color(0xFFFFE8A3),
-            tertiary = Color(0xFF4EDB95),
-            onTertiary = Color(0xFF0B1F16),
-            tertiaryContainer = Color(0xFF1B5A42),
-            onTertiaryContainer = Color(0xFFBDF6D9),
-            card = Color(0xFF151F33),
-            cardElevated = Color(0xFF1C2940),
-            headerSurface = Color(0xFF151F33),
-            headerOnSurface = Color(0xFFF8F5FF),
-            headerGradientStart = Color(0xFF151F33),
-            headerGradientEnd = Color(0xFF2A2455),
-            outline = Color(0xFF2A3550),
-            outlineVariant = Color(0xFF3A4868),
-            divider = Color(0xFF2A3550),
-            muted = Color(0xFFAEB6CC),
-            mutedStrong = Color(0xFFD5DAE8),
-            ink = Color(0xFFF8F5FF),
-            softInk = Color(0xFFD5DAE8),
-            violet = Color(0xFF9B8CFF),
-            violetMuted = Color(0xFFAEB6CC),
-            lavenderSoft = Color(0xFF1A2338),
-            amethystSoft = Color(0xFF2A2455),
-            mint = Color(0xFF4EDB95),
-            mintSurfaceActive = Color(0xFF1B5A42),
-            success = Color(0xFF4EDB95),
-            successSoft = Color(0xFF1B5A42),
-            danger = Color(0xFFFF6B6B),
-            dangerSoft = Color(0xFF5A2630),
-            amber = Color(0xFFFFD166),
-            amberSoft = Color(0xFF4A3A10),
-            amberDark = Color(0xFFFFE8A3),
-            gold = Color(0xFFFFD166),
-            goldSoft = Color(0xFF4A3A10),
-            goldDark = Color(0xFFFFE8A3),
-            pink = Color(0xFFFF7AB6),
-            pinkSoft = Color(0xFF5A263D),
-            pinkDark = Color(0xFFFFAED4),
-            blue = Color(0xFF8AA7FF),
-            blueSoft = Color(0xFF1E3A5F),
-            purple = Color(0xFFC084FC),
-            purpleSoft = Color(0xFF3A2A55),
-            progressTrack = Color(0xFF2A3550),
-            inactiveIcon = Color(0xFFAEB6CC),
-            headerStreakInactive = Color(0xFFAEB6CC),
-            iconBadgeCompletedBackground = Color(0xFF1B5A42),
-            rewardBackdropStart = Color(0xFF050816),
-            rewardBackdropCenter = Color(0xFF0B1020),
-            rewardBackdropEnd = Color(0xFF151F33),
-            rewardSurface = Color(0xFF111827),
-            rewardText = Color(0xFFF8F5FF),
-            rewardTextMuted = Color(0xFFD5DAE8),
-            rewardAccent = Color(0xFFFFD166),
-            overlayBackground = Color(0xFF000000)
-        )
-    )
 }
 
 @Immutable
@@ -511,5 +437,8 @@ object AppThemePrefs {
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     private fun fromId(id: String?): AppThemeOption =
-        AppThemeOption.values().firstOrNull { it.id == id } ?: AppThemeOption.AUTUMN
+        when (id) {
+            "pet_challenge" -> AppThemeOption.DARK
+            else -> AppThemeOption.values().firstOrNull { it.id == id } ?: AppThemeOption.AUTUMN
+        }
 }

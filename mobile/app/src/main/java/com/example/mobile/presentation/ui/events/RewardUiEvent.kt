@@ -8,7 +8,11 @@ import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
  */
 sealed class RewardUiEvent {
     data class CoinReward(val amount: Int) : RewardUiEvent()
-    data class LevelUpReward(val level: Int, val coins: Int) : RewardUiEvent()
+    data class LevelUpReward(
+        val previousLevel: Int,
+        val level: Int,
+        val coins: Int
+    ) : RewardUiEvent()
     data class DragonEvolutionReward(val fromStage: Int, val toStage: Int) : RewardUiEvent()
     data class StreakReward(
         val streak: Int,

@@ -52,6 +52,7 @@ import com.example.mobile.R
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.reward.AnimatedRewardChest
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.AppThemeColors
@@ -68,6 +69,7 @@ fun AchievementScreen(
     val isLoading by achievementViewModel.isLoading.collectAsState()
     val error by achievementViewModel.error.collectAsState()
     val claimableCount by achievementViewModel.claimableAchievementCount.collectAsState()
+    val isClaiming by achievementViewModel.isClaiming.collectAsState()
     val palette = AchievementHallPalette.current()
 
     Scaffold(
@@ -75,6 +77,7 @@ fun AchievementScreen(
         bottomBar = {
             ClaimAllRewardsBar(
                 claimableCount = claimableCount,
+                isClaiming = isClaiming,
                 onClick = achievementViewModel::claimAllAchievements,
                 palette = palette
             )
@@ -499,11 +502,12 @@ private fun HallIconBox(
 @Composable
 private fun ClaimAllRewardsBar(
     claimableCount: Int,
+    isClaiming: Boolean,
     onClick: () -> Unit,
     palette: AchievementHallPalette,
     modifier: Modifier = Modifier
 ) {
-    val enabled = claimableCount > 0
+    val enabled = claimableCount > 0 && !isClaiming
     val buttonShape = RoundedCornerShape(24.dp)
     val enabledBrush = Brush.linearGradient(colors = palette.buttonGradient)
     val disabledBrush = Brush.linearGradient(colors = palette.disabledButton)
@@ -533,20 +537,20 @@ private fun ClaimAllRewardsBar(
             ) {
                 CoinSparkle(left = true)
                 Spacer(modifier = Modifier.width(10.dp))
-                Image(
-                    painter = painterResource(R.drawable.chest_closed),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
-                Spacer(modifier = Modifier.width(14.dp))
                 Text(
-                    text = "Claim All Rewards",
+                    text = if (isClaiming) "Claiming Rewards..." else "Claim All Rewards",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = if (enabled) palette.buttonText else palette.disabledText
                     ),
                     textAlign = TextAlign.Center,
                     maxLines = 1
+                )
+                Spacer(modifier = Modifier.width(14.dp))
+                AnimatedRewardChest(
+                    size = 48.dp,
+                    tint = palette.buttonText,
+                    modifier = Modifier.size(48.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 CoinSparkle(left = false)
@@ -725,11 +729,11 @@ private data class AchievementHallPalette(
                 lockedBackground = listOf(colors.background, colors.surfaceVariant),
                 lockedIconTint = colors.inactiveIcon,
                 lockedIconBackground = lockedIconBackground,
-                unlockedIconTint = Color.White,
+                unlockedIconTint = if (isDarkTheme) Color.White else colors.primary,
                 unlockedIconBackground = colors.primary.copy(alpha = 0.32f),
                 auraIconBackground = colors.primary.copy(alpha = 0.20f),
-                cardInk = Color.White,
-                cardMuted = Color.White.copy(alpha = 0.86f),
+                cardInk = if (isDarkTheme) Color.White else colors.ink,
+                cardMuted = if (isDarkTheme) Color.White.copy(alpha = 0.86f) else colors.softInk,
                 progressTrack = colors.progressTrack,
                 progressTrackAlpha = progressTrackAlpha,
                 disabledButton = if (isDarkTheme) listOf(colors.inactiveIcon, colors.violetMuted) else listOf(colors.outline, colors.purpleSoft),

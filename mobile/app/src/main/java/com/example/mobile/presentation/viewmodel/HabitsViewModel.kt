@@ -7,6 +7,7 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ActivityTimelineEngine
+import com.example.mobile.domain.ChallengeEngine
 import com.example.mobile.domain.ChestRewardConfigProvider
 import com.example.mobile.domain.ChestRewardFactory
 import com.example.mobile.domain.DragonMoodEngine
@@ -48,7 +49,8 @@ class HabitsViewModel @Inject constructor(
     private val inventoryItemRepository: InventoryItemRepository,
     private val activityTimelineEngine: ActivityTimelineEngine,
     private val microFeedbackManager: MicroFeedbackManager,
-    private val dragonMoodEngine: DragonMoodEngine
+    private val dragonMoodEngine: DragonMoodEngine,
+    private val challengeEngine: ChallengeEngine
 ) : ViewModel() {
 
     val habits = habitRepository.getAllHabits()
@@ -160,6 +162,7 @@ class HabitsViewModel @Inject constructor(
                 }
                 streakEngine.evaluateTodayStreak(now)
                 awardPetXpAndCoins(totalXpEarned, coinsEarned)
+                challengeEngine.recordHabitCompleted(habit.id, totalXpEarned, coinsEarned)
                 maybeTriggerHabitCompletionChest()
                 microFeedbackManager.triggerHabitCompleted(
                     xp = totalXpEarned,
@@ -194,7 +197,11 @@ class HabitsViewModel @Inject constructor(
         return calendar.timeInMillis
     }
 
-    private fun awardPetXpAndCoins(xpToAdd: Long, coinsToAdd: Int) {
+    private fun awardPetXpAndCoins(
+        xpToAdd: Long,
+        coinsToAdd: Int,
+        trackChallenge: Boolean = false
+    ) {
         viewModelScope.launch {
             val current = petRepository.getPet().firstOrNull() ?: PetEntity(id = 1)
             val updated = current.copy(xp = current.xp + xpToAdd)
@@ -207,14 +214,18 @@ class HabitsViewModel @Inject constructor(
 
             petRepository.updatePet(evolved)
             microFeedbackManager.triggerXpGained(xpToAdd)
-            awardCoins(coinsToAdd)
+            awardCoins(coinsToAdd, trackChallenge)
 
             if (newLevel > current.level) {
                 val bonus = ExpConfig.levelUpCoins(newLevel)
-                awardCoins(bonus)
+                awardCoins(bonus, trackChallenge)
 
                 rewardQueue.addReward(
-                    RewardUiEvent.LevelUpReward(newLevel, bonus)
+                    RewardUiEvent.LevelUpReward(
+                        previousLevel = current.level,
+                        level = newLevel,
+                        coins = bonus
+                    )
                 )
                 activityTimelineEngine.logLevelUp(newLevel, bonus)
 
@@ -248,7 +259,7 @@ class HabitsViewModel @Inject constructor(
         }
     }
 
-    private fun awardCoins(coins: Int) {
+    private fun awardCoins(coins: Int, trackChallenge: Boolean = false) {
         viewModelScope.launch {
             val stats = statisticsRepository.getStatistics().firstOrNull()
                 ?: StatisticsEntity()
@@ -261,6 +272,10 @@ class HabitsViewModel @Inject constructor(
                     lastUpdated = System.currentTimeMillis()
                 )
             )
+
+            if (trackChallenge && coins > 0) {
+                challengeEngine.recordCoinsEarned(coins)
+            }
         }
     }
 
@@ -279,7 +294,12 @@ class HabitsViewModel @Inject constructor(
                 inventoryItemRepository = inventoryItemRepository
             )
 
-            awardPetXpAndCoins(EconomyConfig.SURPRISE_BONUS_XP, EconomyConfig.SURPRISE_BONUS_COINS)
+            awardPetXpAndCoins(
+                xpToAdd = EconomyConfig.SURPRISE_BONUS_XP,
+                coinsToAdd = EconomyConfig.SURPRISE_BONUS_COINS,
+                trackChallenge = true
+            )
+            challengeEngine.recordXpEarned(EconomyConfig.SURPRISE_BONUS_XP)
             activityTimelineEngine.logSurpriseReward(
                 coins = EconomyConfig.SURPRISE_BONUS_COINS,
                 xp = EconomyConfig.SURPRISE_BONUS_XP,

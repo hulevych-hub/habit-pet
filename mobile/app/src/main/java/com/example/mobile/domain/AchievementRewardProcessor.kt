@@ -77,17 +77,13 @@ class AchievementRewardProcessor @Inject constructor(
                 rewards
             }
 
-            preparedRewards.forEach { preparedReward ->
-                preparedReward.chestReward?.let { rewardQueue.addReward(it) }
-            }
-
-            val event = RewardUiEvent.AchievementReward(
-                achievementName = definition.name,
-                rewards = preparedRewards.map { it.reward }
-            )
-
-            rewardQueue.addReward(event)
-            rewardEventBus.emit(event)
+            preparedRewards
+                .map { it.chestReward ?: it.reward.toRewardUiEvent() }
+                .sortedBy { rewardPriority(it) }
+                .forEach { reward ->
+                    rewardQueue.addReward(reward)
+                    rewardEventBus.emit(reward)
+                }
             return true
         } catch (e: Exception) {
             Log.e("AchievementReward", "Achievement reward processing failed", e)
@@ -119,6 +115,24 @@ class AchievementRewardProcessor @Inject constructor(
         if (result < 0) {
             throw IllegalStateException("Failed to grant customization reward: ${equipable.id}")
         }
+    }
+
+    private fun AchievementReward.toRewardUiEvent(): RewardUiEvent = when (this) {
+        is AchievementReward.CoinReward -> RewardUiEvent.CoinReward(amount)
+        is AchievementReward.ExpReward -> RewardUiEvent.ExpReward(amount.toLong())
+        is AchievementReward.ChestReward -> throw IllegalStateException("Chest rewards must provide a built ChestReward")
+        is AchievementReward.CustomizationReward -> RewardUiEvent.CustomizationReward(equipableId)
+    }
+
+    private fun rewardPriority(reward: RewardUiEvent): Int = when (reward) {
+        is RewardUiEvent.LevelUpReward -> 1
+        is RewardUiEvent.DragonEvolutionReward -> 2
+        is RewardUiEvent.StreakReward -> 3
+        is RewardUiEvent.ChestReward -> 4
+        is RewardUiEvent.AchievementReward -> 5
+        is RewardUiEvent.ExpReward -> 6
+        is RewardUiEvent.CustomizationReward -> 7
+        is RewardUiEvent.CoinReward -> 8
     }
 
     private data class PreparedAchievementReward(
