@@ -12317,7 +12317,7 @@
       "label": "TimerCompletion()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L373",
+      "source_location": "L364",
       "_origin": "ast",
       "id": "screens_habitdetailscreen_timercompletion",
       "community": 89,
@@ -12327,7 +12327,7 @@
       "label": "CompletionHistoryItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L479",
+      "source_location": "L470",
       "_origin": "ast",
       "id": "screens_habitdetailscreen_completionhistoryitem",
       "community": 89,
@@ -12337,7 +12337,7 @@
       "label": "HabitCompletionEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L479",
+      "source_location": "L470",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitdetailscreen_kt_habitcompletionentity",
       "community": 89,
@@ -12347,7 +12347,7 @@
       "label": "formatDate()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L545",
+      "source_location": "L536",
       "_origin": "ast",
       "id": "screens_habitdetailscreen_formatdate",
       "community": 89,
@@ -12357,7 +12357,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L545",
+      "source_location": "L536",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitdetailscreen_kt_string",
       "community": 89,
@@ -12367,7 +12367,7 @@
       "label": "CenteredProgressIndicator()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L551",
+      "source_location": "L542",
       "_origin": "ast",
       "id": "screens_habitdetailscreen_centeredprogressindicator",
       "community": 89,
@@ -12377,7 +12377,7 @@
       "label": "ErrorMessage()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L563",
+      "source_location": "L554",
       "_origin": "ast",
       "id": "screens_habitdetailscreen_errormessage",
       "community": 89,
@@ -12387,7 +12387,7 @@
       "label": "InlineScreenHeader()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L575",
+      "source_location": "L566",
       "_origin": "ast",
       "id": "screens_habitdetailscreen_inlinescreenheader",
       "community": 89,
@@ -12397,7 +12397,7 @@
       "label": "Color",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HabitDetailScreen.kt",
-      "source_location": "L575",
+      "source_location": "L566",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitdetailscreen_kt_color",
       "community": 89,
@@ -37899,9 +37899,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/events/RewardUiEvent.kt",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "events_rewarduievent",
-      "target": "events_rewarduievent_rewardpriority",
-      "confidence_score": 1.0
+      "target": "events_rewarduievent_rewardpriority"
     },
     {
       "relation": "contains",
@@ -38010,9 +38010,9 @@
       "source_location": "L49",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "events_rewarduievent_rewardpriority",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_events_rewarduievent_kt_int",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_events_rewarduievent_kt_int"
     },
     {
       "relation": "contains",
@@ -38362,9 +38362,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_chestlottie_animatedrewardchest",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_string",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_chestlottie_kt_string"
     },
     {
       "relation": "references",
@@ -39431,9 +39431,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L690",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen",
-      "target": "reward_rewardscreen_cheststatekey",
-      "confidence_score": 1.0
+      "target": "reward_rewardscreen_cheststatekey"
     },
     {
       "relation": "contains",
@@ -39571,9 +39571,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L203",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen",
-      "target": "reward_rewardscreen_xpboostanimation",
-      "confidence_score": 1.0
+      "target": "reward_rewardscreen_xpboostanimation"
     },
     {
       "relation": "references",
@@ -39813,9 +39813,9 @@
       "source_location": "L203",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_xpboostanimation",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_modifier",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_modifier"
     },
     {
       "relation": "calls",
@@ -39824,9 +39824,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L296",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_exprewardcontent",
-      "target": "reward_rewardscreen_xpboostanimation",
-      "confidence_score": 1.0
+      "target": "reward_rewardscreen_xpboostanimation"
     },
     {
       "relation": "references",
@@ -39934,9 +39934,9 @@
       "source_location": "L690",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_cheststatekey",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_int",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_int"
     },
     {
       "relation": "references",
@@ -40022,9 +40022,9 @@
       "source_location": "L690",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_cheststatekey",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_string"
     },
     {
       "relation": "references",
@@ -40220,9 +40220,9 @@
       "source_location": "L690",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_cheststatekey",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_long"
     },
     {
       "relation": "calls",
@@ -40264,9 +40264,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/reward/RewardScreen.kt",
       "source_location": "L401",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_chestrewardcontent",
-      "target": "reward_rewardscreen_cheststatekey",
-      "confidence_score": 1.0
+      "target": "reward_rewardscreen_cheststatekey"
     },
     {
       "relation": "calls",
@@ -40308,9 +40308,9 @@
       "source_location": "L690",
       "weight": 1.0,
       "context": "parameter_type",
+      "confidence_score": 1.0,
       "source": "reward_rewardscreen_cheststatekey",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardscreen_kt_any"
     },
     {
       "relation": "references",
@@ -54179,5 +54179,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f18d9ea9068ed4b21c9708931966c9d7aefa28f2"
+  "built_at_commit": "54648279b6b70f7068a88d81cc2409e686724cd8"
 }

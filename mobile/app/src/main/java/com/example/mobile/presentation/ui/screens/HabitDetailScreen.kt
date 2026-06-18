@@ -297,8 +297,8 @@ private fun CompletionStatus(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "Today's Quest Objective",
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                text = "Today's Objective",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = AppTheme.current.ink
             )
 
@@ -349,24 +349,15 @@ private fun CompletionStatus(
 
 @Composable
 private fun CheckboxCompletion(onComplete: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Button(
+        onClick = onComplete,
+        colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.primary),
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(52.dp)
     ) {
-        Text(
-            text = "Pending actions remain...",
-            style = MaterialTheme.typography.bodySmall,
-            color = AppTheme.current.muted
-        )
-        Button(
-            onClick = onComplete,
-            colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.primary),
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier.height(44.dp)
-        ) {
-            Text("Complete Quest", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
-        }
+        Text("Complete Quest", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
     }
 }
 
