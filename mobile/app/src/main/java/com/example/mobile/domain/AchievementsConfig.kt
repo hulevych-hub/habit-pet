@@ -66,6 +66,59 @@ object AchievementsConfig {
         val rewards: List<AchievementReward>
     )
 
+    private val difficultyRanks = mapOf(
+        FIRST_HABIT to 1,
+        FIRST_CUSTOMIZATION to 2,
+        FIRST_AURA_GLOW to 3,
+        THREE_HABIT_BUILDER to 4,
+        FIVE_HABIT_BUILDER to 5,
+        THREE_CUSTOMIZATIONS to 6,
+        TWENTY_FIVE_COMPLETIONS to 7,
+        COZY_OUTFIT to 8,
+        LEVEL_FIVE to 9,
+        SEVEN_DAY_STREAK to 10,
+        FOURTEEN_DAY_STREAK to 11,
+        ONE_THOUSAND_XP to 12,
+        TWO_THOUSAND_FIVE_HUNDRED_XP to 13,
+        FOREST_BACKGROUND to 14,
+        TEN_HABIT_BUILDER to 15,
+        FIFTEEN_HABIT_BUILDER to 16,
+        ONE_HUNDRED_COMPLETIONS to 17,
+        CRYSTAL_AURA to 18,
+        TWO_HUNDRED_FIFTY_COMPLETIONS to 19,
+        LEVEL_TEN to 20,
+        LEVEL_FIFTEEN to 21,
+        THREE_THOUSAND_XP to 22,
+        THIRTY_DAY_STREAK to 23,
+        CUSTOMIZATION_COLLECTOR to 24,
+        CRYSTAL_CROWN to 25,
+        EIGHT_CUSTOMIZATIONS to 26,
+        FIVE_THOUSAND_XP to 27,
+        TWENTY_HABIT_BUILDER to 28,
+        FIVE_HUNDRED_COMPLETIONS to 29,
+        CRYSTAL_CAVE to 30,
+        LEVEL_TWENTY_FIVE to 31,
+        LEVEL_FORTY to 32,
+        STARLIGHT_ARMOR to 33,
+        LEVEL_FIFTY to 34,
+        SEVEN_THOUSAND_FIVE_HUNDRED_XP to 35,
+        TEN_THOUSAND_XP to 36,
+        FIFTEEN_THOUSAND_XP to 37,
+        SIXTY_DAY_STREAK to 38,
+        DRAGONFIRE_AURA to 39,
+        TEN_CUSTOMIZATIONS to 40,
+        MYSTIC_CLOAK to 41,
+        ELEVEN_CUSTOMIZATIONS to 42,
+        FLOATING_ISLANDS to 43,
+        TWELVE_CUSTOMIZATIONS to 44,
+        CELESTIAL_REALM to 45,
+        CELESTIAL_AURA to 46,
+        ONE_THOUSAND_COMPLETIONS to 47,
+        TWENTY_FIVE_THOUSAND_XP to 48,
+        ONE_HUNDRED_DAY_STREAK to 49,
+        LEVEL_SIXTY to 50
+    )
+
     val achievements: List<AchievementDefinition> = listOf(
         AchievementDefinition(
             id = FIRST_HABIT,
@@ -103,7 +156,10 @@ object AchievementsConfig {
             icon = "habit_builder_3",
             progressSource = AchievementProgressSource.HABIT_COUNT,
             targetValue = 3,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3_HABIT_BUILDER_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3_HABIT_BUILDER_COINS)
+            )
         ),
         AchievementDefinition(
             id = COZY_OUTFIT,
@@ -123,7 +179,10 @@ object AchievementsConfig {
             icon = "habit_builder_5",
             progressSource = AchievementProgressSource.HABIT_COUNT,
             targetValue = 5,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_5_HABIT_BUILDER_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_5_HABIT_BUILDER_COINS)
+            )
         ),
         AchievementDefinition(
             id = FOREST_BACKGROUND,
@@ -133,6 +192,7 @@ object AchievementsConfig {
             progressSource = AchievementProgressSource.TOTAL_XP,
             targetValue = 2500,
             rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
                 AchievementReward.CustomizationReward(EquipableConfig.BACKGROUND_FOREST, CustomizationTypes.BACKGROUND)
             )
         ),
@@ -143,7 +203,10 @@ object AchievementsConfig {
             icon = "customization_3",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
             targetValue = 3,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3_CUSTOMIZATIONS_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3_CUSTOMIZATIONS_COINS)
+            )
         ),
         AchievementDefinition(
             id = TWENTY_FIVE_COMPLETIONS,
@@ -152,7 +215,10 @@ object AchievementsConfig {
             icon = "completions_25",
             progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
             targetValue = 25,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_25_COMPLETIONS_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_25_COMPLETIONS_COINS)
+            )
         ),
         AchievementDefinition(
             id = LEVEL_FIVE,
@@ -161,7 +227,10 @@ object AchievementsConfig {
             icon = "level_5",
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 5,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_5_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_5_COINS)
+            )
         ),
         AchievementDefinition(
             id = SEVEN_DAY_STREAK,
@@ -170,7 +239,10 @@ object AchievementsConfig {
             icon = "streak_7",
             progressSource = AchievementProgressSource.CURRENT_STREAK,
             targetValue = 7,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_7_DAY_STREAK_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_7_DAY_STREAK_COINS)
+            )
         ),
         AchievementDefinition(
             id = FOURTEEN_DAY_STREAK,
@@ -179,7 +251,10 @@ object AchievementsConfig {
             icon = "streak_14",
             progressSource = AchievementProgressSource.CURRENT_STREAK,
             targetValue = 14,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_14_DAY_STREAK_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_14_DAY_STREAK_COINS)
+            )
         ),
         AchievementDefinition(
             id = TWO_THOUSAND_FIVE_HUNDRED_XP,
@@ -188,7 +263,10 @@ object AchievementsConfig {
             icon = "xp_2500",
             progressSource = AchievementProgressSource.TOTAL_XP,
             targetValue = 2500,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_2500_XP_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_2500_XP_COINS)
+            )
         ),
         AchievementDefinition(
             id = ONE_HUNDRED_COMPLETIONS,
@@ -197,7 +275,10 @@ object AchievementsConfig {
             icon = "completions_100",
             progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
             targetValue = 100,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_100_COMPLETIONS_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_100_COMPLETIONS_COINS)
+            )
         ),
         AchievementDefinition(
             id = ONE_THOUSAND_XP,
@@ -206,7 +287,10 @@ object AchievementsConfig {
             icon = "xp_1000",
             progressSource = AchievementProgressSource.TOTAL_XP,
             targetValue = 1000,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_1000_XP_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_1000_XP_COINS)
+            )
         ),
         AchievementDefinition(
             id = TEN_HABIT_BUILDER,
@@ -215,7 +299,10 @@ object AchievementsConfig {
             icon = "habit_builder_10",
             progressSource = AchievementProgressSource.HABIT_COUNT,
             targetValue = 10,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_10_HABIT_BUILDER_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_10_HABIT_BUILDER_COINS)
+            )
         ),
         AchievementDefinition(
             id = FIFTEEN_HABIT_BUILDER,
@@ -224,7 +311,10 @@ object AchievementsConfig {
             icon = "habit_builder_15",
             progressSource = AchievementProgressSource.HABIT_COUNT,
             targetValue = 15,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_15_HABIT_BUILDER_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_15_HABIT_BUILDER_COINS)
+            )
         ),
         AchievementDefinition(
             id = TWO_HUNDRED_FIFTY_COMPLETIONS,
@@ -233,7 +323,10 @@ object AchievementsConfig {
             icon = "completions_250",
             progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
             targetValue = 250,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_250_COMPLETIONS_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_250_COMPLETIONS_COINS)
+            )
         ),
         AchievementDefinition(
             id = LEVEL_TEN,
@@ -242,7 +335,10 @@ object AchievementsConfig {
             icon = "level_10",
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 10,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_10_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_10_COINS)
+            )
         ),
         AchievementDefinition(
             id = LEVEL_FIFTEEN,
@@ -251,7 +347,10 @@ object AchievementsConfig {
             icon = "level_15",
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 15,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_15_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_15_COINS)
+            )
         ),
         AchievementDefinition(
             id = THREE_THOUSAND_XP,
@@ -260,7 +359,10 @@ object AchievementsConfig {
             icon = "xp_3000",
             progressSource = AchievementProgressSource.TOTAL_XP,
             targetValue = 3000,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3000_XP_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_3000_XP_COINS)
+            )
         ),
         AchievementDefinition(
             id = THIRTY_DAY_STREAK,
@@ -269,7 +371,10 @@ object AchievementsConfig {
             icon = "streak_30",
             progressSource = AchievementProgressSource.CURRENT_STREAK,
             targetValue = 30,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_30_DAY_STREAK_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_30_DAY_STREAK_COINS)
+            )
         ),
         AchievementDefinition(
             id = CRYSTAL_AURA,
@@ -313,6 +418,7 @@ object AchievementsConfig {
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 25,
             rewards = listOf(
+                AchievementReward.ChestReward(ChestType.NORMAL),
                 AchievementReward.CustomizationReward(EquipableConfig.BACKGROUND_BEACH, CustomizationTypes.BACKGROUND)
             )
         ),
@@ -335,7 +441,10 @@ object AchievementsConfig {
             icon = "xp_5000",
             progressSource = AchievementProgressSource.TOTAL_XP,
             targetValue = 5000,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_5000_XP_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_5000_XP_COINS)
+            )
         ),
         AchievementDefinition(
             id = TWENTY_HABIT_BUILDER,
@@ -344,7 +453,10 @@ object AchievementsConfig {
             icon = "habit_builder_20",
             progressSource = AchievementProgressSource.HABIT_COUNT,
             targetValue = 20,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_20_HABIT_BUILDER_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_20_HABIT_BUILDER_COINS)
+            )
         ),
         AchievementDefinition(
             id = FIVE_HUNDRED_COMPLETIONS,
@@ -353,7 +465,10 @@ object AchievementsConfig {
             icon = "completions_500",
             progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
             targetValue = 500,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_500_COMPLETIONS_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_500_COMPLETIONS_COINS)
+            )
         ),
         AchievementDefinition(
             id = LEVEL_TWENTY_FIVE,
@@ -362,7 +477,10 @@ object AchievementsConfig {
             icon = "level_25",
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 25,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_25_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_25_COINS)
+            )
         ),
         AchievementDefinition(
             id = LEVEL_FORTY,
@@ -371,7 +489,10 @@ object AchievementsConfig {
             icon = "level_40",
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 40,
-            rewards = listOf(AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_40_COINS))
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LEVEL_40_COINS)
+            )
         ),
         AchievementDefinition(
             id = LEVEL_FIFTY,
@@ -546,6 +667,7 @@ object AchievementsConfig {
             progressSource = AchievementProgressSource.PET_LEVEL,
             targetValue = 40,
             rewards = listOf(
+                AchievementReward.ChestReward(ChestType.RARE),
                 AchievementReward.CustomizationReward(EquipableConfig.ADVENTURE_OUTFIT, CustomizationTypes.OUTFIT)
             )
         ),
@@ -585,7 +707,7 @@ object AchievementsConfig {
             )
         )
     ).mapIndexed { index, achievement ->
-        achievement.copy(difficultyRank = index + 1)
+        achievement.copy(difficultyRank = difficultyRanks[achievement.id] ?: index + 1)
     }
 
     fun achievementById(id: String): AchievementDefinition? = achievements.firstOrNull { it.id == id }

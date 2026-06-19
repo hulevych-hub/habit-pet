@@ -15,6 +15,7 @@ The achievements system gives players long-term goals across habit creation, hab
 - Progress sources
 - Target values
 - Rewards
+- Display difficulty order through `difficultyRank`
 
 Runtime code should not hardcode achievement conditions or rewards.
 
@@ -44,7 +45,7 @@ Achievement rewards should be meaningful without bypassing progression.
 Important rule:
 
 - Achievement conditions must not be paid back with the same progression resource.
-- XP milestone achievements must not reward XP.
+- XP milestone achievements must not reward direct XP.
 - Coin milestone achievements should reward coins, chests, or cosmetics, but not enough to collapse saving goals.
 
 Examples:
@@ -62,103 +63,86 @@ Examples:
 - `AchievementReward.ChestReward(chestType)`
 - `AchievementReward.CustomizationReward(equipableId, type)`
 
-`AchievementReward.ExpReward` remains supported by the processor for backward compatibility, but the current achievement configuration no longer uses XP rewards for progression milestones.
+`AchievementReward.ExpReward` remains supported by the processor for backward compatibility, but the current achievement configuration does not use direct XP rewards for progression milestones.
 
 Customization rewards must reference stable `EquipableConfig` IDs and use `unlockSource = "ACHIEVEMENT"`.
 
-## Achievement rebalance summary
+## Validated order and rewards
 
-### XP achievements
+The Achievements screen is sorted by `difficultyRank` from `AchievementsConfig.kt`. The current target values were kept; only the display order and selected reward bundles were adjusted. Tied requirements are grouped together, with lighter rewards before richer customization or chest bundles.
 
-XP achievements now reward coins and/or chests instead of XP.
+| Rank | Achievement | Condition | Rewards |
+|---:|---|---:|---|
+| 1 | `First Habit` | `1 habit` | `50 coins` |
+| 2 | `First Customization` | `1 owned customization` | `60 coins` |
+| 3 | `First Aura Glow` | `10 completions` | `Sakura Aura` |
+| 4 | `3 Habit Builder` | `3 habits` | `Normal chest + 90 coins` |
+| 5 | `5 Habit Builder` | `5 habits` | `Normal chest + 120 coins` |
+| 6 | `3 Customizations` | `3 owned customizations` | `Normal chest + 150 coins` |
+| 7 | `25 Completions` | `25 completions` | `Normal chest + 100 coins` |
+| 8 | `Royal Outfit` | `25 completions` | `Royal Outfit` |
+| 9 | `Level 5` | `level 5` | `Normal chest + 80 coins` |
+| 10 | `7 Day Streak` | `7-day streak` | `Normal chest + 100 coins` |
+| 11 | `14 Day Streak` | `14-day streak` | `Normal chest + 150 coins` |
+| 12 | `1000 XP` | `1000 XP` | `Normal chest + 150 coins` |
+| 13 | `2500 XP` | `2500 XP` | `Normal chest + 200 coins` |
+| 14 | `Forest Background` | `2500 XP` | `Normal chest + Forest Background` |
+| 15 | `10 Habit Builder` | `10 habits` | `Normal chest + 250 coins` |
+| 16 | `15 Habit Builder` | `15 habits` | `Normal chest + 350 coins` |
+| 17 | `100 Completions` | `100 completions` | `Normal chest + 200 coins` |
+| 18 | `Icy Aura` | `100 completions` | `Icy Aura` |
+| 19 | `250 Completions` | `250 completions` | `Normal chest + 300 coins` |
+| 20 | `Level 10` | `level 10` | `Normal chest + 300 coins` |
+| 21 | `Level 15` | `level 15` | `Normal chest + 350 coins` |
+| 22 | `3000 XP` | `3000 XP` | `Normal chest + 300 coins` |
+| 23 | `30 Day Streak` | `30-day streak` | `Rare chest + 400 coins` |
+| 24 | `Customization Collector` | `5 owned customizations` | `Rare chest + 50 coins` |
+| 25 | `Crystal Crown` | `7 owned customizations` | `Epic chest` |
+| 26 | `8 Customizations` | `8 owned customizations` | `Rare chest + 200 coins` |
+| 27 | `5000 XP` | `5000 XP` | `Rare chest + 350 coins` |
+| 28 | `20 Habit Builder` | `20 habits` | `Rare chest + 500 coins` |
+| 29 | `500 Completions` | `500 completions` | `Rare chest + 500 coins` |
+| 30 | `Beach Background` | `level 25` | `Normal chest + Beach Background` |
+| 31 | `Level 25` | `level 25` | `Rare chest + 500 coins` |
+| 32 | `Level 40` | `level 40` | `Rare chest + 800 coins` |
+| 33 | `Adventure Outfit` | `level 40` | `Rare chest + Adventure Outfit` |
+| 34 | `Level 50` | `level 50` | `Rare chest + 700 coins` |
+| 35 | `7500 XP` | `7500 XP` | `Rare chest + 350 coins` |
+| 36 | `10000 XP` | `10000 XP` | `Epic chest + 450 coins` |
+| 37 | `15000 XP` | `15000 XP` | `Epic chest + 600 coins` |
+| 38 | `60 Day Streak` | `60-day streak` | `Epic chest + 600 coins` |
+| 39 | `10 Customization Spark` | `10 owned customizations` | `Rare chest` |
+| 40 | `10 Customizations` | `10 owned customizations` | `Epic chest + 300 coins` |
+| 41 | `11 Customization Hoard` | `11 owned customizations` | `Legendary chest` |
+| 42 | `11 Customizations` | `11 owned customizations` | `Epic chest + 250 coins` |
+| 43 | `16 Customization Milestone` | `16 owned customizations` | `Epic chest` |
+| 44 | `16 Customizations` | `16 owned customizations` | `Legendary chest + 200 coins` |
+| 45 | `Celestial Realm` | `16 owned customizations` | `Legendary chest` |
+| 46 | `Celestial Finale` | `16 owned customizations` | `Legendary chest + 200 coins` |
+| 47 | `1000 Completions` | `1000 completions` | `Epic chest + 800 coins` |
+| 48 | `25000 XP` | `25000 XP` | `Legendary chest + 700 coins` |
+| 49 | `100 Day Streak` | `100-day streak` | `Legendary chest + 800 coins` |
+| 50 | `Level 60` | `level 60` | `Legendary chest + 900 coins` |
 
-| Achievement | Condition | Old reward | New reward |
-|---|---:|---|---|
-| `1000 XP` | `1000 XP` | `150 coins` | `150 coins` |
-| `3000 XP` | `3000 XP` | `150 XP` | `300 coins` |
-| `5000 XP` | `5000 XP` | `300 XP` | `350 coins` |
-| `7500 XP` | `7500 XP` | `Epic chest + 500 coins` | `Rare chest + 350 coins` |
-| `10000 XP` | `10000 XP` | `Epic chest + 600 coins` | `Epic chest + 450 coins` |
-| `15000 XP` | `15000 XP` | `Epic chest + 800 coins` | `Epic chest + 600 coins` |
-| `25000 XP` | `25000 XP` | `Legendary chest + 1000 coins` | `Legendary chest + 700 coins` |
+## Reward balance intent
 
-### Habit and completion achievements
+- Early achievements still give small coin payouts, and many now add a Normal chest for a small non-progression reward.
+- Mid-tier milestones use Rare chests, which can add EXP through the existing chest reward pipeline without directly paying back XP milestones.
+- XP milestone achievements continue to reward coins/chests, not direct XP, so they do not bypass progression.
+- High-rarity chests are reserved for rare milestones like `25000 XP`, `100 Day Streak`, `16 Customizations`, `Celestial Realm`, `Celestial Finale`, and `Level 60`.
+- Customization rewards are tied to stable `EquipableConfig` IDs, not display names.
+- If the equipable catalog changes, update collection achievement targets and docs so "all customizations" matches the actual unique count.
 
-| Achievement | Condition | Old reward | New reward |
-|---|---:|---|---|
-| First Habit | `1 habit` | `50 coins` | `50 coins` |
-| 3 Habit Builder | `3 habits` | `100 coins` | `90 coins` |
-| 5 Habit Builder | `5 habits` | `150 coins` | `120 coins` |
-| 10 Habit Builder | `10 habits` | `300 coins` | `250 coins` |
-| 15 Habit Builder | `15 habits` | `400 coins` | `350 coins` |
-| 20 Habit Builder | `20 habits` | `600 coins` | `500 coins` |
-| 25 Completions | `25 completions` | `100 coins` | `100 coins` |
-| 100 Completions | `100 completions` | `200 coins` | `200 coins` |
-| 250 Completions | `250 completions` | `300 coins` | `300 coins` |
-| 500 Completions | `500 completions` | `600 coins` | `500 coins` |
-| 1000 Completions | `1000 completions` | `Epic chest + 1000 coins` | `Epic chest + 800 coins` |
-
-### Streak achievements
-
-| Achievement | Condition | Old reward | New reward |
-|---|---:|---|---|
-| 7 Day Streak | `7 days` | `100 coins` | `100 coins` |
-| 14 Day Streak | `14 days` | `150 coins` | `150 coins` |
-| 30 Day Streak | `30 days` | `250 coins` | `400 coins` |
-| 60 Day Streak | `60 days` | `Epic chest + 600 coins` | `Epic chest + 600 coins` |
-| 100 Day Streak | `100 days` | `Legendary chest + 1000 coins` | `Legendary chest + 800 coins` |
-
-### Level achievements
-
-| Achievement | Condition | Old reward | New reward |
-|---|---:|---|---|
-| Level 5 | `level 5` | `100 coins` | `80 coins` |
-| Level 10 | `level 10` | `300 coins` | `300 coins` |
-| Level 15 | `level 15` | `300 coins` | `350 coins` |
-| Level 25 | `level 25` | `500 coins` | `500 coins` |
-| Level 40 | `level 40` | `800 coins` | `800 coins` |
-| Level 50 | `level 50` | `Epic chest + 1000 coins` | `Rare chest + 700 coins` |
-| Level 60 | `level 60` | `Legendary chest + 1200 coins` | `Legendary chest + 900 coins` |
-
-### Customization achievements
-
-Collection milestones count every unique equipable in `EquipableConfig`. The current catalog has 16 unique equipables, so final collection achievements use `16 owned`.
-
-| Achievement | Condition | Old reward | New reward |
-|---|---:|---|---|
-| First Customization | `1 owned` | `75 coins` | `60 coins` |
-| 3 Customizations | `3 owned` | `150 coins` | `150 coins` |
-| Customization Collector | `5 owned` | `Rare chest + 50 coins` | `Rare chest + 50 coins` |
-| Crystal Crown | `7 owned` | `Epic chest` | `Epic chest` |
-| 8 Customizations | `8 owned` | `Rare chest + 200 coins` | `Rare chest + 200 coins` |
-| 10 Customization Spark | `10 owned` | `Epic chest` | `Rare chest` |
-| 10 Customizations | `10 owned` | `Epic chest + 300 coins` | `Epic chest + 300 coins` |
-| 11 Customization Hoard | `11 owned` | `Epic chest` | `Legendary chest` |
-| 11 Customizations | `11 owned` | `Epic chest + 250 coins` | `Epic chest + 250 coins` |
-| 16 Customization Milestone | `16 owned` | `12 owned → Epic chest` | `Epic chest` |
-| 16 Customizations | `16 owned` | `12 owned → Legendary chest + 300 coins` | `Legendary chest + 200 coins` |
-| Celestial Realm | `16 owned` | `12 owned → Legendary chest` | `Legendary chest` |
-| Celestial Finale | `16 owned` | `12 owned → Sakura Aura` | `Legendary chest + 200 coins` |
-
-### Achievement-only customization rewards
+## Achievement-only customization rewards
 
 These rewards grant specific locked equipables that are not purchasable with coins. Their requirements are non-customization milestones so the displayed condition is not the same item as the reward:
 
 - `FIRST_AURA_GLOW` → Sakura Aura (`10 completions`)
 - `COZY_OUTFIT` → Royal Outfit (`25 completions`)
-- `FOREST_BACKGROUND` → Forest Background (`2500 XP`)
+- `FOREST_BACKGROUND` → Forest Background (`2500 XP`) plus a Normal chest
 - `CRYSTAL_AURA` → Icy Aura (`100 completions`)
-- `CRYSTAL_CAVE` → Beach Background (`level 25`)
-- `STARLIGHT_ARMOR` → Adventure Outfit (`level 40`)
-
-## Reward balance intent
-
-- Early achievements give small coin payouts to keep onboarding rewarding.
-- XP achievements reward coins/chests, not XP, so they do not bypass progression.
-- Chest rewards are milestone-based and become stronger only for long-term achievements.
-- High-rarity chests are reserved for rare milestones like `25000 XP`, `100 Day Streak`, `16 Customizations`, `Celestial Realm`, `Celestial Finale`, and `Level 60`.
-- Customization rewards are tied to stable `EquipableConfig` IDs, not display names.
-- If the equipable catalog changes, update collection achievement targets and docs so "all customizations" matches the actual unique count.
+- `CRYSTAL_CAVE` → Beach Background (`level 25`) plus a Normal chest
+- `STARLIGHT_ARMOR` → Adventure Outfit (`level 40`) plus a Rare chest
 
 ## Data model
 

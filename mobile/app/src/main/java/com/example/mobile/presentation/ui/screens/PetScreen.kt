@@ -656,7 +656,7 @@ private fun LevelUpButton(progressFraction: Float) {
 
         Text(
             text = "Level Up",
-            color = AppTheme.current.onSecondary,
+            color = AppTheme.current.levelUpText,
             fontSize = 16.sp,
             fontWeight = FontWeight.ExtraBold
         )
