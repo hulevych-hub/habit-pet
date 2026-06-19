@@ -105,9 +105,11 @@ class HomeScreenViewModel @Inject constructor(
                 combine(
                     habits.map { habit ->
                         habitCompletionRepository.getCompletionForHabitOnDate(habit.id, today)
-                            .map { completion -> habit.id to (completion?.xpEarned ?: 0L) }
+                            .map { completion ->
+                                completion?.let { habit.id to it.xpEarned }
+                            }
                     }
-                ) { pairs -> pairs.toMap() }
+                ) { pairs -> pairs.filterNotNull().toMap() }
             }
         }
         .stateIn(
