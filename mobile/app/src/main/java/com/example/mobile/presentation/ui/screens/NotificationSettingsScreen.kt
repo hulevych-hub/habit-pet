@@ -44,15 +44,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.AppThemeOption
 import com.example.mobile.ui.theme.AppThemePrefs
+import com.example.mobile.ui.theme.HabitPetTheme
 import com.example.mobile.util.NotificationPrefs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +66,23 @@ fun NotificationSettingsScreen(
 ) {
     val context = LocalContext.current
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    var settingsError by remember { mutableStateOf<String?>(null) }
+
+    NotificationSettingsContent(
+        progressUiState = progressUiState,
+        onNavigateToRewardsLocked = onNavigateToRewardsLocked,
+        onError = { settingsError = it }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotificationSettingsContent(
+    progressUiState: HomeScreenViewModel.UiState,
+    onNavigateToRewardsLocked: () -> Unit,
+    onError: (String) -> Unit
+) {
+    val context = LocalContext.current
     var settingsError by remember { mutableStateOf<String?>(null) }
 
     // Remember states dynamically to guarantee instantaneous toggle UI rendering updates
@@ -128,7 +148,7 @@ fun NotificationSettingsScreen(
                                 checked,
                                 NotificationPrefs::setDailyReminderEnabled,
                                 "Daily reminder could not be saved",
-                                { settingsError = it }
+                                onError
                             )) {
                             isDailyEnabled = checked
                         }
@@ -148,7 +168,7 @@ fun NotificationSettingsScreen(
                                 checked,
                                 NotificationPrefs::setStreakReminderEnabled,
                                 "Streak reminder could not be saved",
-                                { settingsError = it }
+                                onError
                             )) {
                             isStreakEnabled = checked
                         }
@@ -168,7 +188,7 @@ fun NotificationSettingsScreen(
                                 checked,
                                 NotificationPrefs::setPetReminderEnabled,
                                 "Pet reminder could not be saved",
-                                { settingsError = it }
+                                onError
                             )) {
                             isPetEnabled = checked
                         }
@@ -323,6 +343,39 @@ private fun SettingsHero() {
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun NotificationSettingsScreenPreview() {
+    val pet = PetEntity(
+        id = 1,
+        name = "Luna",
+        level = 3,
+        xp = 180,
+        evolutionStage = 1,
+        equippedOutfit = "classic_blue_outfit",
+        equippedBackground = "misty_meadow_background",
+        equippedAura = null,
+        mood = "Calm"
+    )
+    HabitPetTheme {
+        NotificationSettingsContent(
+            progressUiState = HomeScreenViewModel.UiState(
+                globalStreak = 4,
+                habits = emptyList(),
+                pet = pet,
+                completedTodayXp = emptyMap(),
+                totalCoins = 128,
+                lastStreakDate = 0L,
+                currentCombo = 0,
+                lastHabitCompletionTimestamp = 0L,
+                globalStreakCompletedToday = false
+            ),
+            onNavigateToRewardsLocked = {},
+            onError = {}
+        )
     }
 }
 

@@ -50,12 +50,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
+import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.ExpConfig
@@ -63,6 +65,7 @@ import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.CoinPill
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
@@ -150,6 +153,69 @@ fun RewardsScreen(
     val error by rewardsViewModel.error.collectAsState(initial = null)
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
 
+    RewardsScreenContent(
+        progressUiState = progressUiState,
+        items = items,
+        isLoading = isLoading,
+        error = error,
+        selectedTypeTab = selectedTypeTab,
+        selectedCollection = selectedCollection,
+        selectedRarity = selectedRarity,
+        activeInspectItem = activeInspectItem,
+        onNavigateToRewardsLocked = onNavigateToRewardsLocked,
+        onTypeSelected = {
+            selectedTypeTab = it
+            activeInspectItem = null
+        },
+        onCollectionSelected = {
+            selectedCollection = it
+            activeInspectItem = null
+        },
+        onRaritySelected = { selectedRarity = it },
+        onInspect = { activeInspectItem = it },
+        onCloseInspect = { activeInspectItem = null },
+        onClearError = rewardsViewModel::clearError,
+        onActionExecute = { item ->
+            actionScope.launch {
+                val equippedItemId = when (selectedTypeTab) {
+                    CollectionTypeTab.Outfits -> progressUiState.pet.equippedOutfit
+                    CollectionTypeTab.Backgrounds -> progressUiState.pet.equippedBackground
+                    CollectionTypeTab.Auras -> progressUiState.pet.equippedAura
+                }
+                val isEquipped = equippedItemId == item.itemId
+                val result = when {
+                    isEquipped -> rewardsViewModel.unequipItem(item.type)
+                    item.isPurchased -> rewardsViewModel.equipItem(item.type, item.itemId)
+                    else -> rewardsViewModel.purchaseItem(item.id)
+                }
+                if (result > 0) {
+                    activeInspectItem = null
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RewardsScreenContent(
+    progressUiState: HomeScreenViewModel.UiState,
+    items: List<InventoryItemEntity>,
+    isLoading: Boolean,
+    error: String?,
+    selectedTypeTab: CollectionTypeTab,
+    selectedCollection: CollectionTab,
+    selectedRarity: Rarity?,
+    activeInspectItem: InventoryItemEntity?,
+    onNavigateToRewardsLocked: () -> Unit,
+    onTypeSelected: (CollectionTypeTab) -> Unit,
+    onCollectionSelected: (CollectionTab) -> Unit,
+    onRaritySelected: (Rarity?) -> Unit,
+    onInspect: (InventoryItemEntity) -> Unit,
+    onCloseInspect: () -> Unit,
+    onClearError: () -> Unit,
+    onActionExecute: (InventoryItemEntity) -> Unit
+) {
     val equippedItemId = remember(progressUiState.pet, selectedTypeTab) {
         when (selectedTypeTab) {
             CollectionTypeTab.Outfits -> progressUiState.pet.equippedOutfit
@@ -186,7 +252,7 @@ fun RewardsScreen(
                     .padding(padding)
                     .padding(20.dp),
                 message = error.orEmpty(),
-                onRetry = rewardsViewModel::clearError
+                onRetry = onClearError
             )
         } else if (isLoading) {
             LoadingStateCard(
@@ -210,27 +276,21 @@ fun RewardsScreen(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     CollectionTypeTabs(
                         selectedTypeTab = selectedTypeTab,
-                        onTypeSelected = {
-                            selectedTypeTab = it
-                            activeInspectItem = null
-                        }
+                        onTypeSelected = onTypeSelected
                     )
                 }
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     CollectionToggle(
                         selectedCollection = selectedCollection,
-                        onSelected = {
-                            selectedCollection = it
-                            activeInspectItem = null
-                        }
+                        onSelected = onCollectionSelected
                     )
                 }
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     RarityFilter(
                         selectedRarity = selectedRarity,
-                        onRaritySelected = { selectedRarity = it }
+                        onRaritySelected = onRaritySelected
                     )
                 }
 
@@ -261,7 +321,7 @@ fun RewardsScreen(
                         item = item,
                         isSelected = activeInspectItem?.id == item.id,
                         isEquipped = equippedItemId == item.itemId,
-                        onClick = { activeInspectItem = item }
+                        onClick = { onInspect(item) }
                     )
                 }
             }
@@ -275,20 +335,8 @@ fun RewardsScreen(
                         item = item,
                         currentWalletBalance = progressUiState.totalCoins,
                         isEquipped = equippedItemId == item.itemId,
-                        onClose = { activeInspectItem = null },
-                        onActionExecute = {
-                            actionScope.launch {
-                                val isEquipped = equippedItemId == item.itemId
-                                val result = when {
-                                    isEquipped -> rewardsViewModel.unequipItem(item.type)
-                                    item.isPurchased -> rewardsViewModel.equipItem(item.type, item.itemId)
-                                    else -> rewardsViewModel.purchaseItem(item.id)
-                                }
-                                if (result > 0) {
-                                    activeInspectItem = null
-                                }
-                            }
-                        }
+                        onClose = onCloseInspect,
+                        onActionExecute = { onActionExecute(item) }
                     )
                 }
             }
@@ -656,3 +704,89 @@ private enum class CollectionTab(val label: String) {
         }
     }
 }
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun RewardsScreenPreview() {
+    val pet = PetEntity(
+        id = 1,
+        name = "Luna",
+        level = 3,
+        xp = 180,
+        evolutionStage = 1,
+        equippedOutfit = "classic_blue_outfit",
+        equippedBackground = "misty_meadow_background",
+        equippedAura = null,
+        mood = "Calm"
+    )
+    HabitPetTheme {
+        RewardsScreenContent(
+            progressUiState = HomeScreenViewModel.UiState(
+                globalStreak = 4,
+                habits = emptyList(),
+                pet = pet,
+                completedTodayXp = emptyMap(),
+                totalCoins = 240,
+                lastStreakDate = 0L,
+                currentCombo = 0,
+                lastHabitCompletionTimestamp = 0L,
+                globalStreakCompletedToday = false
+            ),
+            items = listOf(
+                InventoryItemEntity(
+                    id = 1,
+                    itemId = "classic_blue_outfit",
+                    name = "Classic Blue Outfit",
+                    type = CustomizationTypes.OUTFIT,
+                    imageUrl = "",
+                    isUnlocked = true,
+                    isPurchased = true,
+                    isEquipped = true,
+                    price = 80,
+                    rarity = Rarity.NORMAL,
+                    unlockSource = UnlockSources.SHOP
+                ),
+                InventoryItemEntity(
+                    id = 2,
+                    itemId = "misty_meadow_background",
+                    name = "Misty Meadow Scene",
+                    type = CustomizationTypes.BACKGROUND,
+                    imageUrl = "",
+                    isUnlocked = true,
+                    isPurchased = true,
+                    isEquipped = true,
+                    price = 120,
+                    rarity = Rarity.RARE,
+                    unlockSource = UnlockSources.SHOP
+                ),
+                InventoryItemEntity(
+                    id = 3,
+                    itemId = "aurora_pulse_aura",
+                    name = "Aurora Pulse Aura",
+                    type = CustomizationTypes.AURA,
+                    imageUrl = "",
+                    isUnlocked = false,
+                    isPurchased = false,
+                    isEquipped = false,
+                    price = 0,
+                    rarity = Rarity.EPIC,
+                    unlockSource = UnlockSources.CHEST
+                )
+            ),
+            isLoading = false,
+            error = null,
+            selectedTypeTab = CollectionTypeTab.Outfits,
+            selectedCollection = CollectionTab.Owned,
+            selectedRarity = null,
+            activeInspectItem = null,
+            onNavigateToRewardsLocked = {},
+            onTypeSelected = {},
+            onCollectionSelected = {},
+            onRaritySelected = {},
+            onInspect = {},
+            onCloseInspect = {},
+            onClearError = {},
+            onActionExecute = {}
+        )
+    }
+    }

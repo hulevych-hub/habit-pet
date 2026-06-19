@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mobile.domain.CustomizationTypes
+import com.example.mobile.ui.theme.HabitPetTheme
 import com.example.mobile.util.AssetResolver
 
 @Composable
@@ -84,5 +86,19 @@ fun AssetPreview(
                 Icon(Icons.Default.Block, null, tint = Color.Gray, modifier = Modifier.size(24.dp))
             }
         }
+    }
+}
+
+@Preview(showBackground = true, device = "spec:width=120px,height=120px,dpi=320")
+@Composable
+private fun AssetPreviewIconFallbackPreview() {
+    HabitPetTheme {
+        AssetPreview(
+            itemType = CustomizationTypes.OUTFIT,
+            itemId = "missing-outfit",
+            imageUrl = "",
+            tintColor = Color(0xFF6C5CE7),
+            modifier = Modifier.size(120.dp)
+        )
     }
 }

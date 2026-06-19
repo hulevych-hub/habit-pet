@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,6 +56,7 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.viewmodel.HabitDetailViewModel
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -119,11 +121,40 @@ private fun HabitDetailContent(
     val currentError = error
     val currentHabit = habit
 
+    HabitDetailContent(
+        habit = currentHabit,
+        completions = completions,
+        isLoading = isLoading,
+        error = currentError,
+        isCompletedToday = isCompletedToday,
+        isTimerRunning = isTimerRunning,
+        elapsedSeconds = elapsedSeconds,
+        onStartTimer = { viewModel.startTimerHabit(habitId) },
+        onStopTimer = { viewModel.stopTimerHabit(habitId) },
+        onCompleteCheckbox = { viewModel.completeCheckboxHabit(habitId) },
+        onResetTimer = { viewModel.resetTimer() }
+    )
+}
+
+@Composable
+private fun HabitDetailContent(
+    habit: HabitEntity?,
+    completions: List<HabitCompletionEntity>,
+    isLoading: Boolean,
+    error: String?,
+    isCompletedToday: Boolean,
+    isTimerRunning: Boolean,
+    elapsedSeconds: Int,
+    onStartTimer: () -> Unit,
+    onStopTimer: () -> Unit,
+    onCompleteCheckbox: () -> Unit,
+    onResetTimer: () -> Unit
+) {
     if (isLoading) {
         CenteredProgressIndicator()
-    } else if (currentError != null) {
-        ErrorMessage(currentError)
-    } else if (currentHabit == null) {
+    } else if (error != null) {
+        ErrorMessage(error)
+    } else if (habit == null) {
         Box(modifier = Modifier.padding(20.dp)) {
             EmptyStateCard(
                 title = "This habit has gone quiet",
@@ -141,19 +172,19 @@ private fun HabitDetailContent(
             contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
         ) {
             item {
-                HabitHeader(habit = currentHabit)
+                HabitHeader(habit = habit)
             }
 
             item {
                 CompletionStatus(
-                    habit = currentHabit,
+                    habit = habit,
                     isCompletedToday = isCompletedToday,
                     isTimerRunning = isTimerRunning,
                     elapsedSeconds = elapsedSeconds,
-                    onStartTimer = { viewModel.startTimerHabit(habitId) },
-                    onStopTimer = { viewModel.stopTimerHabit(habitId) },
-                    onCompleteCheckbox = { viewModel.completeCheckboxHabit(habitId) },
-                    onResetTimer = { viewModel.resetTimer() }
+                    onStartTimer = onStartTimer,
+                    onStopTimer = onStopTimer,
+                    onCompleteCheckbox = onCompleteCheckbox,
+                    onResetTimer = onResetTimer
                 )
             }
 
@@ -548,6 +579,41 @@ private fun CenteredProgressIndicator() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(color = AppTheme.current.primary)
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun HabitDetailScreenPreview() {
+    HabitPetTheme {
+        HabitDetailContent(
+            habit = HabitEntity(
+                id = 1,
+                name = "Focused reading",
+                icon = "book",
+                type = "TIMER",
+                minimumDurationMinutes = 15,
+                currentStreak = 2,
+                bestStreak = 5
+            ),
+            completions = listOf(
+                HabitCompletionEntity(
+                    id = 1,
+                    habitId = 1,
+                    date = System.currentTimeMillis() - 24L * 60L * 60L * 1000L,
+                    xpEarned = 20
+                )
+            ),
+            isLoading = false,
+            error = null,
+            isCompletedToday = false,
+            isTimerRunning = false,
+            elapsedSeconds = 300,
+            onStartTimer = {},
+            onStopTimer = {},
+            onCompleteCheckbox = {},
+            onResetTimer = {}
+        )
     }
 }
 

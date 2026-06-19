@@ -79,6 +79,10 @@ dependencies {
     // Navigation Compose
     implementation "androidx.navigation:navigation-compose:2.7.7"
 
+    // Compose Preview rendering in Android Studio
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-tooling-preview"
+
     // Hilt
     implementation "com.google.dagger:hilt-android:2.48"
     kapt "com.google.dagger:hilt-compiler:2.48"

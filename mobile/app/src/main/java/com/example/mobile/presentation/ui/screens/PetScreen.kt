@@ -57,6 +57,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,6 +75,7 @@ import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -119,11 +121,38 @@ fun PetScreen(
     val error by petViewModel.error.collectAsState(initial = null)
 
     val pet = uiState.pet
-    var showRenameDialog by remember { mutableStateOf(false) }
-
     val currentLevelXp = ExpConfig.xpProgressInCurrentLevel(pet.xp)
     val xpRequiredForNextLevel = ExpConfig.xpRequiredForCurrentLevelProgress(pet.xp)
     val progressFraction = (currentLevelXp.toFloat() / xpRequiredForNextLevel.toFloat()).coerceIn(0f, 1f)
+
+    PetScreenContent(
+        uiState = uiState,
+        isLoading = isLoading,
+        error = error,
+        progressFraction = progressFraction,
+        onNavigateToRewardsLocked = onNavigateToRewardsLocked,
+        onNavigateToRewardsOwned = onNavigateToRewardsOwned,
+        onClearError = petViewModel::clearError,
+        onConfirmRename = { newName, currentPet ->
+            petViewModel.renamePet(newName.trim(), currentPet)
+        }
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun PetScreenContent(
+    uiState: HomeScreenViewModel.UiState,
+    isLoading: Boolean,
+    error: String?,
+    progressFraction: Float,
+    onNavigateToRewardsLocked: () -> Unit,
+    onNavigateToRewardsOwned: () -> Unit,
+    onClearError: () -> Unit,
+    onConfirmRename: (String, PetEntity) -> Unit
+) {
+    val pet = uiState.pet
+    var showRenameDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = AppTheme.current.background,
@@ -141,7 +170,7 @@ fun PetScreen(
             ErrorStateCard(
                 modifier = Modifier.fillMaxSize().padding(padding).padding(20.dp),
                 message = error.orEmpty(),
-                onRetry = petViewModel::clearError
+                onRetry = onClearError
             )
         } else if (isLoading) {
             LoadingStateCard(
@@ -183,7 +212,7 @@ fun PetScreen(
             initialName = pet.name,
             onDismissRequest = { showRenameDialog = false },
             onConfirm = { newName ->
-                petViewModel.renamePet(newName.trim(), pet)
+                onConfirmRename(newName, pet)
                 showRenameDialog = false
             }
         )
@@ -684,6 +713,44 @@ internal fun validatePetName(name: String): String? {
         trimmedName.isEmpty() -> "Please enter a pet name"
         trimmedName.length > MAX_PET_NAME_LENGTH -> "Pet name must be $MAX_PET_NAME_LENGTH characters or fewer"
         else -> null
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun PetScreenPreview() {
+    val pet = PetEntity(
+        id = 1,
+        name = "Luna",
+        level = 3,
+        xp = 180,
+        evolutionStage = 1,
+        equippedOutfit = "classic_blue_outfit",
+        equippedBackground = "misty_meadow_background",
+        equippedAura = null,
+        mood = "Calm"
+    )
+    HabitPetTheme {
+        PetScreenContent(
+            uiState = HomeScreenViewModel.UiState(
+                globalStreak = 4,
+                habits = emptyList(),
+                pet = pet,
+                completedTodayXp = emptyMap(),
+                totalCoins = 128,
+                lastStreakDate = 0L,
+                currentCombo = 0,
+                lastHabitCompletionTimestamp = 0L,
+                globalStreakCompletedToday = false
+            ),
+            isLoading = false,
+            error = null,
+            progressFraction = 0.48f,
+            onNavigateToRewardsLocked = {},
+            onNavigateToRewardsOwned = {},
+            onClearError = {},
+            onConfirmRename = { _, _ -> }
+        )
     }
 }
 

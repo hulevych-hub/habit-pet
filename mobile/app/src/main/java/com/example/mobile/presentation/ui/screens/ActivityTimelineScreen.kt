@@ -53,10 +53,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.GameEventEntity
+import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.GameEventRarity
 import com.example.mobile.domain.GameEventType
@@ -65,6 +67,7 @@ import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
 import com.example.mobile.util.ReinforcementMessageProvider
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,6 +82,29 @@ fun ActivityTimelineScreen(
     val isLoading by activityTimelineViewModel.isLoading.collectAsState()
     val isLoadingMore by activityTimelineViewModel.isLoadingMore.collectAsState()
     val hasMore by activityTimelineViewModel.hasMore.collectAsState()
+
+    ActivityTimelineScreenContent(
+        progressUiState = progressUiState,
+        events = events,
+        isLoading = isLoading,
+        isLoadingMore = isLoadingMore,
+        hasMore = hasMore,
+        onNavigateToRewardsLocked = onNavigateToRewardsLocked,
+        onLoadMore = activityTimelineViewModel::loadMore
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActivityTimelineScreenContent(
+    progressUiState: HomeScreenViewModel.UiState,
+    events: List<GameEventEntity>,
+    isLoading: Boolean,
+    isLoadingMore: Boolean,
+    hasMore: Boolean,
+    onNavigateToRewardsLocked: () -> Unit,
+    onLoadMore: () -> Unit
+) {
     val groups = remember(events) { groupEventsByDay(events) }
     val listState = rememberLazyListState()
     var hasAutoScrolled by remember { mutableStateOf(false) }
@@ -136,7 +162,7 @@ fun ActivityTimelineScreen(
             if (hasMore) {
                 item {
                     Button(
-                        onClick = { activityTimelineViewModel.loadMore() },
+                        onClick = onLoadMore,
                         enabled = !isLoadingMore,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AppTheme.current.violet,
@@ -494,3 +520,57 @@ private data class TimelineGroup(
 )
 
 private const val DAY_MILLIS = 24L * 60L * 60L * 1000L
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun ActivityTimelineScreenPreview() {
+    val pet = PetEntity(
+        id = 1,
+        name = "Luna",
+        level = 3,
+        xp = 180,
+        evolutionStage = 1,
+        equippedOutfit = "classic_blue_outfit",
+        equippedBackground = "misty_meadow_background",
+        equippedAura = null,
+        mood = "Calm"
+    )
+    HabitPetTheme {
+        ActivityTimelineScreenContent(
+            progressUiState = HomeScreenViewModel.UiState(
+                globalStreak = 4,
+                habits = emptyList(),
+                pet = pet,
+                completedTodayXp = emptyMap(),
+                totalCoins = 128,
+                lastStreakDate = 0L,
+                currentCombo = 0,
+                lastHabitCompletionTimestamp = 0L,
+                globalStreakCompletedToday = false
+            ),
+            events = listOf(
+                GameEventEntity(
+                    id = 1,
+                    type = GameEventType.HABIT_COMPLETED.name,
+                    timestamp = System.currentTimeMillis() - 60 * 60_000L,
+                    title = "Morning hydration completed",
+                    description = "Your dragon celebrated a small, steady win.",
+                    rarity = GameEventRarity.RARE.name
+                ),
+                GameEventEntity(
+                    id = 2,
+                    type = GameEventType.LEVEL_UP.name,
+                    timestamp = System.currentTimeMillis() - 3 * 60 * 60_000L,
+                    title = "Level 3 reached",
+                    description = "A new tier of care unlocked for your dragon.",
+                    rarity = GameEventRarity.EPIC.name
+                )
+            ),
+            isLoading = false,
+            isLoadingMore = false,
+            hasMore = true,
+            onNavigateToRewardsLocked = {},
+            onLoadMore = {}
+        )
+    }
+}

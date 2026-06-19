@@ -46,9 +46,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.R
+import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
@@ -59,6 +61,7 @@ import com.example.mobile.ui.theme.AppThemeColors
 import com.example.mobile.ui.theme.AutumnColors
 import com.example.mobile.ui.theme.AppThemeOption
 import com.example.mobile.ui.theme.AppThemePrefs
+import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,6 +75,32 @@ fun AchievementScreen(
     val isClaiming by achievementViewModel.isClaiming.collectAsState()
     val palette = AchievementHallPalette.current()
 
+    AchievementScreenContent(
+        achievements = achievements,
+        isLoading = isLoading,
+        error = error,
+        claimableCount = claimableCount,
+        isClaiming = isClaiming,
+        palette = palette,
+        onRetry = achievementViewModel::retryLoadAchievements,
+        onClaim = { achievementId -> achievementViewModel.claimAchievement(achievementId) },
+        onClaimAll = achievementViewModel::claimAllAchievements
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun AchievementScreenContent(
+    achievements: List<AchievementEntity>,
+    isLoading: Boolean,
+    error: String?,
+    claimableCount: Int,
+    isClaiming: Boolean,
+    palette: AchievementHallPalette,
+    onRetry: () -> Unit,
+    onClaim: (String) -> Unit,
+    onClaimAll: () -> Unit
+) {
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
@@ -79,7 +108,7 @@ fun AchievementScreen(
                 ClaimAllRewardsBar(
                     claimableCount = claimableCount,
                     isClaiming = isClaiming,
-                    onClick = achievementViewModel::claimAllAchievements,
+                    onClick = onClaimAll,
                     palette = palette
                 )
             }
@@ -126,7 +155,7 @@ fun AchievementScreen(
                         ErrorStateCard(
                             message = error.orEmpty(),
                             modifier = Modifier.fillMaxWidth(),
-                            onRetry = achievementViewModel::retryLoadAchievements
+                            onRetry = onRetry
                         )
                     }
                     achievements.isEmpty() -> item {
@@ -143,32 +172,17 @@ fun AchievementScreen(
                     items = achievements,
                     key = { achievement -> achievement.id }
                 ) { achievement ->
+                    val definition = AchievementsConfig.achievementById(achievement.id)
+                    val target = definition?.targetValue?.coerceAtLeast(1) ?: 1
+                    val progress = achievement.progress.coerceAtLeast(0)
                     AchievementHallCard(
                         achievement = achievement,
-                        title = AchievementsConfig.achievementById(achievement.id)?.name ?: achievement.id,
-                        description = AchievementsConfig.achievementById(achievement.id)?.description ?: "Keep growing.",
-                        progressFraction = achievementViewModel.progressFraction(
-                            achievementViewModel.progressFor(
-                                achievement = achievement,
-                                stats = achievementViewModel.statistics.value,
-                                petState = achievementViewModel.pet.value,
-                                ownedCustomizationCount = achievementViewModel.ownedCustomizations.value,
-                                currentHabitCount = achievementViewModel.habitCount.value
-                            ),
-                            achievement
-                        ),
-                        progressLabel = achievementViewModel.progressLabel(
-                            achievementViewModel.progressFor(
-                                achievement = achievement,
-                                stats = achievementViewModel.statistics.value,
-                                petState = achievementViewModel.pet.value,
-                                ownedCustomizationCount = achievementViewModel.ownedCustomizations.value,
-                                currentHabitCount = achievementViewModel.habitCount.value
-                            ),
-                            achievement
-                        ),
-                        rewards = achievementViewModel.rewardLabels(achievement),
-                        onClaim = { achievementViewModel.claimAchievement(achievement.id) },
+                        title = definition?.name ?: achievement.id,
+                        description = definition?.description ?: "Keep growing.",
+                        progressFraction = (progress.toFloat() / target.toFloat()).coerceIn(0f, 1f),
+                        progressLabel = "$progress/$target",
+                        rewards = emptyList(),
+                        onClaim = { onClaim(achievement.id) },
                         palette = palette
                     )
                 }
@@ -744,5 +758,42 @@ private data class AchievementHallPalette(
                 buttonGradient = listOf(colors.goldSoft, colors.gold, colors.goldDark)
             )
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun AchievementScreenPreview() {
+    HabitPetTheme {
+        AchievementScreenContent(
+            achievements = listOf(
+                AchievementEntity(
+                    id = AchievementsConfig.FIRST_HABIT,
+                    progress = 3,
+                    isUnlocked = true,
+                    isClaimed = false
+                ),
+                AchievementEntity(
+                    id = AchievementsConfig.FIRST_CUSTOMIZATION,
+                    progress = 1,
+                    isUnlocked = true,
+                    isClaimed = true
+                ),
+                AchievementEntity(
+                    id = AchievementsConfig.FIRST_AURA_GLOW,
+                    progress = 0,
+                    isUnlocked = false,
+                    isClaimed = false
+                )
+            ),
+            isLoading = false,
+            error = null,
+            claimableCount = 1,
+            isClaiming = false,
+            palette = AchievementHallPalette.current(),
+            onRetry = {},
+            onClaim = {},
+            onClaimAll = {}
+        )
     }
 }

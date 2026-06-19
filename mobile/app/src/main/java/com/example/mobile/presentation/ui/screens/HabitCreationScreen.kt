@@ -57,11 +57,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.presentation.viewmodel.HabitCreationViewModel
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -142,6 +144,38 @@ private fun HabitCreationForm(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
+    HabitCreationFormContent(
+        name = name,
+        icon = icon,
+        type = type,
+        minimumDuration = minimumDuration,
+        isLoading = isLoading,
+        error = error,
+        onNameChanged = viewModel::onNameChanged,
+        onIconSelected = viewModel::onIconSelected,
+        onTypeSelected = viewModel::onTypeSelected,
+        onMinimumDurationChanged = viewModel::onMinimumDurationChanged,
+        onCreateHabit = viewModel::createHabit,
+        modifier = modifier
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun HabitCreationFormContent(
+    name: String,
+    icon: String,
+    type: String,
+    minimumDuration: Int,
+    isLoading: Boolean,
+    error: String?,
+    onNameChanged: (String) -> Unit,
+    onIconSelected: (String) -> Unit,
+    onTypeSelected: (String) -> Unit,
+    onMinimumDurationChanged: (Int) -> Unit,
+    onCreateHabit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     Column(
@@ -161,7 +195,7 @@ private fun HabitCreationForm(
             Column(modifier = Modifier.padding(18.dp)) {
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { viewModel.onNameChanged(it) },
+                    onValueChange = { onNameChanged(it) },
                     label = { Text("Habit Name") },
                     placeholder = { Text("e.g., Deep Work, Morning Run") },
                     modifier = Modifier.fillMaxWidth(),
@@ -253,7 +287,7 @@ private fun HabitCreationForm(
                 Spacer(modifier = Modifier.height(12.dp))
                 TypeSelection(
                     selectedType = type,
-                    onTypeSelected = { viewModel.onTypeSelected(it) }
+                    onTypeSelected = { onTypeSelected(it) }
                 )
             }
         }
@@ -275,7 +309,7 @@ private fun HabitCreationForm(
                     Spacer(modifier = Modifier.height(12.dp))
                     DurationSelection(
                         duration = minimumDuration,
-                        onDurationChanged = { viewModel.onMinimumDurationChanged(it) }
+                        onDurationChanged = { onMinimumDurationChanged(it) }
                     )
                 }
             }
@@ -302,7 +336,7 @@ private fun HabitCreationForm(
 
         // Premium Bottom Action Primary Trigger
         Button(
-            onClick = { viewModel.createHabit() },
+            onClick = { onCreateHabit() },
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = AppTheme.current.violet,
@@ -347,7 +381,7 @@ private fun HabitCreationForm(
             EmojiVaultContent(
                 selectedEmoji = icon,
                 onEmojiSelected = { chosenEmoji ->
-                    viewModel.onIconSelected(chosenEmoji)
+                    onIconSelected(chosenEmoji)
                     showBottomSheet = false
                 }
             )
@@ -473,6 +507,26 @@ private fun TypeSelection(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun HabitCreationScreenPreview() {
+    HabitPetTheme {
+        HabitCreationFormContent(
+            name = "Focused reading",
+            icon = "book",
+            type = "TIMER",
+            minimumDuration = 15,
+            isLoading = false,
+            error = null,
+            onNameChanged = {},
+            onIconSelected = {},
+            onTypeSelected = {},
+            onMinimumDurationChanged = {},
+            onCreateHabit = {}
+        )
     }
 }
 

@@ -63,18 +63,23 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.mobile.data.local.entities.ChallengeEntity
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ChallengeCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.domain.ChallengeRewardDefinition
 import com.example.mobile.domain.repository.ChallengeUiState
-import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
+import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,6 +94,41 @@ fun HabitsScreen(
     val error by habitsViewModel.error.collectAsState(initial = null)
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
     val challengeUiState by homeScreenViewModel.challengeUiState.collectAsState()
+    val sortedHabits = habits.sortedWith(
+        compareBy<HabitEntity> { completedToday[it.id] == true }
+            .thenBy { it.name.lowercase() }
+    )
+
+    HabitsScreenContent(
+        navController = navController,
+        habits = sortedHabits,
+        completedToday = completedToday,
+        completingHabitIds = completingHabitIds,
+        error = error,
+        isLoading = isLoading,
+        challengeUiState = challengeUiState,
+        onRetry = habitsViewModel::clearError,
+        onComplete = { habit -> habitsViewModel.completeCheckboxHabit(habit) },
+        onDelete = { habit -> habitsViewModel.deleteHabit(habit) },
+        onClaimChallenge = homeScreenViewModel::claimChallenge
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun HabitsScreenContent(
+    navController: NavHostController,
+    habits: List<HabitEntity>,
+    completedToday: Map<Long, Boolean>,
+    completingHabitIds: Set<Long>,
+    error: String?,
+    isLoading: Boolean,
+    challengeUiState: ChallengeUiState,
+    onRetry: () -> Unit,
+    onComplete: (HabitEntity) -> Unit,
+    onDelete: (HabitEntity) -> Unit,
+    onClaimChallenge: () -> Unit
+) {
     val sortedHabits = habits.sortedWith(
         compareBy<HabitEntity> { completedToday[it.id] == true }
             .thenBy { it.name.lowercase() }
@@ -115,7 +155,7 @@ fun HabitsScreen(
                     .padding(padding)
                     .padding(20.dp),
                 message = error.orEmpty(),
-                onRetry = habitsViewModel::clearError
+                onRetry = onRetry
             )
         } else if (isLoading) {
             LoadingStateCard(
@@ -136,7 +176,7 @@ fun HabitsScreen(
             item {
                 ChallengeCard(
                     state = challengeUiState,
-                    onClaim = homeScreenViewModel::claimChallenge,
+                    onClaim = onClaimChallenge,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                 )
             }
@@ -161,9 +201,9 @@ fun HabitsScreen(
                     completed = completedToday[habit.id] == true,
                     isCompleting = habit.id in completingHabitIds,
                     navController = navController,
-                    onComplete = { habitsViewModel.completeCheckboxHabit(habit) },
+                    onComplete = { onComplete(habit) },
                     onEdit = { navController.navigate("habitEdit/${habit.id}") },
-                    onDelete = { habitsViewModel.deleteHabit(habit) }
+                    onDelete = { onDelete(habit) }
                 )
             }
 
@@ -549,4 +589,63 @@ private fun habitIcon(habit: HabitEntity) = when (habitCategory(habit)) {
     "FOCUS" -> Icons.Default.RadioButtonUnchecked
     "CARE" -> Icons.Default.Pets
     else -> Icons.Default.Pets
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun HabitsScreenPreview() {
+    HabitPetTheme {
+        HabitsScreenContent(
+            navController = rememberNavController(),
+            habits = listOf(
+                HabitEntity(
+                    id = 1,
+                    name = "Morning hydration",
+                    icon = "pet",
+                    type = "CHECKBOX",
+                    currentStreak = 4,
+                    bestStreak = 7
+                ),
+                HabitEntity(
+                    id = 2,
+                    name = "Focused reading",
+                    icon = "book",
+                    type = "TIMER",
+                    minimumDurationMinutes = 15,
+                    currentStreak = 2,
+                    bestStreak = 5
+                )
+            ),
+            completedToday = mapOf(1L to true),
+            completingHabitIds = emptySet(),
+            error = null,
+            isLoading = false,
+            challengeUiState = ChallengeUiState(
+                challenge = ChallengeEntity(
+                    challengeId = "complete_three_habits",
+                    title = "Triple Quest Spark",
+                    description = "Complete three habits today to keep your dragon's rhythm glowing.",
+                    icon = "star",
+                    type = "HABITS_COMPLETED",
+                    targetValue = 3,
+                    progressValue = 2,
+                    rewardIdsJson = "[]"
+                ),
+                progress = 2,
+                target = 3,
+                progressFraction = 0.67f,
+                progressLabel = "2/3",
+                isCompleted = false,
+                isClaimed = false,
+                rewards = listOf(
+                    ChallengeRewardDefinition.CoinReward(25),
+                    ChallengeRewardDefinition.ExpReward(25)
+                )
+            ),
+            onRetry = {},
+            onComplete = {},
+            onDelete = {},
+            onClaimChallenge = {}
+        )
+    }
 }

@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,6 +57,7 @@ import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -86,6 +88,15 @@ fun StatisticsScreen(statisticsViewModel: StatisticsViewModel = hiltViewModel())
     val stats by statisticsViewModel.statistics.collectAsState(initial = StatisticsEntity())
     val isLoading by statisticsViewModel.isLoading.collectAsState()
 
+    StatisticsScreenContent(stats = stats, isLoading = isLoading)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StatisticsScreenContent(
+    stats: StatisticsEntity,
+    isLoading: Boolean
+) {
     Scaffold(
         containerColor = AppTheme.current.background,
         topBar = {
@@ -333,6 +344,25 @@ private fun StatBentoCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun StatisticsScreenPreview() {
+    HabitPetTheme {
+        StatisticsScreenContent(
+            stats = StatisticsEntity(
+                currentStreak = 4,
+                bestStreak = 7,
+                totalCompletions = 28,
+                totalXp = 320,
+                daysActive = 6,
+                totalHabitsCompleted = 24,
+                petAgeDays = 6
+            ),
+            isLoading = false
+        )
     }
 }
 

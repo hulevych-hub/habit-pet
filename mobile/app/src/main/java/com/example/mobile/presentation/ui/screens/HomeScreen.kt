@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
@@ -54,6 +55,7 @@ import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
 fun HomeScreen(
@@ -64,6 +66,28 @@ fun HomeScreen(
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
+
+    HomeScreenContent(
+        uiState = uiState,
+        isLoading = isLoading,
+        onNavigateToHabits = onNavigateToHabits,
+        onNavigateToHabitDetail = onNavigateToHabitDetail,
+        onNavigateToRewardsLocked = onNavigateToRewardsLocked,
+        onRenamePet = homeScreenViewModel::renamePet,
+        onResetGameData = homeScreenViewModel::resetAllGameData
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    uiState: HomeScreenViewModel.UiState,
+    isLoading: Boolean,
+    onNavigateToHabits: () -> Unit,
+    onNavigateToHabitDetail: (Long) -> Unit,
+    onNavigateToRewardsLocked: () -> Unit,
+    onRenamePet: (String) -> Unit,
+    onResetGameData: () -> Unit
+) {
     val pet = uiState.pet
     val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
     var showMandatoryPetNameDialog by remember { mutableStateOf(false) }
@@ -128,7 +152,7 @@ fun HomeScreen(
                 allowDismiss = false,
                 onDismissRequest = { showMandatoryPetNameDialog = false },
                 onConfirm = { newName ->
-                    homeScreenViewModel.renamePet(newName.trim())
+                    onRenamePet(newName.trim())
                     showMandatoryPetNameDialog = false
                 }
             )
@@ -145,7 +169,7 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             showResetGameDialog = false
-                            homeScreenViewModel.resetAllGameData()
+                            onResetGameData()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AppTheme.current.danger,
@@ -415,4 +439,55 @@ private fun habitIcon(habit: HabitEntity) = when {
     habit.icon.contains("star", ignoreCase = true) -> Icons.Default.Star
     habit.icon.contains("pet", ignoreCase = true) || habit.icon.contains("dragon", ignoreCase = true) -> Icons.Default.Pets
     else -> Icons.Default.RadioButtonUnchecked
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = "spec:width=390px,height=844px,dpi=420")
+@Composable
+private fun HomeScreenPreview() {
+    HabitPetTheme {
+        HomeScreenContent(
+            uiState = HomeScreenViewModel.UiState(
+                globalStreak = 4,
+                habits = listOf(
+                    HabitEntity(
+                        id = 1,
+                        name = "Morning hydration",
+                        icon = "pet",
+                        type = "CHECKBOX",
+                        currentStreak = 4,
+                        bestStreak = 7
+                    ),
+                    HabitEntity(
+                        id = 2,
+                        name = "Focused reading",
+                        icon = "📚",
+                        type = "TIMER",
+                        minimumDurationMinutes = 15,
+                        currentStreak = 2,
+                        bestStreak = 5
+                    )
+                ),
+                pet = PetEntity(
+                    id = 1,
+                    name = "Luna",
+                    level = 3,
+                    xp = 180,
+                    evolutionStage = 1,
+                    mood = "Calm"
+                ),
+                completedTodayXp = mapOf(1L to 10L),
+                totalCoins = 128,
+                lastStreakDate = 0L,
+                currentCombo = 1,
+                lastHabitCompletionTimestamp = 0L,
+                globalStreakCompletedToday = false
+            ),
+            isLoading = false,
+            onNavigateToHabits = {},
+            onNavigateToHabitDetail = {},
+            onNavigateToRewardsLocked = {},
+            onRenamePet = {},
+            onResetGameData = {}
+        )
+    }
 }
