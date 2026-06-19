@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -27,9 +26,7 @@ import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Landscape
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.LocalFlorist
-import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -65,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.DragonMood
@@ -72,8 +70,8 @@ import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AnimatedPet
-import com.example.mobile.presentation.ui.components.CoinIcon
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -81,7 +79,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.example.mobile.R
 import javax.inject.Inject
 
 private val MedallionSize = 118.dp
@@ -213,7 +210,7 @@ private fun PetShowcase(
             pet = pet,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 8.dp, bottom = 6.dp),
+                .padding(top = 0.dp, bottom = 6.dp),
             showNameOverlay = false,
             backgroundContentScale = ContentScale.Crop
         )
@@ -678,90 +675,6 @@ private fun customizationDisplayName(value: String?, type: String): String {
     }
 }
 
-@Composable
-private fun GamifiedFixedHeader(
-    streak: Int,
-    coins: Int,
-    stageName: String,
-    streakCompletedToday: Boolean,
-    onCoinsClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = AppTheme.current.headerSurface,
-        shadowElevation = 1.dp
-    ) {
-        val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(7.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.LocalFireDepartment,
-                    contentDescription = "Streak",
-                    tint = streakTint,
-                    modifier = Modifier.size(22.dp)
-                )
-                Text(
-                    text = "$streak d",
-                    color = AppTheme.current.headerOnSurface,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(999.dp),
-                color = AppTheme.current.surfaceVariant
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(7.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Pets,
-                        contentDescription = null,
-                        tint = AppTheme.current.violet,
-                        modifier = Modifier.size(15.dp)
-                    )
-                    Text(
-                        text = stageName,
-                        color = AppTheme.current.headerOnSurface,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier.clickable(onClick = onCoinsClick),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(7.dp)
-            ) {
-                CoinIcon(
-                    modifier = Modifier.size(20.dp),
-                    tint = AppTheme.current.amber
-                )
-                Text(
-                    text = "$coins",
-                    color = AppTheme.current.headerOnSurface,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
-        }
-    }
-}
 
 private const val MAX_PET_NAME_LENGTH = 24
 

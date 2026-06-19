@@ -13,14 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Star
@@ -53,7 +51,7 @@ import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
-import com.example.mobile.presentation.ui.components.CoinIcon
+import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
 
@@ -244,87 +242,6 @@ private fun PetSummary(pet: PetEntity) {
     }
 }
 
-@Composable
-private fun GamifiedFixedHeader(
-    streak: Int,
-    coins: Int,
-    stageName: String,
-    streakCompletedToday: Boolean,
-    onCoinsClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = AppTheme.current.headerSurface,
-        shadowElevation = 1.dp
-    ) {
-        val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.LocalFireDepartment,
-                    contentDescription = "Streak",
-                    tint = streakTint,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = "$streak d",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = AppTheme.current.ink
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(999.dp),
-                color = AppTheme.current.violet.copy(alpha = 0.1f)
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Pets,
-                        contentDescription = null,
-                        tint = AppTheme.current.violet,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Text(
-                        text = stageName,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = AppTheme.current.violet
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier.clickable(onClick = onCoinsClick),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                CoinIcon(
-                    modifier = Modifier.size(22.dp),
-                    tint = AppTheme.current.amber
-                )
-                Text(
-                    text = "$coins",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = AppTheme.current.ink
-                )
-            }
-        }
-    }
-}
 
 
 @Composable

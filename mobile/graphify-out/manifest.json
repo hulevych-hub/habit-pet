@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1781817025.6436646,
-    "ast_hash": "b9c3c372446037684f69a09588ce2dec",
+    "mtime": 1781857533.4525957,
+    "ast_hash": "39eec2cb1e1feef537d0cda819da2ec3",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
@@ -300,18 +300,18 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt": {
-    "mtime": 1781817025.6451952,
-    "ast_hash": "9a0af47350ee58bc641def0e54f535bf",
+    "mtime": 1781857583.7143302,
+    "ast_hash": "7a991c09098ed8386ded9a5f3be85319",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/PetScreen.kt": {
-    "mtime": 1781855802.9517412,
-    "ast_hash": "b5fbed47be98a037a404be2c96a6d452",
+    "mtime": 1781857534.5186555,
+    "ast_hash": "f343e6ec5bb7069418b1a141a1228c4d",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/RewardsScreen.kt": {
-    "mtime": 1781817025.6461997,
-    "ast_hash": "8d9307419da52726389ad7fb0b989957",
+    "mtime": 1781857581.983622,
+    "ast_hash": "f53bed90ccb4de99077000718ddc6af2",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/StatisticsScreen.kt": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/ActivityTimelineScreen.kt": {
-    "mtime": 1781817025.6436646,
-    "ast_hash": "0c7f252b9ecb8b67066c49bbf168ca59",
+    "mtime": 1781857582.8259418,
+    "ast_hash": "9e7cd627527faa26b48e290b7d43bb92",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/viewmodel/ActivityTimelineViewModel.kt": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/ProgressHeader.kt": {
-    "mtime": 1781817025.641423,
-    "ast_hash": "fde46673c89466783dccd6ff5673ee07",
+    "mtime": 1781857101.751678,
+    "ast_hash": "06e02e8d98a22bb228778d4f1ac0d4f1",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/events/MicroFeedbackEvent.kt": {

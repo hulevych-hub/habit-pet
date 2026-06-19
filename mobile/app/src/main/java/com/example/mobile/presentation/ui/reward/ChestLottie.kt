@@ -1,11 +1,11 @@
 package com.example.mobile.presentation.ui.reward
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,7 @@ import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 
-private const val REWARD_LOTTIE_SPEED = 0.5f
+private const val REWARD_LOTTIE_SPEED = 1.5f
 
 @Composable
 fun AnimatedRewardChest(
