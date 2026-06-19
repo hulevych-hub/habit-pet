@@ -72,10 +72,12 @@ object EquipableConfig {
     const val KNIGHT_OUTFIT = "knight_outfit"
     const val NINJA_OUTFIT = "ninja_outfit"
     const val ROYAL_OUTFIT = "royal_outfit"
-
+    const val FAIRY_OUTFIT = "fairy_outfit"
     const val SAKURA_AURA = "sakura_aura"
     const val FIRE_AURA = "fire_aura"
-    const val ICY_AURA = "icy_aura"
+    const val FROST_AURA = "frost_aura"
+    const val SHADOW_AURA = "shadow_aura"
+    const val CELESTIAL_AURA = "celestial_aura"
 
     const val BACKGROUND_BEACH = "beach"
     const val BACKGROUND_MOUNTAINS = "mountains"
@@ -139,6 +141,16 @@ object EquipableConfig {
             unlockSource = UnlockSources.ACHIEVEMENT
         ),
         EquipableDefinition(
+            id = FAIRY_OUTFIT,
+            name = "Fairy Outfit",
+            type = EquipableType.OUTFIT,
+            phase = DragonPhase.YOUNG_DRAGON,
+            drawableName = FAIRY_OUTFIT,
+            rarity = Rarity.LEGENDARY,
+            price = null,
+            unlockSource = UnlockSources.CHEST
+        ),
+        EquipableDefinition(
             id = SAKURA_AURA,
             name = "Sakura Aura",
             type = EquipableType.AURA,
@@ -159,12 +171,32 @@ object EquipableConfig {
             unlockSource = UnlockSources.CHEST
         ),
         EquipableDefinition(
-            id = ICY_AURA,
-            name = "Icy Aura",
+            id = FROST_AURA,
+            name = "Frost Aura",
             type = EquipableType.AURA,
             phase = DragonPhase.YOUNG_DRAGON,
-            drawableName = ICY_AURA,
+            drawableName = FROST_AURA,
             rarity = Rarity.EPIC,
+            price = null,
+            unlockSource = UnlockSources.ACHIEVEMENT
+        ),
+        EquipableDefinition(
+            id = SHADOW_AURA,
+            name = "Shadow Aura",
+            type = EquipableType.AURA,
+            phase = DragonPhase.YOUNG_DRAGON,
+            drawableName = SHADOW_AURA,
+            rarity = Rarity.LEGENDARY,
+            price = null,
+            unlockSource = UnlockSources.CHEST
+        ),
+        EquipableDefinition(
+            id = CELESTIAL_AURA,
+            name = "Celestial Aura",
+            type = EquipableType.AURA,
+            phase = DragonPhase.YOUNG_DRAGON,
+            drawableName = CELESTIAL_AURA,
+            rarity = Rarity.LEGENDARY,
             price = null,
             unlockSource = UnlockSources.ACHIEVEMENT
         ),

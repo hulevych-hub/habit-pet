@@ -384,7 +384,7 @@ object AchievementsConfig {
             progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
             targetValue = 100,
             rewards = listOf(
-                AchievementReward.CustomizationReward(EquipableConfig.ICY_AURA, CustomizationTypes.AURA)
+                AchievementReward.CustomizationReward(EquipableConfig.FROST_AURA, CustomizationTypes.AURA)
             )
         ),
         AchievementDefinition(

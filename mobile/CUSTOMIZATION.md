@@ -100,15 +100,15 @@ Chest rewards use `ChestRewardConfig.customizationRarity` and `customizationDrop
 
 The database initializer synchronizes `EquipableConfig` entries into `inventory_items` on startup. Existing player-owned, purchased, and equipped states are preserved; catalog metadata such as name, type, asset path, price, rarity, unlock source, and `isUnlocked` is refreshed from config. New config entries are inserted automatically.
 
-Current equipables are defined in `EquipableConfig`. The catalog currently has 16 unique equipables:
+Current equipables are defined in `EquipableConfig`. The catalog currently has 20 unique equipables:
 
-- Outfits: `wizard_outfit`, `adventure_outfit`, `knight_outfit`, `ninja_outfit`, `royal_outfit`.
-- Auras: `sakura_aura`, `fire_aura`, `icy_aura`.
+- Outfits: `wizard_outfit`, `adventure_outfit`, `knight_outfit`, `ninja_outfit`, `royal_outfit`, `fairy_outfit`, `icy_outfit`.
+- Auras: `sakura_aura`, `fire_aura`, `frost_aura`, `shadow_aura`, `celestial_aura`.
 - Backgrounds: `background_forest`, `background_majestic`, `background_volcanic`, `background_sakura`, `background_icelandic`, `background_beach`, `background_mountains`, `background_night_sky`.
 
 Unlock source examples:
 - Shop: `wizard_outfit`, `background_majestic`, `background_volcanic`, `background_sakura`, `background_icelandic`.
-- Chest: `knight_outfit`, `ninja_outfit`, `fire_aura`, `background_mountains`, `background_night_sky`.
-- Achievement: `royal_outfit`, `sakura_aura`, `icy_aura`, `background_forest`, `background_beach`, `adventure_outfit`.
+- Chest: `knight_outfit`, `ninja_outfit`, `fairy_outfit`, `fire_aura`, `shadow_aura`, `background_mountains`, `background_night_sky`.
+- Achievement: `royal_outfit`, `icy_outfit`, `sakura_aura`, `frost_aura`, `celestial_aura`, `background_forest`, `background_beach`, `adventure_outfit`.
 
 A `phase = null` value means the item is not phase-specific and can be equipped at any dragon phase. Backgrounds currently use `phase = null`. Shop-sourced equipables are immediately purchasable only when `price` is not `null`. Chest-sourced and achievement-only equipables keep `price = null`, remain visible as locked catalog items, and are not purchasable with coins.
