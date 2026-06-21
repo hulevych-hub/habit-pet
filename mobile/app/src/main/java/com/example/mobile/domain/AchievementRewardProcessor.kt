@@ -3,15 +3,11 @@ package com.example.mobile.domain
 import android.util.Log
 import androidx.room.withTransaction
 import com.example.mobile.data.local.database.AppDatabase
-import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.UnlockSources
 import com.example.mobile.domain.repository.InventoryItemRepository
-import com.example.mobile.domain.repository.PetRepository
-import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.events.rewardPriority
-import com.example.mobile.presentation.ui.reward.RewardEventBus
 import com.example.mobile.presentation.ui.reward.RewardQueue
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -20,11 +16,8 @@ import javax.inject.Singleton
 @Singleton
 class AchievementRewardProcessor @Inject constructor(
     private val database: AppDatabase,
-    private val statisticsRepository: StatisticsRepository,
-    private val petRepository: PetRepository,
     private val inventoryItemRepository: InventoryItemRepository,
-    private val rewardQueue: RewardQueue,
-    private val rewardEventBus: RewardEventBus
+    private val rewardQueue: RewardQueue
 ) {
 
     suspend fun process(
@@ -41,14 +34,12 @@ class AchievementRewardProcessor @Inject constructor(
                     when (reward) {
                         is AchievementReward.CoinReward -> {
                             if (reward.amount > 0) {
-                                statisticsRepository.addCoins(reward.amount)
                                 rewards.add(PreparedAchievementReward(reward))
                             }
                         }
 
                         is AchievementReward.ExpReward -> {
                             if (reward.amount > 0) {
-                                addPetExp(reward.amount)
                                 rewards.add(PreparedAchievementReward(reward))
                             }
                         }
@@ -60,14 +51,15 @@ class AchievementRewardProcessor @Inject constructor(
                                     chestReward = ChestRewardFactory.buildChestReward(
                                         rewardType = "achievement_${reward.chestType.name.lowercase()}",
                                         chestType = reward.chestType,
-                                        inventoryItemRepository = inventoryItemRepository
+                                        inventoryItemRepository = inventoryItemRepository,
+                                        grantCustomization = false
                                     )
                                 )
                             )
                         }
 
                         is AchievementReward.CustomizationReward -> {
-                            grantCustomization(reward)
+                            validateCustomizationReward(reward)
                             rewards.add(PreparedAchievementReward(reward))
                         }
                     }
@@ -83,7 +75,6 @@ class AchievementRewardProcessor @Inject constructor(
                 .sortedBy { it.rewardPriority() }
                 .forEach { reward ->
                     rewardQueue.addReward(reward)
-                    rewardEventBus.emit(reward)
                 }
             return true
         } catch (e: Exception) {
@@ -92,12 +83,7 @@ class AchievementRewardProcessor @Inject constructor(
         }
     }
 
-    private suspend fun addPetExp(expAmount: Int) {
-        val currentPet = petRepository.getPet().firstOrNull() ?: PetEntity(id = 1)
-        petRepository.updatePet(currentPet.copy(xp = currentPet.xp + expAmount))
-    }
-
-    private suspend fun grantCustomization(reward: AchievementReward.CustomizationReward) {
+    private suspend fun validateCustomizationReward(reward: AchievementReward.CustomizationReward) {
         val equipable = EquipableConfig.definition(reward.equipableId)
             ?: throw IllegalStateException("Missing customization reward: ${reward.equipableId}")
 
@@ -105,17 +91,8 @@ class AchievementRewardProcessor @Inject constructor(
             throw IllegalStateException("Achievement customization reward must use ACHIEVEMENT source: ${equipable.id}")
         }
 
-        val item = inventoryItemRepository.getItemByItemId(equipable.id).firstOrNull()
+        inventoryItemRepository.getItemByItemId(equipable.id).firstOrNull()
             ?: throw IllegalStateException("Missing customization reward: ${equipable.id}")
-
-        if (item.isPurchased) {
-            return
-        }
-
-        val result = inventoryItemRepository.grantItem(item.id)
-        if (result < 0) {
-            throw IllegalStateException("Failed to grant customization reward: ${equipable.id}")
-        }
     }
 
     private fun AchievementReward.toRewardUiEvent(): RewardUiEvent = when (this) {

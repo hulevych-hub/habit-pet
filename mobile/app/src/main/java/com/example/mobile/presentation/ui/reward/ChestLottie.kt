@@ -35,9 +35,11 @@ fun AnimatedRewardChest(
     onOpened: () -> Unit = {},
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    stateKey: String = "reward-chest"
+    stateKey: String = "reward-chest",
+    isOpenOverride: Boolean? = null
 ) {
-    var isOpen by rememberSaveable(stateKey) { mutableStateOf(false) }
+    var chestIsOpen by rememberSaveable(stateKey) { mutableStateOf(false) }
+    val isOpen = isOpenOverride ?: chestIsOpen
 
     val chestRadiusPx = with(LocalDensity.current) { size.toPx() * 0.62f }
 
@@ -96,13 +98,14 @@ fun AnimatedRewardChest(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable(
-                    enabled = enabled && !isOpen,
-                    onClick = {
-                        if (!isOpen) {
-                            isOpen = true
+                .then(
+                    if (enabled && !isOpen) {
+                        Modifier.clickable {
+                            chestIsOpen = true
                             onOpened()
                         }
+                    } else {
+                        Modifier
                     }
                 )
         )

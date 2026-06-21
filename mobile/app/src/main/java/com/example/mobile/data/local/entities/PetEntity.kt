@@ -10,6 +10,7 @@ data class PetEntity(
     @ColumnInfo(name = "name") var name: String = "Luna",
     @ColumnInfo(name = "level") var level: Int = 0,
     @ColumnInfo(name = "xp") var xp: Long = 0,
+    @Deprecated("Coins now live in StatisticsEntity.totalCoins.")
     @ColumnInfo(name = "coins") var coins: Int = 0,
     @ColumnInfo(name = "evolution_stage") var evolutionStage: Int = 0, // 0: Egg, 1: Hatchling, 2: Young Dragon, 3: Adult Dragon, 4: Ancient Dragon
     @ColumnInfo(name = "equipped_outfit") var equippedOutfit: String? = null,

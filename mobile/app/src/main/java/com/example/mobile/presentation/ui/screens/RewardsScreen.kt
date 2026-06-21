@@ -54,90 +54,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.InventoryItemEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.Rarity
 import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.UnlockSources
-import com.example.mobile.domain.repository.InventoryItemRepository
-import com.example.mobile.domain.repository.PetRepository
-import com.example.mobile.ui.theme.AppTheme
-import com.example.mobile.ui.theme.HabitPetTheme
 import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.CoinPill
-import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
+import com.example.mobile.presentation.viewmodel.RewardsViewModel
+import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.HabitPetTheme
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import androidx.compose.foundation.lazy.grid.items as gridItems
-
-@HiltViewModel
-class RewardsViewModel @Inject constructor(
-    private val inventoryItemRepository: InventoryItemRepository,
-    private val petRepository: PetRepository
-) : ViewModel() {
-
-    private val _isLoading = MutableStateFlow(true)
-    private val _error = MutableStateFlow<String?>(null)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-    val error: StateFlow<String?> = _error.asStateFlow()
-
-    fun clearError() {
-        _error.value = null
-    }
-
-    val outfits = inventoryItemRepository.getItemsByType(CustomizationTypes.OUTFIT)
-    val backgrounds = inventoryItemRepository.getItemsByType(CustomizationTypes.BACKGROUND)
-    val auras = inventoryItemRepository.getItemsByType(CustomizationTypes.AURA)
-
-    init {
-        viewModelScope.launch {
-            combine(outfits, backgrounds, auras) { _, _, _ -> }
-                .collectLatest { _isLoading.value = false }
-        }
-    }
-
-    suspend fun purchaseItem(itemId: Long): Int = try {
-        _error.value = null
-        inventoryItemRepository.purchaseItem(itemId)
-    } catch (e: Exception) {
-        _error.value = e.message ?: "Reward could not be claimed"
-        -1
-    }
-
-    suspend fun equipItem(itemType: String, itemId: String): Int = try {
-        _error.value = null
-        petRepository.equipItem(itemType, itemId)
-    } catch (e: Exception) {
-        _error.value = e.message ?: "Reward could not be equipped"
-        -1
-    }
-
-    suspend fun unequipItem(itemType: String): Int = try {
-        _error.value = null
-        petRepository.unequipItem(itemType)
-    } catch (e: Exception) {
-        _error.value = e.message ?: "Reward could not be unequipped"
-        -1
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RewardsScreen(
     rewardsViewModel: RewardsViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     initialCollection: String? = null,
     onNavigateToRewardsLocked: () -> Unit
 ) {
@@ -151,7 +89,7 @@ fun RewardsScreen(
     val items by selectedTypeTab.itemsFlow(rewardsViewModel).collectAsState(initial = emptyList())
     val isLoading by rewardsViewModel.isLoading.collectAsState()
     val error by rewardsViewModel.error.collectAsState(initial = null)
-    val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    val progressUiState by rewardsViewModel.uiState.collectAsState()
 
     RewardsScreenContent(
         progressUiState = progressUiState,
@@ -199,7 +137,7 @@ fun RewardsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RewardsScreenContent(
-    progressUiState: HomeScreenViewModel.UiState,
+    progressUiState: RewardsViewModel.UiState,
     items: List<InventoryItemEntity>,
     isLoading: Boolean,
     error: String?,
@@ -721,16 +659,11 @@ private fun RewardsScreenPreview() {
     )
     HabitPetTheme {
         RewardsScreenContent(
-            progressUiState = HomeScreenViewModel.UiState(
+            progressUiState = RewardsViewModel.UiState(
                 globalStreak = 4,
-                habits = emptyList(),
-                pet = pet,
-                completedTodayXp = emptyMap(),
+                globalStreakCompletedToday = false,
                 totalCoins = 240,
-                lastStreakDate = 0L,
-                currentCombo = 0,
-                lastHabitCompletionTimestamp = 0L,
-                globalStreakCompletedToday = false
+                pet = pet
             ),
             items = listOf(
                 InventoryItemEntity(

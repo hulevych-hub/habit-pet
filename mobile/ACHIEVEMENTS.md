@@ -26,8 +26,8 @@ Runtime code should not hardcode achievement conditions or rewards.
 3. When a configured threshold is reached, the matching achievement row is marked unlocked while remaining unclaimed.
 4. The player opens the Achievements screen and claims unlocked rewards.
 5. `AchievementViewModel.claimAchievement(...)` calls `AchievementEngine.claimAchievement(...)`.
-6. `AchievementRewardProcessor` processes the configured reward list for that achievement.
-7. Reward UI is queued through `RewardQueue` and emitted through `RewardEventBus`.
+6. `AchievementRewardProcessor` validates and prepares the configured reward list for that achievement, then marks the achievement claimed.
+7. Prepared rewards are queued through `RewardQueue` and applied once by `RewardManager` in the centralized reward pipeline.
 
 Achievement rewards can be:
 
@@ -63,7 +63,7 @@ Examples:
 - `AchievementReward.ChestReward(chestType)`
 - `AchievementReward.CustomizationReward(equipableId, type)`
 
-`AchievementReward.ExpReward` remains supported by the processor for backward compatibility, but the current achievement configuration does not use direct XP rewards for progression milestones.
+`AchievementReward.ExpReward` remains supported by the processor for backward compatibility, but the current achievement configuration does not use direct XP rewards for progression milestones. When present, it is applied by `RewardManager` so level and evolution rewards are recalculated.
 
 Customization rewards must reference stable `EquipableConfig` IDs and use `unlockSource = "ACHIEVEMENT"`.
 
@@ -90,7 +90,7 @@ The Achievements screen is sorted by `difficultyRank` from `AchievementsConfig.k
 | 15 | `10 Habit Builder` | `10 habits` | `Normal chest + 250 coins` |
 | 16 | `15 Habit Builder` | `15 habits` | `Normal chest + 350 coins` |
 | 17 | `100 Completions` | `100 completions` | `Normal chest + 200 coins` |
-| 18 | `Icy Aura` | `100 completions` | `Icy Aura` |
+| 18 | `Frost Aura` | `100 completions` | `Frost Aura` |
 | 19 | `250 Completions` | `250 completions` | `Normal chest + 300 coins` |
 | 20 | `Level 10` | `level 10` | `Normal chest + 300 coins` |
 | 21 | `Level 15` | `level 15` | `Normal chest + 350 coins` |
@@ -115,10 +115,10 @@ The Achievements screen is sorted by `difficultyRank` from `AchievementsConfig.k
 | 40 | `10 Customizations` | `10 owned customizations` | `Epic chest + 300 coins` |
 | 41 | `11 Customization Hoard` | `11 owned customizations` | `Legendary chest` |
 | 42 | `11 Customizations` | `11 owned customizations` | `Epic chest + 250 coins` |
-| 43 | `16 Customization Milestone` | `16 owned customizations` | `Epic chest` |
-| 44 | `16 Customizations` | `16 owned customizations` | `Legendary chest + 200 coins` |
-| 45 | `Celestial Realm` | `16 owned customizations` | `Legendary chest` |
-| 46 | `Celestial Finale` | `16 owned customizations` | `Legendary chest + 200 coins` |
+| 43 | `19 Customization Milestone` | `19 owned customizations` | `Epic chest` |
+| 44 | `19 Customizations` | `19 owned customizations` | `Legendary chest + 200 coins` |
+| 45 | `Celestial Realm` | `19 owned customizations` | `Legendary chest` |
+| 46 | `Celestial Finale` | `19 owned customizations` | `Legendary chest + 200 coins` |
 | 47 | `1000 Completions` | `1000 completions` | `Epic chest + 800 coins` |
 | 48 | `25000 XP` | `25000 XP` | `Legendary chest + 700 coins` |
 | 49 | `100 Day Streak` | `100-day streak` | `Legendary chest + 800 coins` |
@@ -129,7 +129,7 @@ The Achievements screen is sorted by `difficultyRank` from `AchievementsConfig.k
 - Early achievements still give small coin payouts, and many now add a Normal chest for a small non-progression reward.
 - Mid-tier milestones use Rare chests, which can add EXP through the existing chest reward pipeline without directly paying back XP milestones.
 - XP milestone achievements continue to reward coins/chests, not direct XP, so they do not bypass progression.
-- High-rarity chests are reserved for rare milestones like `25000 XP`, `100 Day Streak`, `16 Customizations`, `Celestial Realm`, `Celestial Finale`, and `Level 60`.
+- High-rarity chests are reserved for rare milestones like `25000 XP`, `100 Day Streak`, `19 Customizations`, `Celestial Realm`, `Celestial Finale`, and `Level 60`.
 - Customization rewards are tied to stable `EquipableConfig` IDs, not display names.
 - If the equipable catalog changes, update collection achievement targets and docs so "all customizations" matches the actual unique count.
 
@@ -140,7 +140,7 @@ These rewards grant specific locked equipables that are not purchasable with coi
 - `FIRST_AURA_GLOW` → Sakura Aura (`10 completions`)
 - `COZY_OUTFIT` → Royal Outfit (`25 completions`)
 - `FOREST_BACKGROUND` → Forest Background (`2500 XP`) plus a Normal chest
-- `CRYSTAL_AURA` → Icy Aura (`100 completions`)
+- `CRYSTAL_AURA` → Frost Aura (`100 completions`)
 - `CRYSTAL_CAVE` → Beach Background (`level 25`) plus a Normal chest
 - `STARLIGHT_ARMOR` → Adventure Outfit (`level 40`) plus a Rare chest
 

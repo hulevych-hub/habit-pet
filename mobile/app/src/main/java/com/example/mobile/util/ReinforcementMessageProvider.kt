@@ -51,7 +51,6 @@ object ReinforcementMessageProvider {
             is RewardUiEvent.StreakReward,
             is RewardUiEvent.LevelUpReward,
             is RewardUiEvent.DragonEvolutionReward,
-            is RewardUiEvent.AchievementReward,
             is RewardUiEvent.ExpReward,
             is RewardUiEvent.CustomizationReward -> UserBehavior.STREAK
             is RewardUiEvent.ChestReward -> if (isStreakUser(context)) UserBehavior.STREAK else UserBehavior.CONSISTENT

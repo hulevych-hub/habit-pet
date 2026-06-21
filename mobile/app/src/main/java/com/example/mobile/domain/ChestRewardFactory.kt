@@ -9,19 +9,26 @@ object ChestRewardFactory {
     suspend fun buildChestReward(
         rewardType: String,
         chestType: ChestType,
-        inventoryItemRepository: InventoryItemRepository
+        inventoryItemRepository: InventoryItemRepository,
+        grantCustomization: Boolean = false,
+        tracksChallengeProgress: Boolean = true
     ): RewardUiEvent.ChestReward {
         val config = ChestRewardConfigProvider.getConfig(chestType)
         val coinAmount = config.getRandomCoins()
         val expAmount = config.getRandomExp()
-        val customizationGrant = grantRandomCustomizationIfNeeded(config, inventoryItemRepository)
+        val customizationGrant = if (grantCustomization) {
+            grantRandomCustomizationIfNeeded(config, inventoryItemRepository)
+        } else {
+            previewRandomCustomizationIfNeeded(config, inventoryItemRepository)
+        }
 
         return RewardUiEvent.ChestReward(
             rewardType = rewardType,
             amount = coinAmount,
             expAmount = expAmount,
             customizationId = customizationGrant?.databaseItemId,
-            equipableId = customizationGrant?.equipableId
+            equipableId = customizationGrant?.equipableId,
+            tracksChallengeProgress = tracksChallengeProgress
         )
     }
 
@@ -40,7 +47,7 @@ object ChestRewardFactory {
         )
     }
 
-    private suspend fun grantRandomCustomizationIfNeeded(
+    private suspend fun previewRandomCustomizationIfNeeded(
         config: ChestRewardConfig,
         inventoryItemRepository: InventoryItemRepository
     ): ChestCustomizationGrant? {
@@ -48,20 +55,27 @@ object ChestRewardFactory {
             return null
         }
 
-        val unownedItems = inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
+        return inventoryItemRepository.getUnownedItemsByRarity(config.customizationRarity)
             .firstOrNull()
             ?.toList()
             ?.filter { it.unlockSource != UnlockSources.ACHIEVEMENT }
-            .orEmpty()
+            ?.randomOrNull()
+            ?.let { selectedItem ->
+                ChestCustomizationGrant(
+                    databaseItemId = selectedItem.id,
+                    equipableId = selectedItem.itemId
+                )
+            }
+    }
 
-        if (unownedItems.isEmpty()) return null
+    private suspend fun grantRandomCustomizationIfNeeded(
+        config: ChestRewardConfig,
+        inventoryItemRepository: InventoryItemRepository
+    ): ChestCustomizationGrant? {
+        val preview = previewRandomCustomizationIfNeeded(config, inventoryItemRepository) ?: return null
 
-        val selectedItem = unownedItems.random()
-        return if (inventoryItemRepository.grantItem(selectedItem.id) == 1) {
-            ChestCustomizationGrant(
-                databaseItemId = selectedItem.id,
-                equipableId = selectedItem.itemId
-            )
+        return if (inventoryItemRepository.grantItem(preview.databaseItemId) == 1) {
+            preview
         } else {
             null
         }

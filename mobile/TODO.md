@@ -48,7 +48,7 @@ Summary counts:
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 `RewardQueue` uses a mutable list without synchronization.
 
 ## Impact
@@ -60,7 +60,7 @@ Replace the mutable list with a synchronized queue, Mutex-protected operations, 
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 `RewardManager` is documented as the only place that should apply rewards, but `AchievementRewardProcessor` applies coins/XP/customization directly.
 
 ## Impact
@@ -72,7 +72,7 @@ Make `AchievementRewardProcessor` prepare only reward UI events or persist achie
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 `RewardsViewModel` is a Hilt ViewModel under `presentation.ui.screens` and depends on `HomeScreenViewModel`.
 
 ## Impact
@@ -84,7 +84,7 @@ Move reward screen state into a dedicated ViewModel in `presentation.viewmodel`,
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `PetRepositoryImpl.equipItem` mutates inventory and pet state without a Room transaction.
 
 ## Impact
@@ -96,7 +96,7 @@ Wrap the pet/inventory updates in a Room `@Transaction` or DAO transaction.
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `InventoryItemDatabaseInitializer` syncs configured catalog rows by overwriting `isUnlocked` with `configuredItem.isUnlocked`.
 
 ## Impact
@@ -112,7 +112,7 @@ MEDIUM
 
 # Gameplay
 
-## Issue
+- [x] Issue
 Timer habit coin calculation derives minutes from `completion.xpEarned - ExpConfig.TIMER_HABIT_BASE_XP`.
 
 ## Impact
@@ -124,7 +124,7 @@ Persist timer minutes separately in `HabitCompletionEntity`, or calculate timer 
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 Challenge progress is recorded twice for normal habit completions.
 
 ## Impact
@@ -136,7 +136,7 @@ Remove duplicate challenge progress calls and keep challenge advancement in the 
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 `RewardManager.queueLevelAndEvolutionRewards` logs “evolution milestone nearing” on every level-up because `nextEvolutionStage = updatedPet.evolutionStage + 1`.
 
 ## Impact
@@ -148,7 +148,7 @@ Compare XP to the next evolution threshold and only log when the pet is meaningf
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `PetEntity.coins` exists but `StatisticsEntity` is the coin source of truth.
 
 ## Impact
@@ -164,7 +164,7 @@ LOW
 
 # EXP
 
-## Issue
+- [x] Issue
 Achievement EXP is applied directly by `AchievementRewardProcessor.addPetExp` without recalculating level/evolution.
 
 ## Impact
@@ -176,7 +176,7 @@ Use the same XP update path as habit rewards, or recalculate level/evolution and
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 `EXP.md` states Level 60 total XP is 54900, but `ExpConfig.totalXpRequiredForLevel(60)` is 55800.
 
 ## Impact
@@ -188,7 +188,7 @@ Update `EXP.md` to match the code formula or intentionally change the formula an
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 Combo bonus affects timer habit minutes indirectly through `xpEarned`.
 
 ## Impact
@@ -200,7 +200,7 @@ Separate base XP, combo bonus XP, and timer minutes in completion data or coin c
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 Level-up base coins are awarded directly by habit ViewModels and also processed by `LevelUpReward`.
 
 ## Impact
@@ -216,7 +216,7 @@ HIGH
 
 # Economy
 
-## Issue
+- [x] Issue
 Timer habit coin calculation uses combo-inflated XP as a proxy for minutes.
 
 ## Impact
@@ -228,7 +228,7 @@ Calculate timer habit coins from persisted minutes, not from `xpEarned`.
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 `EconomyConfig.DAYS_FOR_RARE_CUSTOMIZATION` uses integer division and can resolve to 1 day.
 
 ## Impact
@@ -240,7 +240,7 @@ Review coin income vs customization prices and update affordability constants in
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 Level-up coin double-award risk exists.
 
 ## Impact
@@ -252,7 +252,7 @@ Centralize level-up coin application in `RewardManager` or remove one path.
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 Chest reward customization may be granted when building the chest reward and then granted again through the `CustomizationReward` sub-event.
 
 ## Impact
@@ -268,7 +268,7 @@ HIGH
 
 # Rewards
 
-## Issue
+- [x] Issue
 `AchievementRewardProcessor` applies coin, XP, and customization rewards immediately and then queues the same reward UI events.
 
 ## Impact
@@ -280,7 +280,7 @@ Do not apply rewards in `AchievementRewardProcessor`. Queue rewards for `RewardM
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 `RewardOverlayHost` makes the entire background clickable for all non-dragon rewards.
 
 ## Impact
@@ -292,7 +292,7 @@ Only allow the reward card/content area to complete the reward. Keep dim backgro
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 `PetPhaseTransition` never invokes `onTransitionCompleted`.
 
 ## Impact
@@ -304,7 +304,7 @@ Call `onTransitionCompleted` when the transition animation finishes, and call `P
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 `PetTransitionPrefs.markTransitionPlayed` is never called.
 
 ## Impact
@@ -316,7 +316,7 @@ Call `markTransitionPlayed` from `PetPhaseTransition` when the transition comple
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `RewardQueue` is not thread-safe.
 
 ## Impact
@@ -328,7 +328,7 @@ Use a Mutex/channel/actor or synchronized queue implementation.
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 `RewardOverlay.kt` is unused.
 
 ## Impact
@@ -344,7 +344,7 @@ LOW
 
 # Achievements
 
-## Issue
+- [x] Issue
 Achievement screen passes `emptyList()` to `AchievementRewardContent`.
 
 ## Impact
@@ -356,7 +356,7 @@ Pass `achievementViewModel.rewardLabels(achievement)` to `AchievementRewardConte
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `AchievementRewardProcessor` applies achievement rewards outside the centralized reward manager.
 
 ## Impact
@@ -368,7 +368,7 @@ Refactor achievement processing so reward application goes through `RewardManage
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 Several achievement constants/names imply customization rewards that are not stable `EquipableConfig` IDs.
 
 ## Impact
@@ -380,7 +380,7 @@ Use stable `EquipableConfig` constants for actual customization rewards and keep
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 Achievement metadata initializer inserts missing achievements but does not update changed definitions.
 
 ## Impact
@@ -396,7 +396,7 @@ MEDIUM
 
 # Customization
 
-## Issue
+- [x] Issue
 `BACKGROUND_VOLCANIC` is displayed as “Forest Background”.
 
 ## Impact
@@ -408,7 +408,7 @@ Rename the `BACKGROUND_VOLCANIC` catalog item to “Volcanic Background” or an
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 Documentation says “all 16 customization items,” but `EquipableConfig` currently has 19 items.
 
 ## Impact
@@ -420,7 +420,7 @@ Update docs and achievement targets to match the current catalog, or intentional
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 Some customization reward achievements use ids/names that do not match actual equipable ids.
 
 ## Impact
@@ -432,7 +432,7 @@ Make customization reward achievements reference stable `EquipableConfig` IDs on
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `InventoryItemRepositoryImpl.grantItem`/`grantItemByItemId` do not set `isUnlocked = true`.
 
 ## Impact
@@ -448,7 +448,7 @@ MEDIUM
 
 # UI
 
-## Issue
+- [x] Issue
 Dragon evolution reward is blocked because `PetPhaseTransition` never calls `onTransitionCompleted`.
 
 ## Impact
@@ -460,7 +460,7 @@ Invoke the transition completion callback when the animation ends and persist th
 ## Priority
 CRITICAL
 
-## Issue
+- [x] Issue
 Chest reward can be dismissed by tapping outside the chest.
 
 ## Impact
@@ -472,7 +472,7 @@ Restrict reward completion clicks to the reward card/content.
 ## Priority
 HIGH
 
-## Issue
+- [x] Issue
 Achievement rewards are hidden in the achievement screen.
 
 ## Impact
@@ -484,7 +484,7 @@ Use `AchievementViewModel.rewardLabels()` when rendering achievement cards.
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 Rewards screen is not mapped as a bottom route in `NavGraph`.
 
 ## Impact
@@ -500,7 +500,7 @@ MEDIUM
 
 # Documentation
 
-## Issue
+- [x] Issue
 `CUSTOMIZATION.md` says missing backgrounds/outfits/auras are skipped/fallback, but `CLAUDE.md` says missing catalog assets should be treated as configuration errors.
 
 ## Impact
@@ -512,7 +512,7 @@ Update `CUSTOMIZATION.md` to state that missing catalog assets are configuration
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `ACHIEVEMENTS.md` and achievement descriptions reference “16 customization items,” but `EquipableConfig` has 19 equipables.
 
 ## Impact
@@ -524,7 +524,7 @@ Update achievement documentation and targets to reflect the current catalog size
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `EXP.md` has an incorrect Level 60 total XP value.
 
 ## Impact
@@ -536,7 +536,7 @@ Correct Level 60 total XP to 55800 or change the formula intentionally.
 ## Priority
 MEDIUM
 
-## Issue
+- [x] Issue
 `QUESTS.md` and `ENDGAME.md` document systems not implemented in current code.
 
 ## Impact
@@ -548,7 +548,7 @@ Mark quests/endgame as future concepts, remove them, or implement the missing sy
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 `DAILY_REWARDS.md`, `NOTIFICATIONS.md`, `STATISTICS.md`, `ACTIVITY_LOG.md`, and `ACCESSORIES.md` describe systems with no clear active implementation.
 
 ## Impact
@@ -560,7 +560,7 @@ Update these docs to distinguish implemented, legacy, and future systems.
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 `ACCESSORIES.md` is legacy-only and conflicts with current customization terminology.
 
 ## Impact
@@ -576,7 +576,7 @@ LOW
 
 # Cleanup
 
-## Issue
+- [x] Issue
 `RewardOverlay.kt` is unused.
 
 ## Impact
@@ -588,7 +588,7 @@ Remove the file after confirming no references.
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 `RewardUiEvent.AchievementReward` is mostly unused.
 
 ## Impact
@@ -600,7 +600,7 @@ Remove it or document it as intentionally unused; achievements should use indivi
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 `ChallengeRewardDefinition.CustomizationReward` is defined but no challenge configs currently use it.
 
 ## Impact
@@ -612,7 +612,7 @@ Either add challenge configs that use customization rewards or remove the type a
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 `JournalEntryEntity` is legacy and not used by current DAOs/repositories.
 
 ## Impact
@@ -624,7 +624,7 @@ Remove legacy entity/table if no migration compatibility is required, or documen
 ## Priority
 LOW
 
-## Issue
+- [x] Issue
 `PetEntity.coins` appears unused and conflicts with `StatisticsEntity` as the coin source of truth.
 
 ## Impact

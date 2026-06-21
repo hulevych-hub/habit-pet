@@ -4,7 +4,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,7 +51,6 @@ import com.example.mobile.util.ReinforcementMessageProvider
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import kotlinx.coroutines.delay
-import com.example.mobile.domain.AchievementReward as ConfigAchievementReward
 
 private const val REWARD_LOTTIE_SIZE_MULTIPLIER = 3.0f
 private const val REWARD_LOTTIE_SPEED = 1.5f
@@ -89,10 +89,26 @@ fun RewardScreen(
     val emphasisTier = reward.emphasisTier()
 
     var isChestOpen by remember(reward) { mutableStateOf(false) }
+    var areChestRewardsVisible by remember(reward) { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .pointerInput(reward, isChestOpen, areChestRewardsVisible) {
+                detectTapGestures {
+                    if (reward is RewardUiEvent.ChestReward) {
+                        if (!isChestOpen) {
+                            isChestOpen = true
+                        } else if (areChestRewardsVisible) {
+                            onRewardCompleted()
+                        } else {
+                            areChestRewardsVisible = true
+                        }
+                    } else {
+                        onRewardCompleted()
+                    }
+                }
+            }
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
@@ -102,9 +118,6 @@ fun RewardScreen(
                     )
                 )
             )
-            .clickable(enabled = reward !is RewardUiEvent.ChestReward || isChestOpen) {
-                onRewardCompleted()
-            }
     ) {
         Box(
             modifier = Modifier
@@ -127,8 +140,7 @@ fun RewardScreen(
                     fromStage = reward.fromStage,
                     toStage = reward.toStage,
                     reinforcementMessage = reinforcementMessage,
-                    emphasisTier = emphasisTier,
-                    onConfirm = onRewardCompleted
+                    emphasisTier = emphasisTier
                 )
 
                 is RewardUiEvent.StreakReward -> StreakRewardContent(
@@ -136,8 +148,7 @@ fun RewardScreen(
                     coinsEarned = reward.coins,
                     rewardSummary = reward.rewardSummary,
                     reinforcementMessage = reinforcementMessage,
-                    emphasisTier = emphasisTier,
-                    onConfirm = onRewardCompleted
+                    emphasisTier = emphasisTier
                 )
 
                 is RewardUiEvent.ExpReward -> ExpRewardContent(
@@ -158,19 +169,13 @@ fun RewardScreen(
                     expAmount = reward.expAmount,
                     customizationId = reward.customizationId,
                     equipableId = reward.equipableId,
+                    isOpen = isChestOpen,
+                    areRewardsVisible = areChestRewardsVisible,
                     reinforcementMessage = reinforcementMessage,
                     emphasisTier = emphasisTier,
-                    onChestOpened = { isChestOpen = true }
-                )
-
-                is RewardUiEvent.AchievementReward -> AchievementRewardContent(
-                    achievementName = reward.achievementName,
-                    coinsEarned = reward.coins,
-                    expAmount = reward.expAmount,
-                    chestType = reward.chestType,
-                    rewards = reward.rewards,
-                    reinforcementMessage = reinforcementMessage,
-                    emphasisTier = emphasisTier
+                    onRewardsVisibleChanged = { areChestRewardsVisible = it },
+                    onChestOpened = { isChestOpen = true },
+                    onChestContinue = onRewardCompleted
                 )
 
                 is RewardUiEvent.CoinReward -> CoinRewardContent(
@@ -363,115 +368,134 @@ private fun ChestRewardContent(
     expAmount: Int = 0,
     customizationId: Long? = null,
     equipableId: String? = null,
+    isOpen: Boolean,
+    areRewardsVisible: Boolean,
     reinforcementMessage: String,
     emphasisTier: RewardEmphasisTier,
-    onChestOpened: () -> Unit
+    onRewardsVisibleChanged: (Boolean) -> Unit,
+    onChestOpened: () -> Unit,
+    onChestContinue: () -> Unit
 ) {
-    var isOpen by remember { mutableStateOf(false) }
-    var areRewardsVisible by remember { mutableStateOf(false) }
-
     LaunchedEffect(rewardType, amount, expAmount, customizationId, equipableId) {
-        isOpen = false
-        areRewardsVisible = false
+        onRewardsVisibleChanged(false)
     }
 
     LaunchedEffect(isOpen) {
         if (isOpen) {
             delay(900)
-            areRewardsVisible = true
-            onChestOpened()
+            onRewardsVisibleChanged(true)
         } else {
-            areRewardsVisible = false
+            onRewardsVisibleChanged(false)
         }
     }
 
-    RewardEmphasisFrame(tier = emphasisTier) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        RewardEmphasisFrame(tier = emphasisTier) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            val chestSize = (180 * emphasisTier.chestSizeMultiplier * REWARD_LOTTIE_SIZE_MULTIPLIER).dp
+                val chestSize = (180 * emphasisTier.chestSizeMultiplier * REWARD_LOTTIE_SIZE_MULTIPLIER).dp
 
-            Box(
-                modifier = Modifier.size(chestSize),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                AnimatedRewardChest(
-                    size = chestSize,
-                    tint = emphasisTier.chestTint,
-                    modifier = Modifier.fillMaxSize(),
-                    stateKey = chestStateKey(rewardType, amount, expAmount, customizationId, equipableId),
-                    onOpened = {
-                        isOpen = true
-                    }
-                )
+                Box(
+                    modifier = Modifier.size(chestSize),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    AnimatedRewardChest(
+                        size = chestSize,
+                        tint = emphasisTier.chestTint,
+                        modifier = Modifier.fillMaxSize(),
+                        stateKey = chestStateKey(rewardType, amount, expAmount, customizationId, equipableId),
+                        isOpenOverride = isOpen,
+                        enabled = false
+                    )
 
-                if (areRewardsVisible) {
-                    val rewardText = mutableListOf<String>()
-                    val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
+                    if (areRewardsVisible) {
+                        val rewardText = mutableListOf<String>()
+                        val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
 
-                    when (amount) {
-                        is Int -> if (amount > 0) rewardText.add("+$amount coins")
-                        is String -> if (!amount.isEmpty()) rewardText.add(amount)
-                    }
-
-                    if (expAmount > 0) {
-                        rewardText.add("+$expAmount EXP")
-                    }
-
-                    if (customizationId != null || equipableId != null) {
-                        val equipableName = equipableId
-                            ?.let { EquipableConfig.definition(it)?.name }
-                            ?: "Customization"
-                        rewardText.add("$equipableName unlocked!")
-                    }
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    ) {
-                        customizationDefinition?.let { definition ->
-                            AssetPreview(
-                                itemType = definition.type.value,
-                                itemId = definition.id,
-                                imageUrl = definition.imageUrl,
-                                tintColor = emphasisTier.rewardColor,
-                                modifier = Modifier.size(96.dp)
-                            )
+                        when (amount) {
+                            is Int -> if (amount > 0) rewardText.add("+$amount coins")
+                            is String -> if (!amount.isEmpty()) rewardText.add(amount)
                         }
 
-                        if (rewardText.isNotEmpty()) {
+                        if (expAmount > 0) {
+                            rewardText.add("+$expAmount EXP")
+                        }
+
+                        if (customizationId != null || equipableId != null) {
+                            val equipableName = equipableId
+                                ?.let { EquipableConfig.definition(it)?.name }
+                                ?: "Customization"
+                            rewardText.add("$equipableName unlocked!")
+                        }
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            customizationDefinition?.let { definition ->
+                                AssetPreview(
+                                    itemType = definition.type.value,
+                                    itemId = definition.id,
+                                    imageUrl = definition.imageUrl,
+                                    tintColor = emphasisTier.rewardColor,
+                                    modifier = Modifier.size(96.dp)
+                                )
+                            }
+
+                            if (rewardText.isNotEmpty()) {
+                                Text(
+                                    text = rewardText.joinToString("\n"),
+                                    color = AppTheme.current.primary,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
                             Text(
-                                text = rewardText.joinToString("\n"),
-                                color = AppTheme.current.primary,
-                                style = MaterialTheme.typography.headlineSmall,
-                                textAlign = TextAlign.Center,
+                                text = rewardType,
+                                color = AppTheme.current.primary.copy(alpha = 0.78f),
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                         }
-
-                        Text(
-                            text = rewardType,
-                            color = AppTheme.current.primary.copy(alpha = 0.78f),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            if (areRewardsVisible) {
-                ReinforcementMessage(reinforcementMessage)
-            } else {
-                Text(
-                    text = "Tap the chest to open",
-                    color = AppTheme.current.primary.copy(alpha = 0.72f),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                if (areRewardsVisible) {
+                    ReinforcementMessage(reinforcementMessage)
+                } else {
+                    Text(
+                        text = "Tap anywhere to open",
+                        color = AppTheme.current.primary.copy(alpha = 0.72f),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(isOpen, areRewardsVisible, onChestOpened, onRewardsVisibleChanged, onChestContinue) {
+                    detectTapGestures {
+                        if (!isOpen) {
+                            onChestOpened()
+                        } else if (areRewardsVisible) {
+                            onChestContinue()
+                        } else {
+                            onRewardsVisibleChanged(true)
+                        }
+                    }
+                }
+        )
     }
 }
 
@@ -482,8 +506,7 @@ private fun StreakRewardContent(
     coinsEarned: Int,
     rewardSummary: List<String> = emptyList(),
     reinforcementMessage: String,
-    emphasisTier: RewardEmphasisTier,
-    onConfirm: () -> Unit
+    emphasisTier: RewardEmphasisTier
 ) {
     val displayedSummary = if (rewardSummary.isNotEmpty()) {
         rewardSummary
@@ -496,8 +519,7 @@ private fun StreakRewardContent(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .clickable { onConfirm() },
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         RewardDotLottie(
@@ -541,92 +563,6 @@ private fun StreakRewardContent(
             ReinforcementMessage(reinforcementMessage)
         }
     }
-}
-
-// Achievement Reward Screen
-@Composable
-private fun AchievementRewardContent(
-    achievementName: String,
-    coinsEarned: Int,
-    expAmount: Int = 0,
-    chestType: String? = null,
-    rewards: List<ConfigAchievementReward> = emptyList(),
-    reinforcementMessage: String,
-    emphasisTier: RewardEmphasisTier
-) {
-    val rewardText = if (rewards.isNotEmpty()) {
-        rewards.map { it.rewardLabel() }
-    } else {
-        buildLegacyRewardText(coinsEarned, expAmount, chestType)
-    }.ifEmpty { listOf("Reward unlocked") }
-
-    RewardEmphasisFrame(tier = emphasisTier) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-            RewardDotLottie(
-                source = ACHIEVEMENT_LOTTIE_URL,
-                loop = true,
-                modifier = Modifier.size((116 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
-            )
-
-            Spacer(modifier = Modifier.height((-10).dp))
-
-            Text(
-                text = "ACHIEVEMENT UNLOCKED",
-                color = AppTheme.current.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = achievementName,
-                color = AppTheme.current.primary,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = rewardText.joinToString("\n"),
-                color = AppTheme.current.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-
-            ReinforcementMessage(reinforcementMessage)
-        }
-    }
-}
-
-private fun buildLegacyRewardText(
-    coinsEarned: Int,
-    expAmount: Int,
-    chestType: String?
-): List<String> {
-    val rewardText = mutableListOf("+${coinsEarned} coins")
-
-    if (expAmount > 0) {
-        rewardText.add("+$expAmount EXP")
-    }
-
-    if (!chestType.isNullOrBlank()) {
-        val label = chestType.lowercase().replaceFirstChar { it.uppercase() }
-        rewardText.add("$label chest")
-    }
-
-    return rewardText
-}
-
-private fun ConfigAchievementReward.rewardLabel(): String = when (this) {
-    is ConfigAchievementReward.CoinReward -> "+$amount coins"
-    is ConfigAchievementReward.ExpReward -> "+$amount EXP"
-    is ConfigAchievementReward.ChestReward -> {
-        val label = chestType.name.replaceFirstChar { it.uppercase() }
-        "$label chest"
-    }
-    is ConfigAchievementReward.CustomizationReward ->
-        EquipableConfig.definition(equipableId)?.name ?: "Customization"
 }
 
 private enum class RewardEmphasisTier(
@@ -677,14 +613,6 @@ private fun RewardUiEvent.emphasisTier(): RewardEmphasisTier = when (this) {
         customizationId = customizationId,
         equipableId = equipableId
     )
-    is RewardUiEvent.AchievementReward -> if (
-        chestType?.contains("legendary", ignoreCase = true) == true ||
-        rewards.any { it is ConfigAchievementReward.ChestReward && it.chestType == ChestType.LEGENDARY }
-    ) {
-        RewardEmphasisTier.EPIC
-    } else {
-        RewardEmphasisTier.RARE
-    }
 }
 
 private fun chestStateKey(
@@ -838,50 +766,32 @@ private fun DragonEvolutionRewardContent(
     fromStage: Int,
     toStage: Int,
     reinforcementMessage: String,
-    emphasisTier: RewardEmphasisTier,
-    onConfirm: () -> Unit
+    emphasisTier: RewardEmphasisTier
 ) {
-    var isTransitionComplete by remember { mutableStateOf(false) }
-
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
-                .clickable {
-                    if (isTransitionComplete) {
-                        onConfirm()
-                    }
-                },
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             PetPhaseTransition(
                 pet = pet.copy(evolutionStage = toStage),
                 fromStage = fromStage,
-                toStage = toStage,
-                onTransitionCompleted = { isTransitionComplete = true }
+                toStage = toStage
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = if (isTransitionComplete) "Evolution Complete!" else "Watch your dragon evolve",
+                text = "Evolution Complete!",
                 style = MaterialTheme.typography.headlineSmall,
                 color = AppTheme.current.primary,
                 fontWeight = FontWeight.Bold
             )
 
             ReinforcementMessage(reinforcementMessage)
-
-            if (!isTransitionComplete) {
-                Text(
-                    text = "Tap after the transformation to continue",
-                    color = AppTheme.current.primary.copy(alpha = 0.72f),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
         }
     }
 }

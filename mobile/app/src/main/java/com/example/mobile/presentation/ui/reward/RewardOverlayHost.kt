@@ -1,7 +1,6 @@
 package com.example.mobile.presentation.ui.reward
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -21,17 +20,10 @@ fun RewardOverlayHost(
     val isDisplaying by rewardManager.isDisplayingReward.collectAsState()
 
     if (isDisplaying && currentReward != null) {
-        val backgroundModifier = if (currentReward is RewardUiEvent.DragonEvolutionReward) {
-            Modifier
-        } else {
-            Modifier.clickable { onRewardCompleted() }
-        }
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(AppTheme.current.overlayBackground)
-                .then(backgroundModifier)
         ) {
             RewardScreen(
                 reward = currentReward,

@@ -91,7 +91,7 @@ class InventoryItemRepositoryImpl @Inject constructor(
         }
 
         // Mark item as granted/purchased (not equipped by default)
-        val updatedItem = item.copy(isPurchased = true, isEquipped = false)
+        val updatedItem = item.copy(isUnlocked = true, isPurchased = true, isEquipped = false)
         inventoryItemDao.updateItem(updatedItem)
         challengeRepository.recordCustomizationUnlocked(item.itemId)
 

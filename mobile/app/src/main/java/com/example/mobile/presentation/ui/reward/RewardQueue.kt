@@ -15,6 +15,8 @@ class RewardQueue @Inject constructor() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private val lock = Any()
+
     private val buffer = mutableListOf<RewardUiEvent>()
 
     private val _rewardEvents = MutableSharedFlow<RewardUiEvent>(
@@ -27,12 +29,16 @@ class RewardQueue @Inject constructor() {
     private var isEmitting = false
 
     fun addReward(event: RewardUiEvent) {
-        buffer.add(event)
+        val nextReward = synchronized(lock) {
+            buffer.add(event)
 
-        buffer.sortBy { it.rewardPriority() }
-        mergePendingRewards()
+            buffer.sortBy { it.rewardPriority() }
+            mergePendingRewards()
 
-        emitNextIfPossible()
+            takeNextRewardIfIdleLocked()
+        }
+
+        nextReward?.let { emitReward(it) }
     }
 
     private fun mergePendingRewards() {
@@ -52,28 +58,30 @@ class RewardQueue @Inject constructor() {
     }
 
     fun mergeNextRewardIfPossible(current: RewardUiEvent): RewardUiEvent {
-        var merged = current
-        var didMerge = false
-        val remainingRewards = mutableListOf<RewardUiEvent>()
+        return synchronized(lock) {
+            var merged = current
+            var didMerge = false
+            val remainingRewards = mutableListOf<RewardUiEvent>()
 
-        buffer.forEach { reward ->
-            val mergedReward = mergeRewards(merged, reward)
-            if (mergedReward != null) {
-                merged = mergedReward
-                didMerge = true
-            } else {
-                remainingRewards.add(reward)
+            buffer.forEach { reward ->
+                val mergedReward = mergeRewards(merged, reward)
+                if (mergedReward != null) {
+                    merged = mergedReward
+                    didMerge = true
+                } else {
+                    remainingRewards.add(reward)
+                }
             }
+
+            if (!didMerge) return@synchronized current
+
+            buffer.clear()
+            buffer.addAll(remainingRewards)
+            buffer.sortBy { it.rewardPriority() }
+            mergePendingRewards()
+
+            merged
         }
-
-        if (!didMerge) return current
-
-        buffer.clear()
-        buffer.addAll(remainingRewards)
-        buffer.sortBy { it.rewardPriority() }
-        mergePendingRewards()
-
-        return merged
     }
 
     private fun canMergeRewards(left: RewardUiEvent, right: RewardUiEvent): Boolean =
@@ -82,29 +90,48 @@ class RewardQueue @Inject constructor() {
 
     private fun mergeRewards(left: RewardUiEvent, right: RewardUiEvent): RewardUiEvent? = when {
         left is RewardUiEvent.CoinReward && right is RewardUiEvent.CoinReward -> {
-            left.copy(amount = left.amount + right.amount)
+            left.copy(
+                amount = left.amount + right.amount,
+                tracksChallengeProgress = left.tracksChallengeProgress && right.tracksChallengeProgress
+            )
         }
         left is RewardUiEvent.ExpReward && right is RewardUiEvent.ExpReward -> {
-            left.copy(amount = left.amount + right.amount)
+            left.copy(
+                amount = left.amount + right.amount,
+                tracksChallengeProgress = left.tracksChallengeProgress && right.tracksChallengeProgress
+            )
         }
         else -> null
     }
 
     fun emitNextIfPossible() {
-        if (isEmitting) return
-        if (buffer.isEmpty()) return
-
-        val next = buffer.removeAt(0)
-
-        isEmitting = true
-
-        scope.launch {
-            _rewardEvents.emit(next)
+        val nextReward = synchronized(lock) {
+            takeNextRewardIfIdleLocked()
         }
+
+        nextReward?.let { emitReward(it) }
     }
 
     fun rewardDismissed() {
-        isEmitting = false
-        emitNextIfPossible()
+        val nextReward = synchronized(lock) {
+            isEmitting = false
+            takeNextRewardIfIdleLocked()
+        }
+
+        nextReward?.let { emitReward(it) }
+    }
+
+    private fun takeNextRewardIfIdleLocked(): RewardUiEvent? {
+        if (isEmitting) return null
+        if (buffer.isEmpty()) return null
+
+        isEmitting = true
+        return buffer.removeAt(0)
+    }
+
+    private fun emitReward(reward: RewardUiEvent) {
+        scope.launch {
+            _rewardEvents.emit(reward)
+        }
     }
 }

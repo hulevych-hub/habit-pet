@@ -222,7 +222,7 @@ object EquipableConfig {
         ),
         EquipableDefinition(
             id = BACKGROUND_VOLCANIC,
-            name = "Forest Background",
+            name = "Volcanic Background",
             type = EquipableType.BACKGROUND,
             phase = null,
             drawableName = BACKGROUND_VOLCANIC,

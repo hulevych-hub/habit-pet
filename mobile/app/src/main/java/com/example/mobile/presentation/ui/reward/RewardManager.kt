@@ -11,6 +11,7 @@ import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.events.rewardPriority
+import com.example.mobile.presentation.ui.events.tracksChallengeProgress
 import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardEventBus
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,10 +70,9 @@ class RewardManager @Inject constructor(
 
             val coinsToAdd = when (reward) {
                 is RewardUiEvent.CoinReward -> reward.amount
-                is RewardUiEvent.LevelUpReward -> 0
+                is RewardUiEvent.LevelUpReward -> reward.coins
                 is RewardUiEvent.DragonEvolutionReward -> 0
                 is RewardUiEvent.StreakReward -> reward.coins
-                is RewardUiEvent.AchievementReward -> 0
                 is RewardUiEvent.ChestReward -> 0
                 is RewardUiEvent.ExpReward,
                 is RewardUiEvent.CustomizationReward -> 0
@@ -80,14 +80,18 @@ class RewardManager @Inject constructor(
 
             if (coinsToAdd > 0) {
                 statisticsRepository.addCoins(coinsToAdd)
-                challengeRepository.recordCoinsEarned(coinsToAdd)
+                if (reward.tracksChallengeProgress) {
+                    challengeRepository.recordCoinsEarned(coinsToAdd)
+                }
                 if (reward !is RewardUiEvent.LevelUpReward) {
                     microFeedbackManager.triggerCoinGained(coinsToAdd)
                 }
             }
 
             when (reward) {
-                is RewardUiEvent.AchievementReward -> Unit
+                is RewardUiEvent.LevelUpReward -> {
+                    activityTimelineEngine.logLevelUp(reward.level, reward.coins)
+                }
 
                 is RewardUiEvent.ExpReward -> {
                     rewardEventBus.emit(reward)
@@ -95,22 +99,26 @@ class RewardManager @Inject constructor(
                         val expAmount = reward.amount.toInt()
                         microFeedbackManager.triggerXpGained(expAmount.toLong())
                         val (previousPet, updatedPet) = addPetExp(expAmount)
-                        challengeRepository.recordXpEarned(reward.amount)
-                        queueLevelAndEvolutionRewards(previousPet, updatedPet)
+                        if (reward.tracksChallengeProgress) {
+                            challengeRepository.recordXpEarned(reward.amount)
+                        }
+                        queueLevelAndEvolutionRewards(previousPet, updatedPet, reward.tracksChallengeProgress)
                     }
                 }
 
                 is RewardUiEvent.CustomizationReward -> {
                     rewardEventBus.emit(reward)
                     val grantResult = inventoryItemRepository.grantItemByItemId(reward.equipableId)
-                    if (grantResult >= 0) {
+                    if (grantResult >= 0 && reward.tracksChallengeProgress) {
                         challengeRepository.recordCustomizationUnlocked(reward.equipableId)
                     }
                 }
 
                 is RewardUiEvent.ChestReward -> {
                     rewardEventBus.emit(reward)
-                    challengeRepository.recordChestOpened()
+                    if (reward.tracksChallengeProgress) {
+                        challengeRepository.recordChestOpened()
+                    }
 
                     chestRewardSubEvents(reward)
                         .forEach { rewardQueue.addReward(it) }
@@ -130,12 +138,14 @@ class RewardManager @Inject constructor(
         val rewards = mutableListOf<RewardUiEvent>()
 
         when (val amount = current.amount) {
-            is Int -> if (amount > 0) rewards.add(RewardUiEvent.CoinReward(amount))
-            is String -> amount.toIntOrNull()?.takeIf { it > 0 }?.let { rewards.add(RewardUiEvent.CoinReward(it)) }
+            is Int -> if (amount > 0) rewards.add(RewardUiEvent.CoinReward(amount, current.tracksChallengeProgress))
+            is String -> amount.toIntOrNull()?.takeIf { it > 0 }?.let {
+                rewards.add(RewardUiEvent.CoinReward(it, current.tracksChallengeProgress))
+            }
         }
 
         if (current.expAmount > 0) {
-            rewards.add(RewardUiEvent.ExpReward(current.expAmount.toLong()))
+            rewards.add(RewardUiEvent.ExpReward(current.expAmount.toLong(), current.tracksChallengeProgress))
         }
 
         val equipableId = current.equipableId
@@ -144,7 +154,7 @@ class RewardManager @Inject constructor(
             }
 
         if (!equipableId.isNullOrBlank()) {
-            rewards.add(RewardUiEvent.CustomizationReward(equipableId))
+            rewards.add(RewardUiEvent.CustomizationReward(equipableId, current.tracksChallengeProgress))
         }
 
         return rewards.sortedBy { it.rewardPriority() }
@@ -162,24 +172,31 @@ class RewardManager @Inject constructor(
         return currentPet to updatedPet
     }
 
-    private suspend fun queueLevelAndEvolutionRewards(previousPet: PetEntity, updatedPet: PetEntity) {
+    private suspend fun queueLevelAndEvolutionRewards(
+        previousPet: PetEntity,
+        updatedPet: PetEntity,
+        tracksChallengeProgress: Boolean
+    ) {
         if (updatedPet.level > previousPet.level) {
             val coins = ExpConfig.levelUpCoins(updatedPet.level)
-            statisticsRepository.addCoins(coins)
-            challengeRepository.recordCoinsEarned(coins)
             rewardQueue.addReward(
                 RewardUiEvent.LevelUpReward(
                     previousLevel = previousPet.level,
                     level = updatedPet.level,
-                    coins = coins
+                    coins = coins,
+                    tracksChallengeProgress = tracksChallengeProgress
                 )
             )
-            activityTimelineEngine.logLevelUp(updatedPet.level, coins)
         }
 
         val nextEvolutionStage = (updatedPet.evolutionStage + 1)
             .coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
-        if (nextEvolutionStage > updatedPet.evolutionStage) {
+        val nearingProgressThreshold = ExpConfig.xpThresholdForStage(nextEvolutionStage) * 8L / 10L
+        if (
+            updatedPet.evolutionStage == previousPet.evolutionStage &&
+            nextEvolutionStage > updatedPet.evolutionStage &&
+            updatedPet.xp >= nearingProgressThreshold
+        ) {
             activityTimelineEngine.logEvolutionMilestoneNearing(
                 toStage = nextEvolutionStage,
                 xp = updatedPet.xp
@@ -190,7 +207,8 @@ class RewardManager @Inject constructor(
             rewardQueue.addReward(
                 RewardUiEvent.DragonEvolutionReward(
                     previousPet.evolutionStage,
-                    updatedPet.evolutionStage
+                    updatedPet.evolutionStage,
+                    tracksChallengeProgress = tracksChallengeProgress
                 )
             )
             activityTimelineEngine.logDragonEvolution(

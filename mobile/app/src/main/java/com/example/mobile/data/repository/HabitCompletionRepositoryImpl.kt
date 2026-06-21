@@ -8,9 +8,9 @@ import com.example.mobile.data.local.entities.HabitCompletionEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.EconomyConfig
 import com.example.mobile.domain.ExpConfig
-import com.example.mobile.domain.repository.ChallengeRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitCompletionResult
+import com.example.mobile.domain.repository.HabitProgressRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class HabitCompletionRepositoryImpl @Inject constructor(
     private val habitCompletionDao: HabitCompletionDao,
     private val habitDao: HabitDao,
-    private val statisticsDao: StatisticsDao,
-    private val challengeRepository: ChallengeRepository
+    private val habitProgressRepository: HabitProgressRepository,
+    private val statisticsDao: StatisticsDao
 ) : HabitCompletionRepository {
 
     override fun getCompletionsForHabit(
@@ -169,10 +169,7 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         val habit = habitDao.getHabitById(completion.habitId).firstOrNull()
         val coinsEarned = when (habit?.type) {
             "CHECKBOX" -> EconomyConfig.CHECKBOX_HABIT_COINS
-            "TIMER" -> {
-                val minutes = (completion.xpEarned - ExpConfig.TIMER_HABIT_BASE_XP).coerceAtLeast(0).toInt()
-                EconomyConfig.TIMER_HABIT_BASE_COINS + (minutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE)
-            }
+            "TIMER" -> calculateTimerHabitCoins(completion)
             else -> 0
         }
         val updated = stats.copy(
@@ -188,13 +185,18 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         )
 
         upsertStatistics(updated)
-        challengeRepository.recordHabitCompleted(
-            habitId = completion.habitId,
-            xpEarned = completion.xpEarned,
-            coinsEarned = coinsEarned
-        )
     }
 
+    private suspend fun calculateTimerHabitCoins(completion: HabitCompletionEntity): Int {
+        val accumulatedMinutes = habitProgressRepository
+            .getProgress(completion.habitId, completion.date)
+            .firstOrNull()
+            ?.accumulatedMinutes
+            ?: 0
+
+        return EconomyConfig.TIMER_HABIT_BASE_COINS +
+            (accumulatedMinutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE)
+    }
 
     private suspend fun upsertStatistics(statistics: StatisticsEntity) {
         val updated = statisticsDao.updateStatistics(statistics.copy(id = 1))

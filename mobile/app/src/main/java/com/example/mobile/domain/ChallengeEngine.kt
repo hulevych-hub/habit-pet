@@ -61,10 +61,10 @@ class ChallengeEngine @Inject constructor(
         result.rewards.forEach { reward ->
             when (reward) {
                 is ChallengeRewardDefinition.CoinReward -> {
-                    rewardQueue.addReward(RewardUiEvent.CoinReward(reward.amount))
+                    rewardQueue.addReward(RewardUiEvent.CoinReward(reward.amount, tracksChallengeProgress = false))
                 }
                 is ChallengeRewardDefinition.ExpReward -> {
-                    rewardQueue.addReward(RewardUiEvent.ExpReward(reward.amount))
+                    rewardQueue.addReward(RewardUiEvent.ExpReward(reward.amount, tracksChallengeProgress = false))
                 }
                 is ChallengeRewardDefinition.ChestReward -> {
                     val chestType = ChestType.values().firstOrNull {
@@ -74,12 +74,13 @@ class ChallengeEngine @Inject constructor(
                         ChestRewardFactory.buildChestReward(
                             rewardType = "challenge_${chestType.name.lowercase()}",
                             chestType = chestType,
-                            inventoryItemRepository = inventoryItemRepository
+                            inventoryItemRepository = inventoryItemRepository,
+                            tracksChallengeProgress = false
                         )
                     )
                 }
                 is ChallengeRewardDefinition.CustomizationReward -> {
-                    rewardQueue.addReward(RewardUiEvent.CustomizationReward(reward.equipableId))
+                    rewardQueue.addReward(RewardUiEvent.CustomizationReward(reward.equipableId, tracksChallengeProgress = false))
                 }
             }
         }

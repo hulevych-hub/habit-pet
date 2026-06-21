@@ -71,6 +71,9 @@ class HabitDetailViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private val _message = MutableStateFlow<String?>(null)
+    val message: StateFlow<String?> = _message
+
     // Pet state
     private val _pet = MutableStateFlow(PetEntity(id = 1))
     val pet: StateFlow<PetEntity> = _pet
@@ -81,6 +84,12 @@ class HabitDetailViewModel @Inject constructor(
 
     private val _elapsedSeconds = MutableStateFlow(0)
     val elapsedSeconds: StateFlow<Int> = _elapsedSeconds
+
+    private val _completedToday = MutableStateFlow(false)
+    val completedToday: StateFlow<Boolean> = _completedToday
+
+    private val _isCompleting = MutableStateFlow(false)
+    val isCompleting: StateFlow<Boolean> = _isCompleting
 
     private var surpriseCompletionsSinceLastReward = 0
 
@@ -106,6 +115,7 @@ class HabitDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
+            _message.value = null
 
             try {
                 habitRepository.getHabitById(habitId).firstOrNull()
@@ -114,11 +124,13 @@ class HabitDetailViewModel @Inject constructor(
                 val thirtyDaysAgo =
                     getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
 
-                _completions.value =
+                val completionsForHabit =
                     habitCompletionRepository
                         .getCompletionsForHabit(habitId, thirtyDaysAgo, System.currentTimeMillis())
                         .firstOrNull()
                         ?: emptyList()
+                _completions.value = completionsForHabit
+                _completedToday.value = completionsForHabit.any { it.date == getDayStart(System.currentTimeMillis()) }
 
                 petRepository.getPet().firstOrNull()
                     ?.let { _pet.value = it }
@@ -168,12 +180,13 @@ class HabitDetailViewModel @Inject constructor(
 
     fun completeCheckboxHabit(habitId: Long) {
         viewModelScope.launch {
-            _isLoading.value = true
+            _isCompleting.value = true
             _error.value = null
+            _message.value = null
 
             try {
                 if (isAlreadyCompletedToday(habitId)) {
-                    _error.value = "Already completed today"
+                    _completedToday.value = true
                     return@launch
                 }
 
@@ -232,12 +245,14 @@ class HabitDetailViewModel @Inject constructor(
 
                 _habitCompleted.emit(Unit)
 
+                _completedToday.value = true
                 _navigateBack.emit(Unit)
 
             } catch (e: Exception) {
+                _message.value = null
                 _error.value = e.message
             } finally {
-                _isLoading.value = false
+                _isCompleting.value = false
             }
         }
     }
@@ -248,8 +263,7 @@ class HabitDetailViewModel @Inject constructor(
 
     fun startTimerHabit(habitId: Long) {
         viewModelScope.launch {
-            if (isAlreadyCompletedToday(habitId)) {
-                _error.value = "Already completed today"
+            if (_isTimerRunning.value || isAlreadyCompletedToday(habitId)) {
                 return@launch
             }
 
@@ -267,11 +281,17 @@ class HabitDetailViewModel @Inject constructor(
         _isTimerRunning.value = false
 
         viewModelScope.launch {
-            _isLoading.value = true
+            _isCompleting.value = true
             _error.value = null
+            _message.value = null
 
             try {
                 val habit = _habit.value ?: return@launch
+
+                if (isAlreadyCompletedToday(habitId)) {
+                    _completedToday.value = true
+                    return@launch
+                }
 
                 val today = getDayStart(System.currentTimeMillis())
 
@@ -346,6 +366,7 @@ class HabitDetailViewModel @Inject constructor(
                     )
                     dragonMoodEngine.refreshMood()
 
+                    _completedToday.value = true
                     _habitCompleted.emit(Unit)
 
                     _navigateBack.emit(Unit)
@@ -354,13 +375,14 @@ class HabitDetailViewModel @Inject constructor(
 
                 } else {
                     val remaining = habit.minimumDurationMinutes - total
-                    _error.value = "Need $remaining more minutes"
+                    _message.value = "Need $remaining more minute${if (remaining == 1) "" else "s"} to lock this run"
                 }
 
             } catch (e: Exception) {
+                _message.value = null
                 _error.value = e.message
             } finally {
-                _isLoading.value = false
+                _isCompleting.value = false
                 _isTimerRunning.value = false
                 _elapsedSeconds.value = 0
             }
@@ -419,7 +441,6 @@ class HabitDetailViewModel @Inject constructor(
 
             if (newLevel > current.level) {
                 val bonus = ExpConfig.levelUpCoins(newLevel)
-                awardCoins(bonus, trackChallenge)
 
                 rewardQueue.addReward(
                     RewardUiEvent.LevelUpReward(
@@ -428,8 +449,6 @@ class HabitDetailViewModel @Inject constructor(
                         coins = bonus
                     )
                 )
-                activityTimelineEngine.logLevelUp(newLevel, bonus)
-
                 val chestType = ChestRewardConfigProvider.getRandomChestType()
                 rewardQueue.addReward(
                     ChestRewardFactory.buildChestReward(
@@ -442,7 +461,12 @@ class HabitDetailViewModel @Inject constructor(
 
             // Tease the next evolution and emit DragonEvolutionReward when a stage changes
             val nextEvolutionStage = (newEvolutionStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
-            if (nextEvolutionStage > newEvolutionStage) {
+            val nearingProgressThreshold = ExpConfig.xpThresholdForStage(nextEvolutionStage) * 8L / 10L
+            if (
+                newEvolutionStage == current.evolutionStage &&
+                nextEvolutionStage > newEvolutionStage &&
+                updated.xp >= nearingProgressThreshold
+            ) {
                 activityTimelineEngine.logEvolutionMilestoneNearing(
                     toStage = nextEvolutionStage,
                     xp = updated.xp
@@ -516,10 +540,12 @@ class HabitDetailViewModel @Inject constructor(
         val thirtyDays =
             getDayStart(System.currentTimeMillis()) - (30L * 24 * 60 * 60 * 1000)
 
-        _completions.value =
+        val refreshedCompletions =
             habitCompletionRepository
                 .getCompletionsForHabit(habitId, thirtyDays, System.currentTimeMillis())
                 .firstOrNull()
                 ?: emptyList()
+        _completions.value = refreshedCompletions
+        _completedToday.value = refreshedCompletions.any { it.date == getDayStart(System.currentTimeMillis()) }
     }
 }

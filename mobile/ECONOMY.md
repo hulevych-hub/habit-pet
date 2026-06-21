@@ -86,7 +86,7 @@ XP achievements no longer award XP directly. They reward coins and/or chests so 
 | First Customization | `75 coins` | `60 coins` |
 | Customization Collector | `Rare chest + 50 coins` | `Rare chest + 50 coins` |
 
-Achievement coin rewards are applied by `AchievementRewardProcessor.process(...)`. `RewardManager` does not double-process `RewardUiEvent.AchievementReward` coin values.
+Achievement rewards are prepared by `AchievementRewardProcessor.process(...)` and applied once by `RewardManager` through the centralized reward pipeline.
 
 ### 5. Streak milestone chests
 
@@ -173,14 +173,13 @@ Queued rewards flow through:
 
 Achievement rewards flow through:
 
-`AchievementRewardProcessor → Room transaction → RewardQueue → RewardEventBus`
+`AchievementRewardProcessor → Room transaction → RewardQueue → RewardManager → StatisticsRepository / PetRepository / InventoryItemRepository`
 
 Processing rules:
 
-1. `RewardManager` receives non-achievement reward events.
+1. `RewardManager` receives all reward events.
 2. Coin value is extracted by type:
    - `LevelUpReward` → coins
-   - `AchievementReward` → `0`, because achievement coins are already applied by `AchievementRewardProcessor`
    - `StreakReward` → coins
    - `ChestReward` → amount
    - `CoinReward` → amount

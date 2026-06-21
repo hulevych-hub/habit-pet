@@ -112,19 +112,32 @@ fun PetPhaseTransition(
     val density = LocalDensity.current
     val transition = rememberInfiniteTransition(label = "pet idle")
 
-    val hasPlayedTransition = normalizedToStage > 0 &&
-            PetTransitionPrefs.hasPlayedTransition(context, normalizedToStage - 1, normalizedToStage)
+    var hasPlayedTransition by remember {
+        mutableStateOf(
+            normalizedToStage > 0 &&
+                PetTransitionPrefs.hasPlayedTransition(context, normalizedToStage - 1, normalizedToStage)
+        )
+    }
     val shouldTransition = normalizedToStage > 0 && !hasPlayedTransition
 
-    var transitionFinished by remember { mutableStateOf(false) }
-
-    LaunchedEffect(normalizedToStage, hasPlayedTransition) { transitionFinished = false }
+    LaunchedEffect(normalizedToStage) {
+        hasPlayedTransition = normalizedToStage > 0 &&
+            PetTransitionPrefs.hasPlayedTransition(context, normalizedToStage - 1, normalizedToStage)
+    }
 
     val transitionProgress = animateFloatAsState(
-        targetValue = if (shouldTransition || transitionFinished) 1f else 0f,
+        targetValue = if (shouldTransition) 1f else 0f,
         animationSpec = tween(900, easing = FastOutSlowInEasing),
         label = "pet phase transition progress"
     )
+
+    LaunchedEffect(transitionProgress.value, shouldTransition, hasPlayedTransition) {
+        if (shouldTransition && !hasPlayedTransition && transitionProgress.value >= 1f) {
+            hasPlayedTransition = true
+            PetTransitionPrefs.markTransitionPlayed(context, normalizedFromStage, normalizedToStage)
+            onTransitionCompleted?.invoke()
+        }
+    }
 
     val transitionScale = animateFloatAsState(
         targetValue = if (shouldTransition) 1.06f else 1f,
@@ -175,7 +188,7 @@ fun PetPhaseTransition(
         ), label = "pet soft bounce"
     )
 
-    val showTransition = shouldTransition || transitionFinished
+    val showTransition = shouldTransition || hasPlayedTransition
     val transitionScaleValue = transitionScale.value
     val transitionShiftPx = transitionShift.value * density.density
     val idleScale = breathingScale.value

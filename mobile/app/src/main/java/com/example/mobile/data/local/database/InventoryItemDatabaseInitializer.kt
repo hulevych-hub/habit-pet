@@ -30,7 +30,7 @@ class InventoryItemDatabaseInitializer @Inject constructor(
                         name = configuredItem.name,
                         type = configuredItem.type,
                         imageUrl = configuredItem.imageUrl,
-                        isUnlocked = configuredItem.isUnlocked,
+                        isUnlocked = existingItem.isUnlocked || existingItem.isPurchased || configuredItem.isUnlocked,
                         price = configuredItem.price,
                         rarity = configuredItem.rarity,
                         unlockSource = configuredItem.unlockSource

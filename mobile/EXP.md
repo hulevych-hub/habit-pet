@@ -63,7 +63,7 @@ totalXpForLevel(level) = 15 * level * (level + 1)
 | 30 | `13950` | Late-game commitment. |
 | 40 | `24600` | Very long-term play. |
 | 50 | `38250` | Veteran progression. |
-| 60 | `54900` | Endgame milestone. |
+| 60 | `55800` | Endgame milestone. |
 
 This keeps early levels fast while preventing multiple level gains from a single normal habit completion after the first day.
 
@@ -142,14 +142,14 @@ Assuming mostly checkbox habits:
 | 30 | `13950` | 1395 | 465.0 | 279.0 |
 | 40 | `24600` | 2460 | 820.0 | 492.0 |
 | 50 | `38250` | 3825 | 1275.0 | 765.0 |
-| 60 | `54900` | 5490 | 1830.0 | 1098.0 |
+| 60 | `55800` | 5490 | 1830.0 | 1098.0 |
 
 ## Balance notes
 
 - Three checkbox habits per day produce `30 XP/day` before challenge rewards, combo, and surprise rewards.
 - Short-term combo momentum adds at most `+4 XP` to a single habit.
 - Timer habits accelerate XP and coin gain when completed for their configured minimum duration.
-- Level-up base coins are awarded directly with XP progression.
+- Level-up base coins are applied by `RewardManager` when a `LevelUpReward` is processed.
 - Level-up chests add modest coins, XP, and occasional customization items.
 - Evolution remains XP-gated with no additional item or streak requirements.
 - No reward source should trivialize XP progression under normal play.

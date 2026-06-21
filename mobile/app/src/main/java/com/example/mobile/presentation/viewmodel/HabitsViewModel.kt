@@ -218,7 +218,6 @@ class HabitsViewModel @Inject constructor(
 
             if (newLevel > current.level) {
                 val bonus = ExpConfig.levelUpCoins(newLevel)
-                awardCoins(bonus, trackChallenge)
 
                 rewardQueue.addReward(
                     RewardUiEvent.LevelUpReward(
@@ -227,8 +226,6 @@ class HabitsViewModel @Inject constructor(
                         coins = bonus
                     )
                 )
-                activityTimelineEngine.logLevelUp(newLevel, bonus)
-
                 val chestType = ChestRewardConfigProvider.getRandomChestType()
                 rewardQueue.addReward(
                     ChestRewardFactory.buildChestReward(
@@ -240,7 +237,12 @@ class HabitsViewModel @Inject constructor(
             }
 
             val nextEvolutionStage = (newEvolutionStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
-            if (nextEvolutionStage > newEvolutionStage) {
+            val nearingProgressThreshold = ExpConfig.xpThresholdForStage(nextEvolutionStage) * 8L / 10L
+            if (
+                newEvolutionStage == current.evolutionStage &&
+                nextEvolutionStage > newEvolutionStage &&
+                updated.xp >= nearingProgressThreshold
+            ) {
                 activityTimelineEngine.logEvolutionMilestoneNearing(
                     toStage = nextEvolutionStage,
                     xp = updated.xp

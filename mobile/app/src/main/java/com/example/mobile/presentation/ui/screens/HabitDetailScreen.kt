@@ -114,9 +114,11 @@ private fun HabitDetailContent(
     val completions by viewModel.completions.collectAsState(initial = emptyList())
     val isLoading by viewModel.isLoading.collectAsState(initial = false)
     val error by viewModel.error.collectAsState(initial = null)
-    val isCompletedToday by viewModel.isCompletedToday(habitId).collectAsState(initial = false)
+    val message by viewModel.message.collectAsState(initial = null)
+    val isCompletedToday by viewModel.completedToday.collectAsState(initial = false)
     val isTimerRunning by viewModel.isTimerRunning.collectAsState(initial = false)
     val elapsedSeconds by viewModel.elapsedSeconds.collectAsState(initial = 0)
+    val isCompleting by viewModel.isCompleting.collectAsState(initial = false)
 
     val currentError = error
     val currentHabit = habit
@@ -126,9 +128,11 @@ private fun HabitDetailContent(
         completions = completions,
         isLoading = isLoading,
         error = currentError,
+        message = message,
         isCompletedToday = isCompletedToday,
         isTimerRunning = isTimerRunning,
         elapsedSeconds = elapsedSeconds,
+        isCompleting = isCompleting,
         onStartTimer = { viewModel.startTimerHabit(habitId) },
         onStopTimer = { viewModel.stopTimerHabit(habitId) },
         onCompleteCheckbox = { viewModel.completeCheckboxHabit(habitId) },
@@ -142,9 +146,11 @@ private fun HabitDetailContent(
     completions: List<HabitCompletionEntity>,
     isLoading: Boolean,
     error: String?,
+    message: String?,
     isCompletedToday: Boolean,
     isTimerRunning: Boolean,
     elapsedSeconds: Int,
+    isCompleting: Boolean,
     onStartTimer: () -> Unit,
     onStopTimer: () -> Unit,
     onCompleteCheckbox: () -> Unit,
@@ -181,11 +187,18 @@ private fun HabitDetailContent(
                     isCompletedToday = isCompletedToday,
                     isTimerRunning = isTimerRunning,
                     elapsedSeconds = elapsedSeconds,
+                    isCompleting = isCompleting,
                     onStartTimer = onStartTimer,
                     onStopTimer = onStopTimer,
                     onCompleteCheckbox = onCompleteCheckbox,
                     onResetTimer = onResetTimer
                 )
+            }
+
+            if (message != null) {
+                item {
+                    StatusMessage(message)
+                }
             }
 
             item {
@@ -304,6 +317,7 @@ private fun CompletionStatus(
     isCompletedToday: Boolean,
     isTimerRunning: Boolean,
     elapsedSeconds: Int,
+    isCompleting: Boolean,
     onStartTimer: () -> Unit,
     onStopTimer: () -> Unit,
     onCompleteCheckbox: () -> Unit,
@@ -363,11 +377,15 @@ private fun CompletionStatus(
                 }
             } else {
                 when (habit.type) {
-                    "CHECKBOX" -> CheckboxCompletion(onComplete = onCompleteCheckbox)
+                    "CHECKBOX" -> CheckboxCompletion(
+                        onComplete = onCompleteCheckbox,
+                        isCompleting = isCompleting
+                    )
                     "TIMER" -> TimerCompletion(
                         habit = habit,
                         isTimerRunning = isTimerRunning,
                         elapsedSeconds = elapsedSeconds,
+                        isCompleting = isCompleting,
                         onStartTimer = onStartTimer,
                         onStopTimer = onStopTimer,
                         onResetTimer = onResetTimer
@@ -379,16 +397,30 @@ private fun CompletionStatus(
 }
 
 @Composable
-private fun CheckboxCompletion(onComplete: () -> Unit) {
+private fun CheckboxCompletion(
+    onComplete: () -> Unit,
+    isCompleting: Boolean
+) {
     Button(
         onClick = onComplete,
+        enabled = !isCompleting,
         colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.primary),
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp)
     ) {
-        Text("Complete Quest", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+        if (isCompleting) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 2.5.dp,
+                color = AppTheme.current.onPrimary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Securing...", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+        } else {
+            Text("Complete Quest", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+        }
     }
 }
 
@@ -397,6 +429,7 @@ private fun TimerCompletion(
     habit: HabitEntity,
     isTimerRunning: Boolean,
     elapsedSeconds: Int,
+    isCompleting: Boolean,
     onStartTimer: () -> Unit,
     onStopTimer: () -> Unit,
     onResetTimer: () -> Unit
@@ -451,6 +484,7 @@ private fun TimerCompletion(
             if (!isTimerRunning) {
                 Button(
                     onClick = onStartTimer,
+                    enabled = !isCompleting,
                     colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.primary),
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.weight(1f).height(46.dp)
@@ -462,6 +496,7 @@ private fun TimerCompletion(
             } else {
                 Button(
                     onClick = onStopTimer,
+                    enabled = !isCompleting,
                     colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.ink),
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.weight(1f).height(46.dp)
@@ -473,6 +508,7 @@ private fun TimerCompletion(
 
                 OutlinedButton(
                     onClick = onResetTimer,
+                    enabled = !isCompleting,
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = AppTheme.current.muted),
                     border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline),
@@ -486,15 +522,42 @@ private fun TimerCompletion(
         if (isTimerRunning && hasMetMinimum) {
             Button(
                 onClick = onStopTimer,
+                enabled = !isCompleting,
                 colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.success),
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
             ) {
-                Text("Secure & Lock Rewards", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                if (isCompleting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.5.dp,
+                        color = AppTheme.current.onPrimary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Securing...", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                } else {
+                    Text("Secure & Lock Rewards", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun StatusMessage(message: String) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = AppTheme.current.danger.copy(alpha = 0.08f)
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            color = AppTheme.current.danger,
+            modifier = Modifier.padding(14.dp)
+        )
     }
 }
 
@@ -606,9 +669,11 @@ private fun HabitDetailScreenPreview() {
             ),
             isLoading = false,
             error = null,
+            message = null,
             isCompletedToday = false,
             isTimerRunning = false,
             elapsedSeconds = 300,
+            isCompleting = false,
             onStartTimer = {},
             onStopTimer = {},
             onCompleteCheckbox = {},

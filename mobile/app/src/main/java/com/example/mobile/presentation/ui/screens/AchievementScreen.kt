@@ -51,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.AchievementEntity
+import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.AchievementsConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
@@ -73,6 +75,10 @@ fun AchievementScreen(
     val error by achievementViewModel.error.collectAsState()
     val claimableCount by achievementViewModel.claimableAchievementCount.collectAsState()
     val isClaiming by achievementViewModel.isClaiming.collectAsState()
+    val stats by achievementViewModel.statistics.collectAsState()
+    val petState by achievementViewModel.pet.collectAsState()
+    val ownedCustomizations by achievementViewModel.ownedCustomizations.collectAsState()
+    val currentHabitCount by achievementViewModel.habitCount.collectAsState()
     val palette = AchievementHallPalette.current()
 
     AchievementScreenContent(
@@ -81,6 +87,13 @@ fun AchievementScreen(
         error = error,
         claimableCount = claimableCount,
         isClaiming = isClaiming,
+        rewardLabels = achievementViewModel::rewardLabels,
+        progressFor = achievementViewModel::progressFor,
+        progressLabel = achievementViewModel::progressLabel,
+        stats = stats,
+        petState = petState,
+        ownedCustomizations = ownedCustomizations,
+        currentHabitCount = currentHabitCount,
         palette = palette,
         onRetry = achievementViewModel::retryLoadAchievements,
         onClaim = { achievementId -> achievementViewModel.claimAchievement(achievementId) },
@@ -96,6 +109,13 @@ private fun AchievementScreenContent(
     error: String?,
     claimableCount: Int,
     isClaiming: Boolean,
+    rewardLabels: (AchievementEntity) -> List<String>,
+    progressFor: (AchievementEntity, StatisticsEntity, PetEntity, Int, Int) -> Int,
+    progressLabel: (Int, AchievementEntity) -> String,
+    stats: StatisticsEntity,
+    petState: PetEntity,
+    ownedCustomizations: Int,
+    currentHabitCount: Int,
     palette: AchievementHallPalette,
     onRetry: () -> Unit,
     onClaim: (String) -> Unit,
@@ -174,14 +194,20 @@ private fun AchievementScreenContent(
                 ) { achievement ->
                     val definition = AchievementsConfig.achievementById(achievement.id)
                     val target = definition?.targetValue?.coerceAtLeast(1) ?: 1
-                    val progress = achievement.progress.coerceAtLeast(0)
+                    val progress = progressFor(
+                        achievement,
+                        stats,
+                        petState,
+                        ownedCustomizations,
+                        currentHabitCount
+                    )
                     AchievementHallCard(
                         achievement = achievement,
                         title = definition?.name ?: achievement.id,
                         description = definition?.description ?: "Keep growing.",
                         progressFraction = (progress.toFloat() / target.toFloat()).coerceIn(0f, 1f),
-                        progressLabel = "$progress/$target",
-                        rewards = emptyList(),
+                        progressLabel = progressLabel(progress, achievement),
+                        rewards = rewardLabels(achievement),
                         onClaim = { onClaim(achievement.id) },
                         palette = palette
                     )
@@ -790,6 +816,13 @@ private fun AchievementScreenPreview() {
             error = null,
             claimableCount = 1,
             isClaiming = false,
+            rewardLabels = { listOf("+50 coins") },
+            progressFor = { achievement, _, _, _, _ -> achievement.progress },
+            progressLabel = { progress, achievement -> "$progress/${AchievementsConfig.achievementById(achievement.id)?.targetValue ?: 1}" },
+            stats = com.example.mobile.data.local.entities.StatisticsEntity(id = 1),
+            petState = PetEntity(id = 1),
+            ownedCustomizations = 1,
+            currentHabitCount = 3,
             palette = AchievementHallPalette.current(),
             onRetry = {},
             onClaim = {},

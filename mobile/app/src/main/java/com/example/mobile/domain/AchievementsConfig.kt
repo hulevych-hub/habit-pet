@@ -378,9 +378,9 @@ object AchievementsConfig {
         ),
         AchievementDefinition(
             id = CRYSTAL_AURA,
-            name = "Icy Aura",
-            description = "Complete 100 habits to unlock the Icy Aura",
-            icon = "aura_icy",
+            name = "Frost Aura",
+            description = "Complete 100 habits to unlock the Frost Aura",
+            icon = "aura_frost",
             progressSource = AchievementProgressSource.TOTAL_COMPLETIONS,
             targetValue = 100,
             rewards = listOf(
@@ -602,11 +602,11 @@ object AchievementsConfig {
         ),
         AchievementDefinition(
             id = FLOATING_ISLANDS,
-            name = "16 Customization Milestone",
-            description = "Unlock all 16 customization items",
+            name = "19 Customization Milestone",
+            description = "Unlock all 19 customization items",
             icon = "background_mountains",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
-            targetValue = 16,
+            targetValue = 19,
             rewards = listOf(
                 AchievementReward.ChestReward(ChestType.EPIC)
             )
@@ -649,14 +649,14 @@ object AchievementsConfig {
         ),
         AchievementDefinition(
             id = TWELVE_CUSTOMIZATIONS,
-            name = "16 Customizations",
-            description = "Unlock all 16 customization items",
+            name = "19 Customizations",
+            description = "Unlock all 19 customization items",
             icon = "customization_12",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
-            targetValue = 16,
+            targetValue = 19,
             rewards = listOf(
                 AchievementReward.ChestReward(ChestType.LEGENDARY),
-                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_12_CUSTOMIZATIONS_COINS)
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_19_CUSTOMIZATIONS_COINS)
             )
         ),
         AchievementDefinition(
@@ -674,10 +674,10 @@ object AchievementsConfig {
         AchievementDefinition(
             id = CELESTIAL_REALM,
             name = "Celestial Realm",
-            description = "Complete the full 16-item customization collection",
+            description = "Complete the full 19-item customization collection",
             icon = "background_night_sky",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
-            targetValue = 16,
+            targetValue = 19,
             rewards = listOf(
                 AchievementReward.ChestReward(ChestType.LEGENDARY)
             )
@@ -685,13 +685,13 @@ object AchievementsConfig {
         AchievementDefinition(
             id = CELESTIAL_AURA,
             name = "Celestial Finale",
-            description = "Complete the full 16-item customization collection",
+            description = "Complete the full 19-item customization collection",
             icon = "aura_sakura",
             progressSource = AchievementProgressSource.OWNED_CUSTOMIZATIONS,
-            targetValue = 16,
+            targetValue = 19,
             rewards = listOf(
                 AchievementReward.ChestReward(ChestType.LEGENDARY),
-                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_12_CUSTOMIZATIONS_COINS)
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_19_CUSTOMIZATIONS_COINS)
             )
         ),
         AchievementDefinition(

@@ -176,7 +176,7 @@ object EconomyConfig {
     const val ACHIEVEMENT_100_DAY_STREAK_COINS: Int = 800
 
     /** Achievement: final customization collection */
-    const val ACHIEVEMENT_12_CUSTOMIZATIONS_COINS: Int = 200
+    const val ACHIEVEMENT_19_CUSTOMIZATIONS_COINS: Int = 200
 
     /** Achievement: Level 60 */
     const val ACHIEVEMENT_LEVEL_60_COINS: Int = 900
@@ -292,14 +292,19 @@ object EconomyConfig {
     const val TARGET_LEGENDARY_CUSTOMIZATION_COST: Int = 3000
 
     /** Approximate days to save for a Normal customization item (no spending) */
-    const val DAYS_FOR_NORMAL_CUSTOMIZATION: Int = TARGET_NORMAL_CUSTOMIZATION_COST / TARGET_DAILY_COINS
+    val DAYS_FOR_NORMAL_CUSTOMIZATION: Int = ceilDiv(TARGET_NORMAL_CUSTOMIZATION_COST, TARGET_DAILY_COINS)
 
     /** Approximate days to save for a Rare customization item (no spending) */
-    const val DAYS_FOR_RARE_CUSTOMIZATION: Int = TARGET_RARE_CUSTOMIZATION_COST / TARGET_DAILY_COINS
+    val DAYS_FOR_RARE_CUSTOMIZATION: Int = ceilDiv(TARGET_RARE_CUSTOMIZATION_COST, TARGET_DAILY_COINS)
 
     /** Approximate days to save for an Epic customization item (no spending) */
-    const val DAYS_FOR_EPIC_CUSTOMIZATION: Int = TARGET_EPIC_CUSTOMIZATION_COST / TARGET_DAILY_COINS
+    val DAYS_FOR_EPIC_CUSTOMIZATION: Int = ceilDiv(TARGET_EPIC_CUSTOMIZATION_COST, TARGET_DAILY_COINS)
 
     /** Approximate days to save for a Legendary customization item (no spending) */
-    const val DAYS_FOR_LEGENDARY_CUSTOMIZATION: Int = TARGET_LEGENDARY_CUSTOMIZATION_COST / TARGET_DAILY_COINS
+    val DAYS_FOR_LEGENDARY_CUSTOMIZATION: Int = ceilDiv(TARGET_LEGENDARY_CUSTOMIZATION_COST, TARGET_DAILY_COINS)
+
+    private fun ceilDiv(value: Int, divisor: Int): Int {
+        require(divisor > 0) { "Divisor must be positive" }
+        return (value + divisor - 1) / divisor
+    }
 }
