@@ -68,6 +68,7 @@ fun HomeScreen(
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
     val streakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
+    val streakFreezePrompt by homeScreenViewModel.streakFreezePrompt.collectAsState()
 
     HomeScreenContent(
         uiState = uiState,
@@ -81,7 +82,10 @@ fun HomeScreen(
         onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
         onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
         onNextStreakMonth = homeScreenViewModel::showNextStreakMonth,
-        streakCalendarState = streakCalendarState
+        streakCalendarState = streakCalendarState,
+        streakFreezePrompt = streakFreezePrompt,
+        onUseStreakFreeze = homeScreenViewModel::usePendingStreakFreeze,
+        onDismissStreakFreeze = homeScreenViewModel::dismissStreakFreezePrompt
     )
 }
 
@@ -98,7 +102,10 @@ fun HomeScreenContent(
     onStreakCalendarDismiss: () -> Unit,
     onPreviousStreakMonth: () -> Unit,
     onNextStreakMonth: () -> Unit,
-    streakCalendarState: StreakCalendarUiState?
+    streakCalendarState: StreakCalendarUiState?,
+    streakFreezePrompt: com.example.mobile.domain.StreakEngine.StreakFreezePrompt?,
+    onUseStreakFreeze: () -> Unit,
+    onDismissStreakFreeze: () -> Unit
 ) {
     val pet = uiState.pet
     val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
@@ -195,6 +202,31 @@ fun HomeScreenContent(
                 dismissButton = {
                     TextButton(onClick = { showResetGameDialog = false }) {
                         Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        streakFreezePrompt?.let { prompt ->
+            AlertDialog(
+                onDismissRequest = onDismissStreakFreeze,
+                title = { Text("Freeze your streak?") },
+                text = {
+                    Text("Yesterday's habits were not fully completed. Use one freeze to keep your ${prompt.streak}-day global streak? You can freeze once every 7 days and never two days in a row.")
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            onUseStreakFreeze()
+                            onDismissStreakFreeze()
+                        }
+                    ) {
+                        Text("Use freeze")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismissStreakFreeze) {
+                        Text("Let streak go")
                     }
                 }
             )
@@ -512,7 +544,10 @@ private fun HomeScreenPreview() {
             onStreakCalendarDismiss = {},
             onPreviousStreakMonth = {},
             onNextStreakMonth = {},
-            streakCalendarState = null
+            streakCalendarState = null,
+            streakFreezePrompt = null,
+            onUseStreakFreeze = {},
+            onDismissStreakFreeze = {}
         )
     }
 }

@@ -4,7 +4,7 @@ import com.example.mobile.data.local.dao.StatisticsDao
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.StatisticsRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import java.util.Calendar
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addCoins(amount: Int) {
-        val current = statisticsDao.getStatistics().first() ?: return
+        val current = statisticsDao.getStatistics().firstOrNull() ?: return
 
         val updated = current.copy(
             totalCoins = current.totalCoins + amount
@@ -38,16 +38,14 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun isStreakAlreadyCountedToday(): Boolean {
-        val stats = statisticsDao.getStatistics().first() ?: return false
-
+        val stats = statisticsDao.getStatistics().firstOrNull() ?: return false
         val today = todayKey()
 
-        return stats.lastStreakDate == today
+        return stats.currentStreak > 0 && stats.lastStreakDate == today
     }
 
     override suspend fun markStreakUpdatedToday() {
-        val stats = statisticsDao.getStatistics().first() ?: return
-
+        val stats = statisticsDao.getStatistics().firstOrNull() ?: return
         val today = todayKey()
 
         val updated = stats.copy(
@@ -58,13 +56,15 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun incrementStreak() {
-        val stats = statisticsDao.getStatistics().first() ?: return
+        val stats = statisticsDao.getStatistics().firstOrNull() ?: return
+        val today = todayKey()
         val nextStreak = stats.currentStreak + 1
 
         val updated = stats.copy(
             currentStreak = nextStreak,
             globalStreak = nextStreak,
             bestStreak = maxOf(stats.bestStreak, nextStreak),
+            lastStreakDate = today,
             lastUpdated = System.currentTimeMillis()
         )
 
@@ -72,7 +72,7 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun incrementRewardChestsAvailable(amount: Int) {
-        val stats = statisticsDao.getStatistics().first() ?: return
+        val stats = statisticsDao.getStatistics().firstOrNull() ?: return
 
         val updated = stats.copy(
             rewardChestsAvailable = stats.rewardChestsAvailable + amount

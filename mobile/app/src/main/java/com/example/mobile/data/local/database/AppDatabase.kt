@@ -28,7 +28,7 @@ import com.example.mobile.data.local.entities.StatisticsEntity
         HabitProgressEntity::class,
         ChallengeEntity::class
     ],
-    version = 18,
+    version = 19,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

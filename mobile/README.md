@@ -8,7 +8,7 @@ Habit Pet is an Android application that helps users build and maintain healthy 
 
 ## Features
 
-- **Habit Tracking**: Create and track daily habits with streak counting
+- **Habit Tracking**: Create and track daily habits with global streak counting and optional streak freeze protection
 - **Virtual Pet**: Care for a pet that evolves based on your habit consistency
 - **Achievement System**: Unlock achievements for various milestones
 - **Activity Timeline**: Persistent gameplay moments for habit completions, rewards, streaks, and achievements

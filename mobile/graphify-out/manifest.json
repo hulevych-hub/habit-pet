@@ -60,8 +60,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/dao/StatisticsDao.kt": {
-    "mtime": 1781605738.1607199,
-    "ast_hash": "65f248c4a3635d724eb6f213734ff333",
+    "mtime": 1782060306.1496017,
+    "ast_hash": "76ce78b559180cdc833b2dd329ffd403",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/database/AchievementDatabaseInitializer.kt": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/database/AppDatabase.kt": {
-    "mtime": 1781605689.5466063,
-    "ast_hash": "592162e0f93e736a366e54d6e3af4444",
+    "mtime": 1782060341.430148,
+    "ast_hash": "f2cd7fbfe951631385e30a81beb5ee65",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/database/StatisticsDatabaseInitializer.kt": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt": {
-    "mtime": 1781605724.9832888,
-    "ast_hash": "8c126b4b301b82a6eeb549e96d38acb0",
+    "mtime": 1782060252.9180703,
+    "ast_hash": "0727878e77725c1e1df6d5bdfead8d01",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/AchievementRepositoryImpl.kt": {
@@ -150,13 +150,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt": {
-    "mtime": 1781509902.8552372,
-    "ast_hash": "ba14369601388c231da63ba5d5adcaca",
+    "mtime": 1782067298.7515385,
+    "ast_hash": "34edd2e2b57be41c8cbf4cd0df8a70b3",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/DatabaseModule.kt": {
-    "mtime": 1781611545.4376948,
-    "ast_hash": "21da43deb34c10f4d0ee25d05b90cca8",
+    "mtime": 1782060410.2139611,
+    "ast_hash": "26b788a53069a3c201eafce0e3833972",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/di/RepositoryModule.kt": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/StreakEngine.kt": {
-    "mtime": 1781607212.3189454,
-    "ast_hash": "8a0601132f90647afefbc0096c5977f5",
+    "mtime": 1782064879.7102506,
+    "ast_hash": "e64091d2cceb8dd70f5e4b8cb7783bc9",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/domain/repository/AchievementRepository.kt": {
@@ -285,13 +285,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreen.kt": {
-    "mtime": 1782055576.8729248,
-    "ast_hash": "04ae6f89500a316218c735c8dc1df9a1",
+    "mtime": 1782062406.5018709,
+    "ast_hash": "3066b51d9083107a1f60eb70a2b8a6ed",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt": {
-    "mtime": 1782055476.6720927,
-    "ast_hash": "1ee624f065d5a51b70198ee21861b746",
+    "mtime": 1782067094.256338,
+    "ast_hash": "2dc7a37204253b47427f5f00706dc850",
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/screens/NotificationSettingsScreen.kt": {
@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1781633580.2651916,
-    "ast_hash": "018ee6f90dfd89557a01e0d5919c80bd",
+    "mtime": 1782063132.5904205,
+    "ast_hash": "695dd6b1f642f8a178ffabc8df67a09c",
     "semantic_hash": ""
   },
   "Prompt_To_Use.txt": {
@@ -400,8 +400,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1781373152.6502643,
-    "ast_hash": "9a1198880429937dbc22064c18e2271a",
+    "mtime": 1782063086.9120927,
+    "ast_hash": "fbbee94b034d8bc9d6578a3f2fe9ccb2",
     "semantic_hash": ""
   },
   "app/src/main/res/drawable/chest_closed.png": {
@@ -510,8 +510,8 @@
     "semantic_hash": ""
   },
   "DATA_MODEL.md": {
-    "mtime": 1781618565.0048602,
-    "ast_hash": "1870fe2261ca84341e442ead01193632",
+    "mtime": 1782062626.4124713,
+    "ast_hash": "4bd580fa4f1a7792a1a6ca500a13ae52",
     "semantic_hash": ""
   },
   "DRAGON_PHASES.md": {
@@ -550,8 +550,8 @@
     "semantic_hash": ""
   },
   "STATISTICS.md": {
-    "mtime": 1782044663.8625658,
-    "ast_hash": "aa18d82e4cbfe2c8e82ef41a915c896c",
+    "mtime": 1782063077.9757116,
+    "ast_hash": "24db6a6c8a7d0b0ae54fa26bd3616c2f",
     "semantic_hash": ""
   },
   "SUMMARY.md": {
@@ -1155,8 +1155,13 @@
     "semantic_hash": ""
   },
   "app/src/main/java/com/example/mobile/presentation/ui/components/StreakCalendarOverlay.kt": {
-    "mtime": 1782051461.8141124,
-    "ast_hash": "13b4b89b1884fe2db890e398a762d54e",
+    "mtime": 1782061289.0361168,
+    "ast_hash": "3fa3fa5933e695e04b86e8e2b55bcf29",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/mobile/data/local/database/MIGRATION_18_19.kt": {
+    "mtime": 1782060315.3012722,
+    "ast_hash": "1ffa0fa9021b3f1a83502bccda556f3d",
     "semantic_hash": ""
   }
 }

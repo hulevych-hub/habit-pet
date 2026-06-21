@@ -29,6 +29,9 @@ The `StatisticsEntity` tracks the following metrics:
 15. **currentCombo: Int** - Current combo hit count
 16. **bestCombo: Int** - Highest combo hit count achieved
 17. **lastHabitCompletionTimestamp: Long** - Used for combo activity windows
+18. **lastStreakFreezeDate: Long** - Date key of the most recent global streak freeze use
+19. **lastFrozenStreakDate: Long** - Date key of the most recent streak day preserved by a freeze
+20. **streakFreezeDatesJson: String** - JSON list of date keys for global streak days preserved by freezes
 
 ### Statistics Updates
 
@@ -49,6 +52,9 @@ Statistics are updated through the following mechanisms:
 - `incrementStreak()`: `currentStreak += 1`, `globalStreak` mirrors the new streak, `bestStreak` is updated when needed
 - `markStreakUpdatedToday()`: `lastStreakDate = today's date key`
 - `isStreakAlreadyCountedToday()`: checks if streak already counted today
+- `checkPendingStreakFreeze()`: detects a one-day global streak break from yesterday and exposes a Home screen prompt when freezing is allowed
+- `useStreakFreeze()`: records the frozen streak date, marks the freeze cooldown, and preserves the global streak without creating habit completions
+- `resetBrokenStreak()`: clears the global streak when the user lets a break stand or the break spans more than one day
 - Milestone rewards update `lastStreakAwardedAt` only when a defined global streak milestone is awarded
 
 **From Reward System** (`StatisticsRepositoryImpl`):
@@ -72,7 +78,7 @@ Statistics are used for:
 ### Displayed Statistics
 
 The following statistics are visible in the UI:
-- **Streak**: Displayed as an emotional rhythm indicator with low / stable / strong state colors, milestone markers at 3, 7, 14, 30, 60, and 100 days, a subtle pulse on streak increases, protection messaging when the active streak has not been counted today, and a month-labeled streak calendar that can navigate to previous months even when the current month has no completed streak days
+- **Streak**: Displayed as an emotional rhythm indicator with low / stable / strong state colors, milestone markers at 3, 7, 14, 30, 60, and 100 days, a subtle pulse on streak increases, protection messaging when the active streak has not been counted today, and a month-labeled global streak calendar that shows frozen streak days as cold-blue streak icons
 - **Active Challenge**: Displayed in `ChallengeCard` with icon, title, description, progress, progress bar, reward preview, and claim button when completed
 - **Coins**: Displayed as `{totalCoins} Coins`
 - **Level & Evolution**: Derived from pet statistics, not directly from `StatisticsEntity`
@@ -84,6 +90,7 @@ All statistics tracking values are hardcoded in the implementation:
 - Streak UI milestone markers: 3, 7, 14, 30, 60, and 100 days (`ProgressHeader.kt`)
 - Global streak reward milestones: 7, 14, 30, 60, and 100 days (`StreakEngine.kt`)
 - Milestone chest mapping: 7 = Normal, 14 = Rare, 30/60 = Epic, 100 = Legendary
+- Global streak freezes: allowed only for a one-day break from yesterday, once every 7 days, and never on two consecutive streak days
 - Chest reward amounts come from `ChestRewardConfigProvider` and `EconomyConfig`
 - DaysActive calculation: handled by `habitCompletionDao.getActiveDayCount()`
 
@@ -91,7 +98,7 @@ All statistics tracking values are hardcoded in the implementation:
 
 **StatisticsEntity** (`app/src/main/java/com/example/mobile/data/local/entities/StatisticsEntity.kt`):
 - Table: `statistics`
-- Columns: `id`, `currentStreak`, `bestStreak`, `globalStreak`, `totalCompletions`, `totalXp`, `daysActive`, `totalHabitsCompleted`, `petAgeDays`, `totalCoins`, `lastStreakAwardedAt`, `lastUpdated`, `rewardChestsAvailable`, `lastStreakDate`, `currentCombo`, `bestCombo`, `lastHabitCompletionTimestamp`
+- Columns: `id`, `currentStreak`, `bestStreak`, `globalStreak`, `totalCompletions`, `totalXp`, `daysActive`, `totalHabitsCompleted`, `petAgeDays`, `totalCoins`, `lastStreakAwardedAt`, `lastUpdated`, `rewardChestsAvailable`, `lastStreakDate`, `currentCombo`, `bestCombo`, `lastHabitCompletionTimestamp`, `lastStreakFreezeDate`, `lastFrozenStreakDate`, `streakFreezeDatesJson`
 
 **ChallengeEntity** (`app/src/main/java/com/example/mobile/data/local/entities/ChallengeEntity.kt`):
 - Table: `challenges`
@@ -137,4 +144,4 @@ All statistics tracking values are hardcoded in the implementation:
 
 7. **No Statistics History**: The system only tracks current values; no historical progression or milestones are recorded beyond achievements and the activity timeline.
 
-8. **Streak Definition**: Streaks require completing all habits each day, which becomes increasingly difficult as players add more habits.
+8. **Streak Definition**: Streaks require completing all habits each day, which becomes increasingly difficult as players add more habits. A global-only freeze can preserve one missed day when the break is exactly one day and freeze rules allow it.

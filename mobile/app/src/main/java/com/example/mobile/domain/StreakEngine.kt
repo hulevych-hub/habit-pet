@@ -1,5 +1,6 @@
 package com.example.mobile.domain
 
+import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ChestRewardFactory
 import com.example.mobile.domain.repository.ChallengeRepository
@@ -23,6 +24,9 @@ class StreakEngine(
 ) {
 
     companion object {
+        private const val FREEZE_COOLDOWN_DAYS = 7L
+        private const val MILLISECONDS_PER_DAY = 86_400_000L
+
         private val STREAK_MILESTONES = listOf(7, 14, 30, 60, 100)
 
         private fun getChestTypeForMilestone(streak: Int): ChestType = when (streak) {
@@ -40,12 +44,18 @@ class StreakEngine(
         }
     }
 
+    data class StreakFreezePrompt(
+        val streak: Int,
+        val frozenDateKey: Long
+    )
+
     /**
      * Called after completing a habit
      */
     suspend fun evaluateTodayStreak(today: Long) {
 
-        val normalizedToday = normalize(today)
+        val todayKey = dayKey(today)
+        val normalizedToday = todayKey * MILLISECONDS_PER_DAY
 
         if (statisticsRepository.isStreakAlreadyCountedToday()) return
 
@@ -56,14 +66,20 @@ class StreakEngine(
         val allCompleted = habitCompletionRepository.areAllHabitsCompletedOnDate(normalizedToday)
 
         if (allCompleted) {
+            val stats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
+
+            if (stats.currentStreak > 0 && !isContinuationDay(todayKey, stats, habits)) {
+                resetBrokenStreak(stats, System.currentTimeMillis())
+            }
+
             statisticsRepository.incrementStreak()
             statisticsRepository.markStreakUpdatedToday()
             dragonMoodEngine.refreshMood()
 
-            val stats = statisticsRepository.getStatistics().firstOrNull()
-            val currentStreak = stats?.currentStreak ?: 0
+            val updatedStats = statisticsRepository.getStatistics().firstOrNull()
+            val currentStreak = updatedStats?.currentStreak ?: stats.currentStreak + 1
             challengeRepository.recordStreak(currentStreak)
-            val lastStreakAwardedAt = stats?.lastStreakAwardedAt ?: 0
+            val lastStreakAwardedAt = updatedStats?.lastStreakAwardedAt ?: 0
             val milestone = STREAK_MILESTONES
                 .filter { currentStreak >= it && it > lastStreakAwardedAt }
                 .lastOrNull()
@@ -77,7 +93,7 @@ class StreakEngine(
                 )
                 val chestConfig = ChestRewardConfigProvider.getConfig(milestoneChestType)
                 val streakChestSummary = buildRewardSummary(
-                    streak = milestone,
+                    streak = currentStreak,
                     chestType = milestoneChestType,
                     coinAmount = (streakChestReward.amount as? Int) ?: 0,
                     expAmount = streakChestReward.expAmount,
@@ -96,7 +112,7 @@ class StreakEngine(
                 activityTimelineEngine.logStreakMilestone(currentStreak, milestoneChestType)
 
                 statisticsRepository.updateStatistics(
-                    stats?.copy(lastStreakAwardedAt = milestone)
+                    updatedStats?.copy(lastStreakAwardedAt = milestone)
                         ?: StatisticsEntity().copy(lastStreakAwardedAt = milestone)
                 )
             }
@@ -109,11 +125,15 @@ class StreakEngine(
      */
     suspend fun recalculateTodayStreak(today: Long) {
 
-        val normalizedToday = normalize(today)
+        val todayKey = dayKey(today)
+        val normalizedToday = todayKey * MILLISECONDS_PER_DAY
 
+        val stats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
         val habits = habitRepository.getAllHabits().firstOrNull().orEmpty()
 
         if (habits.isEmpty()) return
+
+        maybeResetBrokenStreakIfNeeded(todayKey, stats, habits)
 
         val allCompleted = habitCompletionRepository.areAllHabitsCompletedOnDate(normalizedToday)
 
@@ -125,6 +145,142 @@ class StreakEngine(
                 // optional safety rollback if you ever support it
             }
         }
+    }
+
+    suspend fun checkPendingStreakFreeze(now: Long): StreakFreezePrompt? {
+        val stats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
+        val habits = habitRepository.getAllHabits().firstOrNull().orEmpty()
+
+        if (habits.isEmpty()) return null
+
+        val todayKey = dayKey(now)
+        val todayStart = todayKey * MILLISECONDS_PER_DAY
+        val yesterdayKey = todayKey - 1
+
+        if (habitCompletionRepository.areAllHabitsCompletedOnDate(todayStart)) {
+            evaluateTodayStreak(now)
+            return null
+        }
+
+        if (stats.currentStreak <= 0) return null
+        if (isDayCompletedOrFrozen(yesterdayKey, stats, habits)) return null
+        if (canFreezeDate(frozenDateKey = yesterdayKey, todayKey = todayKey, stats = stats, habits = habits)) {
+            return StreakFreezePrompt(
+                streak = stats.currentStreak,
+                frozenDateKey = yesterdayKey
+            )
+        }
+
+        resetBrokenStreak(stats, now)
+        return null
+    }
+
+    suspend fun useStreakFreeze(now: Long): Boolean {
+        val prompt = checkPendingStreakFreeze(now) ?: return false
+        val stats = statisticsRepository.getStatistics().firstOrNull() ?: return false
+        val freezeDateKey = dayKey(now)
+        val frozenDates = StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).toMutableSet()
+        frozenDates.add(prompt.frozenDateKey)
+
+        statisticsRepository.updateStatistics(
+            stats.copy(
+                lastStreakFreezeDate = freezeDateKey,
+                lastFrozenStreakDate = prompt.frozenDateKey,
+                streakFreezeDatesJson = StatisticsEntity.freezeDatesToJson(frozenDates),
+                lastUpdated = now
+            )
+        )
+
+        if (habitCompletionRepository.areAllHabitsCompletedOnDate(freezeDateKey * MILLISECONDS_PER_DAY)) {
+            evaluateTodayStreak(now)
+        } else {
+            dragonMoodEngine.refreshMood()
+        }
+
+        return true
+    }
+
+    suspend fun resetBrokenStreak(now: Long) {
+        val stats = statisticsRepository.getStatistics().firstOrNull() ?: return
+        if (stats.currentStreak <= 0) return
+
+        resetBrokenStreak(stats, now)
+    }
+
+    private suspend fun canFreezeDate(
+        frozenDateKey: Long,
+        todayKey: Long,
+        stats: StatisticsEntity,
+        habits: List<HabitEntity>
+    ): Boolean {
+        if (stats.currentStreak <= 0) return false
+        if (isDayCompletedOrFrozen(frozenDateKey, stats, habits)) return false
+        if (stats.lastFrozenStreakDate == frozenDateKey - 1) return false
+        if (stats.lastStreakFreezeDate > 0 && todayKey - stats.lastStreakFreezeDate < FREEZE_COOLDOWN_DAYS) {
+            return false
+        }
+
+        return isDayCompletedOrFrozen(frozenDateKey - 1, stats, habits)
+    }
+
+    private suspend fun isContinuationDay(
+        todayKey: Long,
+        stats: StatisticsEntity,
+        habits: List<HabitEntity>
+    ): Boolean {
+        if (stats.currentStreak <= 0) return true
+
+        return isDayCompletedOrFrozen(todayKey - 1, stats, habits)
+    }
+
+    private suspend fun maybeResetBrokenStreakIfNeeded(
+        todayKey: Long,
+        stats: StatisticsEntity,
+        habits: List<HabitEntity>
+    ) {
+        val yesterdayKey = todayKey - 1
+        val dayBeforeYesterdayKey = yesterdayKey - 1
+
+        if (!isDayCompletedOrFrozen(yesterdayKey, stats, habits) &&
+            !isDayCompletedOrFrozen(dayBeforeYesterdayKey, stats, habits)
+        ) {
+            resetBrokenStreak(stats, System.currentTimeMillis())
+        }
+    }
+
+    private suspend fun resetBrokenStreak(stats: StatisticsEntity, now: Long) {
+        statisticsRepository.updateStatistics(
+            stats.copy(
+                currentStreak = 0,
+                globalStreak = 0,
+                lastStreakDate = 0L,
+                lastUpdated = now
+            )
+        )
+        dragonMoodEngine.refreshMood()
+    }
+
+    private suspend fun isDayCompletedOrFrozen(
+        dateKey: Long,
+        stats: StatisticsEntity,
+        habits: List<HabitEntity>
+    ): Boolean {
+        if (habits.isEmpty()) return true
+        if (StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).contains(dateKey)) return true
+
+        return habitCompletionRepository.areAllHabitsCompletedOnDate(dateKey * MILLISECONDS_PER_DAY)
+    }
+
+    private fun dayKey(time: Long): Long = getDayStart(time) / MILLISECONDS_PER_DAY
+
+    private fun getDayStart(time: Long): Long {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.timeInMillis = time
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        calendar.set(java.util.Calendar.MINUTE, 0)
+        calendar.set(java.util.Calendar.SECOND, 0)
+        calendar.set(java.util.Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 
     private fun buildRewardSummary(
@@ -157,13 +313,4 @@ class StreakEngine(
         return summary
     }
 
-    private fun normalize(time: Long): Long {
-        val calendar = java.util.Calendar.getInstance()
-        calendar.timeInMillis = time
-        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
-        calendar.set(java.util.Calendar.MINUTE, 0)
-        calendar.set(java.util.Calendar.SECOND, 0)
-        calendar.set(java.util.Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis
-    }
 }

@@ -7,6 +7,7 @@ import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.ChallengeEngine
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
@@ -39,7 +40,8 @@ class HomeScreenViewModel @Inject constructor(
     private val petRepository: PetRepository,
     private val habitCompletionRepository: HabitCompletionRepository,
     private val achievementRepository: AchievementRepository,
-    private val challengeEngine: ChallengeEngine
+    private val challengeEngine: ChallengeEngine,
+    private val streakEngine: StreakEngine
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(true)
@@ -47,6 +49,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _streakCalendarState = MutableStateFlow<StreakCalendarUiState?>(null)
     val streakCalendarState: StateFlow<StreakCalendarUiState?> = _streakCalendarState.asStateFlow()
+
+    private val _streakFreezePrompt = MutableStateFlow<StreakEngine.StreakFreezePrompt?>(null)
+    val streakFreezePrompt: StateFlow<StreakEngine.StreakFreezePrompt?> = _streakFreezePrompt.asStateFlow()
 
     fun resetAllGameData() {
         viewModelScope.launch {
@@ -66,6 +71,28 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun usePendingStreakFreeze() {
+        viewModelScope.launch {
+            val used = streakEngine.useStreakFreeze(System.currentTimeMillis())
+            if (used) {
+                _streakFreezePrompt.value = null
+            }
+        }
+    }
+
+    fun dismissStreakFreezePrompt() {
+        viewModelScope.launch {
+            streakEngine.resetBrokenStreak(System.currentTimeMillis())
+            _streakFreezePrompt.value = null
+        }
+    }
+
+    fun checkPendingStreakFreeze() {
+        viewModelScope.launch {
+            _streakFreezePrompt.value = streakEngine.checkPendingStreakFreeze(System.currentTimeMillis())
+        }
+    }
+
     fun openGlobalStreakCalendar() {
         viewModelScope.launch {
             val monthStart = getMonthStart(System.currentTimeMillis())
@@ -77,7 +104,8 @@ class HomeScreenViewModel @Inject constructor(
             _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
                 monthStart = monthStart,
                 habits = habits.value,
-                completionRepository = habitCompletionRepository
+                completionRepository = habitCompletionRepository,
+                frozenDates = StatisticsEntity.parseFreezeDates(statistics.value.streakFreezeDatesJson)
             )
         }
     }
@@ -96,7 +124,8 @@ class HomeScreenViewModel @Inject constructor(
             _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
                 monthStart = previousMonthStart,
                 habits = habits.value,
-                completionRepository = habitCompletionRepository
+                completionRepository = habitCompletionRepository,
+                frozenDates = StatisticsEntity.parseFreezeDates(statistics.value.streakFreezeDatesJson)
             )
         }
     }
@@ -115,7 +144,8 @@ class HomeScreenViewModel @Inject constructor(
             _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
                 monthStart = nextMonthStart,
                 habits = habits.value,
-                completionRepository = habitCompletionRepository
+                completionRepository = habitCompletionRepository,
+                frozenDates = StatisticsEntity.parseFreezeDates(statistics.value.streakFreezeDatesJson)
             )
         }
     }
@@ -194,7 +224,10 @@ class HomeScreenViewModel @Inject constructor(
                 todayCompletionXp
             ) { _, _, _, _ -> }
                 .take(1)
-                .collect { _isLoading.value = false }
+                .collect {
+                    _isLoading.value = false
+                    _streakFreezePrompt.value = streakEngine.checkPendingStreakFreeze(System.currentTimeMillis())
+                }
         }
     }
 
@@ -214,7 +247,7 @@ class HomeScreenViewModel @Inject constructor(
             lastStreakDate = stats.lastStreakDate,
             currentCombo = activeCombo(stats),
             lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
-            globalStreakCompletedToday = stats.lastStreakDate == getDayStart(System.currentTimeMillis()) / 86_400_000L
+            globalStreakCompletedToday = stats.lastStreakDate == getDayKey(System.currentTimeMillis())
         )
     }
     .stateIn(
@@ -262,6 +295,8 @@ class HomeScreenViewModel @Inject constructor(
         calendar.set(Calendar.MILLISECOND, 0)
         return calendar.timeInMillis
     }
+
+    private fun getDayKey(timestamp: Long): Long = getDayStart(timestamp) / 86_400_000L
 
     private fun getMonthStart(timestamp: Long): Long {
         val calendar = Calendar.getInstance()

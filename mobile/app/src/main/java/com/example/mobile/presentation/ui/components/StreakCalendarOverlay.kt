@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -105,7 +104,8 @@ object StreakCalendarBuilder {
     suspend fun buildGlobal(
         monthStart: Long,
         habits: List<HabitEntity>,
-        completionRepository: HabitCompletionRepository
+        completionRepository: HabitCompletionRepository,
+        frozenDates: Set<Long> = emptySet()
     ): StreakCalendarUiState {
         val nextMonthStart = addMonths(monthStart, 1)
         val completionsByHabit = habits.associate { habit ->
@@ -120,10 +120,11 @@ object StreakCalendarBuilder {
         }
 
         val days = buildDays(monthStart) { date, _, isToday, isFuture ->
+            val dateKey = date / 86_400_000L
             when {
                 isFuture || habits.isEmpty() -> StreakCalendarDayStatus.EMPTY
                 completionCountByDate[date] == habits.size -> StreakCalendarDayStatus.COMPLETED
-                (completionCountByDate[date] ?: 0) > 0 -> StreakCalendarDayStatus.FREEZE
+                frozenDates.contains(dateKey) -> StreakCalendarDayStatus.FREEZE
                 isToday -> StreakCalendarDayStatus.EMPTY
                 else -> StreakCalendarDayStatus.EMPTY
             }
@@ -134,7 +135,7 @@ object StreakCalendarBuilder {
             subtitle = if (habits.isEmpty()) {
                 "Create a habit to start warming up your streak flame."
             } else {
-                "Fire = every habit complete. Cold = partial activity day."
+                "Fire = every habit complete. Cold fire = frozen streak day."
             },
             monthStart = monthStart,
             days = days,
@@ -483,8 +484,8 @@ private fun StreakCalendarDayCell(day: StreakCalendarDay) {
                     StreakCalendarDayStatus.FREEZE -> {
                         Spacer(modifier = Modifier.height(2.dp))
                         Icon(
-                            imageVector = Icons.Default.AcUnit,
-                            contentDescription = "Freeze",
+                            imageVector = Icons.Default.LocalFireDepartment,
+                            contentDescription = "Frozen streak",
                             tint = AppTheme.current.blue,
                             modifier = Modifier.size(14.dp)
                         )
@@ -510,8 +511,8 @@ private fun StreakCalendarLegend(showFreezeLegend: Boolean) {
         )
         if (showFreezeLegend) {
             LegendItem(
-                icon = Icons.Default.AcUnit,
-                label = "Freeze / partial",
+                icon = Icons.Default.LocalFireDepartment,
+                label = "Frozen streak",
                 tint = AppTheme.current.blue
             )
         }

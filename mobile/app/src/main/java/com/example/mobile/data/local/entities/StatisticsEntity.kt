@@ -22,5 +22,23 @@ data class StatisticsEntity(
     val lastStreakDate: Long = 0L,
     var currentCombo: Int = 0,
     var bestCombo: Int = 0,
-    var lastHabitCompletionTimestamp: Long = 0L
-)
+    var lastHabitCompletionTimestamp: Long = 0L,
+    var lastStreakFreezeDate: Long = 0L,
+    var lastFrozenStreakDate: Long = 0L,
+    var streakFreezeDatesJson: String = "[]"
+) {
+    companion object {
+        fun parseFreezeDates(value: String): Set<Long> = value
+            .trim()
+            .trim('[', ']')
+            .split(',')
+            .mapNotNull { it.trim().trim('"').toLongOrNull() }
+            .toSet()
+
+        fun freezeDatesToJson(dates: Set<Long>): String = if (dates.isEmpty()) {
+            "[]"
+        } else {
+            dates.sorted().joinToString(prefix = "[", postfix = "]") { it.toString() }
+        }
+    }
+}

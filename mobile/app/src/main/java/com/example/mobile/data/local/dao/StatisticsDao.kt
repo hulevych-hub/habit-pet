@@ -35,6 +35,9 @@ SET
     currentCombo = 0,
     bestCombo = 0,
     lastHabitCompletionTimestamp = 0,
+    lastStreakFreezeDate = 0,
+    lastFrozenStreakDate = 0,
+    streakFreezeDatesJson = '[]',
     lastUpdated = 0
 """)
     suspend fun reset()

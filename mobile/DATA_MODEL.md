@@ -75,6 +75,9 @@ The data model includes 10 Room entities:
 - `currentCombo: Int` - Current short-term combo hit count
 - `bestCombo: Int` - Highest combo hit count achieved
 - `lastHabitCompletionTimestamp: Long` - Timestamp used to calculate combo windows
+- `lastStreakFreezeDate: Long` - Date key of the most recent global streak freeze use
+- `lastFrozenStreakDate: Long` - Date key of the most recent streak day preserved by a freeze
+- `streakFreezeDatesJson: String` - JSON list of date keys for global streak days preserved by freezes
 
 **InventoryItemEntity** (table: `inventory_items`)
 - `id: Long` - Primary key (auto-generated)
@@ -201,7 +204,8 @@ All entities are configured with Room annotations:
    - Level and evolution stage derived from XP rather than stored directly
 
 3. **Missing Relationships**: While foreign keys exist conceptually, Room relationships aren't explicitly defined with `@ForeignKey` annotations.
+4. **Freeze History Storage**: Global streak freeze dates are stored as a JSON list on `StatisticsEntity` for calendar display rather than as a separate Room entity.
 
-4. **Sparse Data**: Many string fields (icon, imageUrl, mood) have default values but lack actual asset integration.
+5. **Sparse Data**: Many string fields (icon, imageUrl, mood) have default values but lack actual asset integration.
 
-5. **Limited Query Optimization**: Basic indices exist, but complex query performance may degrade with large datasets.
+6. **Limited Query Optimization**: Basic indices exist, but complex query performance may degrade with large datasets.

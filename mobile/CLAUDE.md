@@ -72,13 +72,13 @@
 
 ## Room schema
 
-- `AppDatabase` version is `18`. Schema changes require migrations and version bump.
+- `AppDatabase` version is `19`. Schema changes require migrations and version bump.
 - Core entities:
   - `HabitEntity` - user habits.
   - `HabitCompletionEntity` - idempotent daily habit completions with `xpEarned`.
   - `HabitProgressEntity` - timer habit accumulated minutes per day.
   - `PetEntity` - pet XP, level, evolution stage, mood, equipped customization.
-  - `StatisticsEntity` - coins, streaks, completions, combo state.
+  - `StatisticsEntity` - coins, streaks, completions, combo state, global streak freeze metadata.
   - `InventoryItemEntity` - customization catalog, ownership, equipped state.
   - `AchievementEntity` - achievement progress/unlock/claim state.
   - `GameEventEntity` - persistent activity timeline events.
@@ -196,6 +196,10 @@ Reward processing rules:
 - Milestone chest mapping: `7 = Normal`, `14 = Rare`, `30/60 = Epic`, `100 = Legendary`.
 - Streak rewards are immersive and must use `RewardQueue` + `RewardManager`.
 - `StreakCalculator` derives current streak from habit completion history; use it when recalculating.
+- Global streak freeze is global-only: it does not create habit completions or affect per-habit streaks.
+- Freeze prompt: when the app opens and yesterday would break a global streak, `StreakEngine.checkPendingStreakFreeze()` asks the user to use one freeze.
+- Freeze rules: allowed only for a one-day break, once every 7 days, and never for two frozen streak days in a row.
+- Frozen streak calendar days render as cold-blue streak icons.
 
 ## Activity timeline integration
 
