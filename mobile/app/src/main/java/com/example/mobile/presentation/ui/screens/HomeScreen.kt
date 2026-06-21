@@ -46,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.DragonMood
@@ -64,7 +63,7 @@ fun HomeScreen(
     onNavigateToHabits: () -> Unit,
     onNavigateToHabitDetail: (Long) -> Unit,
     onNavigateToRewardsLocked: () -> Unit,
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
@@ -81,6 +80,7 @@ fun HomeScreen(
         onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
         onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
         onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
+        onNextStreakMonth = homeScreenViewModel::showNextStreakMonth,
         streakCalendarState = streakCalendarState
     )
 }
@@ -97,6 +97,7 @@ fun HomeScreenContent(
     onStreakClick: () -> Unit,
     onStreakCalendarDismiss: () -> Unit,
     onPreviousStreakMonth: () -> Unit,
+    onNextStreakMonth: () -> Unit,
     streakCalendarState: StreakCalendarUiState?
 ) {
     val pet = uiState.pet
@@ -202,7 +203,8 @@ fun HomeScreenContent(
         StreakCalendarOverlay(
             state = streakCalendarState,
             onDismiss = onStreakCalendarDismiss,
-            onPreviousMonth = onPreviousStreakMonth
+            onPreviousMonth = onPreviousStreakMonth,
+            onNextMonth = onNextStreakMonth
         )
     }
 }
@@ -509,6 +511,7 @@ private fun HomeScreenPreview() {
             onStreakClick = {},
             onStreakCalendarDismiss = {},
             onPreviousStreakMonth = {},
+            onNextStreakMonth = {},
             streakCalendarState = null
         )
     }

@@ -114,6 +114,28 @@ class HabitsViewModel @Inject constructor(
         }
     }
 
+    fun showNextStreakMonth() {
+        val current = _streakCalendarState.value ?: return
+        if (!current.canNavigateNext) return
+
+        viewModelScope.launch {
+            val nextMonthStart = addMonths(current.monthStart, 1)
+            _streakCalendarState.value = StreakCalendarUiState.loading(
+                title = current.title,
+                subtitle = current.subtitle,
+                monthStart = nextMonthStart
+            )
+
+            val habitId = streakCalendarHabitId ?: return@launch
+            val habit = habitRepository.getHabitById(habitId).firstOrNull() ?: return@launch
+            _streakCalendarState.value = StreakCalendarBuilder.buildHabit(
+                monthStart = nextMonthStart,
+                habit = habit,
+                completionRepository = habitCompletionRepository
+            )
+        }
+    }
+
     fun closeStreakCalendar() {
         _streakCalendarState.value = null
         streakCalendarHabitId = null

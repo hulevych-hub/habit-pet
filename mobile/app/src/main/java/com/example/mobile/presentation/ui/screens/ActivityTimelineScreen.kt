@@ -64,6 +64,8 @@ import com.example.mobile.domain.GameEventRarity
 import com.example.mobile.domain.GameEventType
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
 import com.example.mobile.util.ReinforcementMessageProvider
 import com.example.mobile.ui.theme.AppTheme
@@ -74,11 +76,12 @@ import java.util.Calendar
 @Composable
 fun ActivityTimelineScreen(
     activityTimelineViewModel: ActivityTimelineViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel,
     onNavigateToRewardsLocked: () -> Unit
 ) {
     val events by activityTimelineViewModel.events.collectAsState()
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    val streakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
     val isLoading by activityTimelineViewModel.isLoading.collectAsState()
     val isLoadingMore by activityTimelineViewModel.isLoadingMore.collectAsState()
     val hasMore by activityTimelineViewModel.hasMore.collectAsState()
@@ -90,7 +93,12 @@ fun ActivityTimelineScreen(
         isLoadingMore = isLoadingMore,
         hasMore = hasMore,
         onNavigateToRewardsLocked = onNavigateToRewardsLocked,
-        onLoadMore = activityTimelineViewModel::loadMore
+        onLoadMore = activityTimelineViewModel::loadMore,
+        onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
+        onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
+        onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
+        onNextStreakMonth = homeScreenViewModel::showNextStreakMonth,
+        streakCalendarState = streakCalendarState
     )
 }
 
@@ -103,7 +111,12 @@ fun ActivityTimelineScreenContent(
     isLoadingMore: Boolean,
     hasMore: Boolean,
     onNavigateToRewardsLocked: () -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    onStreakClick: () -> Unit,
+    onStreakCalendarDismiss: () -> Unit,
+    onPreviousStreakMonth: () -> Unit,
+    onNextStreakMonth: () -> Unit,
+    streakCalendarState: StreakCalendarUiState?
 ) {
     val groups = remember(events) { groupEventsByDay(events) }
     val listState = rememberLazyListState()
@@ -124,7 +137,8 @@ fun ActivityTimelineScreenContent(
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
                 streakCompletedToday = progressUiState.globalStreakCompletedToday,
-                onCoinsClick = onNavigateToRewardsLocked
+                onCoinsClick = onNavigateToRewardsLocked,
+                onStreakClick = onStreakClick
             )
         }
     ) { padding ->
@@ -195,6 +209,13 @@ fun ActivityTimelineScreenContent(
                 }
             }
         }
+
+        StreakCalendarOverlay(
+            state = streakCalendarState,
+            onDismiss = onStreakCalendarDismiss,
+            onPreviousMonth = onPreviousStreakMonth,
+            onNextMonth = onNextStreakMonth
+        )
     }
 }
 }
@@ -570,7 +591,12 @@ private fun ActivityTimelineScreenPreview() {
             isLoadingMore = false,
             hasMore = true,
             onNavigateToRewardsLocked = {},
-            onLoadMore = {}
+            onLoadMore = {},
+            onStreakClick = {},
+            onStreakCalendarDismiss = {},
+            onPreviousStreakMonth = {},
+            onNextStreakMonth = {},
+            streakCalendarState = null
         )
     }
 }

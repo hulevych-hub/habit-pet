@@ -1,6 +1,13 @@
 package com.example.mobile.presentation.ui.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -24,9 +32,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,11 +52,19 @@ import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.HabitPetTheme
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.Calendar
+import java.util.Locale
+import kotlin.math.abs
 
 enum class StreakCalendarDayStatus {
     EMPTY,
     COMPLETED,
     FREEZE
+}
+
+private enum class StreakCalendarNavigationDirection {
+    NONE,
+    PREVIOUS,
+    NEXT
 }
 
 data class StreakCalendarDay(
@@ -61,7 +82,9 @@ data class StreakCalendarUiState(
     val days: List<StreakCalendarDay>,
     val isLoading: Boolean = false,
     val canNavigatePrevious: Boolean = true,
-    val showFreezeLegend: Boolean = true
+    val canNavigateNext: Boolean = true,
+    val showFreezeLegend: Boolean = true,
+    val showTitleSubtitle: Boolean = true
 ) {
     companion object {
         fun loading(title: String, subtitle: String, monthStart: Long): StreakCalendarUiState =
@@ -71,7 +94,8 @@ data class StreakCalendarUiState(
                 monthStart = monthStart,
                 days = emptyList(),
                 isLoading = true,
-                canNavigatePrevious = monthStart < getMonthStart(System.currentTimeMillis()),
+                canNavigatePrevious = monthStart <= getMonthStart(System.currentTimeMillis()),
+                canNavigateNext = monthStart < getMonthStart(System.currentTimeMillis()),
                 showFreezeLegend = true
             )
     }
@@ -114,8 +138,10 @@ object StreakCalendarBuilder {
             },
             monthStart = monthStart,
             days = days,
-            canNavigatePrevious = monthStart < getMonthStart(System.currentTimeMillis()),
-            showFreezeLegend = habits.isNotEmpty()
+            canNavigatePrevious = monthStart <= getMonthStart(System.currentTimeMillis()),
+            canNavigateNext = monthStart < getMonthStart(System.currentTimeMillis()),
+            showFreezeLegend = habits.isNotEmpty(),
+            showTitleSubtitle = false
         )
     }
 
@@ -146,7 +172,8 @@ object StreakCalendarBuilder {
             subtitle = "Fire = ${habit.name.ifBlank { "this habit" }} completed on that day.",
             monthStart = monthStart,
             days = days,
-            canNavigatePrevious = monthStart < getMonthStart(System.currentTimeMillis()),
+            canNavigatePrevious = monthStart <= getMonthStart(System.currentTimeMillis()),
+            canNavigateNext = monthStart < getMonthStart(System.currentTimeMillis()),
             showFreezeLegend = false
         )
     }
@@ -193,9 +220,12 @@ object StreakCalendarBuilder {
 fun StreakCalendarOverlay(
     state: StreakCalendarUiState?,
     onDismiss: () -> Unit,
-    onPreviousMonth: () -> Unit
+    onPreviousMonth: () -> Unit,
+    onNextMonth: () -> Unit
 ) {
     if (state == null) return
+
+    var navigationDirection by remember { mutableStateOf(StreakCalendarNavigationDirection.NONE) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -209,87 +239,170 @@ fun StreakCalendarOverlay(
             color = AppTheme.current.card,
             shadowElevation = 18.dp
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                StreakCalendarHeader(
-                    title = state.title,
-                    subtitle = state.subtitle,
-                    monthLabel = monthLabel(state.monthStart),
-                    canNavigatePrevious = state.canNavigatePrevious,
-                    onPreviousMonth = onPreviousMonth
-                )
-
-                if (state.isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(260.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = AppTheme.current.violet)
+                    .pointerInput(state.monthStart, state.isLoading) {
+                        var dragDistance = 0f
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { _, dragAmount ->
+                                dragDistance += dragAmount
+                            },
+                            onDragEnd = {
+                                val threshold = 48.dp.toPx()
+                                when {
+                                    state.isLoading || abs(dragDistance) < threshold -> Unit
+                                    dragDistance > 0 && state.canNavigatePrevious -> {
+                                        navigationDirection = StreakCalendarNavigationDirection.PREVIOUS
+                                        onPreviousMonth()
+                                    }
+                                    dragDistance < 0 && state.canNavigateNext -> {
+                                        navigationDirection = StreakCalendarNavigationDirection.NEXT
+                                        onNextMonth()
+                                    }
+                                }
+                                dragDistance = 0f
+                            }
+                        )
                     }
-                } else {
-                    StreakCalendarGrid(days = state.days)
-                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    StreakCalendarControls(
+                        title = state.title,
+                        subtitle = state.subtitle,
+                        showTitleSubtitle = state.showTitleSubtitle,
+                        monthTitle = formatMonthYear(state.monthStart),
+                        canNavigatePrevious = state.canNavigatePrevious,
+                        canNavigateNext = state.canNavigateNext,
+                        onPreviousMonth = {
+                            navigationDirection = StreakCalendarNavigationDirection.PREVIOUS
+                            onPreviousMonth()
+                        },
+                        onNextMonth = {
+                            navigationDirection = StreakCalendarNavigationDirection.NEXT
+                            onNextMonth()
+                        }
+                    )
 
-                StreakCalendarLegend(showFreezeLegend = state.showFreezeLegend)
+                    if (state.isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(260.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = AppTheme.current.violet)
+                        }
+                    } else {
+                        AnimatedContent(
+                            targetState = state.monthStart,
+                            transitionSpec = {
+                                when (navigationDirection) {
+                                    StreakCalendarNavigationDirection.PREVIOUS -> {
+                                        slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
+                                            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                                    }
+                                    StreakCalendarNavigationDirection.NEXT -> {
+                                        slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
+                                            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+                                    }
+                                    StreakCalendarNavigationDirection.NONE -> {
+                                        fadeIn() togetherWith fadeOut()
+                                    }
+                                }
+                            },
+                            label = "Streak calendar month"
+                        ) {
+                            StreakCalendarGrid(days = state.days)
+                        }
+                    }
+
+                    StreakCalendarLegend(showFreezeLegend = state.showFreezeLegend)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun StreakCalendarHeader(
+private fun StreakCalendarControls(
     title: String,
     subtitle: String,
-    monthLabel: String,
+    showTitleSubtitle: Boolean,
+    monthTitle: String,
     canNavigatePrevious: Boolean,
-    onPreviousMonth: () -> Unit
+    canNavigateNext: Boolean,
+    onPreviousMonth: () -> Unit,
+    onNextMonth: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onPreviousMonth,
+            enabled = canNavigatePrevious,
+            modifier = Modifier.size(42.dp)
         ) {
-            Column(modifier = Modifier.fillMaxWidth(0.86f)) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Previous month",
+                tint = if (canNavigatePrevious) AppTheme.current.violet else AppTheme.current.muted,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = monthTitle,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = AppTheme.current.ink,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+            if (showTitleSubtitle) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = AppTheme.current.ink
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = AppTheme.current.ink,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = AppTheme.current.muted
-                )
-            }
-
-            IconButton(
-                onClick = onPreviousMonth,
-                enabled = canNavigatePrevious,
-                modifier = Modifier.size(42.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Previous month",
-                    tint = if (canNavigatePrevious) AppTheme.current.violet else AppTheme.current.muted,
-                    modifier = Modifier.size(22.dp)
+                    color = AppTheme.current.muted,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
                 )
             }
         }
 
-        Text(
-            text = monthLabel,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = AppTheme.current.gold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+        IconButton(
+            onClick = onNextMonth,
+            enabled = canNavigateNext,
+            modifier = Modifier.size(42.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next month",
+                tint = if (canNavigateNext) AppTheme.current.violet else AppTheme.current.muted,
+                modifier = Modifier.size(22.dp)
+            )
+        }
     }
 }
 
@@ -429,14 +542,6 @@ private fun LegendItem(
     }
 }
 
-private fun monthLabel(monthStart: Long): String {
-    val calendar = Calendar.getInstance().apply {
-        timeInMillis = monthStart
-        normalizeDay()
-    }
-    return "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault())} ${calendar.get(Calendar.YEAR)}"
-}
-
 private fun getMonthStart(timestamp: Long): Long {
     val calendar = Calendar.getInstance().apply {
         timeInMillis = timestamp
@@ -444,6 +549,14 @@ private fun getMonthStart(timestamp: Long): Long {
         set(Calendar.DAY_OF_MONTH, 1)
     }
     return calendar.timeInMillis
+}
+
+private fun formatMonthYear(timestamp: Long): String {
+    val calendar = Calendar.getInstance().apply {
+        timeInMillis = timestamp
+        normalizeDay()
+    }
+    return "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US)} ${calendar.get(Calendar.YEAR)}"
 }
 
 private fun addMonths(monthStart: Long, months: Int): Long {
@@ -488,10 +601,12 @@ private fun StreakCalendarOverlayPreview() {
                         buildDaysForPreview()
                     },
                     canNavigatePrevious = true,
+                    canNavigateNext = true,
                     showFreezeLegend = true
                 ),
                 onDismiss = {},
-                onPreviousMonth = {}
+                onPreviousMonth = {},
+                onNextMonth = {}
             )
         }
     }

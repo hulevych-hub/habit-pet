@@ -73,7 +73,7 @@ class HomeScreenViewModel @Inject constructor(
                 title = "Global Streak",
                 subtitle = "Loading your rhythm calendar...",
                 monthStart = monthStart
-            )
+            ).copy(showTitleSubtitle = false)
             _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
                 monthStart = monthStart,
                 habits = habits.value,
@@ -92,9 +92,28 @@ class HomeScreenViewModel @Inject constructor(
                 title = current.title,
                 subtitle = current.subtitle,
                 monthStart = previousMonthStart
-            )
+            ).copy(showTitleSubtitle = false)
             _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
                 monthStart = previousMonthStart,
+                habits = habits.value,
+                completionRepository = habitCompletionRepository
+            )
+        }
+    }
+
+    fun showNextStreakMonth() {
+        val current = _streakCalendarState.value ?: return
+        if (!current.canNavigateNext) return
+
+        viewModelScope.launch {
+            val nextMonthStart = addMonths(current.monthStart, 1)
+            _streakCalendarState.value = StreakCalendarUiState.loading(
+                title = current.title,
+                subtitle = current.subtitle,
+                monthStart = nextMonthStart
+            ).copy(showTitleSubtitle = false)
+            _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
+                monthStart = nextMonthStart,
                 habits = habits.value,
                 completionRepository = habitCompletionRepository
             )

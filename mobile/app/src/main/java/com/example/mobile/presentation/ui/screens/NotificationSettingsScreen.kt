@@ -52,6 +52,8 @@ import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
+import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.AppThemeOption
 import com.example.mobile.ui.theme.AppThemePrefs
@@ -61,17 +63,23 @@ import com.example.mobile.util.NotificationPrefs
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationSettingsScreen(
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel,
     onNavigateToRewardsLocked: () -> Unit
 ) {
     val context = LocalContext.current
     val progressUiState by homeScreenViewModel.uiState.collectAsState()
+    val streakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
     var settingsError by remember { mutableStateOf<String?>(null) }
 
     NotificationSettingsContent(
         progressUiState = progressUiState,
         onNavigateToRewardsLocked = onNavigateToRewardsLocked,
-        onError = { settingsError = it }
+        onError = { settingsError = it },
+        onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
+        onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
+        onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
+        onNextStreakMonth = homeScreenViewModel::showNextStreakMonth,
+        streakCalendarState = streakCalendarState
     )
 }
 
@@ -80,7 +88,12 @@ fun NotificationSettingsScreen(
 fun NotificationSettingsContent(
     progressUiState: HomeScreenViewModel.UiState,
     onNavigateToRewardsLocked: () -> Unit,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
+    onStreakClick: () -> Unit,
+    onStreakCalendarDismiss: () -> Unit,
+    onPreviousStreakMonth: () -> Unit,
+    onNextStreakMonth: () -> Unit,
+    streakCalendarState: StreakCalendarUiState?
 ) {
     val context = LocalContext.current
     var settingsError by remember { mutableStateOf<String?>(null) }
@@ -99,7 +112,8 @@ fun NotificationSettingsContent(
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
                 streakCompletedToday = progressUiState.globalStreakCompletedToday,
-                onCoinsClick = onNavigateToRewardsLocked
+                onCoinsClick = onNavigateToRewardsLocked,
+                onStreakClick = onStreakClick
             )
         }
     ) { padding ->
@@ -201,6 +215,13 @@ fun NotificationSettingsContent(
             }
             }
         }
+
+        StreakCalendarOverlay(
+            state = streakCalendarState,
+            onDismiss = onStreakCalendarDismiss,
+            onPreviousMonth = onPreviousStreakMonth,
+            onNextMonth = onNextStreakMonth
+        )
     }
 }
 
@@ -374,7 +395,12 @@ private fun NotificationSettingsScreenPreview() {
                 globalStreakCompletedToday = false
             ),
             onNavigateToRewardsLocked = {},
-            onError = {}
+            onError = {},
+            onStreakClick = {},
+            onStreakCalendarDismiss = {},
+            onPreviousStreakMonth = {},
+            onNextStreakMonth = {},
+            streakCalendarState = null
         )
     }
 }

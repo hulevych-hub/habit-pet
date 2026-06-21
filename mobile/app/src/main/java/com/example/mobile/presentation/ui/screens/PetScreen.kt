@@ -74,6 +74,8 @@ import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.HabitPetTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -112,12 +114,13 @@ class PetViewModel @Inject constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PetScreen(
     petViewModel: PetViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel,
     onNavigateToRewardsLocked: () -> Unit,
     onNavigateToRewardsOwned: () -> Unit
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
+    val streakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
     val error by petViewModel.error.collectAsState(initial = null)
 
     val pet = uiState.pet
@@ -135,7 +138,12 @@ fun PetScreen(
         onClearError = petViewModel::clearError,
         onConfirmRename = { newName, currentPet ->
             petViewModel.renamePet(newName.trim(), currentPet)
-        }
+        },
+        onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
+        onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
+        onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
+        onNextStreakMonth = homeScreenViewModel::showNextStreakMonth,
+        streakCalendarState = streakCalendarState
     )
 }
 
@@ -149,7 +157,12 @@ fun PetScreenContent(
     onNavigateToRewardsLocked: () -> Unit,
     onNavigateToRewardsOwned: () -> Unit,
     onClearError: () -> Unit,
-    onConfirmRename: (String, PetEntity) -> Unit
+    onConfirmRename: (String, PetEntity) -> Unit,
+    onStreakClick: () -> Unit,
+    onStreakCalendarDismiss: () -> Unit,
+    onPreviousStreakMonth: () -> Unit,
+    onNextStreakMonth: () -> Unit,
+    streakCalendarState: StreakCalendarUiState?
 ) {
     val pet = uiState.pet
     var showRenameDialog by remember { mutableStateOf(false) }
@@ -162,7 +175,8 @@ fun PetScreenContent(
                 coins = uiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
                 streakCompletedToday = uiState.globalStreakCompletedToday,
-                onCoinsClick = onNavigateToRewardsLocked
+                onCoinsClick = onNavigateToRewardsLocked,
+                onStreakClick = onStreakClick
             )
         }
     ) { padding ->
@@ -205,6 +219,13 @@ fun PetScreenContent(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+
+        StreakCalendarOverlay(
+            state = streakCalendarState,
+            onDismiss = onStreakCalendarDismiss,
+            onPreviousMonth = onPreviousStreakMonth,
+            onNextMonth = onNextStreakMonth
+        )
     }
 
     if (showRenameDialog) {
@@ -749,7 +770,12 @@ private fun PetScreenPreview() {
             onNavigateToRewardsLocked = {},
             onNavigateToRewardsOwned = {},
             onClearError = {},
-            onConfirmRename = { _, _ -> }
+            onConfirmRename = { _, _ -> },
+            onStreakClick = {},
+            onStreakCalendarDismiss = {},
+            onPreviousStreakMonth = {},
+            onNextStreakMonth = {},
+            streakCalendarState = null
         )
     }
 }

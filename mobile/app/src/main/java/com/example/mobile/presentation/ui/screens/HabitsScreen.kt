@@ -74,10 +74,12 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ChallengeCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.domain.ChallengeRewardDefinition
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
 import com.example.mobile.ui.theme.AppTheme
@@ -88,15 +90,19 @@ import com.example.mobile.ui.theme.HabitPetTheme
 fun HabitsScreen(
     navController: NavHostController,
     habitsViewModel: HabitsViewModel = hiltViewModel(),
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel,
+    onNavigateToRewardsLocked: () -> Unit
 ) {
     val habits by habitsViewModel.habits.collectAsState(initial = emptyList())
     val completedToday by habitsViewModel.completedToday.collectAsState(initial = emptyMap())
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
     val error by habitsViewModel.error.collectAsState(initial = null)
-    val streakCalendarState by habitsViewModel.streakCalendarState.collectAsState()
+    val habitStreakCalendarState by habitsViewModel.streakCalendarState.collectAsState()
+    val globalStreakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
+    val progressUiState by homeScreenViewModel.uiState.collectAsState()
     val challengeUiState by homeScreenViewModel.challengeUiState.collectAsState()
+    val streakCalendarState = globalStreakCalendarState ?: habitStreakCalendarState
     val sortedHabits = habits.sortedWith(
         compareBy<HabitEntity> { completedToday[it.id] == true }
             .thenBy { it.name.lowercase() }
@@ -109,14 +115,33 @@ fun HabitsScreen(
         completingHabitIds = completingHabitIds,
         error = error,
         isLoading = isLoading,
+        progressUiState = progressUiState,
         challengeUiState = challengeUiState,
         onRetry = habitsViewModel::clearError,
+        onNavigateToRewardsLocked = onNavigateToRewardsLocked,
         onComplete = { habit -> habitsViewModel.completeCheckboxHabit(habit) },
         onDelete = { habit -> habitsViewModel.deleteHabit(habit) },
         onClaimChallenge = homeScreenViewModel::claimChallenge,
-        onStreakClick = { habit -> habitsViewModel.openHabitStreakCalendar(habit.id) },
-        onStreakCalendarDismiss = habitsViewModel::closeStreakCalendar,
-        onPreviousStreakMonth = habitsViewModel::showPreviousStreakMonth,
+        onHabitStreakClick = { habit -> habitsViewModel.openHabitStreakCalendar(habit.id) },
+        onGlobalStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
+        onStreakCalendarDismiss = {
+            homeScreenViewModel.closeStreakCalendar()
+            habitsViewModel.closeStreakCalendar()
+        },
+        onPreviousStreakMonth = {
+            if (globalStreakCalendarState != null) {
+                homeScreenViewModel.showPreviousStreakMonth()
+            } else {
+                habitsViewModel.showPreviousStreakMonth()
+            }
+        },
+        onNextStreakMonth = {
+            if (globalStreakCalendarState != null) {
+                homeScreenViewModel.showNextStreakMonth()
+            } else {
+                habitsViewModel.showNextStreakMonth()
+            }
+        },
         streakCalendarState = streakCalendarState
     )
 }
@@ -130,14 +155,18 @@ fun HabitsScreenContent(
     completingHabitIds: Set<Long>,
     error: String?,
     isLoading: Boolean,
+    progressUiState: HomeScreenViewModel.UiState,
     challengeUiState: ChallengeUiState,
     onRetry: () -> Unit,
+    onNavigateToRewardsLocked: () -> Unit,
     onComplete: (HabitEntity) -> Unit,
     onDelete: (HabitEntity) -> Unit,
     onClaimChallenge: () -> Unit,
-    onStreakClick: (HabitEntity) -> Unit,
+    onHabitStreakClick: (HabitEntity) -> Unit,
+    onGlobalStreakClick: () -> Unit,
     onStreakCalendarDismiss: () -> Unit,
     onPreviousStreakMonth: () -> Unit,
+    onNextStreakMonth: () -> Unit,
     streakCalendarState: StreakCalendarUiState?
 ) {
     val sortedHabits = habits.sortedWith(
@@ -147,6 +176,16 @@ fun HabitsScreenContent(
 
     Scaffold(
         containerColor = AppTheme.current.background,
+        topBar = {
+            GamifiedFixedHeader(
+                streak = progressUiState.globalStreak,
+                coins = progressUiState.totalCoins,
+                stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
+                streakCompletedToday = progressUiState.globalStreakCompletedToday,
+                onCoinsClick = onNavigateToRewardsLocked,
+                onStreakClick = onGlobalStreakClick
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("habitCreation") },
@@ -215,7 +254,7 @@ fun HabitsScreenContent(
                     onComplete = { onComplete(habit) },
                     onEdit = { navController.navigate("habitEdit/${habit.id}") },
                     onDelete = { onDelete(habit) },
-                    onStreakClick = { onStreakClick(habit) }
+                    onStreakClick = { onHabitStreakClick(habit) }
                 )
             }
 
@@ -227,7 +266,8 @@ fun HabitsScreenContent(
         StreakCalendarOverlay(
             state = streakCalendarState,
             onDismiss = onStreakCalendarDismiss,
-            onPreviousMonth = onPreviousStreakMonth
+            onPreviousMonth = onPreviousStreakMonth,
+            onNextMonth = onNextStreakMonth
         )
     }
 }
@@ -644,6 +684,17 @@ private fun HabitsScreenPreview() {
             completingHabitIds = emptySet(),
             error = null,
             isLoading = false,
+            progressUiState = HomeScreenViewModel.UiState(
+                globalStreak = 4,
+                habits = emptyList(),
+                pet = com.example.mobile.data.local.entities.PetEntity(id = 1, evolutionStage = 1),
+                completedTodayXp = emptyMap(),
+                totalCoins = 128,
+                lastStreakDate = 0L,
+                currentCombo = 0,
+                lastHabitCompletionTimestamp = 0L,
+                globalStreakCompletedToday = false
+            ),
             challengeUiState = ChallengeUiState(
                 challenge = ChallengeEntity(
                     challengeId = "complete_three_habits",
@@ -667,12 +718,15 @@ private fun HabitsScreenPreview() {
                 )
             ),
             onRetry = {},
+            onNavigateToRewardsLocked = {},
             onComplete = {},
             onDelete = {},
             onClaimChallenge = {},
-            onStreakClick = {},
+            onHabitStreakClick = {},
+            onGlobalStreakClick = {},
             onStreakCalendarDismiss = {},
             onPreviousStreakMonth = {},
+            onNextStreakMonth = {},
             streakCalendarState = null
         )
     }

@@ -72,7 +72,7 @@ Statistics are used for:
 ### Displayed Statistics
 
 The following statistics are visible in the UI:
-- **Streak**: Displayed as an emotional rhythm indicator with low / stable / strong state colors, milestone markers at 3, 7, 14, 30, 60, and 100 days, a subtle pulse on streak increases, and protection messaging when the active streak has not been counted today
+- **Streak**: Displayed as an emotional rhythm indicator with low / stable / strong state colors, milestone markers at 3, 7, 14, 30, 60, and 100 days, a subtle pulse on streak increases, protection messaging when the active streak has not been counted today, and a month-labeled streak calendar that can navigate to previous months even when the current month has no completed streak days
 - **Active Challenge**: Displayed in `ChallengeCard` with icon, title, description, progress, progress bar, reward preview, and claim button when completed
 - **Coins**: Displayed as `{totalCoins} Coins`
 - **Level & Evolution**: Derived from pet statistics, not directly from `StatisticsEntity`

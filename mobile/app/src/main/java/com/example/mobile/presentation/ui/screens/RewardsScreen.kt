@@ -66,6 +66,8 @@ import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.presentation.viewmodel.RewardsViewModel
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.HabitPetTheme
@@ -76,6 +78,7 @@ import androidx.compose.foundation.lazy.grid.items as gridItems
 @Composable
 fun RewardsScreen(
     rewardsViewModel: RewardsViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel,
     initialCollection: String? = null,
     onNavigateToRewardsLocked: () -> Unit
 ) {
@@ -90,6 +93,7 @@ fun RewardsScreen(
     val isLoading by rewardsViewModel.isLoading.collectAsState()
     val error by rewardsViewModel.error.collectAsState(initial = null)
     val progressUiState by rewardsViewModel.uiState.collectAsState()
+    val streakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
 
     RewardsScreenContent(
         progressUiState = progressUiState,
@@ -101,6 +105,11 @@ fun RewardsScreen(
         selectedRarity = selectedRarity,
         activeInspectItem = activeInspectItem,
         onNavigateToRewardsLocked = onNavigateToRewardsLocked,
+        onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
+        onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
+        onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
+        onNextStreakMonth = homeScreenViewModel::showNextStreakMonth,
+        streakCalendarState = streakCalendarState,
         onTypeSelected = {
             selectedTypeTab = it
             activeInspectItem = null
@@ -146,6 +155,11 @@ private fun RewardsScreenContent(
     selectedRarity: Rarity?,
     activeInspectItem: InventoryItemEntity?,
     onNavigateToRewardsLocked: () -> Unit,
+    onStreakClick: () -> Unit,
+    onStreakCalendarDismiss: () -> Unit,
+    onPreviousStreakMonth: () -> Unit,
+    onNextStreakMonth: () -> Unit,
+    streakCalendarState: StreakCalendarUiState?,
     onTypeSelected: (CollectionTypeTab) -> Unit,
     onCollectionSelected: (CollectionTab) -> Unit,
     onRaritySelected: (Rarity?) -> Unit,
@@ -179,7 +193,8 @@ private fun RewardsScreenContent(
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
                 streakCompletedToday = progressUiState.globalStreakCompletedToday,
-                onCoinsClick = onNavigateToRewardsLocked
+                onCoinsClick = onNavigateToRewardsLocked,
+                onStreakClick = onStreakClick
             )
         }
     ) { padding ->
@@ -279,6 +294,13 @@ private fun RewardsScreenContent(
                 }
             }
         }
+
+        StreakCalendarOverlay(
+            state = streakCalendarState,
+            onDismiss = onStreakCalendarDismiss,
+            onPreviousMonth = onPreviousStreakMonth,
+            onNextMonth = onNextStreakMonth
+        )
     }
 }
 }
@@ -713,6 +735,11 @@ private fun RewardsScreenPreview() {
             selectedRarity = null,
             activeInspectItem = null,
             onNavigateToRewardsLocked = {},
+            onStreakClick = {},
+            onStreakCalendarDismiss = {},
+            onPreviousStreakMonth = {},
+            onNextStreakMonth = {},
+            streakCalendarState = null,
             onTypeSelected = {},
             onCollectionSelected = {},
             onRaritySelected = {},

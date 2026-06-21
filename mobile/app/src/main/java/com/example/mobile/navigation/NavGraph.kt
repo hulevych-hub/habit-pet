@@ -52,6 +52,7 @@ import com.example.mobile.presentation.ui.screens.HabitDetailScreen
 import com.example.mobile.presentation.ui.screens.HabitEditScreen
 import com.example.mobile.presentation.ui.screens.HabitsScreen
 import com.example.mobile.presentation.ui.screens.HomeScreen
+import com.example.mobile.presentation.ui.screens.HomeScreenViewModel
 import com.example.mobile.presentation.ui.screens.NotificationSettingsScreen
 import com.example.mobile.presentation.ui.screens.PetScreen
 import com.example.mobile.presentation.ui.screens.RewardsScreen
@@ -133,6 +134,7 @@ fun HabitPetNavGraph(
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
         val achievementViewModel: AchievementViewModel = hiltViewModel()
+        val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
         val claimableAchievementCount by achievementViewModel.claimableAchievementCount.collectAsState()
         val bottomDestinations = BottomDestination.all(claimableAchievementCount)
         val isRewardsRoute = currentRoute == AppRoutes.REWARDS ||
@@ -174,10 +176,17 @@ fun HabitPetNavGraph(
                     HomeScreen(
                         onNavigateToHabits = { navigateToBottomDestination(navController, BottomDestination.Habits, microFeedbackManager) },
                         onNavigateToHabitDetail = { habitId -> navController.navigate(AppRoutes.habitDetail(habitId)) },
+                        onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) },
+                        homeScreenViewModel = homeScreenViewModel
+                    )
+                }
+                composable(AppRoutes.HABITS) {
+                    HabitsScreen(
+                        navController = navController,
+                        homeScreenViewModel = homeScreenViewModel,
                         onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) }
                     )
                 }
-                composable(AppRoutes.HABITS) { HabitsScreen(navController = navController) }
                 composable(AppRoutes.HABIT_CREATION) {
                     HabitCreationScreen(
                         onNavigateUp = { navController.popBackStack() },
@@ -208,6 +217,7 @@ fun HabitPetNavGraph(
                 }
                 composable(AppRoutes.PET) {
                     PetScreen(
+                        homeScreenViewModel = homeScreenViewModel,
                         onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) },
                         onNavigateToRewardsOwned = { navigateToRewards(navController, AppRoutes.REWARDS_OWNED, microFeedbackManager) }
                     )
@@ -218,6 +228,7 @@ fun HabitPetNavGraph(
                 ) { entry ->
                     val collection = entry.arguments?.getString("collection") ?: AppRoutes.REWARDS_OWNED
                     RewardsScreen(
+                        homeScreenViewModel = homeScreenViewModel,
                         initialCollection = collection,
                         onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) }
                     )
@@ -227,10 +238,16 @@ fun HabitPetNavGraph(
                     AchievementScreen()
                 }
                 composable(AppRoutes.ACTIVITY) {
-                    ActivityTimelineScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })
+                    ActivityTimelineScreen(
+                        homeScreenViewModel = homeScreenViewModel,
+                        onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) }
+                    )
                 }
                 composable(AppRoutes.SETTINGS) {
-                    NotificationSettingsScreen(onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) })
+                    NotificationSettingsScreen(
+                        homeScreenViewModel = homeScreenViewModel,
+                        onNavigateToRewardsLocked = { navigateToRewards(navController, AppRoutes.REWARDS_LOCKED, microFeedbackManager) }
+                    )
                 }
             }
         }
