@@ -54,6 +54,8 @@ import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.HabitPetTheme
 
@@ -66,6 +68,7 @@ fun HomeScreen(
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
+    val streakCalendarState by homeScreenViewModel.streakCalendarState.collectAsState()
 
     HomeScreenContent(
         uiState = uiState,
@@ -74,7 +77,11 @@ fun HomeScreen(
         onNavigateToHabitDetail = onNavigateToHabitDetail,
         onNavigateToRewardsLocked = onNavigateToRewardsLocked,
         onRenamePet = homeScreenViewModel::renamePet,
-        onResetGameData = homeScreenViewModel::resetAllGameData
+        onResetGameData = homeScreenViewModel::resetAllGameData,
+        onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
+        onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
+        onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
+        streakCalendarState = streakCalendarState
     )
 }
 
@@ -86,7 +93,11 @@ fun HomeScreenContent(
     onNavigateToHabitDetail: (Long) -> Unit,
     onNavigateToRewardsLocked: () -> Unit,
     onRenamePet: (String) -> Unit,
-    onResetGameData: () -> Unit
+    onResetGameData: () -> Unit,
+    onStreakClick: () -> Unit,
+    onStreakCalendarDismiss: () -> Unit,
+    onPreviousStreakMonth: () -> Unit,
+    streakCalendarState: StreakCalendarUiState?
 ) {
     val pet = uiState.pet
     val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
@@ -106,7 +117,8 @@ fun HomeScreenContent(
                 coins = uiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
                 streakCompletedToday = uiState.globalStreakCompletedToday,
-                onCoinsClick = onNavigateToRewardsLocked
+                onCoinsClick = onNavigateToRewardsLocked,
+                onStreakClick = onStreakClick
             )
         }
     ) { innerPadding ->
@@ -186,6 +198,12 @@ fun HomeScreenContent(
                 }
             )
         }
+
+        StreakCalendarOverlay(
+            state = streakCalendarState,
+            onDismiss = onStreakCalendarDismiss,
+            onPreviousMonth = onPreviousStreakMonth
+        )
     }
 }
 
@@ -487,7 +505,11 @@ private fun HomeScreenPreview() {
             onNavigateToHabitDetail = {},
             onNavigateToRewardsLocked = {},
             onRenamePet = {},
-            onResetGameData = {}
+            onResetGameData = {},
+            onStreakClick = {},
+            onStreakCalendarDismiss = {},
+            onPreviousStreakMonth = {},
+            streakCalendarState = null
         )
     }
 }

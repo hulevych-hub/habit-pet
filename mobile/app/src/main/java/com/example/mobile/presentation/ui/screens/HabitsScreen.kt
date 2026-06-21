@@ -75,6 +75,8 @@ import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ChallengeCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.LoadingStateCard
+import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.domain.ChallengeRewardDefinition
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
@@ -92,6 +94,7 @@ fun HabitsScreen(
     val completedToday by habitsViewModel.completedToday.collectAsState(initial = emptyMap())
     val completingHabitIds by habitsViewModel.completingHabitIds.collectAsState(initial = emptySet())
     val error by habitsViewModel.error.collectAsState(initial = null)
+    val streakCalendarState by habitsViewModel.streakCalendarState.collectAsState()
     val isLoading by homeScreenViewModel.isLoading.collectAsState()
     val challengeUiState by homeScreenViewModel.challengeUiState.collectAsState()
     val sortedHabits = habits.sortedWith(
@@ -110,7 +113,11 @@ fun HabitsScreen(
         onRetry = habitsViewModel::clearError,
         onComplete = { habit -> habitsViewModel.completeCheckboxHabit(habit) },
         onDelete = { habit -> habitsViewModel.deleteHabit(habit) },
-        onClaimChallenge = homeScreenViewModel::claimChallenge
+        onClaimChallenge = homeScreenViewModel::claimChallenge,
+        onStreakClick = { habit -> habitsViewModel.openHabitStreakCalendar(habit.id) },
+        onStreakCalendarDismiss = habitsViewModel::closeStreakCalendar,
+        onPreviousStreakMonth = habitsViewModel::showPreviousStreakMonth,
+        streakCalendarState = streakCalendarState
     )
 }
 
@@ -127,7 +134,11 @@ fun HabitsScreenContent(
     onRetry: () -> Unit,
     onComplete: (HabitEntity) -> Unit,
     onDelete: (HabitEntity) -> Unit,
-    onClaimChallenge: () -> Unit
+    onClaimChallenge: () -> Unit,
+    onStreakClick: (HabitEntity) -> Unit,
+    onStreakCalendarDismiss: () -> Unit,
+    onPreviousStreakMonth: () -> Unit,
+    streakCalendarState: StreakCalendarUiState?
 ) {
     val sortedHabits = habits.sortedWith(
         compareBy<HabitEntity> { completedToday[it.id] == true }
@@ -203,7 +214,8 @@ fun HabitsScreenContent(
                     navController = navController,
                     onComplete = { onComplete(habit) },
                     onEdit = { navController.navigate("habitEdit/${habit.id}") },
-                    onDelete = { onDelete(habit) }
+                    onDelete = { onDelete(habit) },
+                    onStreakClick = { onStreakClick(habit) }
                 )
             }
 
@@ -211,6 +223,12 @@ fun HabitsScreenContent(
                 Spacer(modifier = Modifier.height(120.dp))
             }
         }
+
+        StreakCalendarOverlay(
+            state = streakCalendarState,
+            onDismiss = onStreakCalendarDismiss,
+            onPreviousMonth = onPreviousStreakMonth
+        )
     }
 }
 }
@@ -224,7 +242,8 @@ private fun HabitItem(
     navController: NavHostController,
     onComplete: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onStreakClick: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showActionsDialog by remember { mutableStateOf(false) }
@@ -312,7 +331,11 @@ private fun HabitItem(
                     }
                 }
 
-                StreakBadge(streak = habit.currentStreak, activeToday = completed)
+                StreakBadge(
+                    streak = habit.currentStreak,
+                    activeToday = completed,
+                    onClick = onStreakClick
+                )
             }
 
             if (showSwipeActions) {
@@ -431,7 +454,7 @@ private fun SwipeActionButton(
 }
 
 @Composable
-private fun StreakBadge(streak: Int, activeToday: Boolean) {
+private fun StreakBadge(streak: Int, activeToday: Boolean, onClick: () -> Unit) {
     val badgeTint = if (activeToday) AppTheme.current.amber else AppTheme.current.muted
     val badgeText = if (activeToday) AppTheme.current.amberDark else AppTheme.current.muted.copy(alpha = 0.78f)
     val badgeSurface = if (activeToday) {
@@ -441,6 +464,7 @@ private fun StreakBadge(streak: Int, activeToday: Boolean) {
     }
 
     Surface(
+        onClick = onClick,
         shape = RoundedCornerShape(999.dp),
         color = badgeSurface
     ) {
@@ -451,7 +475,7 @@ private fun StreakBadge(streak: Int, activeToday: Boolean) {
         ) {
             Icon(
                 imageVector = Icons.Default.LocalFireDepartment,
-                contentDescription = null,
+                contentDescription = "Show streak calendar",
                 tint = badgeTint,
                 modifier = Modifier.size(14.dp)
             )
@@ -645,7 +669,11 @@ private fun HabitsScreenPreview() {
             onRetry = {},
             onComplete = {},
             onDelete = {},
-            onClaimChallenge = {}
+            onClaimChallenge = {},
+            onStreakClick = {},
+            onStreakCalendarDismiss = {},
+            onPreviousStreakMonth = {},
+            streakCalendarState = null
         )
     }
 }

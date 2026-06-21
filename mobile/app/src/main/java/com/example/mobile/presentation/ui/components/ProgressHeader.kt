@@ -60,7 +60,8 @@ fun GamifiedFixedHeader(
     coins: Int,
     stageName: String,
     streakCompletedToday: Boolean,
-    onCoinsClick: () -> Unit
+    onCoinsClick: () -> Unit,
+    onStreakClick: () -> Unit = {}
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -78,12 +79,13 @@ fun GamifiedFixedHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
+                modifier = Modifier.clickable(onClick = onStreakClick),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
-                    contentDescription = "Streak",
+                    contentDescription = "Open streak calendar",
                     tint = streakTint,
                     modifier = Modifier.size(24.dp)
                 )

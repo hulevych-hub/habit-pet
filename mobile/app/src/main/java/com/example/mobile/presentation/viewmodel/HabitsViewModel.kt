@@ -19,6 +19,8 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.components.StreakCalendarBuilder
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardQueue
@@ -27,6 +29,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -58,13 +61,62 @@ class HabitsViewModel @Inject constructor(
     private val _optimisticCompletedHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _completingHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _error = MutableStateFlow<String?>(null)
+    private val _streakCalendarState = MutableStateFlow<StreakCalendarUiState?>(null)
+    private var streakCalendarHabitId: Long? = null
     private var surpriseCompletionsSinceLastReward = 0
 
     val error: StateFlow<String?> = _error
     val completingHabitIds: StateFlow<Set<Long>> = _completingHabitIds
+    val streakCalendarState: StateFlow<StreakCalendarUiState?> = _streakCalendarState.asStateFlow()
 
     fun clearError() {
         _error.value = null
+    }
+
+    fun openHabitStreakCalendar(habitId: Long) {
+        viewModelScope.launch {
+            val monthStart = getMonthStart(System.currentTimeMillis())
+            streakCalendarHabitId = habitId
+            _streakCalendarState.value = StreakCalendarUiState.loading(
+                title = "Habit Streak",
+                subtitle = "Loading habit rhythm...",
+                monthStart = monthStart
+            )
+
+            val habit = habitRepository.getHabitById(habitId).firstOrNull() ?: return@launch
+            _streakCalendarState.value = StreakCalendarBuilder.buildHabit(
+                monthStart = monthStart,
+                habit = habit,
+                completionRepository = habitCompletionRepository
+            )
+        }
+    }
+
+    fun showPreviousStreakMonth() {
+        val current = _streakCalendarState.value ?: return
+        if (!current.canNavigatePrevious) return
+
+        viewModelScope.launch {
+            val previousMonthStart = addMonths(current.monthStart, -1)
+            _streakCalendarState.value = StreakCalendarUiState.loading(
+                title = current.title,
+                subtitle = current.subtitle,
+                monthStart = previousMonthStart
+            )
+
+            val habitId = streakCalendarHabitId ?: return@launch
+            val habit = habitRepository.getHabitById(habitId).firstOrNull() ?: return@launch
+            _streakCalendarState.value = StreakCalendarBuilder.buildHabit(
+                monthStart = previousMonthStart,
+                habit = habit,
+                completionRepository = habitCompletionRepository
+            )
+        }
+    }
+
+    fun closeStreakCalendar() {
+        _streakCalendarState.value = null
+        streakCalendarHabitId = null
     }
 
     private val completedTodayFromRepository = habitRepository.getAllHabits()
@@ -120,7 +172,6 @@ class HabitsViewModel @Inject constructor(
                 val now = System.currentTimeMillis()
                 val xpEarned = ExpConfig.CHECKBOX_HABIT_XP
                 val coinsEarned = EconomyConfig.CHECKBOX_HABIT_COINS
-                val today = getDayStart(System.currentTimeMillis())
 
                 val completionResult = habitCompletionRepository.addCompletionWithCombo(
                     HabitCompletionEntity(
@@ -194,6 +245,24 @@ class HabitsViewModel @Inject constructor(
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun getMonthStart(time: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = time
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        return calendar.timeInMillis
+    }
+
+    private fun addMonths(monthStart: Long, months: Int): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = monthStart
+        calendar.add(Calendar.MONTH, months)
         return calendar.timeInMillis
     }
 

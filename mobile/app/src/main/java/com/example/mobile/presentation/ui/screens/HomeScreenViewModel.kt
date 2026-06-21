@@ -13,6 +13,8 @@ import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.components.StreakCalendarBuilder
+import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,6 +45,9 @@ class HomeScreenViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _streakCalendarState = MutableStateFlow<StreakCalendarUiState?>(null)
+    val streakCalendarState: StateFlow<StreakCalendarUiState?> = _streakCalendarState.asStateFlow()
+
     fun resetAllGameData() {
         viewModelScope.launch {
             habitRepository.deleteAll()
@@ -59,6 +64,45 @@ class HomeScreenViewModel @Inject constructor(
             val currentPet = pet.value
             petRepository.updatePet(currentPet.copy(id = 1, name = name))
         }
+    }
+
+    fun openGlobalStreakCalendar() {
+        viewModelScope.launch {
+            val monthStart = getMonthStart(System.currentTimeMillis())
+            _streakCalendarState.value = StreakCalendarUiState.loading(
+                title = "Global Streak",
+                subtitle = "Loading your rhythm calendar...",
+                monthStart = monthStart
+            )
+            _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
+                monthStart = monthStart,
+                habits = habits.value,
+                completionRepository = habitCompletionRepository
+            )
+        }
+    }
+
+    fun showPreviousStreakMonth() {
+        val current = _streakCalendarState.value ?: return
+        if (!current.canNavigatePrevious) return
+
+        viewModelScope.launch {
+            val previousMonthStart = addMonths(current.monthStart, -1)
+            _streakCalendarState.value = StreakCalendarUiState.loading(
+                title = current.title,
+                subtitle = current.subtitle,
+                monthStart = previousMonthStart
+            )
+            _streakCalendarState.value = StreakCalendarBuilder.buildGlobal(
+                monthStart = previousMonthStart,
+                habits = habits.value,
+                completionRepository = habitCompletionRepository
+            )
+        }
+    }
+
+    fun closeStreakCalendar() {
+        _streakCalendarState.value = null
     }
 
     fun claimChallenge() {
@@ -197,6 +241,24 @@ class HomeScreenViewModel @Inject constructor(
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun getMonthStart(timestamp: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        return calendar.timeInMillis
+    }
+
+    private fun addMonths(monthStart: Long, months: Int): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = monthStart
+        calendar.add(Calendar.MONTH, months)
         return calendar.timeInMillis
     }
 }
