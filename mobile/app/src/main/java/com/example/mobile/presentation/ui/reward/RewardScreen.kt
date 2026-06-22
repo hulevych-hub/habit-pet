@@ -701,7 +701,7 @@ private fun RewardEmphasisFrame(
 
 @Composable
 private fun ReinforcementMessage(message: String) {
-    Spacer(modifier = Modifier.height(4.dp))
+    Spacer(modifier = Modifier.height((-8).dp))
 
     Text(
         text = message,

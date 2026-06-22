@@ -263,7 +263,7 @@ private fun navigateToBottomDestination(
     currentRoute: String? = null
 ) {
     microFeedbackManager?.triggerTabSwitched()
-    if (destination == BottomDestination.Pet && currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true) {
+    if (currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true) {
         navController.navigate(destination.route) {
             popUpTo(currentRoute) {
                 inclusive = true
