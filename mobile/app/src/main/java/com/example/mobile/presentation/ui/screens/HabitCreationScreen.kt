@@ -544,8 +544,8 @@ private fun DurationSelection(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
-            onClick = { onDurationChanged((duration - 5).coerceAtLeast(1)) },
-            enabled = duration > 5,
+            onClick = { onDurationChanged((duration - 1).coerceAtLeast(1)) },
+            enabled = duration > 1,
             modifier = Modifier
                 .background(AppTheme.current.surface, CircleShape)
                 .size(36.dp)
@@ -562,7 +562,7 @@ private fun DurationSelection(
         )
 
         IconButton(
-            onClick = { onDurationChanged(duration + 5) },
+            onClick = { onDurationChanged(duration + 1) },
             enabled = duration < 180,
             modifier = Modifier
                 .background(AppTheme.current.surface, CircleShape)

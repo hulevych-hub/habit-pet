@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -256,7 +258,7 @@ private fun LevelUpRewardContent(
                 modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height((-4).dp))
 
             Text(
                 text = "Level $level",
@@ -290,7 +292,7 @@ private fun ExpRewardContent(
                 modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height((-4).dp))
 
             Text(
                 text = "+$amount XP",
@@ -392,23 +394,23 @@ private fun ChestRewardContent(
                     )
 
                     if (areRewardsVisible) {
-                        val rewardLines = mutableListOf<String>()
+                        val rewardItems = mutableListOf<ChestRewardItem>()
                         val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
 
                         when (amount) {
-                            is Int -> if (amount > 0) rewardLines.add("+$amount coins")
-                            is String -> if (!amount.isEmpty()) rewardLines.add(amount)
+                            is Int -> if (amount > 0) rewardItems.add(ChestRewardItem.Coin(amount))
+                            is String -> if (!amount.isEmpty()) rewardItems.add(ChestRewardItem.Text(amount))
                         }
 
                         if (expAmount > 0) {
-                            rewardLines.add("+$expAmount XP")
+                            rewardItems.add(ChestRewardItem.Exp(expAmount))
                         }
 
                         if (customizationId != null || equipableId != null) {
                             val equipableName = equipableId
                                 ?.let { EquipableConfig.definition(it)?.name }
                                 ?: "Customization"
-                            rewardLines.add(equipableName)
+                            rewardItems.add(ChestRewardItem.Customization(equipableName))
                         }
 
                         Column(
@@ -426,10 +428,39 @@ private fun ChestRewardContent(
                                 )
                             }
 
-                            if (rewardLines.isNotEmpty()) {
-                                rewardLines.forEach { line ->
-                                    Text(
-                                        text = line,
+                            rewardItems.forEach { item ->
+                                when (item) {
+                                    is ChestRewardItem.Coin -> RewardLineWithIcon(
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.Default.MonetizationOn,
+                                                contentDescription = null,
+                                                tint = AppTheme.current.gold,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                        },
+                                        text = "+${item.amount} coins"
+                                    )
+                                    is ChestRewardItem.Exp -> RewardLineWithIcon(
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.Default.Star,
+                                                contentDescription = null,
+                                                tint = AppTheme.current.rewardAccent,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                        },
+                                        text = "+${item.amount} XP"
+                                    )
+                                    is ChestRewardItem.Text -> Text(
+                                        text = item.text,
+                                        color = AppTheme.current.rewardText,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    is ChestRewardItem.Customization -> Text(
+                                        text = item.name,
                                         color = AppTheme.current.rewardText,
                                         style = MaterialTheme.typography.titleLarge,
                                         textAlign = TextAlign.Center,
@@ -441,7 +472,7 @@ private fun ChestRewardContent(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height((-4).dp))
 
                 if (areRewardsVisible) {
                     ReinforcementMessage(reinforcementMessage)
@@ -503,7 +534,7 @@ private fun StreakRewardContent(
             modifier = Modifier.size((150 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height((-4).dp))
 
         Text(
             text = "$streak-Day Streak",
@@ -524,6 +555,32 @@ private fun StreakRewardContent(
         }
 
         ReinforcementMessage(reinforcementMessage)
+    }
+}
+
+private sealed class ChestRewardItem {
+    data class Coin(val amount: Int) : ChestRewardItem()
+    data class Exp(val amount: Int) : ChestRewardItem()
+    data class Text(val text: String) : ChestRewardItem()
+    data class Customization(val name: String) : ChestRewardItem()
+}
+
+@Composable
+private fun RewardLineWithIcon(
+    icon: @Composable () -> Unit,
+    text: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        icon()
+        Text(
+            text = text,
+            color = AppTheme.current.rewardText,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -644,7 +701,7 @@ private fun RewardEmphasisFrame(
 
 @Composable
 private fun ReinforcementMessage(message: String) {
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(4.dp))
 
     Text(
         text = message,
@@ -671,7 +728,7 @@ private fun CoinRewardContent(
                 modifier = Modifier.size((112 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height((-4).dp))
 
             Text(
                 text = "+$amount coins",
@@ -708,7 +765,7 @@ private fun DragonEvolutionRewardContent(
                 toStage = toStage
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((-4).dp))
 
             Text(
                 text = "Evolution Complete!",

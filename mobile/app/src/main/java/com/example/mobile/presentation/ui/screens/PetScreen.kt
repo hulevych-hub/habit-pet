@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -692,6 +693,7 @@ private fun AttributeRow(
 
 @Composable
 private fun LevelUpButton(progressFraction: Float) {
+    val clampedProgress = progressFraction.coerceIn(0f, 1f)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -703,8 +705,8 @@ private fun LevelUpButton(progressFraction: Float) {
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(progressFraction.coerceIn(0f, 1f))
-                .fillMaxSize()
+                .fillMaxWidth(clampedProgress)
+                .fillMaxHeight()
                 .clip(RoundedCornerShape(18.dp))
                 .background(
                     Brush.horizontalGradient(
