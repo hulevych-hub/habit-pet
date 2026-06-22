@@ -57,6 +57,7 @@ import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -118,7 +119,7 @@ fun StatisticsScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = "Counting your journey milestones..."
             )
         } else {
@@ -127,10 +128,10 @@ fun StatisticsScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            contentPadding = PaddingValues(top = 20.dp, bottom = 40.dp)
+                    .padding(horizontal = DesignTokens.Section.horizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space14),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space14),
+            contentPadding = PaddingValues(top = DesignTokens.Section.horizontalPadding, bottom = DesignTokens.space40)
         ) {
             // Section 1: Hero Streak Dashboard Card
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -146,7 +147,7 @@ fun StatisticsScreenContent(
                     text = "Lifetime Milestones",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp),
                     color = AppTheme.current.muted,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
+                    modifier = Modifier.padding(top = DesignTokens.space8, bottom = DesignTokens.space2)
                 )
             }
 
@@ -200,7 +201,7 @@ private fun HeroStreakCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(26.dp),
+        shape = RoundedCornerShape(DesignTokens.radius6xl),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary)
     ) {
         Box(
@@ -211,17 +212,17 @@ private fun HeroStreakCard(
                         colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
-                .padding(24.dp)
+                .padding(DesignTokens.space24)
         ) {
             // Ambient subtle background glow styling
             Box(
                 modifier = Modifier
                     .size(130.dp)
                     .align(Alignment.CenterEnd)
-                    .offset(x = 20.dp, y = (-10).dp)
+                    .offset(x = DesignTokens.Section.horizontalPadding, y = -DesignTokens.space10)
                     .background(
                         brush = Brush.radialGradient(
-                            colors = listOf(AppTheme.current.danger.copy(alpha = 0.18f), Color.Transparent)
+                            colors = listOf(AppTheme.current.danger.copy(alpha = DesignTokens.alpha16), Color.Transparent)
                         ),
                         shape = CircleShape
                     )
@@ -232,16 +233,16 @@ private fun HeroStreakCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space4)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocalFireDepartment,
                             contentDescription = null,
                             tint = AppTheme.current.danger,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(DesignTokens.Icon.sizeMd)
                         )
                         Text(
                             text = "CURRENT STREAK",
@@ -256,25 +257,25 @@ private fun HeroStreakCard(
                         color = AppTheme.current.onPrimary
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(DesignTokens.space12))
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6),
                         modifier = Modifier
-                            .background(AppTheme.current.onPrimary.copy(alpha = 0.12f), RoundedCornerShape(999.dp))
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .background(AppTheme.current.onPrimary.copy(alpha = DesignTokens.alpha12), DesignTokens.cardCornerCircle)
+                            .padding(horizontal = DesignTokens.space12, vertical = DesignTokens.space6)
                     ) {
                         Icon(
                             imageVector = Icons.Default.MilitaryTech,
                             contentDescription = null,
                             tint = AppTheme.current.gold,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(DesignTokens.Icon.sizeXs)
                         )
                         Text(
                             text = "Personal Best: $bestStreak days",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = AppTheme.current.onPrimary.copy(alpha = 0.85f)
+                            color = AppTheme.current.onPrimary.copy(alpha = DesignTokens.alpha85)
                         )
                     }
                 }
@@ -282,8 +283,8 @@ private fun HeroStreakCard(
                 // Oversized high impact numerical fire badge
                 Box(
                     modifier = Modifier
-                        .size(72.dp)
-                        .background(AppTheme.current.danger.copy(alpha = 0.12f), CircleShape),
+                        .size(DesignTokens.space72)
+                        .background(AppTheme.current.danger.copy(alpha = DesignTokens.alpha12), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -307,31 +308,31 @@ private fun StatBentoCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(DesignTokens.radius4xl),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationSm)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(DesignTokens.space18),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space12)
         ) {
             Box(
                 modifier = Modifier
-                    .size(42.dp)
-                    .background(accentColor.copy(alpha = 0.12f), RoundedCornerShape(14.dp)),
+                    .size(DesignTokens.Card.iconSize)
+                    .background(accentColor.copy(alpha = DesignTokens.alpha12), RoundedCornerShape(DesignTokens.Card.iconBackgroundRadius)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = accentColor,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(DesignTokens.Card.iconInnerSize)
                 )
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)) {
                 Text(
                     text = value,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -371,37 +372,37 @@ private fun PetLifecycleCard(ageDays: Int) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 6.dp),
-        shape = RoundedCornerShape(22.dp),
+            .padding(top = DesignTokens.space6),
+        shape = RoundedCornerShape(DesignTokens.radius4xl),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationSm)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(DesignTokens.Section.horizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space16)
             ) {
                 Box(
                     modifier = Modifier
                         .size(46.dp)
-                        .background(AppTheme.current.gold.copy(alpha = 0.12f), CircleShape),
+                        .background(AppTheme.current.gold.copy(alpha = DesignTokens.alpha12), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Cake,
                         contentDescription = null,
                         tint = AppTheme.current.gold,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(DesignTokens.Card.iconInnerSize)
                     )
                 }
 
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)) {
                     Text(
                         text = "Companion Bond Age",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),

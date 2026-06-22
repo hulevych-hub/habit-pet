@@ -48,6 +48,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.Calendar
@@ -235,10 +236,10 @@ fun StreakCalendarOverlay(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(28.dp),
+                .padding(horizontal = DesignTokens.Card.padding),
+            shape = RoundedCornerShape(DesignTokens.radius2xl),
             color = AppTheme.current.card,
-            shadowElevation = 18.dp
+            shadowElevation = DesignTokens.elevationLg
         ) {
             Box(
                 modifier = Modifier
@@ -250,7 +251,7 @@ fun StreakCalendarOverlay(
                                 dragDistance += dragAmount
                             },
                             onDragEnd = {
-                                val threshold = 48.dp.toPx()
+                                val threshold = DesignTokens.space48.toPx()
                                 when {
                                     state.isLoading || abs(dragDistance) < threshold -> Unit
                                     dragDistance > 0 && state.canNavigatePrevious -> {
@@ -270,8 +271,8 @@ fun StreakCalendarOverlay(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                        .padding(DesignTokens.Section.horizontalPadding),
+                    verticalArrangement = Arrangement.spacedBy(DesignTokens.space14)
                 ) {
                     StreakCalendarControls(
                         title = state.title,
@@ -349,20 +350,20 @@ private fun StreakCalendarControls(
         IconButton(
             onClick = onPreviousMonth,
             enabled = canNavigatePrevious,
-            modifier = Modifier.size(42.dp)
+            modifier = Modifier.size(DesignTokens.Card.iconSize)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Previous month",
                 tint = if (canNavigatePrevious) AppTheme.current.violet else AppTheme.current.muted,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(DesignTokens.Icon.sizeLg)
             )
         }
 
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)
         ) {
             Text(
                 text = monthTitle,
@@ -395,13 +396,13 @@ private fun StreakCalendarControls(
         IconButton(
             onClick = onNextMonth,
             enabled = canNavigateNext,
-            modifier = Modifier.size(42.dp)
+            modifier = Modifier.size(DesignTokens.Card.iconSize)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Next month",
                 tint = if (canNavigateNext) AppTheme.current.violet else AppTheme.current.muted,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(DesignTokens.Icon.sizeLg)
             )
         }
     }
@@ -409,12 +410,12 @@ private fun StreakCalendarControls(
 
 @Composable
 private fun StreakCalendarGrid(days: List<StreakCalendarDay>) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space4)) {
         WeekdayRow()
         days.chunked(7).forEach { week ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4)
             ) {
                 week.forEach { day ->
                     StreakCalendarDayCell(day = day)
@@ -428,7 +429,7 @@ private fun StreakCalendarGrid(days: List<StreakCalendarDay>) {
 private fun WeekdayRow() {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4)
     ) {
         val weekdays = listOf("S", "M", "T", "W", "T", "F", "S")
         weekdays.forEach { weekday ->
@@ -448,17 +449,17 @@ private fun StreakCalendarDayCell(day: StreakCalendarDay) {
     val cellColor = when (day.status) {
         StreakCalendarDayStatus.COMPLETED -> AppTheme.current.amberSoft
         StreakCalendarDayStatus.FREEZE -> AppTheme.current.blueSoft
-        StreakCalendarDayStatus.EMPTY -> AppTheme.current.surface.copy(alpha = 0.58f)
+        StreakCalendarDayStatus.EMPTY -> AppTheme.current.surface.copy(alpha = DesignTokens.alpha58)
     }
-    val contentAlpha = if (day.isCurrentMonth) 1f else 0.48f
+    val contentAlpha = if (day.isCurrentMonth) DesignTokens.alpha100 else DesignTokens.alpha48
 
     Surface(
         modifier = Modifier
             .fillMaxWidth(1f / 7f)
             .height(46.dp),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(DesignTokens.radiusLg),
         color = cellColor,
-        border = if (day.isToday) BorderStroke(1.dp, AppTheme.current.gold) else null
+        border = if (day.isToday) BorderStroke(DesignTokens.strokeThin, AppTheme.current.gold) else null
     ) {
         Box(contentAlignment = Alignment.Center) {
             Column(
@@ -473,21 +474,21 @@ private fun StreakCalendarDayCell(day: StreakCalendarDay) {
 
                 when (day.status) {
                     StreakCalendarDayStatus.COMPLETED -> {
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(DesignTokens.space2))
                         Icon(
                             imageVector = Icons.Default.LocalFireDepartment,
                             contentDescription = "Completed",
                             tint = AppTheme.current.amber,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(DesignTokens.radiusLg)
                         )
                     }
                     StreakCalendarDayStatus.FREEZE -> {
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(DesignTokens.space2))
                         Icon(
                             imageVector = Icons.Default.LocalFireDepartment,
                             contentDescription = "Frozen streak",
                             tint = AppTheme.current.blue,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(DesignTokens.radiusLg)
                         )
                     }
                     StreakCalendarDayStatus.EMPTY -> Unit
@@ -501,7 +502,7 @@ private fun StreakCalendarDayCell(day: StreakCalendarDay) {
 private fun StreakCalendarLegend(showFreezeLegend: Boolean) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space12),
         verticalAlignment = Alignment.CenterVertically
     ) {
         LegendItem(
@@ -526,14 +527,14 @@ private fun LegendItem(
     tint: Color
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.size(DesignTokens.radiusLg)
         )
         Text(
             text = label,

@@ -70,6 +70,7 @@ import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.presentation.viewmodel.RewardsViewModel
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.grid.items as gridItems
@@ -203,7 +204,7 @@ private fun RewardsScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = error.orEmpty(),
                 onRetry = onClearError
             )
@@ -212,7 +213,7 @@ private fun RewardsScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = "Opening the reward chest..."
             )
         } else {
@@ -221,10 +222,10 @@ private fun RewardsScreenContent(
                     columns = GridCells.Fixed(3),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp)
+                        .padding(horizontal = DesignTokens.Section.horizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space12),
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space12),
+                contentPadding = PaddingValues(top = DesignTokens.Section.topPadding, bottom = DesignTokens.space96)
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     CollectionTypeTabs(
@@ -249,7 +250,7 @@ private fun RewardsScreenContent(
 
                 if (filteredItems.isEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        Box(modifier = Modifier.padding(top = 24.dp)) {
+                        Box(modifier = Modifier.padding(top = DesignTokens.space24)) {
                             EmptyStateCard(
                                 title = when (selectedCollection) {
                                     CollectionTab.Owned -> "Vault is Empty"
@@ -303,6 +304,7 @@ private fun RewardsScreenContent(
         )
     }
 }
+
 }
 
 @Composable
@@ -319,14 +321,14 @@ private fun InventoryItemGridSquare(
             .aspectRatio(1f)
             .fillMaxWidth()
             .border(
-                width = if (isSelected) 3.dp else if (isEquipped) 2.dp else 0.dp,
+                width = if (isSelected) 3.dp else if (isEquipped) DesignTokens.strokeThick else 0.dp,
                 color = if (isSelected) AppTheme.current.violet else if (isEquipped) AppTheme.current.mint else Color.Transparent,
-                shape = RoundedCornerShape(20.dp)
+                shape = DesignTokens.cardCorner
             )
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased && !isSelected) 1.dp else 0.dp)
+        shape = DesignTokens.cardCorner,
+        elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased && !isSelected) DesignTokens.elevationSm else DesignTokens.elevationNone)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -334,10 +336,10 @@ private fun InventoryItemGridSquare(
         ) {
             Box(
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(DesignTokens.Card.iconSizeLg)
                     .background(
                         brush = Brush.radialGradient(
-                            colors = listOf(tierColor.copy(alpha = 0.2f), Color.Transparent)
+                            colors = listOf(tierColor.copy(alpha = DesignTokens.alpha20), Color.Transparent)
                         ),
                         shape = CircleShape
                     )
@@ -349,29 +351,29 @@ private fun InventoryItemGridSquare(
                 itemId = item.itemId,
                 imageUrl = item.imageUrl,
                 tintColor = tierColor,
-                modifier = Modifier.fillMaxSize().padding(14.dp)
+                modifier = Modifier.fillMaxSize().padding(DesignTokens.space14)
             )
 
             if (!item.isPurchased) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(AppTheme.current.ink.copy(alpha = 0.08f)),
+                        .background(AppTheme.current.ink.copy(alpha = DesignTokens.alpha8)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Locked",
-                        tint = AppTheme.current.onPrimary.copy(alpha = 0.6f),
-                        modifier = Modifier.size(24.dp)
+                        tint = AppTheme.current.onPrimary.copy(alpha = DesignTokens.alpha60),
+                        modifier = Modifier.size(DesignTokens.Icon.sizeXl)
                     )
                 }
             } else if (isEquipped) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .size(16.dp)
+                        .padding(DesignTokens.space8)
+                        .size(DesignTokens.Icon.sizeXs)
                         .background(AppTheme.current.mint, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -379,7 +381,7 @@ private fun InventoryItemGridSquare(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
                         tint = AppTheme.current.onPrimary,
-                        modifier = Modifier.size(10.dp)
+                        modifier = Modifier.size(DesignTokens.space10)
                     )
                 }
             }
@@ -407,30 +409,30 @@ private fun ItemInspectDrawer(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = DesignTokens.Card.padding, vertical = DesignTokens.Card.padding),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
-        shape = RoundedCornerShape(24.dp),
+        shape = DesignTokens.cardCornerRounded,
         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(DesignTokens.Section.horizontalPadding),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.Card.padding)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)) {
                     Surface(
-                        shape = RoundedCornerShape(999.dp),
-                        color = tierColor.copy(alpha = 0.12f)
+                        shape = DesignTokens.cardCornerCircle,
+                        color = tierColor.copy(alpha = DesignTokens.alpha12)
                     ) {
                         Text(
                             text = item.rarity.name,
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = tierColor,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = DesignTokens.Badge.paddingHorizontal, vertical = DesignTokens.Badge.paddingVertical)
                         )
                     }
                     Text(
@@ -462,7 +464,7 @@ private fun ItemInspectDrawer(
                 if (!item.isPurchased && isPurchasable) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4)
                     ) {
                         CoinPill(amount = item.price)
                     }
@@ -474,15 +476,15 @@ private fun ItemInspectDrawer(
                 enabled = isEquipped || item.isPurchased || isPurchasable,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = when {
-                        isEquipped -> AppTheme.current.ink.copy(alpha = 0.08f)
+                        isEquipped -> AppTheme.current.ink.copy(alpha = DesignTokens.alpha8)
                         item.isPurchased -> AppTheme.current.violet
                         isPurchasable -> AppTheme.current.amber
                         else -> AppTheme.current.muted
                     },
                     contentColor = if (isEquipped) AppTheme.current.ink else AppTheme.current.onPrimary
                 ),
-                shape = RoundedCornerShape(999.dp),
-                modifier = Modifier.fillMaxWidth().height(48.dp)
+                shape = DesignTokens.cardCornerCircle,
+                modifier = Modifier.fillMaxWidth().height(DesignTokens.Button.heightSm)
             ) {
                 Text(
                     text = when {
@@ -507,9 +509,9 @@ private fun CollectionTypeTabs(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(AppTheme.current.ink.copy(alpha = 0.04f), RoundedCornerShape(999.dp))
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+            .background(AppTheme.current.ink.copy(alpha = DesignTokens.alpha4), DesignTokens.cardCornerCircle)
+            .padding(DesignTokens.space4),
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4)
     ) {
         CollectionTypeTab.values().forEach { tab ->
             val isSelected = selectedTypeTab == tab
@@ -517,20 +519,20 @@ private fun CollectionTypeTabs(
                 modifier = Modifier
                     .weight(1f)
                     .height(38.dp)
-                    .clip(RoundedCornerShape(999.dp))
+                    .clip(DesignTokens.cardCornerCircle)
                     .background(if (isSelected) AppTheme.current.violet else Color.Transparent)
                     .clickable { onTypeSelected(tab) },
                 contentAlignment = Alignment.Center
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = tab.icon,
                         contentDescription = null,
                         tint = if (isSelected) AppTheme.current.onPrimary else AppTheme.current.muted,
-                        modifier = Modifier.size(15.dp)
+                        modifier = Modifier.size(DesignTokens.Icon.sizeXs)
                     )
                     Text(
                         text = tab.label,
@@ -550,7 +552,7 @@ private fun CollectionToggle(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space10)
     ) {
         CollectionTab.values().forEach { tab ->
             val isSelected = selectedCollection == tab
@@ -559,8 +561,8 @@ private fun CollectionToggle(
                     .weight(1f)
                     .height(44.dp)
                     .clickable { onSelected(tab) },
-                shape = RoundedCornerShape(16.dp),
-                color = if (isSelected) AppTheme.current.violet else AppTheme.current.violet.copy(alpha = 0.08f),
+                shape = DesignTokens.cardCornerSm,
+                color = if (isSelected) AppTheme.current.violet else AppTheme.current.violet.copy(alpha = DesignTokens.alpha8),
                 border = borderStrokeFix(isSelected)
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -582,7 +584,7 @@ private fun RarityFilter(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
     ) {
         RarityChip(
             label = "All",
@@ -615,9 +617,9 @@ private fun RarityChip(
         modifier = modifier
             .height(36.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(999.dp),
-        color = if (isSelected) chipColor else chipColor.copy(alpha = 0.16f),
-        border = if (isSelected) androidx.compose.foundation.BorderStroke(1.5.dp, chipColor) else androidx.compose.foundation.BorderStroke(1.dp, chipColor.copy(alpha = 0.28f))
+        shape = DesignTokens.cardCornerCircle,
+        color = if (isSelected) chipColor else chipColor.copy(alpha = DesignTokens.alpha16),
+        border = if (isSelected) androidx.compose.foundation.BorderStroke(DesignTokens.strokeMedium, chipColor) else androidx.compose.foundation.BorderStroke(DesignTokens.strokeThin, chipColor.copy(alpha = DesignTokens.alpha28))
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
@@ -631,7 +633,7 @@ private fun RarityChip(
 
 
 private fun borderStrokeFix(selected: Boolean, color: Color = AppTheme.current.violet) =
-    if (selected) androidx.compose.foundation.BorderStroke(1.5.dp, color) else null
+    if (selected) androidx.compose.foundation.BorderStroke(DesignTokens.strokeMedium, color) else null
 
 private fun CollectionTypeTab.itemsFlow(viewModel: RewardsViewModel) = when (this) {
     CollectionTypeTab.Outfits -> viewModel.outfits

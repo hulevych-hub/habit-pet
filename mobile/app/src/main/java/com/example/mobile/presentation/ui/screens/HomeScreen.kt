@@ -56,6 +56,7 @@ import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
@@ -140,7 +141,7 @@ fun HomeScreenContent(
                 LoadingStateCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                        .padding(horizontal = DesignTokens.Section.horizontalPadding, vertical = DesignTokens.Section.horizontalPadding),
                     message = "Waking up your dragon..."
                 )
             } else {
@@ -149,9 +150,9 @@ fun HomeScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                        .padding(horizontal = DesignTokens.Section.horizontalPadding)
+                        .padding(top = DesignTokens.Section.verticalSpacing),
+                    verticalArrangement = Arrangement.spacedBy(DesignTokens.Section.horizontalPadding)
                 ) {
                     ResetGameButton(onResetClick = { showResetGameDialog = true })
                     TodayNourishmentSection(
@@ -246,8 +247,8 @@ private fun PetSummary(pet: PetEntity) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = AppTheme.current.card,
-        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
-        shadowElevation = 1.dp
+        shape = RoundedCornerShape(bottomStart = DesignTokens.space28, bottomEnd = DesignTokens.space28),
+        shadowElevation = DesignTokens.elevationSm
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -259,7 +260,7 @@ private fun PetSummary(pet: PetEntity) {
                     .height(320.dp)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(AppTheme.current.lavenderSoft.copy(alpha = 0.4f), Color.Transparent)
+                            colors = listOf(AppTheme.current.lavenderSoft.copy(alpha = DesignTokens.alpha40), Color.Transparent)
                         )
                     ),
                 contentAlignment = Alignment.Center
@@ -274,7 +275,7 @@ private fun PetSummary(pet: PetEntity) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp, vertical = 14.dp),
+                    .padding(horizontal = DesignTokens.space18, vertical = DesignTokens.space14),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -287,29 +288,29 @@ private fun PetSummary(pet: PetEntity) {
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(DesignTokens.space8),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Surface(
-                        shape = RoundedCornerShape(999.dp),
+                        shape = DesignTokens.cardCornerCircle,
                         color = AppTheme.current.amber
                     ) {
                         Text(
                             text = "Lv. ${pet.level}",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = AppTheme.current.onSecondary,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = DesignTokens.space10, vertical = DesignTokens.space4)
                         )
                     }
                     Surface(
-                        shape = RoundedCornerShape(999.dp),
-                        color = AppTheme.current.mint.copy(alpha = 0.16f)
+                        shape = DesignTokens.cardCornerCircle,
+                        color = AppTheme.current.mint.copy(alpha = DesignTokens.alpha16)
                     ) {
                         Text(
                             text = DragonMood.from(pet.mood).displayName,
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = AppTheme.current.success,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = DesignTokens.space10, vertical = DesignTokens.space4)
                         )
                     }
                 }
@@ -331,7 +332,7 @@ private fun ResetGameButton(
             containerColor = AppTheme.current.danger,
             contentColor = AppTheme.current.onSurface
         ),
-        shape = RoundedCornerShape(18.dp)
+        shape = RoundedCornerShape(DesignTokens.radius2xl)
     ) {
         Text(
             text = "Reset Game",
@@ -354,10 +355,10 @@ private fun TodayNourishmentSection(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignTokens.space14)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = DesignTokens.space4),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -397,30 +398,30 @@ private fun EmptyHomeQuest(onNavigateToHabits: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(AppTheme.current.card, RoundedCornerShape(24.dp))
-            .padding(24.dp),
+            .background(AppTheme.current.card, RoundedCornerShape(DesignTokens.radius5xl))
+            .padding(DesignTokens.space24),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = Icons.Default.Star,
             contentDescription = null,
             tint = AppTheme.current.amber,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier.size(DesignTokens.Card.iconSizeSm)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(DesignTokens.space10))
         Text(
             text = "Your dragon is ready for its first tiny quest.",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
             color = AppTheme.current.ink,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(DesignTokens.space14))
         Button(
             onClick = onNavigateToHabits,
             colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.violet),
-            shape = RoundedCornerShape(999.dp)
+            shape = DesignTokens.cardCornerCircle
         ) {
-            Text("Create first habit", modifier = Modifier.padding(horizontal = 8.dp))
+            Text("Create first habit", modifier = Modifier.padding(horizontal = DesignTokens.space8))
         }
     }
 }
@@ -436,26 +437,26 @@ private fun HomeHabitItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        color = if (completed) AppTheme.current.mint.copy(alpha = 0.15f) else AppTheme.current.card,
-        shadowElevation = 0.dp
+        shape = RoundedCornerShape(DesignTokens.radius3xl),
+        color = if (completed) AppTheme.current.mint.copy(alpha = DesignTokens.alpha16) else AppTheme.current.card,
+        shadowElevation = DesignTokens.elevationNone
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(DesignTokens.Card.padding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space14)
         ) {
             Icon(
                 imageVector = if (completed) Icons.Default.CheckCircle else habitIcon(habit),
                 contentDescription = null,
                 tint = if (completed) AppTheme.current.success else AppTheme.current.violet,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(DesignTokens.Icon.size2xl)
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)
             ) {
                 Text(
                     text = habit.name,
@@ -465,7 +466,7 @@ private fun HomeHabitItem(
                 Text(
                     text = if (completed) "Nourished for today" else "${habit.type} • ${habit.currentStreak}d streak",
                     style = MaterialTheme.typography.bodySmall,
-                    color = AppTheme.current.ink.copy(alpha = 0.6f)
+                    color = AppTheme.current.ink.copy(alpha = DesignTokens.alpha60)
                 )
             }
             if (completed) {
@@ -478,8 +479,8 @@ private fun HomeHabitItem(
                 Icon(
                     imageVector = Icons.Default.RadioButtonUnchecked,
                     contentDescription = null,
-                    tint = AppTheme.current.violet.copy(alpha = 0.4f),
-                    modifier = Modifier.size(24.dp)
+                    tint = AppTheme.current.violet.copy(alpha = DesignTokens.alpha40),
+                    modifier = Modifier.size(DesignTokens.Icon.sizeXl)
                 )
             }
         }
@@ -512,7 +513,7 @@ private fun HomeScreenPreview() {
                     HabitEntity(
                         id = 2,
                         name = "Focused reading",
-                        icon = "📚",
+                        icon = "\uD83D\uDCDA",
                         type = "TIMER",
                         minimumDurationMinutes = 15,
                         currentStreak = 2,

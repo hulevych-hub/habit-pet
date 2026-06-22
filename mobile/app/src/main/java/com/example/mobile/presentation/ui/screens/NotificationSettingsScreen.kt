@@ -58,6 +58,7 @@ import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.AppThemeOption
 import com.example.mobile.ui.theme.AppThemePrefs
 import com.example.mobile.ui.theme.HabitPetTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.util.NotificationPrefs
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,7 +123,7 @@ fun NotificationSettingsContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = settingsError.orEmpty(),
                 onRetry = { settingsError = null }
             )
@@ -131,10 +132,10 @@ fun NotificationSettingsContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = DesignTokens.Section.horizontalPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space12),
+                contentPadding = PaddingValues(top = DesignTokens.Section.topPadding, bottom = DesignTokens.Section.bottomPadding)
             ) {
             item {
                 SettingsHero()
@@ -233,15 +234,15 @@ private fun ThemeSelectionSection(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
-        shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
+        shape = DesignTokens.cardCorner,
+        border = androidx.compose.foundation.BorderStroke(DesignTokens.strokeThin, AppTheme.current.outline.copy(alpha = DesignTokens.alpha40)),
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(DesignTokens.Card.padding),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space12)
         ) {
             Text(
                 text = "App Color Palette",
@@ -254,15 +255,15 @@ private fun ThemeSelectionSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onThemeSelected(option) }
-                        .padding(vertical = 6.dp),
+                        .padding(vertical = DesignTokens.space6),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignTokens.space10)
                 ) {
                     RadioButton(
                         selected = selectedTheme == option,
                         onClick = { onThemeSelected(option) }
                     )
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)) {
                         Text(
                             text = option.label,
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
@@ -286,10 +287,10 @@ private fun CopyrightFooter() {
         text = "Copyright © 2026 Hulevych Enterprises. All rights to cuddle Vanessa Baron reserved.",
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = DesignTokens.space8),
         color = AppTheme.current.muted,
         fontSize = 10.sp,
-        lineHeight = 12.sp,
+        lineHeight = DesignTokens.space12.value.sp,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -316,7 +317,7 @@ private fun SettingsHero() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary),
-        shape = RoundedCornerShape(24.dp)
+        shape = DesignTokens.cardCornerRounded
     ) {
         Box(
             modifier = Modifier
@@ -326,7 +327,7 @@ private fun SettingsHero() {
                         colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
-                .padding(20.dp)
+                .padding(DesignTokens.Section.horizontalPadding)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -335,7 +336,7 @@ private fun SettingsHero() {
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignTokens.space4)
                 ) {
                     Text(
                         text = "Gentle Nudges",
@@ -345,21 +346,21 @@ private fun SettingsHero() {
                     Text(
                         text = "Keep reminders warm and supportive. Your companion invites you back without pressure.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = AppTheme.current.onPrimary.copy(alpha = 0.65f)
+                        color = AppTheme.current.onPrimary.copy(alpha = DesignTokens.alpha65)
                     )
                 }
 
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
-                        .background(AppTheme.current.onPrimary.copy(alpha = 0.06f), CircleShape),
+                        .size(DesignTokens.space56)
+                        .background(AppTheme.current.onPrimary.copy(alpha = DesignTokens.alpha6), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = null,
                         tint = AppTheme.current.violet,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(DesignTokens.Icon.size2xl)
                     )
                 }
             }
@@ -417,34 +418,34 @@ private fun SettingRow(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
-        shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.current.outline.copy(alpha = 0.4f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
+        shape = DesignTokens.cardCorner,
+        border = androidx.compose.foundation.BorderStroke(DesignTokens.strokeThin, AppTheme.current.outline.copy(alpha = DesignTokens.alpha40)),
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(DesignTokens.Card.padding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space14)
         ) {
             Box(
                 modifier = Modifier
-                    .size(42.dp)
-                    .background(AppTheme.current.violet.copy(alpha = 0.08f), RoundedCornerShape(12.dp)),
+                    .size(DesignTokens.Card.iconSize)
+                    .background(AppTheme.current.violet.copy(alpha = DesignTokens.alpha8), RoundedCornerShape(DesignTokens.Card.iconBackgroundRadius)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = AppTheme.current.violet,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(DesignTokens.Icon.sizeLg)
                 )
             }
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)
             ) {
                 Text(
                     text = title,
@@ -455,7 +456,7 @@ private fun SettingRow(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
                     color = AppTheme.current.muted,
-                    lineHeight = 16.sp
+                    lineHeight = DesignTokens.space16.value.sp
                 )
             }
 

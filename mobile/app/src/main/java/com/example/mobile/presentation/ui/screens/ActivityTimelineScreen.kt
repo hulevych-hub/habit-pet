@@ -67,9 +67,10 @@ import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
-import com.example.mobile.util.ReinforcementMessageProvider
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
+import com.example.mobile.util.ReinforcementMessageProvider
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,7 +148,7 @@ fun ActivityTimelineScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = "Opening your journey chronicle..."
             )
         } else {
@@ -156,9 +157,9 @@ fun ActivityTimelineScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = DesignTokens.Section.horizontalPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
+                contentPadding = PaddingValues(top = DesignTokens.Section.topPadding, bottom = DesignTokens.Section.bottomPadding)
             ) {
             groups.forEach { group ->
                 item {
@@ -180,13 +181,13 @@ fun ActivityTimelineScreenContent(
                         enabled = !isLoadingMore,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AppTheme.current.violet,
-                            disabledContainerColor = AppTheme.current.violet.copy(alpha = 0.5f)
+                            disabledContainerColor = AppTheme.current.violet.copy(alpha = DesignTokens.alpha50)
                         ),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = DesignTokens.cardCornerSm,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp)
-                            .height(48.dp)
+                            .padding(vertical = DesignTokens.Section.verticalSpacing)
+                            .height(DesignTokens.Button.heightSm)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -194,11 +195,11 @@ fun ActivityTimelineScreenContent(
                         ) {
                             if (isLoadingMore) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier.size(18.dp),
+                                    modifier = Modifier.size(DesignTokens.Icon.sizeSm),
                                     color = AppTheme.current.onPrimary,
-                                    strokeWidth = 2.dp
+                                    strokeWidth = DesignTokens.strokeThin
                                 )
-                                Spacer(modifier = Modifier.width(10.dp))
+                                Spacer(modifier = Modifier.width(DesignTokens.space10))
                             }
                             Text(
                                 text = if (isLoadingMore) "Retrieving Chronicles..." else "Load Older Chronicles",
@@ -226,7 +227,7 @@ private fun ActivityHeader() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary),
-        shape = RoundedCornerShape(24.dp)
+        shape = DesignTokens.cardCornerRounded
     ) {
         Box(
             modifier = Modifier
@@ -236,9 +237,9 @@ private fun ActivityHeader() {
                         colors = listOf(AppTheme.current.primary, AppTheme.current.primaryContainer)
                     )
                 )
-                .padding(20.dp)
+                .padding(DesignTokens.Section.horizontalPadding)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space4)) {
                 Text(
                     text = "Dragon Story Path",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -247,7 +248,7 @@ private fun ActivityHeader() {
                 Text(
                     text = "Every productive rhythm becomes a timeless chronicle your companion carries forward.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = AppTheme.current.onPrimary.copy(alpha = 0.65f)
+                    color = AppTheme.current.onPrimary.copy(alpha = DesignTokens.alpha65)
                 )
             }
         }
@@ -259,7 +260,7 @@ private fun DayHeader(label: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 4.dp),
+            .padding(top = DesignTokens.Section.horizontalPadding, bottom = DesignTokens.space4),
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
@@ -267,8 +268,8 @@ private fun DayHeader(label: String) {
             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
             color = AppTheme.current.violet,
             modifier = Modifier
-                .background(AppTheme.current.violet.copy(alpha = 0.1f), RoundedCornerShape(999.dp))
-                .padding(horizontal = 14.dp, vertical = 4.dp)
+                .background(AppTheme.current.violet.copy(alpha = DesignTokens.alpha10), DesignTokens.cardCornerCircle)
+                .padding(horizontal = DesignTokens.space14, vertical = DesignTokens.space4)
         )
     }
 }
@@ -295,22 +296,22 @@ private fun ActivityTimelineItem(
     IntrinsicSizeRow(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp)
+            .padding(vertical = DesignTokens.space2)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.width(32.dp)
+            modifier = Modifier.width(DesignTokens.space32)
         ) {
             TimelineNode(accent = accentColor)
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .width(2.dp)
+                    .width(DesignTokens.strokeThin)
                     .background(AppTheme.current.outline)
             )
         }
 
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(DesignTokens.space10))
 
         TimelineEventCard(
             event = event,
@@ -319,7 +320,7 @@ private fun ActivityTimelineItem(
             accent = accentColor,
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = 12.dp)
+                .padding(bottom = DesignTokens.space12)
         )
     }
 }
@@ -335,23 +336,23 @@ private fun IntrinsicSizeRow(
 @Composable
 private fun TimelineNode(accent: Color) {
     Box(
-        modifier = Modifier.size(32.dp),
+        modifier = Modifier.size(DesignTokens.space32),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .size(16.dp)
-                .background(accent.copy(alpha = 0.2f), CircleShape),
+                .size(DesignTokens.Icon.sizeXs)
+                .background(accent.copy(alpha = DesignTokens.alpha20), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(DesignTokens.space10)
                     .background(accent, CircleShape)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(4.dp)
+                        .size(DesignTokens.space4)
                         .background(AppTheme.current.onSurface, CircleShape)
                         .align(Alignment.Center)
                 )
@@ -371,20 +372,20 @@ private fun TimelineEventCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isMilestone) accent.copy(alpha = 0.04f) else AppTheme.current.card
+            containerColor = if (isMilestone) accent.copy(alpha = DesignTokens.alpha4) else AppTheme.current.card
         ),
-        shape = RoundedCornerShape(20.dp),
+        shape = DesignTokens.cardCorner,
         border = androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = if (isMilestone) accent.copy(alpha = 0.3f) else AppTheme.current.outline.copy(alpha = 0.4f)
+            width = DesignTokens.strokeThin,
+            color = if (isMilestone) accent.copy(alpha = DesignTokens.alpha30) else AppTheme.current.outline.copy(alpha = DesignTokens.alpha40)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isMilestone) 2.dp else 0.5.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isMilestone) DesignTokens.elevationSm else DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(DesignTokens.Card.padding),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -393,38 +394,38 @@ private fun TimelineEventCard(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(DesignTokens.space10),
                     modifier = Modifier.weight(1f)
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
-                            .background(accent.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
+                            .size(DesignTokens.Card.iconSizeSm)
+                            .background(accent.copy(alpha = DesignTokens.alpha10), DesignTokens.cardCornerXs),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = iconForEvent(event.type),
                             contentDescription = null,
                             tint = accent,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(DesignTokens.Icon.sizeSm)
                         )
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space1)) {
                         Text(
                             text = event.title,
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             color = AppTheme.current.ink
                         )
                         Surface(
-                            shape = RoundedCornerShape(4.dp),
-                            color = accent.copy(alpha = 0.1f)
+                            shape = RoundedCornerShape(DesignTokens.radiusXs),
+                            color = accent.copy(alpha = DesignTokens.alpha10)
                         ) {
                             Text(
                                 text = rewardPreview(event).uppercase(),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, letterSpacing = 0.5.sp),
                                 color = accent,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(horizontal = DesignTokens.space6, vertical = DesignTokens.space2)
                             )
                         }
                     }
@@ -440,21 +441,21 @@ private fun TimelineEventCard(
             Text(
                 text = event.description,
                 style = MaterialTheme.typography.bodySmall,
-                color = AppTheme.current.ink.copy(alpha = 0.75f),
+                color = AppTheme.current.ink.copy(alpha = DesignTokens.alpha75),
                 lineHeight = 18.sp
             )
 
             if (reinforcementMessage.isNotBlank()) {
                 Surface(
-                    shape = RoundedCornerShape(10.dp),
-                    color = AppTheme.current.amber.copy(alpha = 0.08f),
+                    shape = DesignTokens.cardCornerXs,
+                    color = AppTheme.current.amber.copy(alpha = DesignTokens.alpha8),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "💬 $reinforcementMessage",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                         color = AppTheme.current.amberDark,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = DesignTokens.space12, vertical = DesignTokens.space8)
                     )
                 }
             }
@@ -600,3 +601,4 @@ private fun ActivityTimelineScreenPreview() {
         )
     }
 }
+

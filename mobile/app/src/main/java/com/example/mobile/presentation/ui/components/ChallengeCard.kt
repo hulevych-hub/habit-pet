@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -39,6 +38,7 @@ import com.example.mobile.domain.EquipableType
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.domain.rewardLabel
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 
 @Composable
 fun ChallengeCard(
@@ -50,26 +50,26 @@ fun ChallengeCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = DesignTokens.cardCornerRounded,
         colors = CardDefaults.cardColors(
-            containerColor = AppTheme.current.surfaceVariant.copy(alpha = 0.72f)
+            containerColor = AppTheme.current.surfaceVariant.copy(alpha = DesignTokens.alpha72)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationLg)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(DesignTokens.Card.padding),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space12)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 2.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    .padding(horizontal = DesignTokens.space2),
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space12),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .size(52.dp)
+                        .size(DesignTokens.Card.iconSizeLg)
                         .clip(CircleShape)
                         .background(AppTheme.current.gold),
                     contentAlignment = Alignment.Center
@@ -78,7 +78,7 @@ fun ChallengeCard(
                         imageVector = challenge?.icon?.challengeIcon() ?: Icons.Default.Star,
                         contentDescription = null,
                         tint = AppTheme.current.onSecondary,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(DesignTokens.Icon.size2xl)
                     )
                 }
 
@@ -100,7 +100,7 @@ fun ChallengeCard(
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DesignTokens.space8)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -122,9 +122,9 @@ fun ChallengeCard(
                     progress = state.progressFraction,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 2.dp)
-                        .height(10.dp)
-                        .clip(RoundedCornerShape(999.dp)),
+                        .padding(horizontal = DesignTokens.space2)
+                        .height(DesignTokens.space10)
+                        .clip(DesignTokens.cardCornerCircle),
                     color = if (state.isCompleted) AppTheme.current.success else AppTheme.current.violet,
                     trackColor = AppTheme.current.progressTrack
                 )
@@ -132,23 +132,23 @@ fun ChallengeCard(
 
             RewardPreview(
                 rewards = state.rewards,
-                modifier = Modifier.padding(horizontal = 2.dp)
+                modifier = Modifier.padding(horizontal = DesignTokens.space2)
             )
 
             if (state.isCompleted && !state.isClaimed) {
                 Button(
                     onClick = onClaim,
                     modifier = Modifier
-                        .padding(horizontal = 2.dp)
+                        .padding(horizontal = DesignTokens.space2)
                         .fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = DesignTokens.cardCornerSm
                 ) {
                     Icon(
                         imageVector = Icons.Default.Celebration,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(DesignTokens.Icon.sizeSm)
                     )
-                    Spacer(modifier = Modifier.padding(6.dp))
+                    Spacer(modifier = Modifier.padding(DesignTokens.space6))
                     Text("Claim Challenge Reward")
                 }
             }
@@ -163,7 +163,7 @@ private fun RewardPreview(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space8),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (rewards.isEmpty()) {
@@ -184,20 +184,20 @@ private fun RewardPreview(
 private fun RewardChip(reward: ChallengeRewardDefinition) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(999.dp))
-            .background(AppTheme.current.violet.copy(alpha = 0.08f))
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .clip(DesignTokens.cardCornerCircle)
+            .background(AppTheme.current.violet.copy(alpha = DesignTokens.alpha8))
+            .padding(horizontal = DesignTokens.space10, vertical = DesignTokens.space6),
         contentAlignment = Alignment.Center
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = reward.icon(),
                 contentDescription = null,
                 tint = AppTheme.current.violet,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(DesignTokens.Icon.sizeXs)
             )
             Text(
                 text = reward.label(),

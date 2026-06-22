@@ -78,6 +78,7 @@ import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -187,13 +188,13 @@ fun PetScreenContent(
     ) { padding ->
         if (!error.isNullOrBlank()) {
             ErrorStateCard(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(20.dp),
+                modifier = Modifier.fillMaxSize().padding(padding).padding(DesignTokens.Section.horizontalPadding),
                 message = error.orEmpty(),
                 onRetry = onClearError
             )
         } else if (isLoading) {
             LoadingStateCard(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(20.dp),
+                modifier = Modifier.fillMaxSize().padding(padding).padding(DesignTokens.Section.horizontalPadding),
                 message = "Checking on your dragon..."
             )
         } else {
@@ -212,7 +213,7 @@ fun PetScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignTokens.Card.padding))
 
                 PetDetailsPanel(
                     pet = pet,
@@ -223,7 +224,7 @@ fun PetScreenContent(
                     onEditCustomizationsClick = onNavigateToRewardsOwned
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(DesignTokens.space24))
             }
         }
 
@@ -261,7 +262,7 @@ private fun PetShowcase(
         modifier = modifier,
         shape = showcaseShape,
         color = AppTheme.current.surface,
-        shadowElevation = 1.dp
+        shadowElevation = DesignTokens.elevationSm
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -293,7 +294,7 @@ private fun PetShowcase(
                                 Brush.verticalGradient(
                                     colors = listOf(
                                         Color.Transparent,
-                                        AppTheme.current.background.copy(alpha = 0.72f),
+                                        AppTheme.current.background.copy(alpha = DesignTokens.alpha70),
                                         AppTheme.current.background
                                     )
                                 )
@@ -303,7 +304,7 @@ private fun PetShowcase(
                     MedallionConnectors(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(bottom = 10.dp)
+                            .padding(bottom = DesignTokens.space10)
                             .fillMaxWidth()
                             .height(MedallionSize)
                     )
@@ -313,14 +314,14 @@ private fun PetShowcase(
                         name = name,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(bottom = 10.dp)
+                            .padding(bottom = DesignTokens.space10)
                     )
 
                     MoodPill(
                         mood = mood,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(end = 18.dp, bottom = 86.dp)
+                            .padding(end = DesignTokens.space18, bottom = 86.dp)
                     )
                 }
             }
@@ -342,21 +343,21 @@ private fun MedallionConnectors(modifier: Modifier = Modifier) {
         val rightMedallionEdge = centerX + medallionRadius
         val leftEnd = centerX - connectorHalfWidth
         val rightEnd = centerX + connectorHalfWidth
-        val leftInnerEnd = leftMedallionEdge - 8.dp.toPx()
-        val rightInnerEnd = rightMedallionEdge + 8.dp.toPx()
+        val leftInnerEnd = leftMedallionEdge - DesignTokens.space8.toPx()
+        val rightInnerEnd = rightMedallionEdge + DesignTokens.space8.toPx()
 
         drawLine(
-            color = gold.copy(alpha = 0.42f),
+            color = gold.copy(alpha = DesignTokens.alpha42),
             start = Offset(leftEnd, centerY),
             end = Offset(leftInnerEnd, centerY),
-            strokeWidth = strokeWidth + 5.dp.toPx(),
+            strokeWidth = strokeWidth + DesignTokens.space4.toPx(),
             cap = StrokeCap.Round
         )
         drawLine(
-            color = gold.copy(alpha = 0.42f),
+            color = gold.copy(alpha = DesignTokens.alpha42),
             start = Offset(rightEnd, centerY),
             end = Offset(rightInnerEnd, centerY),
-            strokeWidth = strokeWidth + 5.dp.toPx(),
+            strokeWidth = strokeWidth + DesignTokens.space4.toPx(),
             cap = StrokeCap.Round
         )
         drawLine(
@@ -425,7 +426,7 @@ private fun PetMedallion(
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = DesignTokens.Card.padding)
                 )
             }
         }
@@ -442,9 +443,9 @@ private fun LevelBadge(
         modifier = modifier
             .width(138.dp)
             .height(78.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = DesignTokens.cardCornerRounded,
         color = AppTheme.current.headerSurface,
-        border = BorderStroke(2.dp, AppTheme.current.gold),
+        border = BorderStroke(DesignTokens.strokeThick, AppTheme.current.gold),
         shadowElevation = 14.dp
     ) {
         Column(
@@ -466,7 +467,7 @@ private fun LevelBadge(
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 12.dp)
+                modifier = Modifier.padding(horizontal = DesignTokens.space12)
             )
         }
     }
@@ -479,20 +480,20 @@ private fun MoodPill(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(999.dp),
+        shape = DesignTokens.cardCornerCircle,
         color = AppTheme.current.mintSurfaceActive,
-        border = BorderStroke(1.dp, AppTheme.current.success)
+        border = BorderStroke(DesignTokens.strokeThin, AppTheme.current.success)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+            modifier = Modifier.padding(horizontal = DesignTokens.space12, vertical = DesignTokens.space4 + 3.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
         ) {
             Icon(
                 imageVector = Icons.Default.FavoriteBorder,
                 contentDescription = null,
                 tint = AppTheme.current.mint,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(DesignTokens.Icon.sizeXs)
             )
             Text(
                 text = mood,
@@ -516,10 +517,10 @@ private fun PetDetailsPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp, bottom = 6.dp),
+            .padding(horizontal = DesignTokens.Card.padding)
+            .padding(top = DesignTokens.space8, bottom = DesignTokens.space6),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
     ) {
         Text(
             text = "$currentLevelXp/$xpRequiredForNextLevel XP",
@@ -545,21 +546,21 @@ private fun PetBondButton(onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(44.dp)
-            .clip(RoundedCornerShape(999.dp))
+            .clip(DesignTokens.cardCornerCircle)
             .background(AppTheme.current.card)
-            .border(1.5.dp, AppTheme.current.gold.copy(alpha = 0.62f), RoundedCornerShape(999.dp))
+            .border(DesignTokens.strokeMedium, AppTheme.current.gold.copy(alpha = DesignTokens.alpha62), DesignTokens.cardCornerCircle)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
         ) {
             Icon(
                 imageVector = Icons.Default.FavoriteBorder,
                 contentDescription = null,
                 tint = AppTheme.current.gold,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(DesignTokens.Icon.sizeXs)
             )
             Text(
                 text = "Pet bond",
@@ -580,11 +581,11 @@ private fun AttributeCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
         color = AppTheme.current.card,
-        border = BorderStroke(1.dp, AppTheme.current.outline)
+        border = BorderStroke(DesignTokens.strokeThin, AppTheme.current.outline)
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(horizontal = DesignTokens.Card.padding, vertical = DesignTokens.space14),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -601,7 +602,7 @@ private fun AttributeCard(
 
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(DesignTokens.Icon.size3xl)
                         .clickable(onClick = onEditClick),
                     contentAlignment = Alignment.Center
                 ) {
@@ -609,7 +610,7 @@ private fun AttributeCard(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit customizations",
                         tint = AppTheme.current.gold,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(DesignTokens.Icon.sizeSm)
                     )
                 }
             }
@@ -658,20 +659,20 @@ private fun AttributeRow(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space8)
         ) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(9.dp))
-                    .background(iconTint.copy(alpha = 0.13f)),
+                    .size(DesignTokens.Icon.size2xl)
+                    .clip(RoundedCornerShape(DesignTokens.radiusMd))
+                    .background(iconTint.copy(alpha = DesignTokens.alpha12)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(DesignTokens.Icon.sizeXs)
                 )
             }
             Text(
@@ -684,7 +685,7 @@ private fun AttributeRow(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4)
         ) {
             Text(
                 text = value,
@@ -712,10 +713,10 @@ private fun LevelUpButton(progressFraction: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .clip(RoundedCornerShape(18.dp))
-            .background(AppTheme.current.goldSoft.copy(alpha = 0.25f))
-            .border(1.dp, AppTheme.current.goldDark, RoundedCornerShape(18.dp)),
+            .height(DesignTokens.Button.heightSm)
+            .clip(DesignTokens.cardCornerSm)
+            .background(AppTheme.current.goldSoft.copy(alpha = DesignTokens.alpha25))
+            .border(DesignTokens.strokeThin, AppTheme.current.goldDark, DesignTokens.cardCornerSm),
         contentAlignment = Alignment.CenterStart
     ) {
         Box(
@@ -831,7 +832,7 @@ internal fun PetRenameDialog(
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space8)
             ) {
                 OutlinedTextField(
                     value = nameDraft,

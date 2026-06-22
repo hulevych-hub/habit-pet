@@ -2,12 +2,11 @@ package com.example.mobile.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -21,8 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 
 @Composable
 fun EmptyStateCard(
@@ -34,22 +33,23 @@ fun EmptyStateCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = AppTheme.current.primaryContainer.copy(alpha = 0.28f)
+            containerColor = AppTheme.current.primaryContainer.copy(alpha = DesignTokens.alpha28)
         ),
-        shape = RoundedCornerShape(24.dp)
+        shape = DesignTokens.cardCornerRounded,
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(DesignTokens.Card.paddingLg),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space8)
         ) {
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
                 tint = AppTheme.current.violet,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(DesignTokens.Icon.size3xl)
             )
             Text(
                 text = title,
@@ -64,7 +64,7 @@ fun EmptyStateCard(
                 textAlign = TextAlign.Center
             )
             if (hint != null) {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(DesignTokens.space4))
                 Text(
                     text = hint,
                     style = MaterialTheme.typography.labelMedium,
@@ -84,22 +84,23 @@ fun LoadingStateCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = AppTheme.current.primaryContainer.copy(alpha = 0.28f)
+            containerColor = AppTheme.current.primaryContainer.copy(alpha = DesignTokens.alpha28)
         ),
-        shape = RoundedCornerShape(24.dp)
+        shape = DesignTokens.cardCornerRounded,
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
+                .padding(DesignTokens.space24),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(DesignTokens.Icon.size3xl),
                 color = AppTheme.current.violet
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(DesignTokens.space4))
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
@@ -119,16 +120,17 @@ fun ErrorStateCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = AppTheme.current.dangerSoft.copy(alpha = 0.28f)
+            containerColor = AppTheme.current.dangerSoft.copy(alpha = DesignTokens.alpha28)
         ),
-        shape = RoundedCornerShape(24.dp)
+        shape = DesignTokens.cardCornerRounded,
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(DesignTokens.Card.paddingLg),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space8)
         ) {
             Text(
                 text = "Something needs attention",

@@ -65,6 +65,7 @@ import com.example.mobile.ui.theme.AppThemeColors
 import com.example.mobile.ui.theme.AutumnColors
 import com.example.mobile.ui.theme.AppThemeOption
 import com.example.mobile.ui.theme.AppThemePrefs
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
@@ -170,12 +171,12 @@ private fun AchievementScreenContent(
                     .fillMaxSize()
                     .padding(padding),
                 contentPadding = PaddingValues(
-                    top = 10.dp,
-                    start = 14.dp,
-                    end = 14.dp,
-                    bottom = 16.dp
+                    top = DesignTokens.space10,
+                    start = DesignTokens.space14,
+                    end = DesignTokens.space14,
+                    bottom = DesignTokens.Card.padding
                 ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space12)
             ) {
                 item {
                     GrandMilestoneHeader(palette = palette)
@@ -186,7 +187,7 @@ private fun AchievementScreenContent(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(32.dp),
+                                .padding(DesignTokens.space32),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = palette.gold)
@@ -246,13 +247,13 @@ private fun ThemeHallOverlay(
     Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
-        val line = 1.dp.toPx()
-        val lightLineAlpha = if (palette.isAutumn) 0.045f else 0.08f
+        val line = DesignTokens.strokeThin.toPx()
+        val lightLineAlpha = if (palette.isAutumn) DesignTokens.alpha4 else DesignTokens.alpha8
 
         repeat(18) { index ->
             val y = (index + 1) * height / 19f
             drawLine(
-                color = palette.overlayLineDark.copy(alpha = 0.24f),
+                color = palette.overlayLineDark.copy(alpha = DesignTokens.alpha24),
                 start = Offset(0f, y),
                 end = Offset(width, y),
                 strokeWidth = line
@@ -276,17 +277,17 @@ private fun GrandMilestoneHeader(
     palette: AchievementHallPalette,
     modifier: Modifier = Modifier
 ) {
-    val plaqueShape = RoundedCornerShape(22.dp)
+    val plaqueShape = DesignTokens.cardCorner
     val headerBorder = Brush.linearGradient(colors = palette.headerBorder)
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(108.dp)
-            .border(width = 2.dp, brush = headerBorder, shape = plaqueShape),
+            .border(width = DesignTokens.strokeThick, brush = headerBorder, shape = plaqueShape),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = plaqueShape,
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXl)
     ) {
         Box(
             modifier = Modifier
@@ -295,7 +296,7 @@ private fun GrandMilestoneHeader(
                     brush = Brush.linearGradient(colors = palette.headerGradient),
                     shape = plaqueShape
                 )
-                .padding(16.dp)
+                .padding(DesignTokens.Card.padding)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -329,8 +330,8 @@ private fun GrandMilestoneHeader(
                     modifier = Modifier
                         .size(76.dp)
                         .border(
-                            width = 1.dp,
-                            color = palette.trophyBorder.copy(alpha = if (palette.isAutumn) 0.62f else 0.42f),
+                            width = DesignTokens.strokeThin,
+                            color = palette.trophyBorder.copy(alpha = if (palette.isAutumn) DesignTokens.alpha62 else DesignTokens.alpha42),
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -360,7 +361,7 @@ private fun AchievementHallCard(
     val isClaimed = achievement.isClaimed
     val isUnlocked = achievement.isUnlocked
     val isClaimable = isUnlocked && !isClaimed && progressFraction >= 0.999f
-    val cardShape = RoundedCornerShape(20.dp)
+    val cardShape = DesignTokens.cardCorner
     val borderBrush = when {
         isClaimed && achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION -> Brush.linearGradient(colors = palette.crownBorder)
         isClaimed -> Brush.linearGradient(colors = palette.claimedBorder)
@@ -380,24 +381,24 @@ private fun AchievementHallCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(enabled = isClaimable, onClick = onClaim)
-            .border(width = 2.dp, brush = borderBrush, shape = cardShape),
+            .border(width = DesignTokens.strokeThick, brush = borderBrush, shape = cardShape),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = cardShape,
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isClaimable) 5.dp else 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isClaimable) DesignTokens.elevationLg else DesignTokens.elevationMd)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(backgroundBrush, cardShape)
-                .padding(14.dp)
+                .padding(DesignTokens.space14)
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(DesignTokens.space12),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     HallIconBox(
@@ -408,7 +409,7 @@ private fun AchievementHallCard(
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                        verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)
                     ) {
                         Text(
                             text = title,
@@ -431,7 +432,7 @@ private fun AchievementHallCard(
 
                     if (isClaimed) {
                         Surface(
-                            shape = RoundedCornerShape(999.dp),
+                            shape = DesignTokens.cardCornerCircle,
                             color = if (achievement.id == AchievementsConfig.FIRST_CUSTOMIZATION) {
                                 palette.crownBadgeSurface
                             } else {
@@ -446,7 +447,7 @@ private fun AchievementHallCard(
                                 } else {
                                     palette.claimedBadgeText
                                 },
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                modifier = Modifier.padding(horizontal = DesignTokens.space10, vertical = DesignTokens.space4)
                             )
                         }
                     }
@@ -478,20 +479,20 @@ private fun AchievementHallCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(8.dp)
-                            .background(palette.progressTrack.copy(alpha = palette.progressTrackAlpha), RoundedCornerShape(999.dp))
+                            .height(DesignTokens.space8)
+                            .background(palette.progressTrack.copy(alpha = palette.progressTrackAlpha), DesignTokens.cardCornerCircle)
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth(progressFraction.coerceIn(0f, 1f))
-                                .height(8.dp)
+                                .height(DesignTokens.space8)
                                 .background(
                                     brush = if (isClaimable) {
                                         Brush.linearGradient(colors = palette.claimableProgress)
                                     } else {
                                         Brush.linearGradient(colors = palette.unlockedProgress)
                                     },
-                                    RoundedCornerShape(999.dp)
+                                    DesignTokens.cardCornerCircle
                                 )
                         )
                     }
@@ -523,8 +524,8 @@ private fun HallIconBox(
 
     Box(
         modifier = Modifier
-            .size(54.dp)
-            .background(iconBackground, RoundedCornerShape(18.dp)),
+            .size(DesignTokens.Card.iconSizeLg)
+            .background(iconBackground, RoundedCornerShape(DesignTokens.radius2xl)),
         contentAlignment = Alignment.Center
     ) {
         when {
@@ -571,7 +572,7 @@ private fun ClaimAllRewardsBar(
     modifier: Modifier = Modifier
 ) {
     val enabled = claimableCount > 0 && !isClaiming
-    val buttonShape = RoundedCornerShape(24.dp)
+    val buttonShape = DesignTokens.cardCornerRounded
     val enabledBrush = Brush.linearGradient(colors = palette.buttonGradient)
     val disabledBrush = Brush.linearGradient(colors = palette.disabledButton)
 
@@ -579,7 +580,7 @@ private fun ClaimAllRewardsBar(
         modifier = modifier
             .fillMaxWidth()
             .height(92.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = DesignTokens.Card.padding, vertical = DesignTokens.space8),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -588,9 +589,9 @@ private fun ClaimAllRewardsBar(
                 .height(76.dp)
                 .clickable(enabled = enabled, onClick = onClick)
                 .clip(buttonShape)
-                .border(width = 2.dp, brush = if (enabled) enabledBrush else disabledBrush, shape = buttonShape)
+                .border(width = DesignTokens.strokeThick, brush = if (enabled) enabledBrush else disabledBrush, shape = buttonShape)
                 .background(if (enabled) enabledBrush else disabledBrush, buttonShape)
-                .padding(horizontal = 18.dp),
+                .padding(horizontal = DesignTokens.Button.paddingHorizontal),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -599,7 +600,7 @@ private fun ClaimAllRewardsBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CoinSparkle(left = true)
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(DesignTokens.space10))
                 Text(
                     text = if (isClaiming) "Claiming Rewards..." else "Claim All Rewards",
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -609,13 +610,13 @@ private fun ClaimAllRewardsBar(
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )
-                Spacer(modifier = Modifier.width(14.dp))
+                Spacer(modifier = Modifier.width(DesignTokens.space14))
                 AnimatedRewardChest(
-                    size = 48.dp,
+                    size = DesignTokens.Icon.touchTarget,
                     tint = palette.buttonText,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(DesignTokens.Icon.touchTarget)
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(DesignTokens.space10))
                 CoinSparkle(left = false)
             }
         }
@@ -634,7 +635,7 @@ private fun CoinSparkle(left: Boolean) {
                 painter = painterResource(R.drawable.ic_coin),
                 contentDescription = null,
                 tint = Color.White.copy(alpha = alpha),
-                modifier = Modifier.size(if (index == 1) 20.dp else 16.dp)
+                modifier = Modifier.size(if (index == 1) DesignTokens.Icon.sizeMd else DesignTokens.Icon.sizeXs)
             )
         }
     }
@@ -707,13 +708,13 @@ private data class AchievementHallPalette(
             crownBackground = listOf(Color(0xFFFFE7A3), Color(0xFFF4C76B), Color(0xFFD99A31)),
             crownIconTint = AutumnColors.goldDark,
             crownIconBackground = Color(0xFFFFE7A3),
-            crownBadgeSurface = Color(0xFF6B3F0C).copy(alpha = 0.24f),
+            crownBadgeSurface = Color(0xFF6B3F0C).copy(alpha = DesignTokens.alpha24),
             crownBadgeText = Color(0xFF7A4A12),
             claimedBorder = listOf(Color(0xFFE8EEF2), Color(0xFFB9C2C8), Color(0xFF8F9AA3)),
             claimedBackground = listOf(Color(0xFFF7FAFC), Color(0xFFDDE5EA), Color(0xFFB8C4CC)),
             claimedIconTint = Color(0xFF1F6B45),
             claimedIconBackground = Color(0xFFE8F3EC),
-            claimedBadgeSurface = Color(0xFF24332A).copy(alpha = 0.16f),
+            claimedBadgeSurface = Color(0xFF24332A).copy(alpha = DesignTokens.alpha16),
             claimedBadgeText = Color(0xFF1F6B45),
             claimedInk = AutumnColors.claimedInk,
             claimedMuted = AutumnColors.claimedMuted,
@@ -726,15 +727,15 @@ private data class AchievementHallPalette(
             unlockedProgress = listOf(AutumnColors.gold, AutumnColors.amber),
             lockedBorder = listOf(Color(0xFF4A4240), Color(0xFF2E2928)),
             lockedBackground = listOf(Color(0xFF4A4240), Color(0xFF2E2928)),
-            lockedIconTint = Color.White.copy(alpha = 0.55f),
-            lockedIconBackground = Color(0xFF2B2422).copy(alpha = 0.34f),
+            lockedIconTint = Color.White.copy(alpha = DesignTokens.alpha55),
+            lockedIconBackground = Color(0xFF2B2422).copy(alpha = DesignTokens.alpha34),
             unlockedIconTint = Color.White,
-            unlockedIconBackground = Color(0xFF7C3AED).copy(alpha = 0.32f),
+            unlockedIconBackground = Color(0xFF7C3AED).copy(alpha = DesignTokens.alpha32),
             auraIconBackground = Color.Transparent,
             cardInk = Color.White,
-            cardMuted = Color(0xFFFFF7ED).copy(alpha = 0.86f),
+            cardMuted = Color(0xFFFFF7ED).copy(alpha = DesignTokens.alpha86),
             progressTrack = Color(0xFF2B2422),
-            progressTrackAlpha = 0.22f,
+            progressTrackAlpha = DesignTokens.alpha22,
             disabledButton = listOf(Color(0xFF5A514B), Color(0xFF3A3431)),
             buttonText = AutumnColors.deepInk,
             disabledText = AutumnColors.disabledText,
@@ -745,8 +746,8 @@ private data class AchievementHallPalette(
             val isDarkTheme = AppThemePrefs.currentTheme().isDark
             val claimedInk = if (isDarkTheme) colors.headerOnSurface else colors.ink
             val claimedMuted = if (isDarkTheme) colors.mutedStrong else colors.softInk
-            val lockedIconBackground = colors.outline.copy(alpha = if (isDarkTheme) 0.28f else 0.22f)
-            val progressTrackAlpha = if (isDarkTheme) 0.55f else 0.75f
+            val lockedIconBackground = colors.outline.copy(alpha = if (isDarkTheme) DesignTokens.alpha28 else DesignTokens.alpha22)
+            val progressTrackAlpha = if (isDarkTheme) DesignTokens.alpha55 else DesignTokens.alpha75
 
             return AchievementHallPalette(
                 id = AppThemePrefs.currentTheme().id,
@@ -763,7 +764,7 @@ private data class AchievementHallPalette(
                 crownBackground = listOf(colors.goldSoft, colors.gold, colors.amberDark),
                 crownIconTint = colors.goldDark,
                 crownIconBackground = colors.goldSoft,
-                crownBadgeSurface = colors.amber.copy(alpha = 0.20f),
+                crownBadgeSurface = colors.amber.copy(alpha = DesignTokens.alpha20),
                 crownBadgeText = colors.goldDark,
                 claimedBorder = if (isDarkTheme) {
                     listOf(colors.primaryContainer, colors.lavenderSoft, colors.amethystSoft)
@@ -777,7 +778,7 @@ private data class AchievementHallPalette(
                 },
                 claimedIconTint = colors.success,
                 claimedIconBackground = colors.successSoft,
-                claimedBadgeSurface = colors.success.copy(alpha = 0.16f),
+                claimedBadgeSurface = colors.success.copy(alpha = DesignTokens.alpha16),
                 claimedBadgeText = colors.success,
                 claimedInk = claimedInk,
                 claimedMuted = claimedMuted,
@@ -793,10 +794,10 @@ private data class AchievementHallPalette(
                 lockedIconTint = colors.inactiveIcon,
                 lockedIconBackground = lockedIconBackground,
                 unlockedIconTint = if (isDarkTheme) Color.White else colors.primary,
-                unlockedIconBackground = colors.primary.copy(alpha = 0.32f),
-                auraIconBackground = colors.primary.copy(alpha = 0.20f),
+                unlockedIconBackground = colors.primary.copy(alpha = DesignTokens.alpha32),
+                auraIconBackground = colors.primary.copy(alpha = DesignTokens.alpha20),
                 cardInk = if (isDarkTheme) Color.White else colors.ink,
-                cardMuted = if (isDarkTheme) Color.White.copy(alpha = 0.86f) else colors.softInk,
+                cardMuted = if (isDarkTheme) Color.White.copy(alpha = DesignTokens.alpha86) else colors.softInk,
                 progressTrack = colors.progressTrack,
                 progressTrackAlpha = progressTrackAlpha,
                 disabledButton = if (isDarkTheme) listOf(colors.inactiveIcon, colors.violetMuted) else listOf(colors.outline, colors.purpleSoft),

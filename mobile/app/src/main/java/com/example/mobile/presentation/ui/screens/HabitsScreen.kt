@@ -83,6 +83,7 @@ import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.presentation.viewmodel.HabitsViewModel
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 
 @Composable
@@ -191,8 +192,8 @@ fun HabitsScreenContent(
                 onClick = { navController.navigate("habitCreation") },
                 containerColor = AppTheme.current.violet,
                 contentColor = AppTheme.current.onPrimary,
-                shape = RoundedCornerShape(999.dp),
-                modifier = Modifier.padding(bottom = 16.dp, end = 8.dp)
+                shape = DesignTokens.cardCornerCircle,
+                modifier = Modifier.padding(bottom = DesignTokens.Section.topPadding, end = DesignTokens.space8)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add habit", modifier = Modifier.size(26.dp))
             }
@@ -203,7 +204,7 @@ fun HabitsScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = error.orEmpty(),
                 onRetry = onRetry
             )
@@ -212,7 +213,7 @@ fun HabitsScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(20.dp),
+                    .padding(DesignTokens.Section.horizontalPadding),
                 message = "Gathering today's quests..."
             )
         } else {
@@ -221,13 +222,13 @@ fun HabitsScreenContent(
                     .fillMaxSize()
                     .padding(padding),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.space4)
             ) {
             item {
                 ChallengeCard(
                     state = challengeUiState,
                     onClaim = onClaimChallenge,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+                    modifier = Modifier.padding(horizontal = DesignTokens.Section.horizontalPadding, vertical = DesignTokens.space12)
                 )
             }
 
@@ -237,7 +238,7 @@ fun HabitsScreenContent(
                         title = "Your dragon is ready for its first tiny quest.",
                         message = "Create one small habit and give your dragon a simple win to celebrate.",
                         hint = "Start with something easy enough to finish today.",
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.padding(DesignTokens.Section.horizontalPadding)
                     )
                 }
             }
@@ -296,7 +297,7 @@ private fun HabitItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 6.dp)
+            .padding(horizontal = DesignTokens.Section.horizontalPadding, vertical = DesignTokens.space6)
             .combinedClickable(
                 onClick = { navController.navigate("habitDetail/${habit.id}") },
                 onLongClick = { showActionsDialog = true }
@@ -319,17 +320,17 @@ private fun HabitItem(
                     }
                 )
             },
-        shape = RoundedCornerShape(24.dp),
+        shape = DesignTokens.cardCornerRounded,
         color = itemBackground,
-        shadowElevation = 0.dp
+        shadowElevation = DesignTokens.elevationNone
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(14.dp),
+                    .padding(DesignTokens.Card.paddingSm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space10)
             ) {
                 CompletionButton(
                     completed = completed,
@@ -346,7 +347,7 @@ private fun HabitItem(
 
                 Column(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignTokens.space2)
                 ) {
                     Text(
                         text = habit.name,
@@ -358,7 +359,7 @@ private fun HabitItem(
                     Text(
                         text = category,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = AppTheme.current.muted.copy(alpha = 0.7f),
+                        color = AppTheme.current.muted.copy(alpha = DesignTokens.alpha70),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -445,14 +446,14 @@ private fun SwipeActionsOverlay(
 ) {
     Surface(
         modifier = Modifier
-            .padding(top = 6.dp, end = 20.dp),
-        shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
+            .padding(top = DesignTokens.space6, end = DesignTokens.Section.horizontalPadding),
+        shape = RoundedCornerShape(topEnd = DesignTokens.radius3xl, bottomEnd = DesignTokens.radius3xl),
         color = AppTheme.current.surface,
-        shadowElevation = 4.dp
+        shadowElevation = DesignTokens.elevationLg
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = DesignTokens.space8, vertical = DesignTokens.space8),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space8),
             horizontalAlignment = Alignment.End
         ) {
             SwipeActionButton(
@@ -487,7 +488,7 @@ private fun SwipeActionButton(
                 imageVector = icon,
                 contentDescription = null,
                 tint = color,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(DesignTokens.Icon.sizeXl)
             )
         }
     }
@@ -498,19 +499,19 @@ private fun StreakBadge(streak: Int, activeToday: Boolean, onClick: () -> Unit) 
     val badgeTint = if (activeToday) AppTheme.current.amber else AppTheme.current.muted
     val badgeText = if (activeToday) AppTheme.current.amberDark else AppTheme.current.muted.copy(alpha = 0.78f)
     val badgeSurface = if (activeToday) {
-        AppTheme.current.amberSoft.copy(alpha = 0.6f)
+        AppTheme.current.amberSoft.copy(alpha = DesignTokens.alpha60)
     } else {
-        AppTheme.current.card.copy(alpha = 0.55f)
+        AppTheme.current.card.copy(alpha = DesignTokens.alpha55)
     }
 
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(999.dp),
+        shape = DesignTokens.cardCornerCircle,
         color = badgeSurface
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(horizontal = DesignTokens.Badge.paddingHorizontal, vertical = DesignTokens.space6),
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space4),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -535,11 +536,11 @@ private fun IconBadge(
     fallbackIcon: ImageVector
 ) {
     val tintColor = if (completed) AppTheme.current.success else AppTheme.current.violet
-    val ambientBg = if (completed) AppTheme.current.success.copy(alpha = 0.12f) else AppTheme.current.violet.copy(alpha = 0.08f)
+    val ambientBg = if (completed) AppTheme.current.success.copy(alpha = DesignTokens.alpha12) else AppTheme.current.violet.copy(alpha = DesignTokens.alpha8)
 
     Surface(
         modifier = Modifier.size(46.dp),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(DesignTokens.Card.cornerRadiusXs),
         color = ambientBg
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -553,7 +554,7 @@ private fun IconBadge(
                     imageVector = fallbackIcon,
                     contentDescription = null,
                     tint = tintColor,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(DesignTokens.Icon.sizeXl)
                 )
             }
         }
@@ -570,11 +571,11 @@ private fun CompletionButton(
     IconButton(
         onClick = onComplete,
         enabled = !completed && !skippedToday && !isCompleting,
-        modifier = Modifier.size(40.dp)
+        modifier = Modifier.size(DesignTokens.space40)
     ) {
         if (isCompleting) {
             CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(DesignTokens.Icon.sizeXl),
                 strokeWidth = 2.5.dp,
                 color = AppTheme.current.violet
             )
@@ -582,7 +583,7 @@ private fun CompletionButton(
             Icon(
                 imageVector = if (completed) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
                 contentDescription = null,
-                tint = if (completed) AppTheme.current.success else AppTheme.current.violet.copy(alpha = 0.6f),
+                tint = if (completed) AppTheme.current.success else AppTheme.current.violet.copy(alpha = DesignTokens.alpha60),
                 modifier = Modifier.size(30.dp)
             )
         }
@@ -606,21 +607,21 @@ private fun HabitActionsDialog(
         text = { Text("Choose what to do with this quest.") },
         confirmButton = {
             TextButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(6.dp))
+                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(DesignTokens.Icon.sizeSm))
+                Spacer(modifier = Modifier.width(DesignTokens.space6))
                 Text("Edit")
             }
         },
         dismissButton = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(DesignTokens.space8)) {
                 TextButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp), tint = AppTheme.current.danger)
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(DesignTokens.Icon.sizeSm), tint = AppTheme.current.danger)
+                    Spacer(modifier = Modifier.width(DesignTokens.space4))
                     Text("Delete", color = AppTheme.current.danger)
                 }
                 TextButton(onClick = onSkip) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = null, modifier = Modifier.size(18.dp), tint = AppTheme.current.muted)
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(Icons.Default.FavoriteBorder, contentDescription = null, modifier = Modifier.size(DesignTokens.Icon.sizeSm), tint = AppTheme.current.muted)
+                    Spacer(modifier = Modifier.width(DesignTokens.space4))
                     Text("Skip", color = AppTheme.current.muted)
                 }
             }

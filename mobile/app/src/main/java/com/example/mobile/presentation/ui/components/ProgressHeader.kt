@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Pets
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.ui.theme.DesignTokens
 import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.Locale
@@ -66,7 +67,7 @@ fun GamifiedFixedHeader(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = AppTheme.current.headerSurface,
-        shadowElevation = 1.dp
+        shadowElevation = DesignTokens.elevationSm
     ) {
         val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
 
@@ -74,20 +75,22 @@ fun GamifiedFixedHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = DesignTokens.Section.horizontalPadding, vertical = DesignTokens.space12),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                modifier = Modifier.clickable(onClick = onStreakClick),
+                modifier = Modifier
+                    .clickable(onClick = onStreakClick)
+                    .padding(DesignTokens.space2),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
             ) {
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Open streak calendar",
                     tint = streakTint,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(DesignTokens.Icon.sizeXl)
                 )
                 Text(
                     text = "$streak d",
@@ -97,19 +100,19 @@ fun GamifiedFixedHeader(
             }
 
             Surface(
-                shape = RoundedCornerShape(999.dp),
-                color = AppTheme.current.violet.copy(alpha = 0.1f)
+                shape = DesignTokens.cardCornerCircle,
+                color = AppTheme.current.violet.copy(alpha = DesignTokens.alpha10)
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                    modifier = Modifier.padding(horizontal = DesignTokens.space14, vertical = DesignTokens.space6),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Pets,
                         contentDescription = null,
                         tint = AppTheme.current.violet,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(DesignTokens.Icon.sizeXs)
                     )
                     Text(
                         text = stageName,
@@ -120,12 +123,14 @@ fun GamifiedFixedHeader(
             }
 
             Row(
-                modifier = Modifier.clickable(onClick = onCoinsClick),
+                modifier = Modifier
+                    .clickable(onClick = onCoinsClick)
+                    .padding(DesignTokens.space2),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
             ) {
                 CoinIcon(
-                    modifier = Modifier.size(22.dp),
+                    modifier = Modifier.size(DesignTokens.Icon.sizeLg),
                     tint = AppTheme.current.amber
                 )
                 Text(
@@ -191,15 +196,16 @@ fun ProgressHeader(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = AppTheme.current.primaryContainer.copy(alpha = 0.35f)
+            containerColor = AppTheme.current.primaryContainer.copy(alpha = DesignTokens.alpha35)
         ),
-        shape = RoundedCornerShape(20.dp)
+        shape = DesignTokens.cardCorner,
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(DesignTokens.Card.padding),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
         ) {
             StreakIndicator(
                 visualState = visualState,
@@ -229,12 +235,12 @@ fun ProgressHeader(
                 progress = { levelProgress },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(10.dp)
+                    .height(DesignTokens.space10)
             )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.space8)
             ) {
                 ProgressChip("XP $currentLevelXp / $nextLevelXp")
                 ProgressChip("${state.globalStreak}d streak")
@@ -279,15 +285,16 @@ fun EvolutionTeaser(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = AppTheme.current.secondaryContainer.copy(alpha = 0.35f)
+            containerColor = AppTheme.current.secondaryContainer.copy(alpha = DesignTokens.alpha35)
         ),
-        shape = RoundedCornerShape(20.dp)
+        shape = DesignTokens.cardCorner,
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationXs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(DesignTokens.Card.padding),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space10)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -310,7 +317,7 @@ fun EvolutionTeaser(
                 progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(10.dp)
+                    .height(DesignTokens.space10)
             )
 
             Text(
@@ -333,11 +340,11 @@ private fun ProgressChip(
     accentColor: Color? = null
 ) {
     Surface(
-        shape = RoundedCornerShape(999.dp),
+        shape = DesignTokens.cardCornerCircle,
         color = if (achieved && accentColor != null) {
-            accentColor.copy(alpha = 0.16f)
+            accentColor.copy(alpha = DesignTokens.alpha16)
         } else {
-            AppTheme.current.surface.copy(alpha = 0.85f)
+            AppTheme.current.surface.copy(alpha = DesignTokens.alpha85)
         }
     ) {
         Text(
@@ -345,7 +352,7 @@ private fun ProgressChip(
             style = MaterialTheme.typography.labelMedium,
             color = accentColor?.takeIf { achieved }
                 ?: AppTheme.current.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+            modifier = Modifier.padding(horizontal = DesignTokens.space10, vertical = DesignTokens.space6)
         )
     }
 }
@@ -377,12 +384,12 @@ private fun StreakIndicator(
         modifier = Modifier
             .fillMaxWidth()
             .graphicsLayer(scaleX = scale, scaleY = scale),
-        color = visualState.color.copy(alpha = 0.10f),
-        shape = RoundedCornerShape(18.dp)
+        color = visualState.color.copy(alpha = DesignTokens.alpha10),
+        shape = RoundedCornerShape(DesignTokens.radius3xl)
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(DesignTokens.space14),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.space8)
         ) {
             Text(
                 text = visualState.title,
@@ -429,7 +436,7 @@ private fun StreakMilestoneMarkers(
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
