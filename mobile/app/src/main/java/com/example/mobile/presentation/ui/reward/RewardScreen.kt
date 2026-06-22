@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -27,8 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -37,7 +34,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.dotlottie.dlplayer.Mode
 import com.example.mobile.data.local.entities.PetEntity
@@ -94,6 +90,15 @@ fun RewardScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        AppTheme.current.rewardBackdropStart,
+                        AppTheme.current.rewardBackdropCenter,
+                        AppTheme.current.rewardBackdropEnd
+                    )
+                )
+            )
             .pointerInput(reward, isChestOpen, areChestRewardsVisible) {
                 detectTapGestures {
                     if (reward is RewardUiEvent.ChestReward) {
@@ -109,15 +114,6 @@ fun RewardScreen(
                     }
                 }
             }
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        AppTheme.current.background,
-                        AppTheme.current.surfaceVariant,
-                        AppTheme.current.background
-                    )
-                )
-            )
     ) {
         Box(
             modifier = Modifier
@@ -232,7 +228,7 @@ private fun XpBoostAnimation(
     Icon(
         imageVector = Icons.Default.Star,
         contentDescription = "XP boost",
-        tint = AppTheme.current.primary,
+        tint = AppTheme.current.rewardAccent,
         modifier = modifier
             .graphicsLayer {
                 scaleX = scale
@@ -260,20 +256,20 @@ private fun LevelUpRewardContent(
                 modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height((-10).dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "LEVEL $level",
-                color = AppTheme.current.primary,
-                style = MaterialTheme.typography.headlineLarge,
+                text = "Level $level",
+                color = AppTheme.current.rewardText,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "+$coinsEarned coins",
-                color = AppTheme.current.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+                color = AppTheme.current.rewardTextMuted,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -289,25 +285,17 @@ private fun ExpRewardContent(
 ) {
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "XP BOOST!",
-                style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.primary,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             XpBoostAnimation(
                 modifier = Modifier.size((120 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height((-10).dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = "+$amount XP",
-                color = AppTheme.current.primary,
-                style = MaterialTheme.typography.headlineSmall,
+                color = AppTheme.current.rewardText,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
 
@@ -327,14 +315,6 @@ private fun CustomizationRewardContent(
 
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "NEW LOOK!",
-                style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.primary,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             definition?.let {
                 AssetPreview(
@@ -346,11 +326,11 @@ private fun CustomizationRewardContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height((-10).dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = name,
-                color = AppTheme.current.primary,
+                color = AppTheme.current.rewardText,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -412,28 +392,28 @@ private fun ChestRewardContent(
                     )
 
                     if (areRewardsVisible) {
-                        val rewardText = mutableListOf<String>()
+                        val rewardLines = mutableListOf<String>()
                         val customizationDefinition = equipableId?.let { EquipableConfig.definition(it) }
 
                         when (amount) {
-                            is Int -> if (amount > 0) rewardText.add("+$amount coins")
-                            is String -> if (!amount.isEmpty()) rewardText.add(amount)
+                            is Int -> if (amount > 0) rewardLines.add("+$amount coins")
+                            is String -> if (!amount.isEmpty()) rewardLines.add(amount)
                         }
 
                         if (expAmount > 0) {
-                            rewardText.add("+$expAmount EXP")
+                            rewardLines.add("+$expAmount XP")
                         }
 
                         if (customizationId != null || equipableId != null) {
                             val equipableName = equipableId
                                 ?.let { EquipableConfig.definition(it)?.name }
                                 ?: "Customization"
-                            rewardText.add("$equipableName unlocked!")
+                            rewardLines.add(equipableName)
                         }
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
                             modifier = Modifier.padding(bottom = 8.dp)
                         ) {
                             customizationDefinition?.let { definition ->
@@ -446,22 +426,17 @@ private fun ChestRewardContent(
                                 )
                             }
 
-                            if (rewardText.isNotEmpty()) {
-                                Text(
-                                    text = rewardText.joinToString("\n"),
-                                    color = AppTheme.current.primary,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold
-                                )
+                            if (rewardLines.isNotEmpty()) {
+                                rewardLines.forEach { line ->
+                                    Text(
+                                        text = line,
+                                        color = AppTheme.current.rewardText,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
-
-                            Text(
-                                text = rewardType,
-                                color = AppTheme.current.primary.copy(alpha = 0.78f),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
                         }
                     }
                 }
@@ -472,10 +447,10 @@ private fun ChestRewardContent(
                     ReinforcementMessage(reinforcementMessage)
                 } else {
                     Text(
-                        text = "Tap anywhere to open",
-                        color = AppTheme.current.primary.copy(alpha = 0.72f),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        text = "Tap to open",
+                        color = AppTheme.current.rewardTextMuted,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
@@ -512,15 +487,15 @@ private fun StreakRewardContent(
         rewardSummary
     } else {
         listOf(
-            "$streak Day Streak",
+            "$streak-day streak",
             if (coinsEarned > 0) "+$coinsEarned coins" else "Reward chest unlocked"
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         RewardDotLottie(
             source = STREAK_LOTTIE_URL,
@@ -528,40 +503,27 @@ private fun StreakRewardContent(
             modifier = Modifier.size((150 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
         )
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+        Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height((-12).dp))
+        Text(
+            text = "$streak-Day Streak",
+            style = MaterialTheme.typography.headlineMedium,
+            color = AppTheme.current.rewardText,
+            fontWeight = FontWeight.Bold
+        )
 
+        Spacer(modifier = Modifier.height(4.dp))
+
+        displayedSummary.drop(1).forEach { rewardLine ->
             Text(
-                text = "GLOBAL STREAK!",
-                style = MaterialTheme.typography.headlineSmall,
-                color = AppTheme.current.primary,
-                fontWeight = FontWeight.Bold
+                text = rewardLine,
+                color = AppTheme.current.rewardTextMuted,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
             )
-
-            Text(
-                text = "$streak DAY STREAK",
-                style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.primary,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            displayedSummary.forEach { rewardLine ->
-                Text(
-                    text = rewardLine,
-                    color = AppTheme.current.primary,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            ReinforcementMessage(reinforcementMessage)
         }
+
+        ReinforcementMessage(reinforcementMessage)
     }
 }
 
@@ -668,32 +630,12 @@ private fun RewardEmphasisFrame(
         animationSpec = tween(360, easing = FastOutSlowInEasing),
         label = "reward emphasis scale"
     )
-    val glowAlpha by animateFloatAsState(
-        targetValue = if (emphasisActive) 0.28f else 0f,
-        animationSpec = tween(360, easing = FastOutSlowInEasing),
-        label = "reward emphasis glow"
-    )
-    val elevation = if (emphasisActive) (24 * tier.rewardScale).dp else 8.dp
 
     Box(
         modifier = Modifier
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-            }
-            .shadow(
-                elevation = elevation,
-                shape = CircleShape,
-                clip = false
-            )
-            .drawWithContent {
-                if (glowAlpha > 0.01f) {
-                    drawCircle(
-                        color = tier.glowColor.copy(alpha = glowAlpha),
-                        radius = size.maxDimension * tier.chestSizeMultiplier
-                    )
-                }
-                drawContent()
             }
     ) {
         content()
@@ -702,23 +644,14 @@ private fun RewardEmphasisFrame(
 
 @Composable
 private fun ReinforcementMessage(message: String) {
-    Spacer(modifier = Modifier.height(4.dp))
+    Spacer(modifier = Modifier.height(8.dp))
 
     Text(
         text = message,
-        color = AppTheme.current.primary.copy(alpha = 0.92f),
-        style = MaterialTheme.typography.headlineSmall,
+        color = AppTheme.current.rewardText,
+        style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
-        fontWeight = FontWeight.Bold
-    )
-
-    Spacer(modifier = Modifier.height(4.dp))
-
-    Text(
-        text = "Tap to continue",
-        color = AppTheme.current.primary.copy(alpha = 0.72f),
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Medium
     )
 }
 
@@ -738,19 +671,12 @@ private fun CoinRewardContent(
                 modifier = Modifier.size((112 * emphasisTier.rewardScale * REWARD_LOTTIE_SIZE_MULTIPLIER).dp)
             )
 
-            Spacer(modifier = Modifier.height((-10).dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "+$amount",
-                style = MaterialTheme.typography.headlineLarge,
-                color = AppTheme.current.primary,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = "Coins earned",
-                color = AppTheme.current.primary.copy(alpha = 0.88f),
-                style = MaterialTheme.typography.titleMedium,
+                text = "+$amount coins",
+                style = MaterialTheme.typography.headlineMedium,
+                color = AppTheme.current.rewardText,
                 fontWeight = FontWeight.Bold
             )
 
@@ -782,12 +708,12 @@ private fun DragonEvolutionRewardContent(
                 toStage = toStage
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = "Evolution Complete!",
-                style = MaterialTheme.typography.headlineSmall,
-                color = AppTheme.current.primary,
+                style = MaterialTheme.typography.headlineMedium,
+                color = AppTheme.current.rewardText,
                 fontWeight = FontWeight.Bold
             )
 

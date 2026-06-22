@@ -18,9 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
@@ -41,17 +39,8 @@ fun AnimatedRewardChest(
     var chestIsOpen by rememberSaveable(stateKey) { mutableStateOf(false) }
     val isOpen = isOpenOverride ?: chestIsOpen
 
-    val chestRadiusPx = with(LocalDensity.current) { size.toPx() * 0.62f }
-
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .drawBehind {
-                drawCircle(
-                    color = tint.copy(alpha = if (isOpen) 0.16f else 0.06f),
-                    radius = chestRadiusPx
-                )
-            },
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         AnimatedVisibility(
