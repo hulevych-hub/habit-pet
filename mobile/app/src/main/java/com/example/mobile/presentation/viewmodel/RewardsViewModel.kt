@@ -39,7 +39,7 @@ class RewardsViewModel @Inject constructor(
         petRepository.getPet()
     ) { statistics, pet ->
         UiState(
-            globalStreak = statistics.globalStreak,
+            globalStreak = statistics.currentStreak,
             globalStreakCompletedToday = statistics.lastStreakDate == getDayStart(System.currentTimeMillis()) / 86_400_000L,
             totalCoins = statistics.totalCoins,
             pet = pet

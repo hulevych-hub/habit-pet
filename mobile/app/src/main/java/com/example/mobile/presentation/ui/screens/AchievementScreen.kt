@@ -54,8 +54,10 @@ import com.example.mobile.data.local.entities.AchievementEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.AchievementsConfig
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.reward.AnimatedRewardChest
 import com.example.mobile.presentation.viewmodel.AchievementViewModel
 import com.example.mobile.ui.theme.AppTheme
@@ -68,7 +70,8 @@ import com.example.mobile.ui.theme.HabitPetTheme
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AchievementScreen(
-    achievementViewModel: AchievementViewModel = hiltViewModel()
+    achievementViewModel: AchievementViewModel = hiltViewModel(),
+    homeScreenViewModel: HomeScreenViewModel? = null
 ) {
     val achievements by achievementViewModel.achievements.collectAsState(initial = emptyList())
     val isLoading by achievementViewModel.isLoading.collectAsState()
@@ -97,7 +100,8 @@ fun AchievementScreen(
         palette = palette,
         onRetry = achievementViewModel::retryLoadAchievements,
         onClaim = { achievementId -> achievementViewModel.claimAchievement(achievementId) },
-        onClaimAll = achievementViewModel::claimAllAchievements
+        onClaimAll = achievementViewModel::claimAllAchievements,
+        homeScreenViewModel = homeScreenViewModel
     )
 }
 
@@ -119,10 +123,27 @@ private fun AchievementScreenContent(
     palette: AchievementHallPalette,
     onRetry: () -> Unit,
     onClaim: (String) -> Unit,
-    onClaimAll: () -> Unit
+    onClaimAll: () -> Unit,
+    homeScreenViewModel: HomeScreenViewModel? = null
 ) {
+    val headerUiState by (homeScreenViewModel?.uiState?.collectAsState()
+        ?: return)
     Scaffold(
         containerColor = Color.Transparent,
+        topBar = {
+            GamifiedFixedHeader(
+                streak = headerUiState.globalStreak,
+                coins = headerUiState.totalCoins,
+                stageName = ExpConfig.evolutionStageName(petState.evolutionStage),
+                streakCompletedToday = headerUiState.globalStreakCompletedToday,
+                onCoinsClick = {},
+                onStreakClick = if (homeScreenViewModel != null) {
+                    { homeScreenViewModel.openGlobalStreakCalendar() }
+                } else {
+                    {}
+                }
+            )
+        },
         bottomBar = {
             if (claimableCount > 1) {
                 ClaimAllRewardsBar(

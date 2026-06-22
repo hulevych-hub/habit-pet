@@ -18,4 +18,6 @@ interface StatisticsRepository {
     suspend fun incrementStreak()
 
     suspend fun incrementRewardChestsAvailable(amount: Int)
+
+    suspend fun syncGlobalStreak()
 }

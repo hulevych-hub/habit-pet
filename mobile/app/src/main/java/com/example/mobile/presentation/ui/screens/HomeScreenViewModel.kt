@@ -217,6 +217,10 @@ class HomeScreenViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            statisticsRepository.syncGlobalStreak()
+        }
+
+        viewModelScope.launch {
             combine(
                 statistics,
                 habits,
@@ -239,7 +243,7 @@ class HomeScreenViewModel @Inject constructor(
         todayCompletionXp
     ) { stats, habList, petState, completionXp ->
         UiState(
-            globalStreak = stats.globalStreak,
+            globalStreak = stats.currentStreak,
             habits = habList,
             pet = petState,
             completedTodayXp = completionXp,

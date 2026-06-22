@@ -56,11 +56,13 @@ class StatisticsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun incrementStreak() {
-        val stats = statisticsDao.getStatistics().firstOrNull() ?: return
+        val stats = statisticsDao.getStatistics().firstOrNull()
+            ?: StatisticsEntity(id = 1)
         val today = todayKey()
         val nextStreak = stats.currentStreak + 1
 
         val updated = stats.copy(
+            id = 1,
             currentStreak = nextStreak,
             globalStreak = nextStreak,
             bestStreak = maxOf(stats.bestStreak, nextStreak),
@@ -68,7 +70,10 @@ class StatisticsRepositoryImpl @Inject constructor(
             lastUpdated = System.currentTimeMillis()
         )
 
-        statisticsDao.updateStatistics(updated)
+        val rows = statisticsDao.updateStatistics(updated)
+        if (rows == 0) {
+            statisticsDao.insertStatistics(updated)
+        }
     }
 
     override suspend fun incrementRewardChestsAvailable(amount: Int) {
@@ -79,6 +84,13 @@ class StatisticsRepositoryImpl @Inject constructor(
         )
 
         statisticsDao.updateStatistics(updated)
+    }
+
+    override suspend fun syncGlobalStreak() {
+        val stats = statisticsDao.getStatistics().firstOrNull() ?: return
+        if (stats.globalStreak != stats.currentStreak) {
+            statisticsDao.updateStatistics(stats.copy(globalStreak = stats.currentStreak))
+        }
     }
 
     private fun todayKey(): Long {

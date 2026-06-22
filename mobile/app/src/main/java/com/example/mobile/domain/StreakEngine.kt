@@ -54,8 +54,8 @@ class StreakEngine(
      */
     suspend fun evaluateTodayStreak(today: Long) {
 
+        val normalizedToday = getDayStart(today)
         val todayKey = dayKey(today)
-        val normalizedToday = todayKey * MILLISECONDS_PER_DAY
 
         if (statisticsRepository.isStreakAlreadyCountedToday()) return
 
@@ -125,8 +125,8 @@ class StreakEngine(
      */
     suspend fun recalculateTodayStreak(today: Long) {
 
+        val normalizedToday = getDayStart(today)
         val todayKey = dayKey(today)
-        val normalizedToday = todayKey * MILLISECONDS_PER_DAY
 
         val stats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
         val habits = habitRepository.getAllHabits().firstOrNull().orEmpty()
@@ -153,8 +153,8 @@ class StreakEngine(
 
         if (habits.isEmpty()) return null
 
+        val todayStart = getDayStart(now)
         val todayKey = dayKey(now)
-        val todayStart = todayKey * MILLISECONDS_PER_DAY
         val yesterdayKey = todayKey - 1
 
         if (habitCompletionRepository.areAllHabitsCompletedOnDate(todayStart)) {
@@ -191,7 +191,7 @@ class StreakEngine(
             )
         )
 
-        if (habitCompletionRepository.areAllHabitsCompletedOnDate(freezeDateKey * MILLISECONDS_PER_DAY)) {
+        if (habitCompletionRepository.areAllHabitsCompletedOnDate(getDayStart(now))) {
             evaluateTodayStreak(now)
         } else {
             dragonMoodEngine.refreshMood()
@@ -268,7 +268,7 @@ class StreakEngine(
         if (habits.isEmpty()) return true
         if (StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).contains(dateKey)) return true
 
-        return habitCompletionRepository.areAllHabitsCompletedOnDate(dateKey * MILLISECONDS_PER_DAY)
+        return habitCompletionRepository.areAllHabitsCompletedOnDate(getDayStart(dateKey * MILLISECONDS_PER_DAY))
     }
 
     private fun dayKey(time: Long): Long = getDayStart(time) / MILLISECONDS_PER_DAY

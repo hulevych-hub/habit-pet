@@ -235,7 +235,9 @@ fun HabitPetNavGraph(
                 }
                 composable(AppRoutes.STATISTICS) { StatisticsScreen() }
                 composable(AppRoutes.ACHIEVEMENTS) {
-                    AchievementScreen()
+                    AchievementScreen(
+                        homeScreenViewModel = homeScreenViewModel
+                    )
                 }
                 composable(AppRoutes.ACTIVITY) {
                     ActivityTimelineScreen(

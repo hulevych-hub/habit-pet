@@ -1090,7 +1090,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "mobile_mainactivity",
-      "community": 89,
+      "community": 150,
       "norm_label": "mainactivity.kt"
     },
     {
@@ -1100,7 +1100,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity",
-      "community": 89,
+      "community": 150,
       "norm_label": "mainactivity"
     },
     {
@@ -1110,7 +1110,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "componentactivity",
-      "community": 89,
+      "community": 150,
       "norm_label": "componentactivity"
     },
     {
@@ -1120,7 +1120,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_rewardmanager",
-      "community": 89,
+      "community": 150,
       "norm_label": "rewardmanager"
     },
     {
@@ -1130,7 +1130,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "activitytimelineengine",
-      "community": 89,
+      "community": 150,
       "norm_label": "activitytimelineengine"
     },
     {
@@ -1140,7 +1140,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_microfeedbackmanager",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackmanager"
     },
     {
@@ -1150,7 +1150,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_dragonmoodengine",
-      "community": 89,
+      "community": 150,
       "norm_label": "dragonmoodengine"
     },
     {
@@ -1160,7 +1160,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_mainactivity_kt_statisticsrepository",
-      "community": 89,
+      "community": 150,
       "norm_label": "statisticsrepository"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "onbackpressedcallback",
-      "community": 89,
+      "community": 150,
       "norm_label": "onbackpressedcallback"
     },
     {
@@ -1180,7 +1180,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "mobile_mainactivity_mainactivity_oncreate",
-      "community": 89,
+      "community": 150,
       "norm_label": ".oncreate()"
     },
     {
@@ -1190,7 +1190,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "bundle",
-      "community": 89,
+      "community": 150,
       "norm_label": "bundle"
     },
     {
@@ -4767,17 +4767,27 @@
       "label": ".incrementRewardChestsAvailable()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
-      "source_location": "L74",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_incrementrewardchestsavailable",
       "community": 15,
       "norm_label": ".incrementrewardchestsavailable()"
     },
     {
+      "label": ".syncGlobalStreak()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
+      "source_location": "L89",
+      "_origin": "ast",
+      "id": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_syncglobalstreak",
+      "community": 15,
+      "norm_label": ".syncglobalstreak()"
+    },
+    {
       "label": ".todayKey()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
-      "source_location": "L84",
+      "source_location": "L96",
       "_origin": "ast",
       "id": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_todaykey",
       "community": 15,
@@ -4787,7 +4797,7 @@
       "label": "Long",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
-      "source_location": "L84",
+      "source_location": "L96",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_data_repository_statisticsrepositoryimpl_kt_long",
       "community": 15,
@@ -9404,13 +9414,23 @@
       "norm_label": ".incrementrewardchestsavailable()"
     },
     {
+      "label": ".syncGlobalStreak()",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/domain/repository/StatisticsRepository.kt",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "repository_statisticsrepository_statisticsrepository_syncglobalstreak",
+      "community": 20,
+      "norm_label": ".syncglobalstreak()"
+    },
+    {
       "label": "NavGraph.kt",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
       "source_location": "L1",
       "_origin": "ast",
       "id": "navigation_navgraph",
-      "community": 113,
+      "community": 42,
       "norm_label": "navgraph.kt"
     },
     {
@@ -9420,7 +9440,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes",
-      "community": 113,
+      "community": 42,
       "norm_label": "approutes"
     },
     {
@@ -9430,7 +9450,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes_habitdetail",
-      "community": 113,
+      "community": 42,
       "norm_label": ".habitdetail()"
     },
     {
@@ -9440,7 +9460,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_long",
-      "community": 113,
+      "community": 42,
       "norm_label": "long"
     },
     {
@@ -9450,7 +9470,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes_habitedit",
-      "community": 113,
+      "community": 42,
       "norm_label": ".habitedit()"
     },
     {
@@ -9460,7 +9480,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "navigation_navgraph_approutes_rewards",
-      "community": 113,
+      "community": 42,
       "norm_label": ".rewards()"
     },
     {
@@ -9470,7 +9490,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_string",
-      "community": 113,
+      "community": 42,
       "norm_label": "string"
     },
     {
@@ -9480,7 +9500,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "navigation_navgraph_bottomdestination",
-      "community": 113,
+      "community": 42,
       "norm_label": "bottomdestination"
     },
     {
@@ -9490,7 +9510,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "navigation_navgraph_home",
-      "community": 113,
+      "community": 42,
       "norm_label": "home"
     },
     {
@@ -9500,7 +9520,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "navigation_navgraph_habits",
-      "community": 113,
+      "community": 42,
       "norm_label": "habits"
     },
     {
@@ -9510,7 +9530,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "navigation_navgraph_pet",
-      "community": 113,
+      "community": 42,
       "norm_label": "pet"
     },
     {
@@ -9520,7 +9540,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "navigation_navgraph_achievements",
-      "community": 113,
+      "community": 42,
       "norm_label": "achievements"
     },
     {
@@ -9530,7 +9550,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "navigation_navgraph_settings",
-      "community": 113,
+      "community": 42,
       "norm_label": "settings"
     },
     {
@@ -9540,7 +9560,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "navigation_navgraph_all",
-      "community": 113,
+      "community": 42,
       "norm_label": "all()"
     },
     {
@@ -9550,7 +9570,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_int",
-      "community": 113,
+      "community": 42,
       "norm_label": "int"
     },
     {
@@ -9560,7 +9580,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_list",
-      "community": 113,
+      "community": 42,
       "norm_label": "list"
     },
     {
@@ -9570,7 +9590,7 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "navigation_navgraph_achievementswithbadge",
-      "community": 113,
+      "community": 42,
       "norm_label": "achievementswithbadge"
     },
     {
@@ -9580,7 +9600,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "navigation_navgraph_habitpetnavgraph",
-      "community": 113,
+      "community": 42,
       "norm_label": "habitpetnavgraph()"
     },
     {
@@ -9590,7 +9610,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_navhostcontroller",
-      "community": 113,
+      "community": 42,
       "norm_label": "navhostcontroller"
     },
     {
@@ -9600,7 +9620,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_appthemeoption",
-      "community": 113,
+      "community": 42,
       "norm_label": "appthemeoption"
     },
     {
@@ -9610,77 +9630,77 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_microfeedbackmanager",
-      "community": 113,
+      "community": 42,
       "norm_label": "microfeedbackmanager"
     },
     {
       "label": "navigateToBottomDestination()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L257",
+      "source_location": "L259",
       "_origin": "ast",
       "id": "navigation_navgraph_navigatetobottomdestination",
-      "community": 113,
+      "community": 42,
       "norm_label": "navigatetobottomdestination()"
     },
     {
       "label": "navigateToRewards()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L284",
+      "source_location": "L286",
       "_origin": "ast",
       "id": "navigation_navgraph_navigatetorewards",
-      "community": 113,
+      "community": 42,
       "norm_label": "navigatetorewards()"
     },
     {
       "label": "HabitPetBottomBar()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L296",
+      "source_location": "L298",
       "_origin": "ast",
       "id": "navigation_navgraph_habitpetbottombar",
-      "community": 113,
+      "community": 42,
       "norm_label": "habitpetbottombar()"
     },
     {
       "label": "HabitPetBottomNavItem()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L322",
+      "source_location": "L324",
       "_origin": "ast",
       "id": "navigation_navgraph_habitpetbottomnavitem",
-      "community": 113,
+      "community": 42,
       "norm_label": "habitpetbottomnavitem()"
     },
     {
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L322",
+      "source_location": "L324",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_boolean",
-      "community": 113,
+      "community": 42,
       "norm_label": "boolean"
     },
     {
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L322",
+      "source_location": "L324",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_navigation_navgraph_kt_modifier",
-      "community": 113,
+      "community": 42,
       "norm_label": "modifier"
     },
     {
       "label": "BottomBarIcon()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/navigation/NavGraph.kt",
-      "source_location": "L362",
+      "source_location": "L364",
       "_origin": "ast",
       "id": "navigation_navgraph_bottombaricon",
-      "community": 113,
+      "community": 42,
       "norm_label": "bottombaricon()"
     },
     {
@@ -10090,7 +10110,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_challengecard",
-      "community": 132,
+      "community": 155,
       "norm_label": "challengecard.kt"
     },
     {
@@ -10100,7 +10120,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "components_challengecard_challengecard",
-      "community": 132,
+      "community": 155,
       "norm_label": "challengecard()"
     },
     {
@@ -10110,7 +10130,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_challengeuistate",
-      "community": 132,
+      "community": 155,
       "norm_label": "challengeuistate"
     },
     {
@@ -10120,7 +10140,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_modifier",
-      "community": 132,
+      "community": 155,
       "norm_label": "modifier"
     },
     {
@@ -10130,7 +10150,7 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "components_challengecard_rewardpreview",
-      "community": 132,
+      "community": 155,
       "norm_label": "rewardpreview()"
     },
     {
@@ -10140,7 +10160,7 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_list",
-      "community": 132,
+      "community": 155,
       "norm_label": "list"
     },
     {
@@ -10150,7 +10170,7 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_challengerewarddefinition",
-      "community": 132,
+      "community": 155,
       "norm_label": "challengerewarddefinition"
     },
     {
@@ -10160,7 +10180,7 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "components_challengecard_rewardchip",
-      "community": 132,
+      "community": 155,
       "norm_label": "rewardchip()"
     },
     {
@@ -10170,7 +10190,7 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "components_challengecard_challengeicon",
-      "community": 132,
+      "community": 155,
       "norm_label": "challengeicon()"
     },
     {
@@ -10180,7 +10200,7 @@
       "source_location": "L220",
       "_origin": "ast",
       "id": "components_challengecard_icon",
-      "community": 132,
+      "community": 152,
       "norm_label": "icon()"
     },
     {
@@ -10190,7 +10210,7 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "components_challengecard_label",
-      "community": 132,
+      "community": 155,
       "norm_label": "label()"
     },
     {
@@ -10200,7 +10220,7 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_challengecard_kt_string",
-      "community": 132,
+      "community": 155,
       "norm_label": "string"
     },
     {
@@ -10270,7 +10290,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_emptystatecard",
-      "community": 5,
+      "community": 132,
       "norm_label": "emptystatecard.kt"
     },
     {
@@ -10280,7 +10300,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "components_emptystatecard_emptystatecard",
-      "community": 5,
+      "community": 132,
       "norm_label": "emptystatecard()"
     },
     {
@@ -10290,7 +10310,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_modifier",
-      "community": 5,
+      "community": 132,
       "norm_label": "modifier"
     },
     {
@@ -10300,7 +10320,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_string",
-      "community": 5,
+      "community": 132,
       "norm_label": "string"
     },
     {
@@ -10310,7 +10330,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "components_emptystatecard_loadingstatecard",
-      "community": 5,
+      "community": 132,
       "norm_label": "loadingstatecard()"
     },
     {
@@ -10320,7 +10340,7 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "components_emptystatecard_errorstatecard",
-      "community": 5,
+      "community": 132,
       "norm_label": "errorstatecard()"
     },
     {
@@ -10330,7 +10350,7 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_components_emptystatecard_kt_unit",
-      "community": 5,
+      "community": 132,
       "norm_label": "unit"
     },
     {
@@ -11160,7 +11180,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackoverlay.kt"
     },
     {
@@ -11170,7 +11190,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_microfeedbackoverlay",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackoverlay()"
     },
     {
@@ -11180,7 +11200,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_microfeedbackmanager",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackmanager"
     },
     {
@@ -11190,7 +11210,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_microfeedbackpulse",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackpulse()"
     },
     {
@@ -11200,7 +11220,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_microfeedbackevent",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackevent"
     },
     {
@@ -11210,7 +11230,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_microfeedbackxppulse",
-      "community": 89,
+      "community": 150,
       "norm_label": "microfeedbackxppulse()"
     },
     {
@@ -11220,7 +11240,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_float",
-      "community": 89,
+      "community": 150,
       "norm_label": "float"
     },
     {
@@ -11230,7 +11250,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_labelforevent",
-      "community": 89,
+      "community": 150,
       "norm_label": "labelforevent()"
     },
     {
@@ -11240,7 +11260,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_string",
-      "community": 89,
+      "community": 150,
       "norm_label": "string"
     },
     {
@@ -11250,7 +11270,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "feedback_microfeedbackoverlay_colorforevent",
-      "community": 89,
+      "community": 150,
       "norm_label": "colorforevent()"
     },
     {
@@ -11260,7 +11280,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_feedback_microfeedbackoverlay_kt_color",
-      "community": 89,
+      "community": 150,
       "norm_label": "color"
     },
     {
@@ -11410,7 +11430,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "viewmodel",
-      "community": 14,
+      "community": 154,
       "norm_label": "viewmodel"
     },
     {
@@ -11540,7 +11560,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "reward_rewardoverlayhost",
-      "community": 89,
+      "community": 150,
       "norm_label": "rewardoverlayhost.kt"
     },
     {
@@ -11550,7 +11570,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "reward_rewardoverlayhost_rewardoverlayhost",
-      "community": 89,
+      "community": 150,
       "norm_label": "rewardoverlayhost()"
     },
     {
@@ -11560,7 +11580,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_reward_rewardoverlayhost_kt_rewardmanager",
-      "community": 89,
+      "community": 150,
       "norm_label": "rewardmanager"
     },
     {
@@ -11987,7 +12007,7 @@
       "label": "AchievementScreen()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L70",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementscreen",
       "community": 93,
@@ -11997,17 +12017,27 @@
       "label": "AchievementViewModel",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L70",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "achievementviewmodel",
       "community": 93,
       "norm_label": "achievementviewmodel"
     },
     {
+      "label": "HomeScreenViewModel",
+      "file_type": "code",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_homescreenviewmodel",
+      "community": 93,
+      "norm_label": "homescreenviewmodel"
+    },
+    {
       "label": "AchievementScreenContent()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementscreencontent",
       "community": 93,
@@ -12017,7 +12047,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_list",
       "community": 93,
@@ -12027,7 +12057,7 @@
       "label": "AchievementEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_achievemententity",
       "community": 93,
@@ -12037,7 +12067,7 @@
       "label": "Boolean",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_boolean",
       "community": 93,
@@ -12047,7 +12077,7 @@
       "label": "String",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_string",
       "community": 93,
@@ -12057,7 +12087,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_int",
       "community": 93,
@@ -12067,7 +12097,7 @@
       "label": "StatisticsEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_statisticsentity",
       "community": 93,
@@ -12077,7 +12107,7 @@
       "label": "PetEntity",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_petentity",
       "community": 93,
@@ -12087,7 +12117,7 @@
       "label": "AchievementHallPalette",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L104",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "achievementhallpalette",
       "community": 93,
@@ -12097,7 +12127,7 @@
       "label": "ThemeHallOverlay()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L220",
+      "source_location": "L241",
       "_origin": "ast",
       "id": "screens_achievementscreen_themehalloverlay",
       "community": 93,
@@ -12107,7 +12137,7 @@
       "label": "Modifier",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L220",
+      "source_location": "L241",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_modifier",
       "community": 93,
@@ -12117,7 +12147,7 @@
       "label": "GrandMilestoneHeader()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L253",
+      "source_location": "L274",
       "_origin": "ast",
       "id": "screens_achievementscreen_grandmilestoneheader",
       "community": 93,
@@ -12127,7 +12157,7 @@
       "label": "AchievementHallCard()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L328",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementhallcard",
       "community": 93,
@@ -12137,7 +12167,7 @@
       "label": "com",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L328",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_com",
       "community": 93,
@@ -12147,7 +12177,7 @@
       "label": "Float",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L328",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_float",
       "community": 93,
@@ -12157,7 +12187,7 @@
       "label": "HallIconBox()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L483",
+      "source_location": "L504",
       "_origin": "ast",
       "id": "screens_achievementscreen_halliconbox",
       "community": 93,
@@ -12167,7 +12197,7 @@
       "label": "ClaimAllRewardsBar()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L544",
+      "source_location": "L565",
       "_origin": "ast",
       "id": "screens_achievementscreen_claimallrewardsbar",
       "community": 93,
@@ -12177,7 +12207,7 @@
       "label": "CoinSparkle()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L604",
+      "source_location": "L625",
       "_origin": "ast",
       "id": "screens_achievementscreen_coinsparkle",
       "community": 93,
@@ -12187,7 +12217,7 @@
       "label": "AchievementHallPalette",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L622",
+      "source_location": "L643",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementhallpalette",
       "community": 93,
@@ -12197,7 +12227,7 @@
       "label": "current()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L671",
+      "source_location": "L692",
       "_origin": "ast",
       "id": "screens_achievementscreen_current",
       "community": 93,
@@ -12207,7 +12237,7 @@
       "label": "fromTheme()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L723",
+      "source_location": "L744",
       "_origin": "ast",
       "id": "screens_achievementscreen_fromtheme",
       "community": 93,
@@ -12217,7 +12247,7 @@
       "label": "AppThemeColors",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L723",
+      "source_location": "L744",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_appthemecolors",
       "community": 93,
@@ -12227,7 +12257,7 @@
       "label": "AchievementScreenPreview()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
-      "source_location": "L790",
+      "source_location": "L811",
       "_origin": "ast",
       "id": "screens_achievementscreen_achievementscreenpreview",
       "community": 93,
@@ -12520,7 +12550,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habitcreationscreen",
-      "community": 132,
+      "community": 151,
       "norm_label": "habitcreationscreen.kt"
     },
     {
@@ -12530,7 +12560,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_habitcreationscreen",
-      "community": 132,
+      "community": 151,
       "norm_label": "habitcreationscreen()"
     },
     {
@@ -12540,7 +12570,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_inlinescreenheader",
-      "community": 132,
+      "community": 151,
       "norm_label": "inlinescreenheader()"
     },
     {
@@ -12550,7 +12580,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_string",
-      "community": 132,
+      "community": 151,
       "norm_label": "string"
     },
     {
@@ -12560,7 +12590,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_color",
-      "community": 132,
+      "community": 151,
       "norm_label": "color"
     },
     {
@@ -12570,7 +12600,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_habitcreationform",
-      "community": 132,
+      "community": 151,
       "norm_label": "habitcreationform()"
     },
     {
@@ -12580,7 +12610,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "habitcreationviewmodel",
-      "community": 132,
+      "community": 151,
       "norm_label": "habitcreationviewmodel"
     },
     {
@@ -12590,7 +12620,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_modifier",
-      "community": 132,
+      "community": 151,
       "norm_label": "modifier"
     },
     {
@@ -12600,7 +12630,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_habitcreationformcontent",
-      "community": 132,
+      "community": 151,
       "norm_label": "habitcreationformcontent()"
     },
     {
@@ -12610,7 +12640,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_int",
-      "community": 132,
+      "community": 151,
       "norm_label": "int"
     },
     {
@@ -12620,7 +12650,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitcreationscreen_kt_boolean",
-      "community": 132,
+      "community": 151,
       "norm_label": "boolean"
     },
     {
@@ -12630,7 +12660,7 @@
       "source_location": "L392",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_emojivaultcontent",
-      "community": 132,
+      "community": 151,
       "norm_label": "emojivaultcontent()"
     },
     {
@@ -12640,7 +12670,7 @@
       "source_location": "L469",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_typeselection",
-      "community": 132,
+      "community": 151,
       "norm_label": "typeselection()"
     },
     {
@@ -12650,7 +12680,7 @@
       "source_location": "L533",
       "_origin": "ast",
       "id": "screens_habitcreationscreen_durationselection",
-      "community": 132,
+      "community": 151,
       "norm_label": "durationselection()"
     },
     {
@@ -12880,7 +12910,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habiteditscreen",
-      "community": 132,
+      "community": 153,
       "norm_label": "habiteditscreen.kt"
     },
     {
@@ -12890,7 +12920,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "screens_habiteditscreen_habiteditscreen",
-      "community": 132,
+      "community": 153,
       "norm_label": "habiteditscreen()"
     },
     {
@@ -12900,7 +12930,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_long",
-      "community": 132,
+      "community": 153,
       "norm_label": "long"
     },
     {
@@ -12910,7 +12940,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "habiteditviewmodel",
-      "community": 132,
+      "community": 153,
       "norm_label": "habiteditviewmodel"
     },
     {
@@ -12920,7 +12950,7 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "screens_habiteditscreen_inlinescreenheader",
-      "community": 132,
+      "community": 153,
       "norm_label": "inlinescreenheader()"
     },
     {
@@ -12930,7 +12960,7 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_string",
-      "community": 132,
+      "community": 153,
       "norm_label": "string"
     },
     {
@@ -12940,7 +12970,7 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_color",
-      "community": 132,
+      "community": 153,
       "norm_label": "color"
     },
     {
@@ -12950,7 +12980,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "screens_habiteditscreen_habiteditform",
-      "community": 132,
+      "community": 153,
       "norm_label": "habiteditform()"
     },
     {
@@ -12960,7 +12990,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_modifier",
-      "community": 132,
+      "community": 153,
       "norm_label": "modifier"
     },
     {
@@ -12970,7 +13000,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "screens_habiteditscreen_habiteditformcontent",
-      "community": 132,
+      "community": 153,
       "norm_label": "habiteditformcontent()"
     },
     {
@@ -12980,7 +13010,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_int",
-      "community": 132,
+      "community": 153,
       "norm_label": "int"
     },
     {
@@ -12990,7 +13020,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habiteditscreen_kt_boolean",
-      "community": 132,
+      "community": 153,
       "norm_label": "boolean"
     },
     {
@@ -13000,7 +13030,7 @@
       "source_location": "L456",
       "_origin": "ast",
       "id": "screens_habiteditscreen_emojivaultcontent",
-      "community": 132,
+      "community": 153,
       "norm_label": "emojivaultcontent()"
     },
     {
@@ -13010,7 +13040,7 @@
       "source_location": "L534",
       "_origin": "ast",
       "id": "screens_habiteditscreen_typeselection",
-      "community": 132,
+      "community": 153,
       "norm_label": "typeselection()"
     },
     {
@@ -13020,7 +13050,7 @@
       "source_location": "L599",
       "_origin": "ast",
       "id": "screens_habiteditscreen_durationselection",
-      "community": 132,
+      "community": 153,
       "norm_label": "durationselection()"
     },
     {
@@ -13030,7 +13060,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_habitsscreen",
-      "community": 132,
+      "community": 152,
       "norm_label": "habitsscreen.kt"
     },
     {
@@ -13100,7 +13130,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_habitentity",
-      "community": 132,
+      "community": 152,
       "norm_label": "habitentity"
     },
     {
@@ -13130,7 +13160,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_boolean",
-      "community": 132,
+      "community": 152,
       "norm_label": "boolean"
     },
     {
@@ -13150,7 +13180,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_string",
-      "community": 132,
+      "community": 152,
       "norm_label": "string"
     },
     {
@@ -13180,7 +13210,7 @@
       "source_location": "L276",
       "_origin": "ast",
       "id": "screens_habitsscreen_habititem",
-      "community": 132,
+      "community": 152,
       "norm_label": "habititem()"
     },
     {
@@ -13190,7 +13220,7 @@
       "source_location": "L441",
       "_origin": "ast",
       "id": "screens_habitsscreen_swipeactionsoverlay",
-      "community": 132,
+      "community": 152,
       "norm_label": "swipeactionsoverlay()"
     },
     {
@@ -13200,7 +13230,7 @@
       "source_location": "L472",
       "_origin": "ast",
       "id": "screens_habitsscreen_swipeactionbutton",
-      "community": 132,
+      "community": 152,
       "norm_label": "swipeactionbutton()"
     },
     {
@@ -13210,7 +13240,7 @@
       "source_location": "L472",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_imagevector",
-      "community": 132,
+      "community": 152,
       "norm_label": "imagevector"
     },
     {
@@ -13230,7 +13260,7 @@
       "source_location": "L496",
       "_origin": "ast",
       "id": "screens_habitsscreen_streakbadge",
-      "community": 132,
+      "community": 152,
       "norm_label": "streakbadge()"
     },
     {
@@ -13240,7 +13270,7 @@
       "source_location": "L496",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_habitsscreen_kt_int",
-      "community": 132,
+      "community": 152,
       "norm_label": "int"
     },
     {
@@ -13250,7 +13280,7 @@
       "source_location": "L531",
       "_origin": "ast",
       "id": "screens_habitsscreen_iconbadge",
-      "community": 132,
+      "community": 152,
       "norm_label": "iconbadge()"
     },
     {
@@ -13260,7 +13290,7 @@
       "source_location": "L563",
       "_origin": "ast",
       "id": "screens_habitsscreen_completionbutton",
-      "community": 132,
+      "community": 152,
       "norm_label": "completionbutton()"
     },
     {
@@ -13270,7 +13300,7 @@
       "source_location": "L592",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitactionsdialog",
-      "community": 132,
+      "community": 152,
       "norm_label": "habitactionsdialog()"
     },
     {
@@ -13280,7 +13310,7 @@
       "source_location": "L631",
       "_origin": "ast",
       "id": "screens_habitsscreen_habitcategory",
-      "community": 132,
+      "community": 152,
       "norm_label": "habitcategory()"
     },
     {
@@ -13290,7 +13320,7 @@
       "source_location": "L647",
       "_origin": "ast",
       "id": "screens_habitsscreen_habiticon",
-      "community": 132,
+      "community": 152,
       "norm_label": "habiticon()"
     },
     {
@@ -13737,7 +13767,7 @@
       "label": "UiState",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L235",
+      "source_location": "L239",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_uistate",
       "community": 87,
@@ -13747,7 +13777,7 @@
       "label": "UiState",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L269",
+      "source_location": "L273",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_uistate",
       "community": 87,
@@ -13757,7 +13787,7 @@
       "label": ".activeCombo()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L281",
+      "source_location": "L285",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_activecombo",
       "community": 87,
@@ -13767,7 +13797,7 @@
       "label": "Int",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L281",
+      "source_location": "L285",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_int",
       "community": 87,
@@ -13777,7 +13807,7 @@
       "label": ".getDayStart()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L289",
+      "source_location": "L293",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_getdaystart",
       "community": 87,
@@ -13787,7 +13817,7 @@
       "label": ".getDayKey()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L299",
+      "source_location": "L303",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_getdaykey",
       "community": 87,
@@ -13797,7 +13827,7 @@
       "label": ".getMonthStart()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L301",
+      "source_location": "L305",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_getmonthstart",
       "community": 87,
@@ -13807,7 +13837,7 @@
       "label": ".addMonths()",
       "file_type": "code",
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
-      "source_location": "L312",
+      "source_location": "L316",
       "_origin": "ast",
       "id": "screens_homescreenviewmodel_homescreenviewmodel_addmonths",
       "community": 87,
@@ -13980,7 +14010,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_petscreen",
-      "community": 100,
+      "community": 89,
       "norm_label": "petscreen.kt"
     },
     {
@@ -13990,7 +14020,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel",
-      "community": 100,
+      "community": 89,
       "norm_label": "petviewmodel"
     },
     {
@@ -14000,7 +14030,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_stateflow",
-      "community": 100,
+      "community": 89,
       "norm_label": "stateflow"
     },
     {
@@ -14010,7 +14040,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_string",
-      "community": 100,
+      "community": 89,
       "norm_label": "string"
     },
     {
@@ -14020,7 +14050,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel_clearerror",
-      "community": 100,
+      "community": 89,
       "norm_label": ".clearerror()"
     },
     {
@@ -14030,7 +14060,7 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "screens_petscreen_petviewmodel_renamepet",
-      "community": 100,
+      "community": 89,
       "norm_label": ".renamepet()"
     },
     {
@@ -14040,7 +14070,7 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_petentity",
-      "community": 100,
+      "community": 89,
       "norm_label": "petentity"
     },
     {
@@ -14050,7 +14080,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "screens_petscreen_petscreen",
-      "community": 100,
+      "community": 89,
       "norm_label": "petscreen()"
     },
     {
@@ -14060,7 +14090,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_homescreenviewmodel",
-      "community": 100,
+      "community": 89,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -14070,7 +14100,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "screens_petscreen_petscreencontent",
-      "community": 100,
+      "community": 89,
       "norm_label": "petscreencontent()"
     },
     {
@@ -14080,7 +14110,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_boolean",
-      "community": 100,
+      "community": 89,
       "norm_label": "boolean"
     },
     {
@@ -14090,7 +14120,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_float",
-      "community": 100,
+      "community": 89,
       "norm_label": "float"
     },
     {
@@ -14100,7 +14130,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_streakcalendaruistate",
-      "community": 100,
+      "community": 89,
       "norm_label": "streakcalendaruistate"
     },
     {
@@ -14110,7 +14140,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "screens_petscreen_petshowcase",
-      "community": 100,
+      "community": 89,
       "norm_label": "petshowcase()"
     },
     {
@@ -14120,7 +14150,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_int",
-      "community": 100,
+      "community": 89,
       "norm_label": "int"
     },
     {
@@ -14130,7 +14160,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_modifier",
-      "community": 100,
+      "community": 89,
       "norm_label": "modifier"
     },
     {
@@ -14140,7 +14170,7 @@
       "source_location": "L309",
       "_origin": "ast",
       "id": "screens_petscreen_medallionconnectors",
-      "community": 100,
+      "community": 89,
       "norm_label": "medallionconnectors()"
     },
     {
@@ -14150,7 +14180,7 @@
       "source_location": "L357",
       "_origin": "ast",
       "id": "screens_petscreen_petmedallion",
-      "community": 100,
+      "community": 89,
       "norm_label": "petmedallion()"
     },
     {
@@ -14160,7 +14190,7 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "screens_petscreen_levelbadge",
-      "community": 100,
+      "community": 89,
       "norm_label": "levelbadge()"
     },
     {
@@ -14170,7 +14200,7 @@
       "source_location": "L453",
       "_origin": "ast",
       "id": "screens_petscreen_moodpill",
-      "community": 100,
+      "community": 89,
       "norm_label": "moodpill()"
     },
     {
@@ -14180,7 +14210,7 @@
       "source_location": "L485",
       "_origin": "ast",
       "id": "screens_petscreen_petdetailspanel",
-      "community": 100,
+      "community": 89,
       "norm_label": "petdetailspanel()"
     },
     {
@@ -14190,7 +14220,7 @@
       "source_location": "L511",
       "_origin": "ast",
       "id": "screens_petscreen_petbondbutton",
-      "community": 100,
+      "community": 89,
       "norm_label": "petbondbutton()"
     },
     {
@@ -14200,7 +14230,7 @@
       "source_location": "L543",
       "_origin": "ast",
       "id": "screens_petscreen_attributecard",
-      "community": 100,
+      "community": 89,
       "norm_label": "attributecard()"
     },
     {
@@ -14210,7 +14240,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "screens_petscreen_attributerow",
-      "community": 100,
+      "community": 89,
       "norm_label": "attributerow()"
     },
     {
@@ -14220,7 +14250,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_androidx",
-      "community": 100,
+      "community": 89,
       "norm_label": "androidx"
     },
     {
@@ -14230,7 +14260,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_petscreen_kt_color",
-      "community": 100,
+      "community": 89,
       "norm_label": "color"
     },
     {
@@ -14240,7 +14270,7 @@
       "source_location": "L678",
       "_origin": "ast",
       "id": "screens_petscreen_levelupbutton",
-      "community": 100,
+      "community": 89,
       "norm_label": "levelupbutton()"
     },
     {
@@ -14250,7 +14280,7 @@
       "source_location": "L713",
       "_origin": "ast",
       "id": "screens_petscreen_customizationdisplayname",
-      "community": 100,
+      "community": 89,
       "norm_label": "customizationdisplayname()"
     },
     {
@@ -14260,7 +14290,7 @@
       "source_location": "L731",
       "_origin": "ast",
       "id": "screens_petscreen_validatepetname",
-      "community": 100,
+      "community": 89,
       "norm_label": "validatepetname()"
     },
     {
@@ -14270,7 +14300,7 @@
       "source_location": "L783",
       "_origin": "ast",
       "id": "screens_petscreen_petrenamedialog",
-      "community": 100,
+      "community": 89,
       "norm_label": "petrenamedialog()"
     },
     {
@@ -14280,7 +14310,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_rewardsscreen",
-      "community": 5,
+      "community": 113,
       "norm_label": "rewardsscreen.kt"
     },
     {
@@ -14290,7 +14320,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsscreen",
-      "community": 5,
+      "community": 113,
       "norm_label": "rewardsscreen()"
     },
     {
@@ -14300,7 +14330,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "rewardsviewmodel",
-      "community": 5,
+      "community": 113,
       "norm_label": "rewardsviewmodel"
     },
     {
@@ -14310,7 +14340,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_homescreenviewmodel",
-      "community": 5,
+      "community": 113,
       "norm_label": "homescreenviewmodel"
     },
     {
@@ -14320,7 +14350,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_string",
-      "community": 5,
+      "community": 113,
       "norm_label": "string"
     },
     {
@@ -14330,7 +14360,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsscreencontent",
-      "community": 5,
+      "community": 113,
       "norm_label": "rewardsscreencontent()"
     },
     {
@@ -14340,7 +14370,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_list",
-      "community": 5,
+      "community": 113,
       "norm_label": "list"
     },
     {
@@ -14350,7 +14380,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_inventoryitementity",
-      "community": 5,
+      "community": 113,
       "norm_label": "inventoryitementity"
     },
     {
@@ -14360,7 +14390,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_boolean",
-      "community": 5,
+      "community": 113,
       "norm_label": "boolean"
     },
     {
@@ -14370,7 +14400,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "collectiontypetab",
-      "community": 5,
+      "community": 113,
       "norm_label": "collectiontypetab"
     },
     {
@@ -14380,7 +14410,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "collectiontab",
-      "community": 5,
+      "community": 113,
       "norm_label": "collectiontab"
     },
     {
@@ -14390,7 +14420,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_rarity",
-      "community": 5,
+      "community": 113,
       "norm_label": "rarity"
     },
     {
@@ -14400,7 +14430,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_streakcalendaruistate",
-      "community": 5,
+      "community": 113,
       "norm_label": "streakcalendaruistate"
     },
     {
@@ -14410,7 +14440,7 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "screens_rewardsscreen_inventoryitemgridsquare",
-      "community": 5,
+      "community": 113,
       "norm_label": "inventoryitemgridsquare()"
     },
     {
@@ -14420,7 +14450,7 @@
       "source_location": "L390",
       "_origin": "ast",
       "id": "screens_rewardsscreen_iteminspectdrawer",
-      "community": 5,
+      "community": 113,
       "norm_label": "iteminspectdrawer()"
     },
     {
@@ -14430,7 +14460,7 @@
       "source_location": "L390",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_int",
-      "community": 5,
+      "community": 113,
       "norm_label": "int"
     },
     {
@@ -14440,7 +14470,7 @@
       "source_location": "L502",
       "_origin": "ast",
       "id": "screens_rewardsscreen_collectiontypetabs",
-      "community": 5,
+      "community": 113,
       "norm_label": "collectiontypetabs()"
     },
     {
@@ -14450,7 +14480,7 @@
       "source_location": "L546",
       "_origin": "ast",
       "id": "screens_rewardsscreen_collectiontoggle",
-      "community": 5,
+      "community": 113,
       "norm_label": "collectiontoggle()"
     },
     {
@@ -14460,7 +14490,7 @@
       "source_location": "L578",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rarityfilter",
-      "community": 5,
+      "community": 113,
       "norm_label": "rarityfilter()"
     },
     {
@@ -14470,7 +14500,7 @@
       "source_location": "L606",
       "_origin": "ast",
       "id": "screens_rewardsscreen_raritychip",
-      "community": 5,
+      "community": 113,
       "norm_label": "raritychip()"
     },
     {
@@ -14480,7 +14510,7 @@
       "source_location": "L606",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_color",
-      "community": 5,
+      "community": 113,
       "norm_label": "color"
     },
     {
@@ -14490,7 +14520,7 @@
       "source_location": "L606",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_rewardsscreen_kt_modifier",
-      "community": 5,
+      "community": 113,
       "norm_label": "modifier"
     },
     {
@@ -14500,7 +14530,7 @@
       "source_location": "L633",
       "_origin": "ast",
       "id": "screens_rewardsscreen_borderstrokefix",
-      "community": 5,
+      "community": 113,
       "norm_label": "borderstrokefix()"
     },
     {
@@ -14510,7 +14540,7 @@
       "source_location": "L636",
       "_origin": "ast",
       "id": "screens_rewardsscreen_itemsflow",
-      "community": 5,
+      "community": 113,
       "norm_label": "itemsflow()"
     },
     {
@@ -14520,7 +14550,7 @@
       "source_location": "L642",
       "_origin": "ast",
       "id": "screens_rewardsscreen_raritycolor",
-      "community": 5,
+      "community": 113,
       "norm_label": "raritycolor()"
     },
     {
@@ -14530,7 +14560,7 @@
       "source_location": "L649",
       "_origin": "ast",
       "id": "screens_rewardsscreen_collectiontypetab",
-      "community": 5,
+      "community": 113,
       "norm_label": "collectiontypetab"
     },
     {
@@ -14540,7 +14570,7 @@
       "source_location": "L655",
       "_origin": "ast",
       "id": "screens_rewardsscreen_collectiontab",
-      "community": 5,
+      "community": 113,
       "norm_label": "collectiontab"
     },
     {
@@ -14550,7 +14580,7 @@
       "source_location": "L668",
       "_origin": "ast",
       "id": "screens_rewardsscreen_rewardsscreenpreview",
-      "community": 5,
+      "community": 113,
       "norm_label": "rewardsscreenpreview()"
     },
     {
@@ -14560,7 +14590,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "screens_statisticsscreen",
-      "community": 14,
+      "community": 154,
       "norm_label": "statisticsscreen.kt"
     },
     {
@@ -14570,7 +14600,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsviewmodel",
-      "community": 14,
+      "community": 154,
       "norm_label": "statisticsviewmodel"
     },
     {
@@ -14580,7 +14610,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_stateflow",
-      "community": 14,
+      "community": 154,
       "norm_label": "stateflow"
     },
     {
@@ -14590,7 +14620,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_boolean",
-      "community": 14,
+      "community": 154,
       "norm_label": "boolean"
     },
     {
@@ -14600,7 +14630,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsscreen",
-      "community": 14,
+      "community": 154,
       "norm_label": "statisticsscreen()"
     },
     {
@@ -14610,7 +14640,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statisticsscreencontent",
-      "community": 14,
+      "community": 154,
       "norm_label": "statisticsscreencontent()"
     },
     {
@@ -14620,7 +14650,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_statisticsentity",
-      "community": 14,
+      "community": 154,
       "norm_label": "statisticsentity"
     },
     {
@@ -14630,7 +14660,7 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "screens_statisticsscreen_herostreakcard",
-      "community": 14,
+      "community": 154,
       "norm_label": "herostreakcard()"
     },
     {
@@ -14640,7 +14670,7 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_int",
-      "community": 14,
+      "community": 154,
       "norm_label": "int"
     },
     {
@@ -14650,7 +14680,7 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "screens_statisticsscreen_statbentocard",
-      "community": 14,
+      "community": 154,
       "norm_label": "statbentocard()"
     },
     {
@@ -14660,7 +14690,7 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_string",
-      "community": 14,
+      "community": 154,
       "norm_label": "string"
     },
     {
@@ -14670,7 +14700,7 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_imagevector",
-      "community": 14,
+      "community": 154,
       "norm_label": "imagevector"
     },
     {
@@ -14680,7 +14710,7 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_ui_screens_statisticsscreen_kt_color",
-      "community": 14,
+      "community": 154,
       "norm_label": "color"
     },
     {
@@ -14690,7 +14720,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "screens_statisticsscreen_petlifecyclecard",
-      "community": 14,
+      "community": 154,
       "norm_label": "petlifecyclecard()"
     },
     {
@@ -14920,7 +14950,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel",
-      "community": 14,
+      "community": 131,
       "norm_label": "activitytimelineviewmodel.kt"
     },
     {
@@ -14930,7 +14960,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel",
-      "community": 14,
+      "community": 131,
       "norm_label": "activitytimelineviewmodel"
     },
     {
@@ -14940,7 +14970,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_stateflow",
-      "community": 14,
+      "community": 131,
       "norm_label": "stateflow"
     },
     {
@@ -14950,7 +14980,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_list",
-      "community": 14,
+      "community": 131,
       "norm_label": "list"
     },
     {
@@ -14960,7 +14990,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_gameevententity",
-      "community": 14,
+      "community": 131,
       "norm_label": "gameevententity"
     },
     {
@@ -14970,7 +15000,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_boolean",
-      "community": 14,
+      "community": 131,
       "norm_label": "boolean"
     },
     {
@@ -14980,7 +15010,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_activitytimelineviewmodel_kt_string",
-      "community": 14,
+      "community": 131,
       "norm_label": "string"
     },
     {
@@ -14990,7 +15020,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "viewmodel_activitytimelineviewmodel_activitytimelineviewmodel_loadmore",
-      "community": 14,
+      "community": 131,
       "norm_label": ".loadmore()"
     },
     {
@@ -15900,7 +15930,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel",
-      "community": 14,
+      "community": 144,
       "norm_label": "notificationsettingsviewmodel.kt"
     },
     {
@@ -15910,7 +15940,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel",
-      "community": 14,
+      "community": 144,
       "norm_label": "notificationsettingsviewmodel"
     },
     {
@@ -15920,7 +15950,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_stateflow",
-      "community": 14,
+      "community": 144,
       "norm_label": "stateflow"
     },
     {
@@ -15930,7 +15960,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_notificationsettingsviewmodel_kt_boolean",
-      "community": 14,
+      "community": 144,
       "norm_label": "boolean"
     },
     {
@@ -15940,7 +15970,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setdailyreminderenabled",
-      "community": 14,
+      "community": 144,
       "norm_label": ".setdailyreminderenabled()"
     },
     {
@@ -15950,7 +15980,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setstreakreminderenabled",
-      "community": 14,
+      "community": 144,
       "norm_label": ".setstreakreminderenabled()"
     },
     {
@@ -15960,7 +15990,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "viewmodel_notificationsettingsviewmodel_notificationsettingsviewmodel_setpetreminderenabled",
-      "community": 14,
+      "community": 144,
       "norm_label": ".setpetreminderenabled()"
     },
     {
@@ -15970,7 +16000,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel",
-      "community": 14,
+      "community": 130,
       "norm_label": "rewardsviewmodel.kt"
     },
     {
@@ -15980,7 +16010,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_rewardsviewmodel",
-      "community": 14,
+      "community": 130,
       "norm_label": "rewardsviewmodel"
     },
     {
@@ -15990,7 +16020,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_rewardsviewmodel_kt_stateflow",
-      "community": 14,
+      "community": 130,
       "norm_label": "stateflow"
     },
     {
@@ -16000,7 +16030,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_rewardsviewmodel_kt_boolean",
-      "community": 14,
+      "community": 130,
       "norm_label": "boolean"
     },
     {
@@ -16010,7 +16040,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_rewardsviewmodel_kt_string",
-      "community": 14,
+      "community": 130,
       "norm_label": "string"
     },
     {
@@ -16020,7 +16050,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_rewardsviewmodel_kt_uistate",
-      "community": 14,
+      "community": 130,
       "norm_label": "uistate"
     },
     {
@@ -16030,7 +16060,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_rewardsviewmodel_clearerror",
-      "community": 14,
+      "community": 130,
       "norm_label": ".clearerror()"
     },
     {
@@ -16040,7 +16070,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_rewardsviewmodel_purchaseitem",
-      "community": 14,
+      "community": 130,
       "norm_label": ".purchaseitem()"
     },
     {
@@ -16050,7 +16080,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_rewardsviewmodel_kt_long",
-      "community": 14,
+      "community": 130,
       "norm_label": "long"
     },
     {
@@ -16060,7 +16090,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_presentation_viewmodel_rewardsviewmodel_kt_int",
-      "community": 14,
+      "community": 130,
       "norm_label": "int"
     },
     {
@@ -16070,7 +16100,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_rewardsviewmodel_equipitem",
-      "community": 14,
+      "community": 130,
       "norm_label": ".equipitem()"
     },
     {
@@ -16080,7 +16110,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_rewardsviewmodel_unequipitem",
-      "community": 14,
+      "community": 130,
       "norm_label": ".unequipitem()"
     },
     {
@@ -16090,7 +16120,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_uistate",
-      "community": 14,
+      "community": 130,
       "norm_label": "uistate"
     },
     {
@@ -16100,7 +16130,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "viewmodel_rewardsviewmodel_rewardsviewmodel_getdaystart",
-      "community": 14,
+      "community": 130,
       "norm_label": ".getdaystart()"
     },
     {
@@ -16270,7 +16300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "theme_theme",
-      "community": 132,
+      "community": 151,
       "norm_label": "theme.kt"
     },
     {
@@ -16280,7 +16310,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "theme_theme_habitpettheme",
-      "community": 132,
+      "community": 151,
       "norm_label": "habitpettheme()"
     },
     {
@@ -16290,7 +16320,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_src_main_java_com_example_mobile_ui_theme_theme_kt_appthemeoption",
-      "community": 132,
+      "community": 151,
       "norm_label": "appthemeoption"
     },
     {
@@ -28409,6 +28439,16 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl",
+      "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_syncglobalstreak",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
       "source_location": "L84",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -28513,6 +28553,28 @@
       "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_getstatistics"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_syncglobalstreak",
+      "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_getstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_incrementstreak",
+      "target": "app_src_main_java_com_example_mobile_data_repository_statisticsrepositoryimpl_kt_statisticsentity",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
@@ -28566,6 +28628,17 @@
       "confidence_score": 1.0,
       "source": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_markstreakupdatedtoday",
       "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_updatestatistics"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
+      "source_location": "L92",
+      "weight": 1.0,
+      "source": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_syncglobalstreak",
+      "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_updatestatistics",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -28640,9 +28713,9 @@
       "source_file": "app/src/main/java/com/example/mobile/data/repository/StatisticsRepositoryImpl.kt",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_incrementstreak",
-      "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_todaykey",
-      "confidence_score": 1.0
+      "target": "repository_statisticsrepositoryimpl_statisticsrepositoryimpl_todaykey"
     },
     {
       "relation": "references",
@@ -34351,6 +34424,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "domain_streakengine_streakengine_evaluatetodaystreak",
+      "target": "domain_streakengine_streakengine_getdaystart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L72",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -34527,6 +34611,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "domain_streakengine_streakengine_recalculatetodaystreak",
+      "target": "domain_streakengine_streakengine_getdaystart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
       "source_location": "L136",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -34565,6 +34660,17 @@
       "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_checkpendingstreakfreeze",
       "target": "domain_streakengine_streakengine_daykey"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
+      "source_location": "L156",
+      "weight": 1.0,
+      "source": "domain_streakengine_streakengine_checkpendingstreakfreeze",
+      "target": "domain_streakengine_streakengine_getdaystart",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -34620,6 +34726,17 @@
       "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_usestreakfreeze",
       "target": "domain_streakengine_streakengine_daykey"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
+      "source_location": "L194",
+      "weight": 1.0,
+      "source": "domain_streakengine_streakengine_usestreakfreeze",
+      "target": "domain_streakengine_streakengine_getdaystart",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -34851,6 +34968,17 @@
       "confidence_score": 1.0,
       "source": "domain_streakengine_streakengine_iscontinuationday",
       "target": "domain_streakengine_streakengine_isdaycompletedorfrozen"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/domain/StreakEngine.kt",
+      "source_location": "L271",
+      "weight": 1.0,
+      "source": "domain_streakengine_streakengine_isdaycompletedorfrozen",
+      "target": "domain_streakengine_streakengine_getdaystart",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -36917,6 +37045,16 @@
       "confidence_score": 1.0,
       "source": "repository_statisticsrepository_statisticsrepository",
       "target": "repository_statisticsrepository_statisticsrepository_reset"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/domain/repository/StatisticsRepository.kt",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "repository_statisticsrepository_statisticsrepository",
+      "target": "repository_statisticsrepository_statisticsrepository_syncglobalstreak",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -40379,6 +40517,17 @@
       "confidence_score": 1.0,
       "source": "components_progressheader_gamifiedfixedheader",
       "target": "app_src_main_java_com_example_mobile_presentation_ui_components_progressheader_kt_string"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "screens_achievementscreen_achievementscreencontent",
+      "target": "components_progressheader_gamifiedfixedheader"
     },
     {
       "relation": "calls",
@@ -44389,6 +44538,17 @@
       "target": "achievementviewmodel"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
+      "source_location": "L72",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "confidence_score": 1.0,
+      "source": "screens_achievementscreen_achievementscreen",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_homescreenviewmodel"
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -44453,6 +44613,17 @@
       "confidence_score": 1.0,
       "source": "screens_achievementscreen_achievementscreen",
       "target": "screens_achievementscreen_themehalloverlay"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/AchievementScreen.kt",
+      "source_location": "L108",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "confidence_score": 1.0,
+      "source": "screens_achievementscreen_achievementscreencontent",
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_achievementscreen_kt_homescreenviewmodel"
     },
     {
       "relation": "references",
@@ -48239,9 +48410,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
       "source_location": "L299",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_homescreenviewmodel_homescreenviewmodel",
-      "target": "screens_homescreenviewmodel_homescreenviewmodel_getdaykey",
-      "confidence_score": 1.0
+      "target": "screens_homescreenviewmodel_homescreenviewmodel_getdaykey"
     },
     {
       "relation": "method",
@@ -48396,9 +48567,9 @@
       "source_location": "L299",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "screens_homescreenviewmodel_homescreenviewmodel_getdaykey",
-      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_long",
-      "confidence_score": 1.0
+      "target": "app_src_main_java_com_example_mobile_presentation_ui_screens_homescreenviewmodel_kt_long"
     },
     {
       "relation": "references",
@@ -48451,9 +48622,9 @@
       "source_file": "app/src/main/java/com/example/mobile/presentation/ui/screens/HomeScreenViewModel.kt",
       "source_location": "L299",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_homescreenviewmodel_homescreenviewmodel_getdaykey",
-      "target": "screens_homescreenviewmodel_homescreenviewmodel_getdaystart",
-      "confidence_score": 1.0
+      "target": "screens_homescreenviewmodel_homescreenviewmodel_getdaystart"
     },
     {
       "relation": "contains",
@@ -60871,5 +61042,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "de9f7377efb298ef8474a5f550f78608eabb9fb4"
+  "built_at_commit": "f5881fbe9a3ab537e6aa45e8e2858df446b0e8aa"
 }
