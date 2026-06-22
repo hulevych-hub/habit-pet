@@ -1,652 +1,151 @@
-# TODO - Habit Pet MVP
+# TODO — UI/UX Audit Improvements
+
+## Visual Design Consistency
+
+### Spacing & Layout
+- [ ] **Standardize horizontal padding across screens** — Most screens use `20.dp` horizontal padding, but `HabitDetailScreen` applies it twice (once in the outer `Column` and again in the inner `LazyColumn`), causing double padding on some content. Audit all screens for consistent `20.dp` horizontal padding.
+- [ ] **Standardize content padding top/bottom** — `HomeScreen` uses `top = 16.dp, bottom = 32.dp`, `ActivityTimelineScreen` uses the same, but `HabitDetailScreen` uses `top = 16.dp, bottom = 32.dp` inside a nested structure. `StatisticsScreen` uses `top = 20.dp, bottom = 40.dp`. Unify to a single standard.
+- [ ] **Standardize card internal padding** — Cards use `16.dp`, `18.dp`, `20.dp`, and `24.dp` internal padding inconsistently. `HabitCreationForm` uses `18.dp`, `HabitDetailScreen` completion status uses `20.dp`, `StatisticsScreen` stat cards use `18.dp`, hero card uses `24.dp`. Pick a standard (e.g., `16.dp` for compact, `20.dp` for hero/featured).
+- [ ] **Standardize `Spacer` heights between sections** — Spacing between cards/sections varies: `12.dp`, `14.dp`, `16.dp`, `18.dp`. `HabitCreationForm` uses `16.dp` vertical arrangement, `NotificationSettingsScreen` uses `12.dp`. Define a spacing scale (e.g., `8.dp` tight, `12.dp` default, `16.dp` section, `24.dp` major).
+
+### Card Design
+- [ ] **Standardize card border radius** — Cards use `RoundedCornerShape(14.dp)`, `(16.dp)`, `(20.dp)`, `(22.dp)`, `(24.dp)`, and `(26.dp)`. `EmptyStateCard` uses `24.dp`, most content cards use `20.dp` or `22.dp`, `HeroStreakCard` uses `26.dp`. Define a consistent scale: small `(12.dp)`, medium `(16.dp)`, large `(20.dp)`, hero `(24.dp)`.
+- [ ] **Standardize card border stroke width** — Borders use `1.dp`, `1.5.dp`, and conditional widths. Most cards use `1.dp` at `0.4f` alpha, but `TypeSelection` uses `1.5.dp`. Unify border styling.
+- [ ] **Standardize card elevation** — Most cards use `0.5.dp`, some use `1.dp`, `TypeSelection` uses `0.dp`, `StatBentoCard` uses `1.dp`. Define a consistent elevation system.
+- [ ] **Standardize card container colors** — Most cards use `AppTheme.current.card`, but `HabitCreationForm` type selection uses `AppTheme.current.surface` for unselected state. Ensure unselected/selected states are consistent across all card-based selectors.
+
+### Typography
+- [ ] **Standardize section header typography** — Section labels use various styles: `labelLarge` with `Bold` in `ActivityTimelineScreen`, `labelLarge` with `Bold` + `letterSpacing = 0.5.sp` in `HabitDetailScreen`, `labelLarge` with `Bold` + `letterSpacing = 0.5.sp` in `StatisticsScreen`. Create a consistent `SectionHeader` style.
+- [ ] **Standardize card title typography** — Card titles use `bodyMedium` with `Bold`, `titleMedium` with `Bold`, and `labelLarge` with `Bold` interchangeably. Define a clear hierarchy.
+- [ ] **Standardize body text color** — Body text uses `AppTheme.current.ink`, `AppTheme.current.muted`, and `AppTheme.current.ink.copy(alpha = 0.75f)` inconsistently. Define a clear text color hierarchy: primary (`ink`), secondary (`muted`), tertiary (`ink` at reduced alpha).
+- [ ] **Audit font weight usage** — `FontWeight.Bold` is used heavily. Some places use `FontWeight.SemiBold`, `FontWeight.Medium`, `FontWeight.Black`. Ensure `Black` is reserved for hero numbers only, `Bold` for titles, `SemiBold` for subtitles, `Medium` for body emphasis.
+- [ ] **Standardize letter spacing** — Labels use `letterSpacing = 0.5.sp` or `1.sp` inconsistently. Define a standard for uppercase labels vs. normal text.
+
+### Color Usage
+- [ ] **Standardize accent color for interactive elements** — `AppTheme.current.violet` is used for most interactive accents, but `HabitDetailScreen` uses `AppTheme.current.primary` for the back button and completion button. Ensure primary action buttons use a consistent color.
+- [ ] **Standardize success color usage** — `AppTheme.current.success` is used for completed states, but the exact shade and alpha vary (`0.03f`, `0.04f`, `0.08f`, `0.1f`, `0.2f`). Define standard alpha values for background tints.
+- [ ] **Standardize danger/error color usage** — Error states use `AppTheme.current.danger` with varying alpha values (`0.08f`, `0.2f`). Unify.
+- [ ] **Audit `AppTheme.current.surface` vs `AppTheme.current.card`** — These are used interchangeably in some places (e.g., `HabitCreationForm` uses `surface` for unselected type cards, `outline` alpha backgrounds). Clarify when to use `surface` vs `card`.
+
+## Navigation & Interaction Patterns
+
+### Screen Headers
+- [ ] **Standardize detail screen headers** — `HabitDetailScreen` uses `InlineScreenHeader` with back arrow + title, `HabitCreationScreen` uses the same pattern, `HabitEditScreen` uses the same. `StatisticsScreen` uses `CenterAlignedTopAppBar`. `HomeScreen`, `PetScreen`, `AchievementsScreen` use `GamifiedFixedHeader`. Ensure all detail screens follow the same header pattern and all main screens use `GamifiedFixedHeader`.
+- [ ] **Standardize back button styling** — `InlineScreenHeader` uses `IconButton` with `ArrowBack` icon. The `tint` color varies: `AppTheme.current.primary` in `HabitDetailScreen`, `AppTheme.current.violet` in creation/edit screens. Unify.
+- [ ] **Add consistent screen title styling** — Detail screen titles use `titleLarge` with `Bold`, but the color varies between `AppTheme.current.ink` and `accentColor`. Standardize.
+
+### Empty States
+- [ ] **Standardize empty state design** — `EmptyStateCard` is a reusable component, but `HabitDetailScreen` also has inline empty states with different copy patterns. Ensure all empty states use the `EmptyStateCard` component with consistent icon, title, message, and hint styling.
+- [ ] **Standardize empty state icons** — `EmptyStateCard` always uses `Icons.Default.Star`. Some screens might benefit from contextual icons. Consider making the icon configurable or using contextual icons consistently.
 
----
+### Loading States
+- [ ] **Standardize loading state design** — `LoadingStateCard` is used consistently, but `HabitDetailScreen` has its own `CenteredProgressIndicator` with a full-screen background. Unify to use `LoadingStateCard` everywhere.
+- [ ] **Standardize loading messages** — Loading messages vary in tone and style. Ensure they all follow the warm, playful brand voice consistently.
 
-# 🧠 GENERAL EXECUTION RULES
+### Error States
+- [ ] **Standardize error state design** — `ErrorStateCard` is used in some screens, but `HabitDetailScreen` has its own inline `ErrorMessage` composable with different styling. Unify to use `ErrorStateCard` everywhere.
+- [ ] **Standardize error message copy** — Error messages vary in tone. Ensure they follow the supportive, non-harsh brand voice.
 
-For every task below:
+## Reward & Feedback Systems
+
+### Reward Overlays
+- [ ] **Standardize reward screen spacing** — `RewardScreen` uses `24.dp` padding inside the overlay box, but the `Spacer` heights between elements use negative values like `(-4).dp` and `(-8).dp`. Negative spacers are a code smell — restructure layouts to avoid them.
+- [ ] **Standardize reinforcement message spacing** — `ReinforcementMessage` uses `Spacer(modifier = Modifier.height((-8).dp))` which is a negative spacer. Fix the layout to use proper positive spacing.
+- [ ] **Standardize reward text colors** — Reward screens use `AppTheme.current.rewardText` and `AppTheme.current.rewardTextMuted`. Ensure these are defined in all theme variants and provide sufficient contrast.
+- [ ] **Add haptic feedback for reward interactions** — Chest opening and reward completion lack haptic feedback. Add consistent haptic feedback for reward taps and completions.
+
+### Micro Feedback
+- [ ] **Standardize micro-feedback positioning** — `MicroFeedbackManager` overlay positioning should be consistent across all screens. Audit that it doesn't overlap with navigation elements or headers.
+- [ ] **Standardize micro-feedback animation duration** — Ensure all micro-feedback animations have consistent duration and easing curves.
+
+## Screen-Specific Improvements
+
+### Home Screen
+- [ ] **Standardize habit card spacing** — `HabitCard` internal spacing and the `verticalArrangement = Arrangement.spacedBy(10.dp)` in the habit list should match the global spacing scale.
+- [ ] **Standardize progress header sizing** — `ProgressHeader` and `EvolutionTeaser` sizing should be consistent across different screen sizes.
+
+### Habits Screen
+- [ ] **Standardize FAB styling** — The floating action button for adding habits should use consistent styling (size, color, icon, elevation) with the design system.
+- [ ] **Standardize habit list item spacing** — The `10.dp` spacing between habit cards should match the global spacing scale.
+
+### Pet Screen
+- [ ] **Standardize attribute card styling** — Attribute cards on the Pet screen should use the same card styling (border radius, elevation, padding) as cards on other screens.
+- [ ] **Standardize customization grid spacing** — The customization item grid spacing should match the global spacing scale.
+
+### Achievements Screen
+- [ ] **Standardize achievement card styling** — Achievement cards should use consistent card styling with the rest of the app.
+- [ ] **Standardize progress bar styling** — Progress bars on achievement cards should use consistent colors, heights, and corner radii.
+
+### Activity Timeline Screen
+- [ ] **Standardize timeline item spacing** — Timeline items use `padding(vertical = 2.dp)` and `padding(bottom = 12.dp)`. These should match the global spacing scale.
+- [ ] **Standardize day header spacing** — Day headers use `padding(top = 20.dp, bottom = 4.dp)`. This should match the section header spacing standard.
+
+### Statistics Screen
+- [ ] **Standardize grid spacing** — `StatisticsScreen` uses `horizontalArrangement = Arrangement.spacedBy(14.dp)` and `verticalArrangement = Arrangement.spacedBy(14.dp)`. This should match the global spacing scale.
+- [ ] **Standardize stat card sizing** — `StatBentoCard` internal padding of `18.dp` should match the card padding standard.
+
+### Habit Creation/Edit Screens
+- [ ] **Standardize form field styling** — `OutlinedTextField` uses `RoundedCornerShape(14.dp)` but cards use `RoundedCornerShape(22.dp)`. Consider unifying or clearly differentiating form elements from cards.
+- [ ] **Standardize emoji picker bottom sheet** — The bottom sheet shape `RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)` is inconsistent with the app's corner radius scale. Use a standard large radius.
+- [ ] **Standardize duration selector styling** — The duration selector's internal padding and button sizes should match the global scale.
+
+### Habit Detail Screen
+- [ ] **Remove duplicate horizontal padding** — The outer `Column` and inner `LazyColumn` both apply `padding(horizontal = 20.dp)`, causing double padding.
+- [ ] **Standardize timer display sizing** — The timer uses `displayMedium` which may be too large. Ensure it's balanced with surrounding content.
+- [ ] **Standardize completion history item spacing** — History items use custom spacing that should match the global scale.
+
+### Notification Settings Screen
+- [ ] **Standardize setting row styling** — `SettingRow` uses `RoundedCornerShape(20.dp)` while most cards use `22.dp`. Unify.
+- [ ] **Standardize switch styling** — Switch colors are defined inline. Extract to a consistent switch style.
+- [ ] **Standardize theme selection radio button styling** — Radio button sizing and spacing should match the global scale.
+
+## Component-Level Improvements
 
-1. Read the related documentation files before implementing.
-2. Update related documentation files immediately after implementation.
-3. Mark tasks as completed when finished.
-4. Do not leave documentation outdated.
-5. If implementation decisions are required, document them in the relevant `.md` file.
-6. Complete tasks strictly in order.
-7. Do not start a later section until the current section is fully completed.
+### EmptyStateCard
+- [ ] **Make icon configurable** — `EmptyStateCard` always uses `Icons.Default.Star`. Add an icon parameter for contextual empty states.
+- [ ] **Standardize internal padding** — Uses `20.dp` padding which should match the card padding standard.
 
----
+### LoadingStateCard
+- [ ] **Standardize internal padding** — Uses `24.dp` padding which is larger than most cards. Align with card padding standard.
 
-# 1.
+### ErrorStateCard
+- [ ] **Standardize internal padding** — Uses `20.dp` padding. Align with card padding standard.
+- [ ] **Add contextual icon** — Consider adding an error/warning icon for visual consistency with `EmptyStateCard`.
 
----
+### AssetPainter / AssetPreview
+- [ ] **Add consistent placeholder/fallback styling** — When assets fail to load, ensure the fallback UI is consistent across all screens.
+- [ ] **Standardize asset preview sizing** — Asset previews use various sizes (`96.dp`, `120 * multiplier`). Define standard sizes.
 
-# PROJECT AUDIT FINDINGS
+### StreakCalendarOverlay
+- [ ] **Standardize overlay padding and spacing** — Ensure the calendar overlay uses consistent spacing with the rest of the app.
+- [ ] **Standardize day cell sizing** — Calendar day cells should have consistent sizing across different screen sizes.
 
-Audit scope covered the Android/Kotlin/Jetpack Compose Habit Pet project under `app/src/main/java/com/example/mobile`, project documentation, Gradle config, Room entities/DAOs, repositories, ViewModels, reward/progression/customization systems, dragon rendering, activity timeline, and documentation consistency.
+## Theme & Design Tokens
 
-Validation performed:
-- Read `CLAUDE.md`, `TODO.md`, all markdown documentation, Gradle/config files, Android manifest, repositories, entities, ViewModels, reward systems, progression systems, customization systems, timeline systems, and UI screens.
-- Ran `./gradlew assembleDebug`; build completed successfully with warnings.
-- Checked customization assets against `EquipableConfig` using supported drawable extensions.
-- Counted configured achievements and equipables.
-- Did not modify source code.
-- Did not implement fixes.
+### Color System
+- [ ] **Document all theme color tokens** — Ensure every color in `Color.kt` has a clear purpose and usage guideline. Remove unused colors.
+- [ ] **Ensure all theme variants have all required tokens** — Verify that `rewardBackdropStart`, `rewardBackdropCenter`, `rewardBackdropEnd`, `rewardText`, `rewardTextMuted`, `rewardAccent`, `headerSurface`, `surfaceVariant`, `onSurfaceVariant`, `dangerSoft`, `mint`, `gold`, `amberDark`, `violetMuted` are all defined in every `AppThemeOption`.
+- [ ] **Standardize alpha values** — Define a set of standard alpha values (e.g., `0.04f` for subtle backgrounds, `0.08f` for hover states, `0.12f` for icon backgrounds, `0.2f` for borders, `0.4f` for dividers, `0.65f` for secondary text, `0.75f` for tertiary text).
 
-Summary counts:
-- Total findings: 26
-- Critical findings: 4
-- High priority findings: 10
-- Medium priority findings: 8
-- Low priority findings: 4
-- Documentation inconsistencies: 8
-- Potential balance issues: 4
-- Potential architectural issues: 7
-- Potential cleanup opportunities: 5
+### Spacing System
+- [ ] **Define a spacing scale** — Create a formal spacing scale: `xs = 4.dp`, `sm = 8.dp`, `md = 12.dp`, `lg = 16.dp`, `xl = 20.dp`, `xxl = 24.dp`, `xxxl = 32.dp`. Apply consistently.
+- [ ] **Define a corner radius scale** — Create a formal radius scale: `sm = 8.dp`, `md = 12.dp`, `lg = 16.dp`, `xl = 20.dp`, `xxl = 24.dp`. Apply consistently.
 
----
+### Typography System
+- [ ] **Define a formal typography scale** — Document the usage of each `MaterialTheme.typography` style: `displayMedium` for timer/hero numbers, `headlineLarge` for streak counts, `headlineMedium` for reward titles, `headlineSmall` for customization names, `titleLarge` for screen titles, `titleMedium` for card titles, `titleSmall` for stat values, `bodyLarge` for reinforcement messages, `bodyMedium` for card body text, `bodySmall` for descriptions, `labelLarge` for buttons, `labelMedium` for section headers, `labelSmall` for captions/tags.
+- [ ] **Standardize text color per typography level** — Each typography level should have a default text color that's used consistently.
 
-## Priority
-HIGH
+## Accessibility & Usability
 
-- [x] Issue
-`RewardQueue` uses a mutable list without synchronization.
+### Touch Targets
+- [ ] **Audit all touch targets** — Ensure all interactive elements meet the minimum `48.dp` touch target size. Some `IconButton` elements may be smaller (e.g., back buttons, duration +/- buttons).
+- [ ] **Increase duration +/- button touch targets** — `HabitCreationForm` and `HabitEditForm` use `36.dp` buttons which are below the `48.dp` minimum.
 
-## Impact
-Reward additions, dismissals, and merge operations can race when called from different coroutine contexts, causing lost rewards, duplicate rewards, or invalid queue state.
+### Contrast
+- [ ] **Audit text contrast ratios** — Ensure all text meets WCAG AA contrast requirements, especially: `muted` text on `card` backgrounds, `onPrimary` text at `0.65f` alpha, `ink.copy(alpha = 0.75f)` on various backgrounds.
+- [ ] **Audit reward screen contrast** — Reward overlay text colors (`rewardText`, `rewardTextMuted`) on gradient backgrounds need contrast verification.
 
-## Recommended Fix
-Replace the mutable list with a synchronized queue, Mutex-protected operations, or an actor/channel-based queue.
-
-## Priority
-HIGH
-
-- [x] Issue
-`RewardManager` is documented as the only place that should apply rewards, but `AchievementRewardProcessor` applies coins/XP/customization directly.
-
-## Impact
-Reward application is split across two systems, creating duplicate rewards and bypassing centralized reward ordering/validation.
-
-## Recommended Fix
-Make `AchievementRewardProcessor` prepare only reward UI events or persist achievement claim state, and let `RewardManager` apply rewards through the existing centralized pipeline.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-`RewardsViewModel` is a Hilt ViewModel under `presentation.ui.screens` and depends on `HomeScreenViewModel`.
-
-## Impact
-Screen-to-screen ViewModel coupling weakens MVVM boundaries and makes reward navigation state harder to test/reuse.
-
-## Recommended Fix
-Move reward screen state into a dedicated ViewModel in `presentation.viewmodel`, or pass a simple UI state/interactor instead of injecting another screen ViewModel.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`PetRepositoryImpl.equipItem` mutates inventory and pet state without a Room transaction.
-
-## Impact
-Partial failure between inventory updates and pet equipped-state updates could leave ownership/equipment state inconsistent.
-
-## Recommended Fix
-Wrap the pet/inventory updates in a Room `@Transaction` or DAO transaction.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`InventoryItemDatabaseInitializer` syncs configured catalog rows by overwriting `isUnlocked` with `configuredItem.isUnlocked`.
-
-## Impact
-If configuration changes, player-owned/unlocked items can be reset even though `isPurchased`/`isEquipped` are preserved.
-
-## Recommended Fix
-Do not overwrite player-owned unlock state during catalog sync. Only update catalog metadata, price, rarity, and source unless the item has never been purchased/unlocked.
-
-## Priority
-MEDIUM
-
----
-
-# Gameplay
-
-- [x] Issue
-Timer habit coin calculation derives minutes from `completion.xpEarned - ExpConfig.TIMER_HABIT_BASE_XP`.
-
-## Impact
-XP includes combo bonus, so combo completions inflate timer minutes and coin income.
-
-## Recommended Fix
-Persist timer minutes separately in `HabitCompletionEntity`, or calculate timer coins from the original minutes field rather than XP.
-
-## Priority
-HIGH
-
-- [x] Issue
-Challenge progress is recorded twice for normal habit completions.
-
-## Impact
-Challenge completion can occur earlier than intended, reducing retention value and distorting challenge rewards.
-
-## Recommended Fix
-Remove duplicate challenge progress calls and keep challenge advancement in the repository or completion service.
-
-## Priority
-HIGH
-
-- [x] Issue
-`RewardManager.queueLevelAndEvolutionRewards` logs “evolution milestone nearing” on every level-up because `nextEvolutionStage = updatedPet.evolutionStage + 1`.
-
-## Impact
-Timeline can contain misleading “nearing evolution” events after unrelated level-ups.
-
-## Recommended Fix
-Compare XP to the next evolution threshold and only log when the pet is meaningfully close, not merely at the next level.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`PetEntity.coins` exists but `StatisticsEntity` is the coin source of truth.
-
-## Impact
-Dead/misleading field can confuse future development and create accidental coin duplication if used.
-
-## Recommended Fix
-Remove `PetEntity.coins` if unused, or clearly mark it as legacy/deprecated and prevent future use.
-
-## Priority
-LOW
-
----
-
-# EXP
-
-- [x] Issue
-Achievement EXP is applied directly by `AchievementRewardProcessor.addPetExp` without recalculating level/evolution.
-
-## Impact
-Achievement XP can advance pet level/evolution but skip level-up, chest, and dragon evolution rewards.
-
-## Recommended Fix
-Use the same XP update path as habit rewards, or recalculate level/evolution and queue the appropriate reward events after achievement EXP.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-`EXP.md` states Level 60 total XP is 54900, but `ExpConfig.totalXpRequiredForLevel(60)` is 55800.
-
-## Impact
-Progression documentation is incorrect and can mislead balance decisions.
-
-## Recommended Fix
-Update `EXP.md` to match the code formula or intentionally change the formula and migration/balance data.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-Combo bonus affects timer habit minutes indirectly through `xpEarned`.
-
-## Impact
-Timer habits can earn more coins than intended when combo bonuses are active.
-
-## Recommended Fix
-Separate base XP, combo bonus XP, and timer minutes in completion data or coin calculation.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-Level-up base coins are awarded directly by habit ViewModels and also processed by `LevelUpReward`.
-
-## Impact
-Potential level-up coin double-award risk exists in the reward/economy pipeline.
-
-## Recommended Fix
-Choose one authoritative level-up coin path. Prefer `RewardManager` for reward coin application and remove direct level-up coin awards from habit ViewModels if duplicate.
-
-## Priority
-HIGH
-
----
-
-# Economy
-
-- [x] Issue
-Timer habit coin calculation uses combo-inflated XP as a proxy for minutes.
-
-## Impact
-Coin income can inflate when combo bonuses are active.
-
-## Recommended Fix
-Calculate timer habit coins from persisted minutes, not from `xpEarned`.
-
-## Priority
-HIGH
-
-- [x] Issue
-`EconomyConfig.DAYS_FOR_RARE_CUSTOMIZATION` uses integer division and can resolve to 1 day.
-
-## Impact
-Rare customization affordability pacing may be much faster than intended.
-
-## Recommended Fix
-Review coin income vs customization prices and update affordability constants intentionally.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-Level-up coin double-award risk exists.
-
-## Impact
-Players may receive level-up coins twice, accelerating economy and reducing progression pacing.
-
-## Recommended Fix
-Centralize level-up coin application in `RewardManager` or remove one path.
-
-## Priority
-HIGH
-
-- [x] Issue
-Chest reward customization may be granted when building the chest reward and then granted again through the `CustomizationReward` sub-event.
-
-## Impact
-Redundant grant attempts can create inconsistent ownership/challenge progress and confusing reward processing.
-
-## Recommended Fix
-Grant customization exactly once, either at chest build time with metadata only for UI or inside `RewardManager` when the sub-event is displayed.
-
-## Priority
-HIGH
-
----
-
-# Rewards
-
-- [x] Issue
-`AchievementRewardProcessor` applies coin, XP, and customization rewards immediately and then queues the same reward UI events.
-
-## Impact
-Achievement rewards can duplicate coins, XP, and customization grants.
-
-## Recommended Fix
-Do not apply rewards in `AchievementRewardProcessor`. Queue rewards for `RewardManager`, or prepare display-only reward metadata and let `RewardManager` apply them once.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-`RewardOverlayHost` makes the entire background clickable for all non-dragon rewards.
-
-## Impact
-A chest reward can be dismissed by tapping outside the chest before the player opens it, weakening the reward experience and causing premature completion.
-
-## Recommended Fix
-Only allow the reward card/content area to complete the reward. Keep dim background non-clickable for chest/achievement/level-up/streak rewards unless explicitly intended.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-`PetPhaseTransition` never invokes `onTransitionCompleted`.
-
-## Impact
-Dragon evolution reward cannot be dismissed/continued, blocking the player after evolution.
-
-## Recommended Fix
-Call `onTransitionCompleted` when the transition animation finishes, and call `PetTransitionPrefs.markTransitionPlayed` once the transition has played.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-`PetTransitionPrefs.markTransitionPlayed` is never called.
-
-## Impact
-Evolution transition animations are not persisted as played, so replay behavior may not match intended UX.
-
-## Recommended Fix
-Call `markTransitionPlayed` from `PetPhaseTransition` when the transition completes.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`RewardQueue` is not thread-safe.
-
-## Impact
-Concurrent reward additions/dismissals can corrupt queue state.
-
-## Recommended Fix
-Use a Mutex/channel/actor or synchronized queue implementation.
-
-## Priority
-HIGH
-
-- [x] Issue
-`RewardOverlay.kt` is unused.
-
-## Impact
-Dead UI code increases maintenance burden and can confuse future developers.
-
-## Recommended Fix
-Delete the obsolete overlay file after confirming no runtime/navigation references exist.
-
-## Priority
-LOW
-
----
-
-# Achievements
-
-- [x] Issue
-Achievement screen passes `emptyList()` to `AchievementRewardContent`.
-
-## Impact
-Achievement reward labels are not shown even though `AchievementViewModel.rewardLabels()` exists.
-
-## Recommended Fix
-Pass `achievementViewModel.rewardLabels(achievement)` to `AchievementRewardContent`.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`AchievementRewardProcessor` applies achievement rewards outside the centralized reward manager.
-
-## Impact
-Achievement rewards bypass centralized ordering, duplicate processing, and may skip level/evolution rewards for XP.
-
-## Recommended Fix
-Refactor achievement processing so reward application goes through `RewardManager`.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-Several achievement constants/names imply customization rewards that are not stable `EquipableConfig` IDs.
-
-## Impact
-Achievement metadata is harder to reason about and may accidentally reference non-existent equipables in future changes.
-
-## Recommended Fix
-Use stable `EquipableConfig` constants for actual customization rewards and keep milestone ids/names separate from equipable ids.
-
-## Priority
-LOW
-
-- [x] Issue
-Achievement metadata initializer inserts missing achievements but does not update changed definitions.
-
-## Impact
-If achievement names, descriptions, icons, targets, or rewards change, existing achievement rows may remain stale.
-
-## Recommended Fix
-Decide whether achievement metadata should be mutable or config-driven. If config-driven, update metadata safely without resetting player progress/claim state.
-
-## Priority
-MEDIUM
-
----
-
-# Customization
-
-- [x] Issue
-`BACKGROUND_VOLCANIC` is displayed as “Forest Background”.
-
-## Impact
-Players see the wrong background name in the rewards UI.
-
-## Recommended Fix
-Rename the `BACKGROUND_VOLCANIC` catalog item to “Volcanic Background” or another accurate label.
-
-## Priority
-LOW
-
-- [x] Issue
-Documentation says “all 16 customization items,” but `EquipableConfig` currently has 19 items.
-
-## Impact
-Achievement and documentation targets are outdated relative to the actual catalog.
-
-## Recommended Fix
-Update docs and achievement targets to match the current catalog, or intentionally reduce catalog to 16.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-Some customization reward achievements use ids/names that do not match actual equipable ids.
-
-## Impact
-Future refactors may break customization reward mapping or create confusion between milestone achievements and actual items.
-
-## Recommended Fix
-Make customization reward achievements reference stable `EquipableConfig` IDs only when the reward is a customization item.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`InventoryItemRepositoryImpl.grantItem`/`grantItemByItemId` do not set `isUnlocked = true`.
-
-## Impact
-Granted chest/achievement items may be purchased but not marked unlocked, depending on UI logic expectations.
-
-## Recommended Fix
-Clarify ownership semantics and set `isUnlocked = true` when granting non-shop rewards, or rename fields to avoid ambiguity.
-
-## Priority
-MEDIUM
-
----
-
-# UI
-
-- [x] Issue
-Dragon evolution reward is blocked because `PetPhaseTransition` never calls `onTransitionCompleted`.
-
-## Impact
-After dragon evolution, the player can be stuck on the evolution reward overlay.
-
-## Recommended Fix
-Invoke the transition completion callback when the animation ends and persist the transition as played.
-
-## Priority
-CRITICAL
-
-- [x] Issue
-Chest reward can be dismissed by tapping outside the chest.
-
-## Impact
-The chest opening moment can be skipped accidentally or too easily.
-
-## Recommended Fix
-Restrict reward completion clicks to the reward card/content.
-
-## Priority
-HIGH
-
-- [x] Issue
-Achievement rewards are hidden in the achievement screen.
-
-## Impact
-Players cannot see what rewards they will receive from achievements.
-
-## Recommended Fix
-Use `AchievementViewModel.rewardLabels()` when rendering achievement cards.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-Rewards screen is not mapped as a bottom route in `NavGraph`.
-
-## Impact
-Bottom navigation may not hide correctly when opening Rewards, despite Rewards not being a bottom nav destination.
-
-## Recommended Fix
-Add a route mapping so Rewards hides the bottom bar.
-
-## Priority
-MEDIUM
-
----
-
-# Documentation
-
-- [x] Issue
-`CUSTOMIZATION.md` says missing backgrounds/outfits/auras are skipped/fallback, but `CLAUDE.md` says missing catalog assets should be treated as configuration errors.
-
-## Impact
-Documentation conflicts with the intended asset policy.
-
-## Recommended Fix
-Update `CUSTOMIZATION.md` to state that missing catalog assets are configuration errors, while optional preview fallbacks may still be handled defensively.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`ACHIEVEMENTS.md` and achievement descriptions reference “16 customization items,” but `EquipableConfig` has 19 equipables.
-
-## Impact
-Achievement documentation is outdated.
-
-## Recommended Fix
-Update achievement documentation and targets to reflect the current catalog size.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`EXP.md` has an incorrect Level 60 total XP value.
-
-## Impact
-Progression documentation does not match code.
-
-## Recommended Fix
-Correct Level 60 total XP to 55800 or change the formula intentionally.
-
-## Priority
-MEDIUM
-
-- [x] Issue
-`QUESTS.md` and `ENDGAME.md` document systems not implemented in current code.
-
-## Impact
-Docs describe unavailable features as if they exist.
-
-## Recommended Fix
-Mark quests/endgame as future concepts, remove them, or implement the missing systems.
-
-## Priority
-LOW
-
-- [x] Issue
-`DAILY_REWARDS.md`, `NOTIFICATIONS.md`, `STATISTICS.md`, `ACTIVITY_LOG.md`, and `ACCESSORIES.md` describe systems with no clear active implementation.
-
-## Impact
-Documentation overstates implemented functionality.
-
-## Recommended Fix
-Update these docs to distinguish implemented, legacy, and future systems.
-
-## Priority
-LOW
-
-- [x] Issue
-`ACCESSORIES.md` is legacy-only and conflicts with current customization terminology.
-
-## Impact
-Developers may use obsolete accessory concepts instead of the current outfit/background/aura model.
-
-## Recommended Fix
-Mark `ACCESSORIES.md` as legacy and point to `CUSTOMIZATION.md`.
-
-## Priority
-LOW
-
----
-
-# Cleanup
-
-- [x] Issue
-`RewardOverlay.kt` is unused.
-
-## Impact
-Dead code increases maintenance burden.
-
-## Recommended Fix
-Remove the file after confirming no references.
-
-## Priority
-LOW
-
-- [x] Issue
-`RewardUiEvent.AchievementReward` is mostly unused.
-
-## Impact
-Dead/ambiguous reward type can confuse future reward pipeline changes.
-
-## Recommended Fix
-Remove it or document it as intentionally unused; achievements should use individual reward events through the centralized pipeline.
-
-## Priority
-LOW
-
-- [x] Issue
-`ChallengeRewardDefinition.CustomizationReward` is defined but no challenge configs currently use it.
-
-## Impact
-Dead challenge reward type adds unused complexity.
-
-## Recommended Fix
-Either add challenge configs that use customization rewards or remove the type and handler.
-
-## Priority
-LOW
-
-- [x] Issue
-`JournalEntryEntity` is legacy and not used by current DAOs/repositories.
-
-## Impact
-Dead data model increases schema confusion.
-
-## Recommended Fix
-Remove legacy entity/table if no migration compatibility is required, or document it as legacy.
-
-## Priority
-LOW
-
-- [x] Issue
-`PetEntity.coins` appears unused and conflicts with `StatisticsEntity` as the coin source of truth.
-
-## Impact
-Misleading field can cause future coin bugs.
-
-## Recommended Fix
-Remove the field or clearly mark it legacy/deprecated.
-
-## Priority
-LOW
-
----
-
-# Validation Notes
-
-- `./gradlew assembleDebug` completed successfully.
-- All configured equipables had matching drawable assets when checking supported image extensions.
-- Configured counts found during audit:
-  - Achievements: 50
-  - Equipables: 19
-    - Outfits: 6
-    - Auras: 5
-    - Backgrounds: 8
-- No source code was modified during the audit.
-- Only this `TODO.md` audit section was added.
+### Content
+- [ ] **Standardize copy tone** — Some screens use very elaborate/verbose copy ("Synchronized Journey Event", "Construct Habit Module", "Verification Method"). Consider simplifying for clarity while maintaining the playful tone.
+- [ ] **Add content descriptions** — Ensure all icons and images have appropriate `contentDescription` values for screen readers. Some are set to `null`.
+- [ ] **Standardize emoji usage in copy** — Some text uses emoji prefixes (e.g., "🎯 Target:", "💬 ") while others don't. Decide on a consistent approach.

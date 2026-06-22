@@ -134,6 +134,8 @@ fun PetScreen(
         isLoading = isLoading,
         error = error,
         progressFraction = progressFraction,
+        currentLevelXp = currentLevelXp,
+        xpRequiredForNextLevel = xpRequiredForNextLevel,
         onNavigateToRewardsLocked = onNavigateToRewardsLocked,
         onNavigateToRewardsOwned = onNavigateToRewardsOwned,
         onClearError = petViewModel::clearError,
@@ -155,6 +157,8 @@ fun PetScreenContent(
     isLoading: Boolean,
     error: String?,
     progressFraction: Float,
+    currentLevelXp: Long,
+    xpRequiredForNextLevel: Long,
     onNavigateToRewardsLocked: () -> Unit,
     onNavigateToRewardsOwned: () -> Unit,
     onClearError: () -> Unit,
@@ -213,6 +217,8 @@ fun PetScreenContent(
                 PetDetailsPanel(
                     pet = pet,
                     progressFraction = progressFraction,
+                    currentLevelXp = currentLevelXp,
+                    xpRequiredForNextLevel = xpRequiredForNextLevel,
                     onRenameClick = { showRenameDialog = true },
                     onEditCustomizationsClick = onNavigateToRewardsOwned
                 )
@@ -502,6 +508,8 @@ private fun MoodPill(
 private fun PetDetailsPanel(
     pet: PetEntity,
     progressFraction: Float,
+    currentLevelXp: Long,
+    xpRequiredForNextLevel: Long,
     onRenameClick: () -> Unit,
     onEditCustomizationsClick: () -> Unit
 ) {
@@ -513,6 +521,13 @@ private fun PetDetailsPanel(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        Text(
+            text = "$currentLevelXp/$xpRequiredForNextLevel XP",
+            color = AppTheme.current.muted,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium
+        )
+
         PetBondButton(onClick = onRenameClick)
 
         AttributeCard(
@@ -701,13 +716,12 @@ private fun LevelUpButton(progressFraction: Float) {
             .clip(RoundedCornerShape(18.dp))
             .background(AppTheme.current.goldSoft.copy(alpha = 0.25f))
             .border(1.dp, AppTheme.current.goldDark, RoundedCornerShape(18.dp)),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.CenterStart
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(clampedProgress)
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(18.dp))
                 .background(
                     Brush.horizontalGradient(
                         colors = listOf(
@@ -722,7 +736,8 @@ private fun LevelUpButton(progressFraction: Float) {
             text = "Level Up",
             color = AppTheme.current.levelUpText,
             fontSize = 16.sp,
-            fontWeight = FontWeight.ExtraBold
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
@@ -784,6 +799,8 @@ private fun PetScreenPreview() {
             isLoading = false,
             error = null,
             progressFraction = 0.48f,
+            currentLevelXp = 80L,
+            xpRequiredForNextLevel = 165L,
             onNavigateToRewardsLocked = {},
             onNavigateToRewardsOwned = {},
             onClearError = {},
