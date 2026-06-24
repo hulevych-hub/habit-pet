@@ -235,13 +235,28 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    private val todayPartialState: StateFlow<Pair<Boolean, Boolean>> = combine(
+        habits,
+        todayCompletionXp
+    ) { habList, completionXp ->
+        val todayStart = getDayStart(System.currentTimeMillis())
+        val allCompleted = habList.isNotEmpty() && habList.size == completionXp.size
+        val partial = completionXp.isNotEmpty() && completionXp.size < habList.size
+        Pair(allCompleted, partial)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = Pair(false, false)
+    )
+
     // Combined state for easy access in UI
     val uiState: StateFlow<UiState> = combine(
         statistics,
         habits,
         pet,
-        todayCompletionXp
-    ) { stats, habList, petState, completionXp ->
+        todayCompletionXp,
+        todayPartialState
+    ) { stats, habList, petState, completionXp, partialState ->
         UiState(
             globalStreak = stats.currentStreak,
             habits = habList,
@@ -251,7 +266,8 @@ class HomeScreenViewModel @Inject constructor(
             lastStreakDate = stats.lastStreakDate,
             currentCombo = activeCombo(stats),
             lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
-            globalStreakCompletedToday = stats.lastStreakDate == getDayKey(System.currentTimeMillis())
+            globalStreakCompletedToday = partialState.first,
+            globalStreakPartialToday = partialState.second
         )
     }
     .stateIn(
@@ -266,7 +282,8 @@ class HomeScreenViewModel @Inject constructor(
             lastStreakDate = 0L,
             currentCombo = 0,
             lastHabitCompletionTimestamp = 0L,
-            globalStreakCompletedToday = false
+            globalStreakCompletedToday = false,
+            globalStreakPartialToday = false
         )
     )
 
@@ -279,7 +296,8 @@ class HomeScreenViewModel @Inject constructor(
         val lastStreakDate: Long,
         val currentCombo: Int,
         val lastHabitCompletionTimestamp: Long,
-        val globalStreakCompletedToday: Boolean
+        val globalStreakCompletedToday: Boolean,
+        val globalStreakPartialToday: Boolean = false
     )
 
     private fun activeCombo(stats: StatisticsEntity): Int {

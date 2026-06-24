@@ -1,13 +1,18 @@
 package com.example.mobile.data.repository
 
 import com.example.mobile.data.local.dao.HabitDao
+import com.example.mobile.data.local.dao.HabitCompletionDao
+import com.example.mobile.data.local.dao.HabitProgressDao
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.domain.repository.HabitRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class HabitRepositoryImpl @Inject constructor(
-    private val habitDao: HabitDao
+    private val habitDao: HabitDao,
+    private val habitCompletionDao: HabitCompletionDao,
+    private val habitProgressDao: HabitProgressDao
 ) : HabitRepository {
     override fun getAllHabits(): Flow<List<HabitEntity>> = habitDao.getAllHabits()
 
@@ -17,9 +22,16 @@ class HabitRepositoryImpl @Inject constructor(
 
     override suspend fun updateHabit(habit: HabitEntity): Int = habitDao.updateHabit(habit)
 
-    override suspend fun deleteHabit(habit: HabitEntity): Int = habitDao.deleteHabit(habit)
+    override suspend fun deleteHabit(habit: HabitEntity): Int {
+        // Cascade delete: remove completions and progress for this habit first
+        habitCompletionDao.deleteCompletionsForHabit(habit.id)
+        habitProgressDao.deleteProgressForHabit(habit.id)
+        return habitDao.deleteHabit(habit)
+    }
 
     override suspend fun deleteAll() {
+        habitCompletionDao.deleteAll()
+        habitProgressDao.deleteAll()
         habitDao.deleteAll()
     }
 }

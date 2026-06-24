@@ -4,11 +4,12 @@ import com.example.mobile.domain.AchievementsConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Syncs config-driven achievement definitions with persisted progress rows.
  */
-class AchievementDatabaseInitializer(private val database: AppDatabase) {
+class AchievementDatabaseInitializer @Inject constructor(private val database: AppDatabase) {
 
     suspend fun initializeAchievements() {
         achievementRepositorySync()

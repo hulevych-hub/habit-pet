@@ -58,6 +58,7 @@ import kotlin.math.abs
 enum class StreakCalendarDayStatus {
     EMPTY,
     COMPLETED,
+    PARTIAL,
     FREEZE
 }
 
@@ -122,10 +123,12 @@ object StreakCalendarBuilder {
 
         val days = buildDays(monthStart) { date, _, isToday, isFuture ->
             val dateKey = date / 86_400_000L
+            val completionCount = completionCountByDate[date] ?: 0
             when {
                 isFuture || habits.isEmpty() -> StreakCalendarDayStatus.EMPTY
-                completionCountByDate[date] == habits.size -> StreakCalendarDayStatus.COMPLETED
                 frozenDates.contains(dateKey) -> StreakCalendarDayStatus.FREEZE
+                completionCount == habits.size -> StreakCalendarDayStatus.COMPLETED
+                completionCount > 0 -> StreakCalendarDayStatus.PARTIAL
                 isToday -> StreakCalendarDayStatus.EMPTY
                 else -> StreakCalendarDayStatus.EMPTY
             }
@@ -136,7 +139,7 @@ object StreakCalendarBuilder {
             subtitle = if (habits.isEmpty()) {
                 "Create a habit to start warming up your streak flame."
             } else {
-                "Fire = every habit complete. Cold fire = frozen streak day."
+                "Fire = every habit complete. Half-fire = partial day. Cold fire = frozen streak day."
             },
             monthStart = monthStart,
             days = days,
@@ -448,6 +451,7 @@ private fun WeekdayRow() {
 private fun StreakCalendarDayCell(day: StreakCalendarDay) {
     val cellColor = when (day.status) {
         StreakCalendarDayStatus.COMPLETED -> AppTheme.current.amberSoft
+        StreakCalendarDayStatus.PARTIAL -> AppTheme.current.amberSoft.copy(alpha = DesignTokens.alpha58)
         StreakCalendarDayStatus.FREEZE -> AppTheme.current.blueSoft
         StreakCalendarDayStatus.EMPTY -> AppTheme.current.surface.copy(alpha = DesignTokens.alpha58)
     }
@@ -477,8 +481,17 @@ private fun StreakCalendarDayCell(day: StreakCalendarDay) {
                         Spacer(modifier = Modifier.height(DesignTokens.space2))
                         Icon(
                             imageVector = Icons.Default.LocalFireDepartment,
-                            contentDescription = "Completed",
+                            contentDescription = "All habits completed",
                             tint = AppTheme.current.amber,
+                            modifier = Modifier.size(DesignTokens.radiusLg)
+                        )
+                    }
+                    StreakCalendarDayStatus.PARTIAL -> {
+                        Spacer(modifier = Modifier.height(DesignTokens.space2))
+                        Icon(
+                            imageVector = Icons.Default.LocalFireDepartment,
+                            contentDescription = "Partial completion",
+                            tint = AppTheme.current.amber.copy(alpha = DesignTokens.alpha60),
                             modifier = Modifier.size(DesignTokens.radiusLg)
                         )
                     }
@@ -509,6 +522,11 @@ private fun StreakCalendarLegend(showFreezeLegend: Boolean) {
             icon = Icons.Default.LocalFireDepartment,
             label = "Completed",
             tint = AppTheme.current.amber
+        )
+        LegendItem(
+            icon = Icons.Default.LocalFireDepartment,
+            label = "Partial",
+            tint = AppTheme.current.amber.copy(alpha = DesignTokens.alpha60)
         )
         if (showFreezeLegend) {
             LegendItem(
@@ -597,7 +615,7 @@ private fun StreakCalendarOverlayPreview() {
             StreakCalendarOverlay(
                 state = StreakCalendarUiState(
                     title = "Global Streak",
-                    subtitle = "Fire = every habit complete. Cold = partial activity day.",
+                    subtitle = "Fire = every habit complete. Half-fire = partial day. Cold fire = frozen streak day.",
                     monthStart = getMonthStart(System.currentTimeMillis()),
                     days = StreakCalendarBuilder.run {
                         buildDaysForPreview()
@@ -629,6 +647,7 @@ private fun buildDaysForPreview(): List<StreakCalendarDay> {
             status = when {
                 index in 3..9 -> StreakCalendarDayStatus.COMPLETED
                 index == 10 -> StreakCalendarDayStatus.FREEZE
+                index == 11 -> StreakCalendarDayStatus.PARTIAL
                 index in 12..15 -> StreakCalendarDayStatus.COMPLETED
                 else -> StreakCalendarDayStatus.EMPTY
             },

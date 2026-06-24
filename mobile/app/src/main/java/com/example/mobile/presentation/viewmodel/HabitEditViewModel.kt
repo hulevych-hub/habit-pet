@@ -128,6 +128,16 @@ class HabitEditViewModel @Inject constructor(
                 // Check if we have a habit to edit
                 val habit = habitBeingEdited ?: return@launch
 
+                // Check for duplicate name (excluding current habit)
+                val existingHabits = habitRepository.getAllHabits().firstOrNull() ?: emptyList()
+                val duplicateExists = existingHabits.any {
+                    it.name.trim().equals(_name.value.trim(), ignoreCase = true) && it.id != habit.id
+                }
+                if (duplicateExists) {
+                    _error.value = "A habit with this name already exists"
+                    return@launch
+                }
+
                 // Update habit entity
                 val updatedHabit = habit.copy(
                     name = _name.value.trim(),

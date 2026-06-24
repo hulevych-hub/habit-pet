@@ -61,6 +61,7 @@ fun GamifiedFixedHeader(
     coins: Int,
     stageName: String,
     streakCompletedToday: Boolean,
+    streakPartialToday: Boolean = false,
     onCoinsClick: () -> Unit,
     onStreakClick: () -> Unit = {}
 ) {
@@ -69,7 +70,11 @@ fun GamifiedFixedHeader(
         color = AppTheme.current.headerSurface,
         shadowElevation = DesignTokens.elevationSm
     ) {
-        val streakTint = if (streakCompletedToday) AppTheme.current.amber else AppTheme.current.headerStreakInactive
+        val streakTint = when {
+            streakCompletedToday -> AppTheme.current.amber
+            streakPartialToday -> AppTheme.current.amber.copy(alpha = DesignTokens.alpha60)
+            else -> AppTheme.current.headerStreakInactive
+        }
 
         Row(
             modifier = Modifier

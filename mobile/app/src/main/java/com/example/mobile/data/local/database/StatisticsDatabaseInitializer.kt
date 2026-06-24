@@ -5,8 +5,9 @@ import com.example.mobile.data.local.entities.StatisticsEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StatisticsDatabaseInitializer(
+class StatisticsDatabaseInitializer @Inject constructor(
     private val statisticsDao: StatisticsDao
 ) {
 

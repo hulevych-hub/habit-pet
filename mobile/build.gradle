@@ -17,3 +17,12 @@ allprojects {
         mavenCentral()
     }
 }
+
+gradle.buildFinished {
+    // Clean test results directories after each build to avoid Windows file lock issues
+    def testResultsDir = file("${project(':app').buildDir}/test-results")
+    if (testResultsDir.exists()) {
+        testResultsDir.deleteDir()
+    }
+}
+

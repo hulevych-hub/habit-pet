@@ -19,6 +19,9 @@ interface HabitProgressDao {
     @Query("DELETE FROM habit_progress WHERE habitId = :habitId")
     suspend fun clear(habitId: Long)
 
+    @Query("DELETE FROM habit_progress WHERE habitId = :habitId")
+    suspend fun deleteProgressForHabit(habitId: Long)
+
     @Query("DELETE FROM habit_progress")
     suspend fun deleteAll()
 }

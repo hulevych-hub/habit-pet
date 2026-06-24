@@ -11,6 +11,27 @@
 - After modifying code, run `graphify update .` to keep the dependency graph current.
 - Prefer extension over replacement. Keep changes minimal, localized, and backward-compatible.
 
+## Test Coverage Rule
+
+Whenever implementing a new feature, behavior change, UI flow, system, configuration, repository, engine, or reward logic:
+
+- Add all necessary unit, integration, and UI tests for the new functionality.
+- Ensure the new implementation is covered by automated tests before considering the task complete.
+- Run the relevant test suites after implementation.
+
+If existing tests fail:
+
+- If failures are caused by intentional changes (new parameters, updated APIs, renamed fields, expected behavior updates, etc.), update the tests to reflect the new intended behavior.
+- If the feature request explicitly changes existing behavior, update affected tests accordingly.
+- Otherwise, do not modify failing tests. Report the failures, root cause, and impacted functionality in the final output.
+
+A task is not complete until:
+
+1. Code compiles successfully.
+2. Relevant tests pass successfully.
+3. New functionality is covered by automated tests.
+4. Documentation and TODO.md are updated if required.
+
 ## Graphify workflow
 
 - `graphify-out/graph.json` exists. For codebase questions, first run:

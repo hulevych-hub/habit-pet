@@ -70,7 +70,10 @@ class RewardManager @Inject constructor(
 
             val coinsToAdd = when (reward) {
                 is RewardUiEvent.CoinReward -> reward.amount
-                is RewardUiEvent.LevelUpReward -> reward.coins
+                // LevelUpReward coins are NOT added here — ViewModels award level-up
+                // coins directly before queuing this reward. LevelUpReward carries
+                // coin metadata for the UI overlay only.
+                is RewardUiEvent.LevelUpReward -> 0
                 is RewardUiEvent.DragonEvolutionReward -> 0
                 is RewardUiEvent.StreakReward -> reward.coins
                 is RewardUiEvent.ChestReward -> 0

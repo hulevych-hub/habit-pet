@@ -126,6 +126,7 @@ fun HomeScreenContent(
                 coins = uiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
                 streakCompletedToday = uiState.globalStreakCompletedToday,
+                streakPartialToday = uiState.globalStreakPartialToday,
                 onCoinsClick = onNavigateToRewardsLocked,
                 onStreakClick = onStreakClick
             )
@@ -211,9 +212,9 @@ fun HomeScreenContent(
         streakFreezePrompt?.let { prompt ->
             AlertDialog(
                 onDismissRequest = onDismissStreakFreeze,
-                title = { Text("Freeze your streak?") },
+                title = { Text("Save your streak?") },
                 text = {
-                    Text("Yesterday's habits were not fully completed. Use one freeze to keep your ${prompt.streak}-day global streak? You can freeze once every 7 days and never two days in a row.")
+                    Text("Yesterday was a missed day with no habits completed. You have a Freeze available — want to protect your ${prompt.streak}-day streak?\n\nYou can freeze once every 7 days and never on two consecutive days.")
                 },
                 confirmButton = {
                     Button(
@@ -533,7 +534,8 @@ private fun HomeScreenPreview() {
                 lastStreakDate = 0L,
                 currentCombo = 1,
                 lastHabitCompletionTimestamp = 0L,
-                globalStreakCompletedToday = false
+                globalStreakCompletedToday = false,
+                globalStreakPartialToday = true
             ),
             isLoading = false,
             onNavigateToHabits = {},

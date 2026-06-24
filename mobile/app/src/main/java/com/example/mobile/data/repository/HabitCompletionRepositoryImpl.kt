@@ -126,6 +126,16 @@ class HabitCompletionRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun isPartialCompletionOnDate(date: Long): Boolean {
+        val habits = habitDao.getAllHabits().firstOrNull() ?: return false
+        if (habits.isEmpty()) return false
+
+        val completedCount = habits.count { habit ->
+            habitCompletionDao.getCompletionForHabitOnDateOnce(habit.id, date) != null
+        }
+        return completedCount in 1 until habits.size
+    }
+
     // -------------------------
     // STREAK LOGIC (UNCHANGED BUT NOW SAFE)
     // -------------------------

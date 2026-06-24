@@ -50,7 +50,8 @@ class StreakEngine(
     )
 
     /**
-     * Called after completing a habit
+     * Called after completing a habit.
+     * Streak continues if at least 1 habit is completed today (partial or full).
      */
     suspend fun evaluateTodayStreak(today: Long) {
 
@@ -63,9 +64,9 @@ class StreakEngine(
 
         if (habits.isEmpty()) return
 
-        val allCompleted = habitCompletionRepository.areAllHabitsCompletedOnDate(normalizedToday)
+        val hasAnyActivity = habitCompletionRepository.hasAnyCompletionOnDate(normalizedToday)
 
-        if (allCompleted) {
+        if (hasAnyActivity) {
             val stats = statisticsRepository.getStatistics().firstOrNull() ?: StatisticsEntity(id = 1)
 
             if (stats.currentStreak > 0 && !isContinuationDay(todayKey, stats, habits)) {
@@ -135,13 +136,13 @@ class StreakEngine(
 
         maybeResetBrokenStreakIfNeeded(todayKey, stats, habits)
 
-        val allCompleted = habitCompletionRepository.areAllHabitsCompletedOnDate(normalizedToday)
+        val hasAnyActivity = habitCompletionRepository.hasAnyCompletionOnDate(normalizedToday)
 
         val alreadyCounted = statisticsRepository.isStreakAlreadyCountedToday()
 
         when {
-            allCompleted && !alreadyCounted -> evaluateTodayStreak(today)
-            !allCompleted && alreadyCounted -> {
+            hasAnyActivity && !alreadyCounted -> evaluateTodayStreak(today)
+            !hasAnyActivity && alreadyCounted -> {
                 // optional safety rollback if you ever support it
             }
         }
@@ -157,11 +158,13 @@ class StreakEngine(
         val todayKey = dayKey(now)
         val yesterdayKey = todayKey - 1
 
-        if (habitCompletionRepository.areAllHabitsCompletedOnDate(todayStart)) {
+        // If user has completed any habit today (partial or full), streak continues — no freeze needed
+        if (habitCompletionRepository.hasAnyCompletionOnDate(todayStart)) {
             evaluateTodayStreak(now)
             return null
         }
 
+        // Only check freeze when today has 0 completions
         if (stats.currentStreak <= 0) return null
         if (isDayCompletedOrFrozen(yesterdayKey, stats, habits)) return null
         if (canFreezeDate(frozenDateKey = yesterdayKey, todayKey = todayKey, stats = stats, habits = habits)) {
@@ -268,7 +271,8 @@ class StreakEngine(
         if (habits.isEmpty()) return true
         if (StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).contains(dateKey)) return true
 
-        return habitCompletionRepository.areAllHabitsCompletedOnDate(getDayStart(dateKey * MILLISECONDS_PER_DAY))
+        // A day counts as a streak day if at least 1 habit was completed (partial or full)
+        return habitCompletionRepository.hasAnyCompletionOnDate(getDayStart(dateKey * MILLISECONDS_PER_DAY))
     }
 
     private fun dayKey(time: Long): Long = getDayStart(time) / MILLISECONDS_PER_DAY

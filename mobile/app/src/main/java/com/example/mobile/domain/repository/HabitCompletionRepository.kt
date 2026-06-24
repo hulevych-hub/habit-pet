@@ -46,4 +46,9 @@ interface HabitCompletionRepository {
     suspend fun hasAnyCompletionOnDate(date: Long): Boolean
 
     suspend fun areAllHabitsCompletedOnDate(date: Long): Boolean
+
+    /**
+     * Returns true if at least one but not all habits are completed on the given day.
+     */
+    suspend fun isPartialCompletionOnDate(date: Long): Boolean
 }

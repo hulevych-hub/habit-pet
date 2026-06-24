@@ -10,13 +10,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DragonMoodEngine @Inject constructor(
+open class DragonMoodEngine @Inject constructor(
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
     private val habitCompletionRepository: HabitCompletionRepository
 ) {
 
-    suspend fun refreshMood() {
+    open suspend fun refreshMood() {
         val stats = statisticsRepository.getStatistics().firstOrNull()
         val currentStreak = stats?.currentStreak ?: 0
         val recentCompletions = recentHabitCompletions()
