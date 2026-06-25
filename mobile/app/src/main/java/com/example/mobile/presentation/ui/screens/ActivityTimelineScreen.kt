@@ -66,6 +66,7 @@ import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
+import com.example.mobile.presentation.ui.animations.staggeredListItem
 import com.example.mobile.presentation.viewmodel.ActivityTimelineViewModel
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.DesignTokens
@@ -162,6 +163,7 @@ fun ActivityTimelineScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(top = DesignTokens.Section.topPadding, bottom = DesignTokens.Section.bottomPadding)
             ) {
+            var globalItemIndex = 0
             groups.forEach { group ->
                 item {
                     DayHeader(label = group.label)
@@ -171,7 +173,11 @@ fun ActivityTimelineScreenContent(
                     items = group.events,
                     key = { it.id }
                 ) { event ->
-                    ActivityTimelineItem(event = event)
+                    val itemIndex = globalItemIndex++
+                    ActivityTimelineItem(
+                        event = event,
+                        modifier = Modifier.staggeredListItem(itemIndex)
+                    )
                 }
             }
 

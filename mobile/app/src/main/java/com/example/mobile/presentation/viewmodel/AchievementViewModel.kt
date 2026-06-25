@@ -41,7 +41,13 @@ class AchievementViewModel @Inject constructor(
     val achievements: StateFlow<List<AchievementEntity>> = _achievements
 
     val claimableAchievementCount: StateFlow<Int> = achievements
-        .map { list -> list.count { achievement -> achievement.isUnlocked && !achievement.isClaimed } }
+        .map { list ->
+            list.count { achievement ->
+                val definition = AchievementsConfig.achievementById(achievement.id)
+                val targetReached = definition?.targetValue?.let { achievement.progress >= it } ?: achievement.isUnlocked
+                achievement.isUnlocked && !achievement.isClaimed && targetReached
+            }
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

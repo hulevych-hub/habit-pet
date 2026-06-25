@@ -57,6 +57,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.repository.StatisticsRepository
+import com.example.mobile.presentation.ui.animations.staggeredListItem
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.DesignTokens
@@ -139,7 +140,8 @@ fun StatisticsScreenContent(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 HeroStreakCard(
                     currentStreak = stats.currentStreak,
-                    bestStreak = stats.bestStreak
+                    bestStreak = stats.bestStreak,
+                    modifier = Modifier.staggeredListItem(0)
                 )
             }
 
@@ -159,7 +161,8 @@ fun StatisticsScreenContent(
                     label = "Total Actions",
                     value = "${stats.totalCompletions}",
                     icon = Icons.Default.CheckCircle,
-                    accentColor = AppTheme.current.success
+                    accentColor = AppTheme.current.success,
+                    modifier = Modifier.staggeredListItem(1)
                 )
             }
             item {
@@ -167,7 +170,8 @@ fun StatisticsScreenContent(
                     label = "Experience Gained",
                     value = "${stats.totalXp} XP",
                     icon = Icons.Default.AutoAwesome,
-                    accentColor = AppTheme.current.violet
+                    accentColor = AppTheme.current.violet,
+                    modifier = Modifier.staggeredListItem(2)
                 )
             }
             item {
@@ -175,7 +179,8 @@ fun StatisticsScreenContent(
                     label = "Days Active",
                     value = "${stats.daysActive} d",
                     icon = Icons.Default.CalendarMonth,
-                    accentColor = AppTheme.current.blue
+                    accentColor = AppTheme.current.blue,
+                    modifier = Modifier.staggeredListItem(3)
                 )
             }
             item {
@@ -183,7 +188,8 @@ fun StatisticsScreenContent(
                     label = "Habits Formed",
                     value = "${stats.totalHabitsCompleted}",
                     icon = Icons.Default.TaskAlt,
-                    accentColor = AppTheme.current.purple
+                    accentColor = AppTheme.current.purple,
+                    modifier = Modifier.staggeredListItem(4)
                 )
             }
             item {
@@ -191,7 +197,8 @@ fun StatisticsScreenContent(
                     label = "Coins Earned",
                     value = "${stats.totalCoins}",
                     icon = Icons.Default.MonetizationOn,
-                    accentColor = AppTheme.current.gold
+                    accentColor = AppTheme.current.gold,
+                    modifier = Modifier.staggeredListItem(5)
                 )
             }
             item {
@@ -199,13 +206,17 @@ fun StatisticsScreenContent(
                     label = "Best Combo",
                     value = "${stats.bestCombo}x",
                     icon = Icons.Default.Whatshot,
-                    accentColor = AppTheme.current.danger
+                    accentColor = AppTheme.current.danger,
+                    modifier = Modifier.staggeredListItem(6)
                 )
             }
 
             // Section 3: Pet Lifecycle Statistics Wide Card
             item(span = { GridItemSpan(maxLineSpan) }) {
-                PetLifecycleCard(ageDays = stats.petAgeDays)
+                PetLifecycleCard(
+                    ageDays = stats.petAgeDays,
+                    modifier = Modifier.staggeredListItem(7)
+                )
             }
         }
     }
@@ -215,10 +226,11 @@ fun StatisticsScreenContent(
 @Composable
 private fun HeroStreakCard(
     currentStreak: Int,
-    bestStreak: Int
+    bestStreak: Int,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(DesignTokens.radius6xl),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.primary)
     ) {
@@ -322,10 +334,11 @@ private fun StatBentoCard(
     label: String,
     value: String,
     icon: ImageVector,
-    accentColor: Color
+    accentColor: Color,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(DesignTokens.radius4xl),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.elevationSm)
@@ -386,9 +399,9 @@ private fun StatisticsScreenPreview() {
 }
 
 @Composable
-private fun PetLifecycleCard(ageDays: Int) {
+private fun PetLifecycleCard(ageDays: Int, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(top = DesignTokens.space6),
         shape = RoundedCornerShape(DesignTokens.radius4xl),

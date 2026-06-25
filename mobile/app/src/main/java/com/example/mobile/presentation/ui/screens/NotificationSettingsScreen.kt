@@ -54,6 +54,7 @@ import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
 import com.example.mobile.presentation.ui.components.StreakCalendarUiState
+import com.example.mobile.presentation.ui.animations.pressableScale
 import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.AppThemeOption
 import com.example.mobile.ui.theme.AppThemePrefs

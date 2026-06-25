@@ -24,6 +24,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -147,7 +149,7 @@ private fun AchievementScreenContent(
             )
         },
         bottomBar = {
-            if (claimableCount > 1) {
+            if (claimableCount > 0) {
                 ClaimAllRewardsBar(
                     claimableCount = claimableCount,
                     isClaiming = isClaiming,
@@ -231,6 +233,7 @@ private fun AchievementScreenContent(
                         progressFraction = (progress.toFloat() / target.toFloat()).coerceIn(0f, 1f),
                         progressLabel = progressLabel(progress, achievement),
                         rewards = rewardLabels(achievement),
+                        isClaiming = isClaiming,
                         onClaim = { onClaim(achievement.id) },
                         palette = palette
                     )
@@ -356,6 +359,7 @@ private fun AchievementHallCard(
     progressFraction: Float,
     progressLabel: String,
     rewards: List<String>,
+    isClaiming: Boolean,
     onClaim: () -> Unit,
     palette: AchievementHallPalette
 ) {
@@ -495,6 +499,28 @@ private fun AchievementHallCard(
                                     },
                                     DesignTokens.cardCornerCircle
                                 )
+                        )
+                    }
+                }
+
+                if (isClaimable) {
+                    Button(
+                        onClick = onClaim,
+                        enabled = !isClaiming,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = palette.buttonGradient.first(),
+                            contentColor = palette.buttonText,
+                            disabledContainerColor = palette.buttonGradient.first().copy(alpha = DesignTokens.alpha50),
+                            disabledContentColor = palette.disabledText
+                        ),
+                        shape = DesignTokens.cardCornerSm,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(DesignTokens.Button.heightSm)
+                    ) {
+                        Text(
+                            text = if (isClaiming) "Claiming..." else "Claim Reward",
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }

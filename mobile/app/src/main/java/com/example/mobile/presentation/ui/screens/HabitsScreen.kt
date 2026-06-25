@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -81,6 +81,9 @@ import androidx.navigation.compose.rememberNavController
 import kotlin.math.roundToInt
 import com.example.mobile.data.local.entities.ChallengeEntity
 import com.example.mobile.data.local.entities.HabitEntity
+import com.example.mobile.presentation.ui.animations.HabitPetAnimations
+import com.example.mobile.presentation.ui.animations.pressableScale
+import com.example.mobile.presentation.ui.animations.staggeredListItem
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ChallengeCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
@@ -204,7 +207,9 @@ fun HabitsScreenContent(
                 containerColor = AppTheme.current.violet,
                 contentColor = AppTheme.current.onPrimary,
                 shape = DesignTokens.cardCornerCircle,
-                modifier = Modifier.padding(bottom = DesignTokens.Section.topPadding, end = DesignTokens.space8)
+                modifier = Modifier
+                    .padding(bottom = DesignTokens.Section.topPadding, end = DesignTokens.space8)
+                    .pressableScale()
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add habit", modifier = Modifier.size(26.dp))
             }
@@ -254,10 +259,10 @@ fun HabitsScreenContent(
                 }
             }
 
-            items(
+            itemsIndexed(
                 items = sortedHabits,
-                key = { habit -> habit.id }
-            ) { habit ->
+                key = { _, habit -> habit.id }
+            ) { index, habit ->
                 HabitItem(
                     habit = habit,
                     completed = completedToday[habit.id] == true,
@@ -266,7 +271,8 @@ fun HabitsScreenContent(
                     onComplete = { onComplete(habit) },
                     onEdit = { navController.navigate("habitEdit/${habit.id}") },
                     onDelete = { onDelete(habit) },
-                    onStreakClick = { onHabitStreakClick(habit) }
+                    onStreakClick = { onHabitStreakClick(habit) },
+                    modifier = Modifier.staggeredListItem(index)
                 )
             }
 
@@ -295,7 +301,8 @@ private fun HabitItem(
     onComplete: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onStreakClick: () -> Unit
+    onStreakClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showActionsDialog by remember { mutableStateOf(false) }
@@ -312,7 +319,7 @@ private fun HabitItem(
     val itemBackground = if (completed) AppTheme.current.mintSurfaceActive else AppTheme.current.card
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = DesignTokens.Section.horizontalPadding, vertical = DesignTokens.space6)
             .clip(DesignTokens.cardCornerRounded)

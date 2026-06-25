@@ -64,6 +64,9 @@ import com.example.mobile.presentation.ui.components.AssetPreview
 import com.example.mobile.presentation.ui.components.CoinPill
 import com.example.mobile.presentation.ui.components.EmptyStateCard
 import com.example.mobile.presentation.ui.components.ErrorStateCard
+import com.example.mobile.presentation.ui.animations.HabitPetAnimations
+import com.example.mobile.presentation.ui.animations.pressableScale
+import com.example.mobile.presentation.ui.animations.staggeredListItem
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
@@ -73,7 +76,7 @@ import com.example.mobile.ui.theme.AppTheme
 import com.example.mobile.ui.theme.DesignTokens
 import com.example.mobile.ui.theme.HabitPetTheme
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -267,15 +270,16 @@ private fun RewardsScreenContent(
                     }
                 }
 
-                gridItems(
+                gridItemsIndexed(
                     items = filteredItems,
-                    key = { it.id }
-                ) { item ->
+                    key = { _, item -> item.id }
+                ) { index, item ->
                     InventoryItemGridSquare(
                         item = item,
                         isSelected = activeInspectItem?.id == item.id,
                         isEquipped = equippedItemId == item.itemId,
-                        onClick = { onInspect(item) }
+                        onClick = { onInspect(item) },
+                        modifier = Modifier.staggeredListItem(index)
                     )
                 }
             }
@@ -312,12 +316,13 @@ private fun InventoryItemGridSquare(
     item: InventoryItemEntity,
     isSelected: Boolean,
     isEquipped: Boolean = item.isEquipped,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val tierColor = rarityColor(item.rarity)
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .aspectRatio(1f)
             .fillMaxWidth()
             .border(
@@ -325,7 +330,8 @@ private fun InventoryItemGridSquare(
                 color = if (isSelected) AppTheme.current.violet else if (isEquipped) AppTheme.current.mint else Color.Transparent,
                 shape = DesignTokens.cardCorner
             )
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .pressableScale(),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         shape = DesignTokens.cardCorner,
         elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased && !isSelected) DesignTokens.elevationSm else DesignTokens.elevationNone)
