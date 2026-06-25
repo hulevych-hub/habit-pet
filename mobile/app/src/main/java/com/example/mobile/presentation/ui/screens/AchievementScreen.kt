@@ -137,6 +137,7 @@ private fun AchievementScreenContent(
                 coins = headerUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(petState.evolutionStage),
                 streakCompletedToday = headerUiState.globalStreakCompletedToday,
+                streakPartialToday = headerUiState.globalStreakPartialToday,
                 onCoinsClick = {},
                 onStreakClick = if (homeScreenViewModel != null) {
                     { homeScreenViewModel.openGlobalStreakCalendar() }

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -242,13 +243,15 @@ class HabitDetailViewModelTest {
             .thenReturn(flowOf(emptyList()))
         whenever(habitCompletionRepository.getCompletionForHabitOnDate(any(), any()))
             .thenReturn(flowOf(null))
+        whenever(habitProgressRepository.getProgress(any(), any()))
+            .thenReturn(flowOf(null))
 
         viewModel = buildViewModel()
         viewModel.initialize(2L)
         advanceUntilIdle()
 
         viewModel.startTimerHabit(2L)
-        advanceUntilIdle()
+        runCurrent()
 
         assertEquals(true, viewModel.isTimerRunning.value)
     }
@@ -268,7 +271,9 @@ class HabitDetailViewModelTest {
         viewModel.initialize(2L)
         advanceUntilIdle()
 
-        // Simulate timer running for 10 seconds (0 minutes)
+        // Start the timer so it is running, then immediately stop it (0 elapsed minutes)
+        viewModel.startTimerHabit(2L)
+        runCurrent()
         viewModel.stopTimerHabit(2L)
         advanceUntilIdle()
 
@@ -284,13 +289,15 @@ class HabitDetailViewModelTest {
             .thenReturn(flowOf(emptyList()))
         whenever(habitCompletionRepository.getCompletionForHabitOnDate(any(), any()))
             .thenReturn(flowOf(null))
+        whenever(habitProgressRepository.getProgress(any(), any()))
+            .thenReturn(flowOf(null))
 
         viewModel = buildViewModel()
         viewModel.initialize(2L)
         advanceUntilIdle()
 
         viewModel.startTimerHabit(2L)
-        advanceUntilIdle()
+        runCurrent()
         viewModel.resetTimer()
 
         assertEquals(false, viewModel.isTimerRunning.value)
@@ -324,7 +331,7 @@ class HabitDetailViewModelTest {
 
         viewModel = buildViewModel()
         viewModel.initialize(2L)
-        advanceUntilIdle()
+        runCurrent()
 
         assertEquals(true, viewModel.isTimerRunning.value)
         val elapsed = viewModel.elapsedSeconds.value
@@ -354,7 +361,7 @@ class HabitDetailViewModelTest {
         val startedAt = System.currentTimeMillis() - (60L * 1000 * 60) // 60 simulated minutes ago
         // We can't directly set private fields in this test structure, so we start real:
         viewModel.startTimerHabit(2L)
-        advanceUntilIdle()
+        runCurrent()
         // Override the elapsed via reflection
         val field = HabitDetailViewModel::class.java.getDeclaredField("currentSessionStartEpoch")
         field.isAccessible = true

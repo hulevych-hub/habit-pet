@@ -25,6 +25,7 @@ import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -283,7 +284,7 @@ class HabitDetailViewModel @Inject constructor(
 
     private fun startTicking() {
         timerJob?.cancel()
-        timerJob = viewModelScope.launch {
+        timerJob = viewModelScope.launch(Dispatchers.Default) {
             while (_isTimerRunning.value) {
                 delay(1000)
                 val start = currentSessionStartEpoch ?: continue

@@ -224,7 +224,10 @@ private fun HabitDetailContent(
                     items = completions,
                     key = { it.id }
                 ) { completion ->
-                    CompletionHistoryItem(completion = completion)
+                    CompletionHistoryItem(
+                        completion = completion,
+                        isTimerHabit = habit?.type == "TIMER"
+                    )
                 }
             }
         }
@@ -562,7 +565,7 @@ private fun StatusMessage(message: String) {
 }
 
 @Composable
-private fun CompletionHistoryItem(completion: HabitCompletionEntity) {
+private fun CompletionHistoryItem(completion: HabitCompletionEntity, isTimerHabit: Boolean = false) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -609,6 +612,16 @@ private fun CompletionHistoryItem(completion: HabitCompletionEntity) {
                         style = MaterialTheme.typography.bodySmall,
                         color = AppTheme.current.muted
                     )
+                    if (isTimerHabit) {
+                        val minutes = completion.xpEarned - 5
+                        if (minutes > 0) {
+                            Text(
+                                text = "${minutes}m",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = AppTheme.current.muted
+                            )
+                        }
+                    }
                 }
 
                 Surface(

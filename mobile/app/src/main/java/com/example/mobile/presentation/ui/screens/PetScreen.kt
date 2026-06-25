@@ -182,6 +182,7 @@ fun PetScreenContent(
                 coins = uiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(pet.evolutionStage),
                 streakCompletedToday = uiState.globalStreakCompletedToday,
+                streakPartialToday = uiState.globalStreakPartialToday,
                 onCoinsClick = onNavigateToRewardsLocked,
                 onStreakClick = onStreakClick
             )

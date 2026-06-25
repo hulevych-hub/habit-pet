@@ -138,6 +138,7 @@ fun ActivityTimelineScreenContent(
                 coins = progressUiState.totalCoins,
                 stageName = ExpConfig.evolutionStageName(progressUiState.pet.evolutionStage),
                 streakCompletedToday = progressUiState.globalStreakCompletedToday,
+                streakPartialToday = progressUiState.globalStreakPartialToday,
                 onCoinsClick = onNavigateToRewardsLocked,
                 onStreakClick = onStreakClick
             )
