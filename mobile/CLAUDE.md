@@ -93,11 +93,11 @@ A task is not complete until:
 
 ## Room schema
 
-- `AppDatabase` version is `19`. Schema changes require migrations and version bump.
+- `AppDatabase` version is `20`. Schema changes require migrations and version bump.
 - Core entities:
   - `HabitEntity` - user habits.
   - `HabitCompletionEntity` - idempotent daily habit completions with `xpEarned`.
-  - `HabitProgressEntity` - timer habit accumulated minutes per day.
+  - `HabitProgressEntity` - timer habit accumulated minutes per day. Fields: `habitId`, `date`, `accumulatedMinutes`, `lastUpdated`, `startedAt` (nullable — non-null when a timer run is active, used to resume after process death), `lastSessionSeconds` (duration of the most recent stopped session, for logs).
   - `PetEntity` - pet XP, level, evolution stage, mood, equipped customization.
   - `StatisticsEntity` - coins, streaks, completions, combo state, global streak freeze metadata.
   - `InventoryItemEntity` - customization catalog, ownership, equipped state.
@@ -126,7 +126,7 @@ A task is not complete until:
 ## Progression values
 
 - Checkbox habit: `10 XP`, `10 coins`.
-- Timer habit: `5 + 1 * minutes` XP; `5 + 2 * minutes` coins.
+- Timer habit: `5 + 1 * minutes` XP; `5 + 2 * minutes` coins. Reward minutes are capped at `minimumDurationMinutes` (anti-abuse). Actual elapsed minutes are still logged in `HabitProgressEntity.accumulatedMinutes` for history.
 - Combo: consecutive completions within 2 hours; `+1 XP` per completion after first, capped at `+4 XP`.
 - Combo milestones: `3`, `5`, `10` hits.
 - Level formula: `totalXpForLevel(level) = 15 * level * (level + 1)`. Use `ExpConfig.calculateLevelFromXp()`.

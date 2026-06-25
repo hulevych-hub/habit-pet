@@ -25,6 +25,7 @@ import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.feedback.MicroFeedbackManager
 import com.example.mobile.presentation.ui.reward.RewardQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,10 +39,6 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
-/**
- * ViewModel for habit detail screen
- * Handles habit data, completion history, and completion logic
- */
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
@@ -58,7 +55,6 @@ class HabitDetailViewModel @Inject constructor(
     private val challengeEngine: ChallengeEngine
 ) : ViewModel() {
 
-    // UI State
     private val _habit = MutableStateFlow<HabitEntity?>(null)
     val habit: StateFlow<HabitEntity?> = _habit
 
@@ -74,11 +70,9 @@ class HabitDetailViewModel @Inject constructor(
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message
 
-    // Pet state
     private val _pet = MutableStateFlow(PetEntity(id = 1))
     val pet: StateFlow<PetEntity> = _pet
 
-    // Timer state
     private val _isTimerRunning = MutableStateFlow(false)
     val isTimerRunning: StateFlow<Boolean> = _isTimerRunning
 
@@ -93,10 +87,9 @@ class HabitDetailViewModel @Inject constructor(
 
     private var surpriseCompletionsSinceLastReward = 0
 
-
-    // =========================
-    // EVENTS (FIXED)
-    // =========================
+    private var timerJob: Job? = null
+    private var currentTimerHabitId: Long? = null
+    private var currentSessionStartEpoch: Long? = null
 
     private val _habitCompleted = MutableSharedFlow<Unit>()
     val habitCompleted: SharedFlow<Unit> = _habitCompleted
@@ -106,10 +99,6 @@ class HabitDetailViewModel @Inject constructor(
 
     private val _navigateBack = MutableSharedFlow<Unit>()
     val navigateBack: SharedFlow<Unit> = _navigateBack
-
-    // =========================
-    // INIT
-    // =========================
 
     fun initialize(habitId: Long) {
         viewModelScope.launch {
@@ -130,7 +119,8 @@ class HabitDetailViewModel @Inject constructor(
                         .firstOrNull()
                         ?: emptyList()
                 _completions.value = completionsForHabit
-                _completedToday.value = completionsForHabit.any { it.date == getDayStart(System.currentTimeMillis()) }
+                val todayDone = completionsForHabit.any { it.date == getDayStart(System.currentTimeMillis()) }
+                _completedToday.value = todayDone
 
                 petRepository.getPet().firstOrNull()
                     ?.let { _pet.value = it }
@@ -140,6 +130,9 @@ class HabitDetailViewModel @Inject constructor(
                         _pet.value = defaultPet
                     }
 
+                if (!todayDone) {
+                    resumeTimerIfRunning(habitId)
+                }
             } catch (e: Exception) {
                 _error.value = "Failed to load habit details: ${e.message}"
             } finally {
@@ -148,9 +141,18 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    // =========================
-    // DAY HELPERS
-    // =========================
+    private suspend fun resumeTimerIfRunning(habitId: Long) {
+        val today = getDayStart(System.currentTimeMillis())
+        val progress = habitProgressRepository.getProgress(habitId, today).firstOrNull() ?: return
+        val startedAt = progress.startedAt ?: return
+        if (startedAt <= 0) return
+
+        currentTimerHabitId = habitId
+        currentSessionStartEpoch = startedAt
+        _isTimerRunning.value = true
+        _elapsedSeconds.value = ((System.currentTimeMillis() - startedAt) / 1000).toInt().coerceAtLeast(0)
+        startTicking()
+    }
 
     private fun getDayStart(timestamp: Long): Long {
         val calendar = Calendar.getInstance()
@@ -162,10 +164,6 @@ class HabitDetailViewModel @Inject constructor(
         return calendar.timeInMillis
     }
 
-    // =========================
-    // CHECK COMPLETION
-    // =========================
-
     fun isCompletedToday(habitId: Long): StateFlow<Boolean> {
         val todayStart = getDayStart(System.currentTimeMillis())
         return habitCompletionRepository
@@ -173,10 +171,6 @@ class HabitDetailViewModel @Inject constructor(
             .map { it != null }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     }
-
-    // =========================
-    // CHECKBOX HABIT
-    // =========================
 
     fun completeCheckboxHabit(habitId: Long) {
         viewModelScope.launch {
@@ -257,28 +251,52 @@ class HabitDetailViewModel @Inject constructor(
         }
     }
 
-    // =========================
-    // TIMER HABIT
-    // =========================
-
     fun startTimerHabit(habitId: Long) {
+        if (_isTimerRunning.value) return
         viewModelScope.launch {
-            if (_isTimerRunning.value || isAlreadyCompletedToday(habitId)) {
-                return@launch
-            }
-
+            if (isAlreadyCompletedToday(habitId)) return@launch
+            val now = System.currentTimeMillis()
+            currentTimerHabitId = habitId
+            currentSessionStartEpoch = now
             _isTimerRunning.value = true
             _elapsedSeconds.value = 0
 
+            val today = getDayStart(now)
+            val previous = habitProgressRepository
+                .getProgress(habitId, today)
+                .firstOrNull()
+
+            habitProgressRepository.updateProgress(
+                HabitProgressEntity(
+                    habitId = habitId,
+                    date = today,
+                    accumulatedMinutes = previous?.accumulatedMinutes ?: 0,
+                    lastUpdated = now,
+                    startedAt = now,
+                    lastSessionSeconds = 0
+                )
+            )
+
+            startTicking()
+        }
+    }
+
+    private fun startTicking() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
             while (_isTimerRunning.value) {
                 delay(1000)
-                _elapsedSeconds.value += 1
+                val start = currentSessionStartEpoch ?: continue
+                _elapsedSeconds.value = ((System.currentTimeMillis() - start) / 1000).toInt().coerceAtLeast(0)
             }
         }
     }
 
     fun stopTimerHabit(habitId: Long) {
+        if (!_isTimerRunning.value) return
         _isTimerRunning.value = false
+        timerJob?.cancel()
+        timerJob = null
 
         viewModelScope.launch {
             _isCompleting.value = true
@@ -290,32 +308,40 @@ class HabitDetailViewModel @Inject constructor(
 
                 if (isAlreadyCompletedToday(habitId)) {
                     _completedToday.value = true
+                    currentSessionStartEpoch = null
+                    currentTimerHabitId = null
                     return@launch
                 }
 
                 val today = getDayStart(System.currentTimeMillis())
+                val start = currentSessionStartEpoch ?: System.currentTimeMillis()
+                val sessionSeconds = ((System.currentTimeMillis() - start) / 1000).toInt().coerceAtLeast(0)
+                val sessionMinutes = sessionSeconds / 60
 
                 val previous = habitProgressRepository
                     .getProgress(habitId, today)
                     .firstOrNull()
-                    ?.accumulatedMinutes ?: 0
-
-                val sessionMinutes = _elapsedSeconds.value / 60
-                val total = previous + sessionMinutes
+                val previousMinutes = previous?.accumulatedMinutes ?: 0
+                val totalMinutes = previousMinutes + sessionMinutes
 
                 habitProgressRepository.updateProgress(
                     HabitProgressEntity(
                         habitId = habitId,
                         date = today,
-                        accumulatedMinutes = total,
-                        lastUpdated = System.currentTimeMillis()
+                        accumulatedMinutes = totalMinutes,
+                        lastUpdated = System.currentTimeMillis(),
+                        startedAt = null,
+                        lastSessionSeconds = sessionSeconds
                     )
                 )
 
-                if (total >= habit.minimumDurationMinutes) {
+                currentSessionStartEpoch = null
+                currentTimerHabitId = null
 
-                    val xpEarned = (ExpConfig.TIMER_HABIT_BASE_XP + total * ExpConfig.TIMER_HABIT_XP_PER_MINUTE).toLong()
-                    val coinsEarned = EconomyConfig.TIMER_HABIT_BASE_COINS + total * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE
+                if (totalMinutes >= habit.minimumDurationMinutes) {
+                    val rewardMinutes = totalMinutes.coerceAtMost(habit.minimumDurationMinutes)
+                    val xpEarned = (ExpConfig.TIMER_HABIT_BASE_XP + rewardMinutes * ExpConfig.TIMER_HABIT_XP_PER_MINUTE).toLong()
+                    val coinsEarned = EconomyConfig.TIMER_HABIT_BASE_COINS + rewardMinutes * EconomyConfig.TIMER_HABIT_COINS_PER_MINUTE
 
                     val completionResult = habitCompletionRepository.addCompletionWithCombo(
                         HabitCompletionEntity(
@@ -374,7 +400,7 @@ class HabitDetailViewModel @Inject constructor(
                     habitProgressRepository.reset(habitId)
 
                 } else {
-                    val remaining = habit.minimumDurationMinutes - total
+                    val remaining = habit.minimumDurationMinutes - totalMinutes
                     _message.value = "Need $remaining more minute${if (remaining == 1) "" else "s"} to lock this run"
                 }
 
@@ -388,10 +414,6 @@ class HabitDetailViewModel @Inject constructor(
             }
         }
     }
-
-    // =========================
-    // HELPERS
-    // =========================
 
     private suspend fun isAlreadyCompletedToday(habitId: Long): Boolean {
         val today = getDayStart(System.currentTimeMillis())
@@ -409,13 +431,28 @@ class HabitDetailViewModel @Inject constructor(
     }
 
     fun resetTimer() {
+        if (!_isTimerRunning.value) return
+        val habitId = currentTimerHabitId ?: return
         _isTimerRunning.value = false
+        timerJob?.cancel()
+        timerJob = null
+        currentSessionStartEpoch = null
+        currentTimerHabitId = null
         _elapsedSeconds.value = 0
-    }
 
-    // =========================
-    // REWARDS
-    // =========================
+        viewModelScope.launch {
+            val today = getDayStart(System.currentTimeMillis())
+            val previous = habitProgressRepository
+                .getProgress(habitId, today)
+                .firstOrNull() ?: return@launch
+            habitProgressRepository.updateProgress(
+                previous.copy(
+                    startedAt = null,
+                    lastUpdated = System.currentTimeMillis()
+                )
+            )
+        }
+    }
 
     private fun awardPetXpAndCoins(
         xpToAdd: Long,
@@ -459,7 +496,6 @@ class HabitDetailViewModel @Inject constructor(
                 )
             }
 
-            // Tease the next evolution and emit DragonEvolutionReward when a stage changes
             val nextEvolutionStage = (newEvolutionStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
             val nearingProgressThreshold = ExpConfig.xpThresholdForStage(nextEvolutionStage) * 8L / 10L
             if (
@@ -547,5 +583,10 @@ class HabitDetailViewModel @Inject constructor(
                 ?: emptyList()
         _completions.value = refreshedCompletions
         _completedToday.value = refreshedCompletions.any { it.date == getDayStart(System.currentTimeMillis()) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        timerJob?.cancel()
     }
 }

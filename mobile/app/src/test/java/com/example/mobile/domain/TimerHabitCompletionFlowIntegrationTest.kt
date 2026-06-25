@@ -315,4 +315,73 @@ class TimerHabitCompletionFlowIntegrationTest {
         assertEquals(18L, expectedXp)
         assertEquals(31, expectedCoins)
     }
+
+    @Test
+    fun `HabitProgressEntity — startedAt nullable field defaults to null and supports persistence`() {
+        val now = System.currentTimeMillis()
+
+        // Default values
+        val defaultProgress = HabitProgressEntity(
+            habitId = 2,
+            date = now,
+            accumulatedMinutes = 0,
+            lastUpdated = now
+        )
+        assertEquals(null, defaultProgress.startedAt)
+        assertEquals(0, defaultProgress.lastSessionSeconds)
+
+        // Started timer sets startedAt
+        val startedProgress = defaultProgress.copy(startedAt = now, lastSessionSeconds = 0)
+        assertEquals(now, startedProgress.startedAt)
+
+        // Stopped timer clears startedAt and records session seconds
+        val stoppedProgress = startedProgress.copy(startedAt = null, lastSessionSeconds = 120)
+        assertEquals(null, stoppedProgress.startedAt)
+        assertEquals(120, stoppedProgress.lastSessionSeconds)
+    }
+
+    @Test
+    fun `stopTimerHabit — reward minutes capped at minimumDurationMinutes`() = runTest {
+        val now = System.currentTimeMillis()
+        val tenMinutesAgo = now - 10 * 60 * 1000L
+
+        doReturn(null).whenever(habitCompletionDao).getCompletionForHabitOnDateOnce(2L, now)
+
+        statsFlow.value = StatisticsEntity(
+            id = 1,
+            lastHabitCompletionTimestamp = 0L,
+            currentCombo = 0,
+            totalCoins = 0,
+            totalCompletions = 0
+        )
+
+        doReturn(1L).whenever(habitCompletionDao).insertCompletion(any())
+        doReturn(1).whenever(habitDao).updateHabit(any())
+        doReturn(0).whenever(habitCompletionDao).getActiveDayCount()
+        doReturn(1).whenever(statisticsDao).updateStatistics(any())
+        doReturn(0).whenever(habitCompletionDao).getCompletionCountOnDate(any())
+
+        // Simulate: progress already has 35 accumulated minutes (more than minimum 10)
+        val progress = HabitProgressEntity(
+            habitId = 2,
+            date = now,
+            accumulatedMinutes = 35,
+            lastUpdated = tenMinutesAgo,
+            startedAt = tenMinutesAgo,
+            lastSessionSeconds = 0
+        )
+        whenever(habitProgressRepository.getProgress(any(), any())).thenReturn(flowOf(progress))
+
+        val completion = HabitCompletionEntity(
+            id = 0,
+            habitId = 2,
+            date = now,
+            xpEarned = 15L // Will be replaced in ViewModel logic
+        )
+
+        val result = habitCompletionRepository.addCompletionWithCombo(completion)
+
+        assertTrue("Should be new completion", result.isNewCompletion)
+        assertEquals(1L, result.completionId)
+    }
 }

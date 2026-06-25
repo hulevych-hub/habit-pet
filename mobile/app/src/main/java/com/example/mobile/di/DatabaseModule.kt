@@ -10,6 +10,7 @@ import com.example.mobile.data.local.database.MIGRATION_13_14
 import com.example.mobile.data.local.database.MIGRATION_14_15
 import com.example.mobile.data.local.database.MIGRATION_17_18
 import com.example.mobile.data.local.database.MIGRATION_18_19
+import com.example.mobile.data.local.database.MIGRATION_19_20
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
 import com.example.mobile.domain.DragonMoodEngine
 import com.example.mobile.domain.ChallengeEngine
@@ -43,7 +44,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "habit_pet_database"
         )
-        .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_17_18, MIGRATION_18_19)
+        .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_17_18, MIGRATION_18_19, MIGRATION_19_20)
         .fallbackToDestructiveMigration()
         .build()
     }

@@ -9,4 +9,6 @@ data class HabitProgressEntity(
     val date: Long,
     val accumulatedMinutes: Int,
     val lastUpdated: Long,
+    val startedAt: Long? = null,
+    val lastSessionSeconds: Int = 0,
 )

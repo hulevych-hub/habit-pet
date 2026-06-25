@@ -31,8 +31,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.Calendar
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -293,6 +295,101 @@ class HabitDetailViewModelTest {
 
         assertEquals(false, viewModel.isTimerRunning.value)
         assertEquals(0, viewModel.elapsedSeconds.value)
+    }
+
+    @Test
+    fun `initialize — resumes running timer from persisted startedAt`() = runTest {
+        val thirtyDaysAgo = getDayStatic() - (30L * 24 * 60 * 60 * 1000)
+        val today = getDayStatic()
+        val startedAt = System.currentTimeMillis() - 90_000L // 90 seconds ago
+        habitFlow.value = timerHabit
+        whenever(habitRepository.getHabitById(2L)).thenReturn(habitFlow)
+        whenever(habitCompletionRepository.getCompletionsForHabit(any(), any(), any()))
+            .thenReturn(flowOf(emptyList()))
+        whenever(habitCompletionRepository.getCompletionForHabitOnDate(any(), any()))
+            .thenReturn(flowOf(null))
+        whenever(habitProgressRepository.getProgress(any(), any()))
+            .thenReturn(
+                flowOf(
+                    HabitProgressEntity(
+                        habitId = 2,
+                        date = today,
+                        accumulatedMinutes = 5,
+                        lastUpdated = startedAt,
+                        startedAt = startedAt,
+                        lastSessionSeconds = 0
+                    )
+                )
+            )
+
+        viewModel = buildViewModel()
+        viewModel.initialize(2L)
+        advanceUntilIdle()
+
+        assertEquals(true, viewModel.isTimerRunning.value)
+        val elapsed = viewModel.elapsedSeconds.value
+        assertTrue("Elapsed should be ~90s, was $elapsed", elapsed >= 85)
+    }
+
+    @Test
+    fun `stopTimerHabit — reward minutes capped at minimumDurationMinutes`() = runTest {
+        habitFlow.value = timerHabit
+        whenever(habitRepository.getHabitById(2L)).thenReturn(habitFlow)
+        whenever(habitCompletionRepository.getCompletionsForHabit(any(), any(), any()))
+            .thenReturn(flowOf(emptyList()))
+        whenever(habitCompletionRepository.getCompletionForHabitOnDate(any(), any()))
+            .thenReturn(flowOf(null))
+        whenever(habitProgressRepository.getProgress(any(), any()))
+            .thenReturn(flowOf(HabitProgressEntity(habitId = 2, date = 0, accumulatedMinutes = 0, lastUpdated = 0)))
+        whenever(habitCompletionRepository.addCompletionWithCombo(any()))
+            .thenReturn(completionResult)
+        whenever(petRepository.getPet()).thenReturn(MutableStateFlow(PetEntity(id = 1, xp = 0, level = 0, evolutionStage = 0)))
+
+        viewModel = buildViewModel()
+        viewModel.initialize(2L)
+        advanceUntilIdle()
+
+        // Simulate a running session with elapsed > minimum
+        // Inject private state via reflection or use a simulated start + stop
+        val startedAt = System.currentTimeMillis() - (60L * 1000 * 60) // 60 simulated minutes ago
+        // We can't directly set private fields in this test structure, so we start real:
+        viewModel.startTimerHabit(2L)
+        advanceUntilIdle()
+        // Override the elapsed via reflection
+        val field = HabitDetailViewModel::class.java.getDeclaredField("currentSessionStartEpoch")
+        field.isAccessible = true
+        field.set(viewModel, startedAt)
+        // Force UI update
+        val elapsedField = HabitDetailViewModel::class.java.getDeclaredField("_elapsedSeconds")
+        elapsedField.isAccessible = true
+        val mutableElapsed = elapsedField.get(viewModel) as MutableStateFlow<Int>
+        mutableElapsed.value = (60 * 60) - 1  // just under 60 minutes
+
+        viewModel.stopTimerHabit(2L)
+        advanceUntilIdle()
+
+        // Minimum is 30, so reward uses 30 minutes: XP = 5 + 30*1 = 35, coins = 5 + 30*2 = 65
+        verify(habitCompletionRepository).addCompletionWithCombo(
+            org.mockito.kotlin.check { completion ->
+                assertEquals(35L, completion.xpEarned)
+            }
+        )
+        verify(habitProgressRepository).updateProgress(
+            org.mockito.kotlin.check { progress ->
+                assertEquals(60, progress.accumulatedMinutes)
+                assertNull(progress.startedAt)
+                assertEquals(60 * 60, progress.lastSessionSeconds)
+            }
+        )
+    }
+
+    private fun getDayStatic(): Long {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
     }
 
     private fun buildViewModel(): HabitDetailViewModel {
