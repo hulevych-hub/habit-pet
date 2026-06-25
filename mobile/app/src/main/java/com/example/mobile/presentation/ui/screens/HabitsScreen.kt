@@ -1,17 +1,22 @@
 package com.example.mobile.presentation.ui.screens
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -57,18 +62,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlin.math.roundToInt
 import com.example.mobile.data.local.entities.ChallengeEntity
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.presentation.ui.components.EmptyStateCard
@@ -290,42 +300,88 @@ private fun HabitItem(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showActionsDialog by remember { mutableStateOf(false) }
     var skippedToday by remember { mutableStateOf(false) }
-    var swipeOffset by remember { mutableStateOf(0f) }
-    var showSwipeActions by remember { mutableStateOf(false) }
+    var offsetX by remember { mutableStateOf(0f) }
+    val swipeThresholdPx = with(LocalDensity.current) { 96.dp.toPx() }
+    val revealed = offsetX <= -swipeThresholdPx
+    val animatedOffset by animateDpAsState(
+        targetValue = if (revealed) with(LocalDensity.current) { -160.dp.toPx() }.dp else 0.dp,
+        animationSpec = tween(durationMillis = 180),
+        label = "habitSwipe"
+    )
     val category = habitCategory(habit)
     val itemBackground = if (completed) AppTheme.current.mintSurfaceActive else AppTheme.current.card
 
-    Surface(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = DesignTokens.Section.horizontalPadding, vertical = DesignTokens.space6)
-            .combinedClickable(
-                onClick = { navController.navigate("habitDetail/${habit.id}") },
-                onLongClick = { showActionsDialog = true }
-            )
-            .pointerInput(habit.id) {
-                detectDragGestures(
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        val nextOffset = (swipeOffset + dragAmount.x).coerceIn(-120f, 80f)
-                        swipeOffset = nextOffset
-                        showSwipeActions = nextOffset < -48f
-                    },
-                    onDragEnd = {
-                        showSwipeActions = swipeOffset < -48f
-                        swipeOffset = 0f
-                    },
-                    onDragCancel = {
-                        showSwipeActions = false
-                        swipeOffset = 0f
-                    }
-                )
-            },
-        shape = DesignTokens.cardCornerRounded,
-        color = itemBackground,
-        shadowElevation = DesignTokens.elevationNone
+            .clip(DesignTokens.cardCornerRounded)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        // Background actions layer (always positioned behind the card)
+        Row(
+            modifier = Modifier
+                .matchParentSize()
+                .padding(vertical = DesignTokens.space6),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.weight(1f))
+            SwipeActionButton(
+                icon = Icons.Default.Edit,
+                label = "Edit",
+                color = AppTheme.current.violet,
+                onClick = {
+                    offsetX = 0f
+                    onEdit()
+                },
+                reveal = revealed
+            )
+            Spacer(modifier = Modifier.width(DesignTokens.space6))
+            SwipeActionButton(
+                icon = Icons.Default.Delete,
+                label = "Delete",
+                color = AppTheme.current.danger,
+                onClick = {
+                    offsetX = 0f
+                    showDeleteDialog = true
+                },
+                reveal = revealed
+            )
+            Spacer(modifier = Modifier.width(DesignTokens.space8))
+        }
+
+        // Foreground card
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset { IntOffset(animatedOffset.roundToPx(), 0) }
+                .zIndex(1f)
+                .combinedClickable(
+                    onClick = {
+                        if (revealed) {
+                            offsetX = 0f
+                        } else {
+                            navController.navigate("habitDetail/${habit.id}")
+                        }
+                    },
+                    onLongClick = { showActionsDialog = true }
+                )
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            offsetX = if (offsetX <= -swipeThresholdPx) -swipeThresholdPx * 2 else 0f
+                        },
+                        onDragCancel = { offsetX = 0f },
+                        onHorizontalDrag = { change, dragAmount ->
+                            change.consume()
+                            offsetX = (offsetX + dragAmount).coerceIn(-280f, 0f)
+                        }
+                    )
+                },
+            shape = DesignTokens.cardCornerRounded,
+            color = itemBackground,
+            shadowElevation = DesignTokens.elevationSm
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -379,21 +435,6 @@ private fun HabitItem(
                     onClick = onStreakClick
                 )
             }
-
-            if (showSwipeActions) {
-                Box(modifier = Modifier.align(Alignment.TopEnd)) {
-                    SwipeActionsOverlay(
-                        onEdit = {
-                            showSwipeActions = false
-                            onEdit()
-                        },
-                        onDelete = {
-                            showSwipeActions = false
-                            showDeleteDialog = true
-                        }
-                    )
-                }
-            }
         }
     }
 
@@ -428,8 +469,8 @@ private fun HabitItem(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = AppTheme.current.danger)
                 ) {
-                    Text("Delete")
-                }
+                        Text("Delete")
+                    }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
@@ -441,55 +482,50 @@ private fun HabitItem(
 }
 
 @Composable
-private fun SwipeActionsOverlay(
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .padding(top = DesignTokens.space6, end = DesignTokens.Section.horizontalPadding),
-        shape = RoundedCornerShape(topEnd = DesignTokens.radius3xl, bottomEnd = DesignTokens.radius3xl),
-        color = AppTheme.current.surface,
-        shadowElevation = DesignTokens.elevationLg
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = DesignTokens.space8, vertical = DesignTokens.space8),
-            verticalArrangement = Arrangement.spacedBy(DesignTokens.space8),
-            horizontalAlignment = Alignment.End
-        ) {
-            SwipeActionButton(
-                icon = Icons.Default.Edit,
-                color = AppTheme.current.violet,
-                onClick = onEdit
-            )
-            SwipeActionButton(
-                icon = Icons.Default.Delete,
-                color = AppTheme.current.danger,
-                onClick = onDelete
-            )
-        }
-    }
-}
-
-@Composable
 private fun SwipeActionButton(
     icon: ImageVector,
+    label: String,
     color: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    reveal: Boolean
 ) {
+    val size by animateDpAsState(
+        targetValue = if (reveal) 64.dp else 52.dp,
+        animationSpec = tween(durationMillis = 180),
+        label = "swipeActionSize"
+    )
+    val iconSize by animateDpAsState(
+        targetValue = if (reveal) 26.dp else 22.dp,
+        animationSpec = tween(durationMillis = 180),
+        label = "swipeActionIcon"
+    )
+
     Surface(
-        shape = RoundedCornerShape(18.dp),
-        color = color.copy(alpha = 0.14f)
+        modifier = Modifier.size(size),
+        shape = RoundedCornerShape(20.dp),
+        color = color.copy(alpha = if (reveal) 0.16f else 0.10f),
+        tonalElevation = 0.dp
     ) {
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier.size(44.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(onClick = onClick)
+                .padding(top = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = icon,
-                contentDescription = null,
+                contentDescription = label,
                 tint = color,
-                modifier = Modifier.size(DesignTokens.Icon.sizeXl)
+                modifier = Modifier.size(iconSize)
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+                maxLines = 1
             )
         }
     }
