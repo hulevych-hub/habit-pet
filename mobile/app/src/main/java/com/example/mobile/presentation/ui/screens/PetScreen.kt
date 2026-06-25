@@ -267,51 +267,57 @@ private fun PetShowcase(
         color = AppTheme.current.surface,
         shadowElevation = DesignTokens.elevationSm
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(320.dp),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AnimatedPet(
-                    pet = pet,
-                    modifier = Modifier.fillMaxSize(),
-                    showNameOverlay = false,
-                    backgroundContentScale = ContentScale.Crop
-                )
-
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .height(120.dp)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    AppTheme.current.background.copy(alpha = DesignTokens.alpha70),
-                                    AppTheme.current.background
+                        .height(320.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimatedPet(
+                        pet = pet,
+                        modifier = Modifier.fillMaxSize(),
+                        showNameOverlay = false,
+                        backgroundContentScale = ContentScale.Crop
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .height(120.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        AppTheme.current.background.copy(alpha = DesignTokens.alpha70),
+                                        AppTheme.current.background
+                                    )
                                 )
                             )
-                        )
-                )
+                    )
 
-                MoodPill(
-                    mood = mood,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = DesignTokens.space18, bottom = 86.dp)
-                )
+                    MoodPill(
+                        mood = mood,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = DesignTokens.space18, bottom = 86.dp)
+                    )
+                }
             }
 
+            // Medallion overlays the bottom border of the background image
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(MedallionSize),
+                    .height(MedallionSize)
+                    .align(Alignment.BottomCenter),
                 contentAlignment = Alignment.TopCenter
             ) {
                 MedallionConnectors(
