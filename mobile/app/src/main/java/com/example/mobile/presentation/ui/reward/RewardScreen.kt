@@ -763,23 +763,21 @@ private fun DragonEvolutionRewardContent(
 ) {
     RewardEmphasisFrame(tier = emphasisTier) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             EvolutionTransitionAnimation(
                 fromStage = fromStage,
                 toStage = toStage,
-                modifier = Modifier.size(220.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
 
             AnimatedEvolutionLabel(
                 fromStage = fromStage,
-                toStage = toStage
+                toStage = toStage,
+                modifier = Modifier.graphicsLayer { translationY = -24f }
             )
 
             ReinforcementMessage(reinforcementMessage)
@@ -1010,7 +1008,8 @@ private enum class EvolutionPhase {
 @Composable
 private fun AnimatedEvolutionLabel(
     fromStage: Int,
-    toStage: Int
+    toStage: Int,
+    modifier: Modifier = Modifier
 ) {
     var showNewLabel by remember(fromStage, toStage) { mutableStateOf(false) }
 
@@ -1028,7 +1027,7 @@ private fun AnimatedEvolutionLabel(
         showNewLabel = true
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Text(
             text = "Evolution Complete!",
             style = MaterialTheme.typography.headlineMedium,
