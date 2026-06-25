@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -710,19 +711,19 @@ private fun AttributeRow(
 @Composable
 private fun LevelUpButton(progressFraction: Float) {
     val clampedProgress = progressFraction.coerceIn(0f, 1f)
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .height(DesignTokens.Button.heightSm)
             .clip(DesignTokens.cardCornerSm)
             .background(AppTheme.current.goldSoft.copy(alpha = DesignTokens.alpha25))
-            .border(DesignTokens.strokeThin, AppTheme.current.goldDark, DesignTokens.cardCornerSm),
-        contentAlignment = Alignment.CenterStart
+            .border(DesignTokens.strokeThin, AppTheme.current.goldDark, DesignTokens.cardCornerSm)
     ) {
+        val progressWidth = maxWidth * clampedProgress
         Box(
             modifier = Modifier
-                .fillMaxWidth(clampedProgress)
                 .fillMaxHeight()
+                .width(progressWidth)
                 .background(
                     Brush.horizontalGradient(
                         colors = listOf(
