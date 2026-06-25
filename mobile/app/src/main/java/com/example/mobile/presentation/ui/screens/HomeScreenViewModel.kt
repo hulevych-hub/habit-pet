@@ -64,6 +64,27 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Sets pet XP to one checkbox-habit completion (10 XP) before the next evolution threshold,
+     * so completing any checkbox habit triggers a level-up + evolution transition.
+     */
+    fun setXpBeforeEvolution() {
+        viewModelScope.launch {
+            val currentPet = pet.value
+            val currentStage = currentPet.evolutionStage
+            val nextStage = (currentStage + 1).coerceAtMost(ExpConfig.EVOLUTION_STAGE_NAMES.lastIndex)
+            if (nextStage <= currentStage) return@launch
+
+            val nextThreshold = ExpConfig.xpThresholdForStage(nextStage)
+            val targetXp = (nextThreshold - ExpConfig.CHECKBOX_HABIT_XP).coerceAtLeast(0)
+            val newLevel = ExpConfig.calculateLevelFromXp(targetXp)
+            val newStage = ExpConfig.calculateEvolutionStageFromXp(targetXp)
+            petRepository.updatePet(
+                currentPet.copy(id = 1, xp = targetXp, level = newLevel, evolutionStage = newStage)
+            )
+        }
+    }
+
     fun renamePet(name: String) {
         viewModelScope.launch {
             val currentPet = pet.value

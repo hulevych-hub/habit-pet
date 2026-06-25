@@ -1,8 +1,14 @@
 package com.example.mobile.presentation.ui.reward
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,11 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,10 +49,12 @@ import com.dotlottie.dlplayer.Mode
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.ChestType
 import com.example.mobile.domain.EquipableConfig
+import com.example.mobile.domain.ExpConfig
 import com.example.mobile.presentation.ui.components.AssetPreview
-import com.example.mobile.presentation.ui.components.PetPhaseTransition
+import com.example.mobile.presentation.ui.components.rememberAssetPainter
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.ui.theme.AppTheme
+import com.example.mobile.util.AssetResolver
 import com.example.mobile.util.ReinforcementMessageProvider
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
@@ -759,22 +769,292 @@ private fun DragonEvolutionRewardContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            PetPhaseTransition(
-                pet = pet.copy(evolutionStage = toStage),
+            EvolutionTransitionAnimation(
+                fromStage = fromStage,
+                toStage = toStage,
+                modifier = Modifier.size(220.dp)
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            AnimatedEvolutionLabel(
                 fromStage = fromStage,
                 toStage = toStage
             )
 
-            Spacer(modifier = Modifier.height((-4).dp))
-
-            Text(
-                text = "Evolution Complete!",
-                style = MaterialTheme.typography.headlineMedium,
-                color = AppTheme.current.rewardText,
-                fontWeight = FontWeight.Bold
-            )
-
             ReinforcementMessage(reinforcementMessage)
+        }
+    }
+}
+
+/**
+ * Multi-phase evolution transition animation that always plays on the reward screen.
+ *
+ * Sequence:
+ * 1. Old form breathes (0-600ms)
+ * 2. Glow builds around old form (600-1400ms)
+ * 3. Flash dissolve - old form fades out with white flash (1400-2000ms)
+ * 4. New form appears with scale-in + glow (2000-2800ms)
+ * 5. New form settles with gentle idle (2800ms+)
+ */
+@Composable
+private fun EvolutionTransitionAnimation(
+    fromStage: Int,
+    toStage: Int,
+    modifier: Modifier = Modifier
+) {
+    // Timeline-driven animation phases
+    var phase by remember(fromStage, toStage) { mutableStateOf(EvolutionPhase.IDLE_OLD) }
+
+    val glowAlpha = remember { Animatable(0f) }
+    val oldAlpha = remember { Animatable(1f) }
+    val oldScale = remember { Animatable(1f) }
+    val flashAlpha = remember { Animatable(0f) }
+    val newAlpha = remember { Animatable(0f) }
+    val newScale = remember { Animatable(0.6f) }
+    val newGlowAlpha = remember { Animatable(0f) }
+
+    // Idle breathing for whichever form is currently visible
+    val infiniteTransition = rememberInfiniteTransition(label = "evo idle")
+    val breathingScale = infiniteTransition.animateFloat(
+        initialValue = 0.97f,
+        targetValue = 1.03f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "evo breathing"
+    )
+
+    LaunchedEffect(fromStage, toStage) {
+        // Phase 1: Old form breathing (idle) - just wait
+        phase = EvolutionPhase.IDLE_OLD
+        delay(600)
+
+        // Phase 2: Glow builds around old form
+        phase = EvolutionPhase.GLOW_BUILD
+        glowAlpha.animateTo(
+            1f,
+            animationSpec = tween(800, easing = FastOutSlowInEasing)
+        )
+        delay(100)
+
+        // Phase 3: Flash and dissolve old form
+        phase = EvolutionPhase.FLASH_DISSOLVE
+        flashAlpha.animateTo(
+            1f,
+            animationSpec = tween(300, easing = FastOutSlowInEasing)
+        )
+        oldAlpha.animateTo(
+            0f,
+            animationSpec = tween(350, easing = FastOutSlowInEasing)
+        )
+        oldScale.animateTo(
+            1.25f,
+            animationSpec = tween(400, easing = FastOutSlowInEasing)
+        )
+        glowAlpha.animateTo(
+            0f,
+            animationSpec = tween(300, easing = FastOutSlowInEasing)
+        )
+        delay(50)
+
+        // Phase 4: Reveal new form with scale-in
+        phase = EvolutionPhase.REVEAL_NEW
+        newAlpha.animateTo(
+            1f,
+            animationSpec = tween(500, easing = FastOutSlowInEasing)
+        )
+        newScale.animateTo(
+            1f,
+            animationSpec = tween(600, easing = FastOutSlowInEasing)
+        )
+        newGlowAlpha.animateTo(
+            0.8f,
+            animationSpec = tween(400, easing = FastOutSlowInEasing)
+        )
+        delay(200)
+        flashAlpha.animateTo(
+            0f,
+            animationSpec = tween(400, easing = FastOutSlowInEasing)
+        )
+        newGlowAlpha.animateTo(
+            0f,
+            animationSpec = tween(600, easing = FastOutSlowInEasing)
+        )
+
+        // Phase 5: Settled
+        phase = EvolutionPhase.SETTLED
+    }
+
+    val context = LocalContext.current
+    val assetManager = context.assets
+
+    val oldAssetPath = remember(fromStage) {
+        AssetResolver.defaultAssetPath(assetManager, fromStage)
+    }
+    val newAssetPath = remember(toStage) {
+        AssetResolver.defaultAssetPath(assetManager, toStage)
+    }
+    val oldPainter = rememberAssetPainter(oldAssetPath, "evolution old form")
+    val newPainter = rememberAssetPainter(newAssetPath, "evolution new form")
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        // Glow behind old form
+        if (glowAlpha.value > 0.01f && oldPainter != null) {
+            Image(
+                painter = oldPainter,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = oldScale.value * 1.15f
+                        scaleY = oldScale.value * 1.15f
+                        alpha = glowAlpha.value * 0.5f
+                    }
+                    .blur(20.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        // Old form
+        if (oldAlpha.value > 0.01f && oldPainter != null) {
+            Image(
+                painter = oldPainter,
+                contentDescription = ExpConfig.evolutionStageName(fromStage),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        val idle = if (phase == EvolutionPhase.IDLE_OLD) breathingScale.value else 1f
+                        scaleX = oldScale.value * idle
+                        scaleY = oldScale.value * idle
+                        alpha = oldAlpha.value
+                    },
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        // Radial glow flash overlay — bright center fading smoothly to transparent edges
+        if (flashAlpha.value > 0.01f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = flashAlpha.value * 0.85f
+                    }
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                Color.White,
+                                Color.White.copy(alpha = 0.85f),
+                                Color.White.copy(alpha = 0.35f),
+                                Color.Transparent
+                            ),
+                            center = androidx.compose.ui.geometry.Offset.Unspecified,
+                            radius = 200f
+                        )
+                    )
+            )
+        }
+
+        // Glow behind new form
+        if (newGlowAlpha.value > 0.01f && newPainter != null) {
+            Image(
+                painter = newPainter,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = newScale.value * 1.2f
+                        scaleY = newScale.value * 1.2f
+                        alpha = newGlowAlpha.value * 0.6f
+                    }
+                    .blur(24.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        // New form
+        if (newAlpha.value > 0.01f && newPainter != null) {
+            Image(
+                painter = newPainter,
+                contentDescription = ExpConfig.evolutionStageName(toStage),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        val idle = if (phase == EvolutionPhase.SETTLED) breathingScale.value else 1f
+                        scaleX = newScale.value * idle
+                        scaleY = newScale.value * idle
+                        alpha = newAlpha.value
+                    },
+                contentScale = ContentScale.Fit
+            )
+        }
+    }
+}
+
+private enum class EvolutionPhase {
+    IDLE_OLD,
+    GLOW_BUILD,
+    FLASH_DISSOLVE,
+    REVEAL_NEW,
+    SETTLED
+}
+
+/**
+ * Animated label showing "Old Stage → New Stage" with a smooth crossfade.
+ */
+@Composable
+private fun AnimatedEvolutionLabel(
+    fromStage: Int,
+    toStage: Int
+) {
+    var showNewLabel by remember(fromStage, toStage) { mutableStateOf(false) }
+
+    val fromName = ExpConfig.evolutionStageName(fromStage)
+    val toName = ExpConfig.evolutionStageName(toStage)
+
+    val labelAlpha by animateFloatAsState(
+        targetValue = if (showNewLabel) 1f else 0f,
+        animationSpec = tween(600, easing = FastOutSlowInEasing),
+        label = "evolution label alpha"
+    )
+
+    LaunchedEffect(fromStage, toStage) {
+        delay(2000)
+        showNewLabel = true
+    }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Evolution Complete!",
+            style = MaterialTheme.typography.headlineMedium,
+            color = AppTheme.current.rewardText,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(2.dp))
+
+        if (!showNewLabel) {
+            Text(
+                text = fromName,
+                style = MaterialTheme.typography.titleMedium,
+                color = AppTheme.current.rewardTextMuted,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        if (showNewLabel) {
+            Text(
+                text = toName,
+                style = MaterialTheme.typography.titleLarge,
+                color = AppTheme.current.rewardAccent,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.graphicsLayer { alpha = labelAlpha }
+            )
         }
     }
 }

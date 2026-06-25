@@ -79,6 +79,7 @@ fun HomeScreen(
         onNavigateToRewardsLocked = onNavigateToRewardsLocked,
         onRenamePet = homeScreenViewModel::renamePet,
         onResetGameData = homeScreenViewModel::resetAllGameData,
+        onSetXpBeforeEvolution = homeScreenViewModel::setXpBeforeEvolution,
         onStreakClick = homeScreenViewModel::openGlobalStreakCalendar,
         onStreakCalendarDismiss = homeScreenViewModel::closeStreakCalendar,
         onPreviousStreakMonth = homeScreenViewModel::showPreviousStreakMonth,
@@ -99,6 +100,7 @@ fun HomeScreenContent(
     onNavigateToRewardsLocked: () -> Unit,
     onRenamePet: (String) -> Unit,
     onResetGameData: () -> Unit,
+    onSetXpBeforeEvolution: () -> Unit,
     onStreakClick: () -> Unit,
     onStreakCalendarDismiss: () -> Unit,
     onPreviousStreakMonth: () -> Unit,
@@ -156,6 +158,7 @@ fun HomeScreenContent(
                     verticalArrangement = Arrangement.spacedBy(DesignTokens.Section.horizontalPadding)
                 ) {
                     ResetGameButton(onResetClick = { showResetGameDialog = true })
+                    DevEvolutionButton(onClick = onSetXpBeforeEvolution)
                     TodayNourishmentSection(
                         habits = uiState.habits,
                         completedTodayXp = uiState.completedTodayXp,
@@ -337,6 +340,26 @@ private fun ResetGameButton(
     ) {
         Text(
             text = "Reset Game",
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+        )
+    }
+}
+
+@Composable
+private fun DevEvolutionButton(
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = AppTheme.current.blue,
+            contentColor = AppTheme.current.onSurface
+        ),
+        shape = RoundedCornerShape(DesignTokens.radius2xl)
+    ) {
+        Text(
+            text = "Dev: Test Evolution",
             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
         )
     }
@@ -543,6 +566,7 @@ private fun HomeScreenPreview() {
             onNavigateToRewardsLocked = {},
             onRenamePet = {},
             onResetGameData = {},
+            onSetXpBeforeEvolution = {},
             onStreakClick = {},
             onStreakCalendarDismiss = {},
             onPreviousStreakMonth = {},
