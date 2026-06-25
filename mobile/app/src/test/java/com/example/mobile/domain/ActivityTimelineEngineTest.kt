@@ -9,15 +9,12 @@ import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import com.example.mobile.presentation.ui.events.RewardUiEvent
 import com.example.mobile.presentation.ui.reward.RewardEventBus
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -31,11 +28,10 @@ import org.mockito.kotlin.whenever
 /**
  * Tests for ActivityTimelineEngine.
  *
- * Note: The engine uses its own CoroutineScope with Dispatchers.IO. Since
- * Dispatchers.IO cannot be replaced by the test framework, we use
- * UnconfinedTestDispatcher for the main dispatcher and verify calls
- * synchronously for methods that don't launch coroutines, and use
- * runTest + Thread.sleep for methods that do launch coroutines.
+ * The engine's default scope uses Dispatchers.IO, which would require real
+ * threads. We inject a CoroutineScope backed by UnconfinedTestDispatcher so
+ * launched coroutines run eagerly up to their first suspension point. This
+ * avoids the need for advanceUntilIdle() in most tests.
  */
 @kotlin.OptIn(ExperimentalCoroutinesApi::class)
 class ActivityTimelineEngineTest {
@@ -51,11 +47,11 @@ class ActivityTimelineEngineTest {
     private lateinit var engine: ActivityTimelineEngine
 
     private val testDispatcher = UnconfinedTestDispatcher()
+    private val testScope = CoroutineScope(testDispatcher)
     private val statsFlow = MutableStateFlow(com.example.mobile.data.local.entities.StatisticsEntity())
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         gameEventRepository = mock()
         rewardEventBus = mock()
         petRepository = mock()
@@ -84,13 +80,9 @@ class ActivityTimelineEngineTest {
             petRepository = petRepository,
             statisticsRepository = statisticsRepository,
             challengeRepository = challengeRepository,
-            context = context
+            context = context,
+            scopeCoroutineContext = testDispatcher
         )
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
     }
 
     // ==================== logHabitCompleted ====================
@@ -102,8 +94,6 @@ class ActivityTimelineEngineTest {
             xpEarned = 15L,
             coinsEarned = 10
         )
-        // Allow IO coroutine to complete
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -113,7 +103,6 @@ class ActivityTimelineEngineTest {
     @Test
     fun `logComboMilestone — delegates to repository`() = runTest {
         engine.logComboMilestone(combo = 5, bonusXp = 4L, multiplier = 1.4f)
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -123,7 +112,6 @@ class ActivityTimelineEngineTest {
     @Test
     fun `logAchievementUnlocked — delegates to repository`() = runTest {
         engine.logAchievementUnlocked(achievementName = "First Habit")
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -133,7 +121,6 @@ class ActivityTimelineEngineTest {
     @Test
     fun `logLevelUp — delegates to repository`() = runTest {
         engine.logLevelUp(level = 5, coins = 50)
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -143,7 +130,6 @@ class ActivityTimelineEngineTest {
     @Test
     fun `logDragonEvolution — delegates to repository`() = runTest {
         engine.logDragonEvolution(fromStage = 0, toStage = 1)
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -153,7 +139,6 @@ class ActivityTimelineEngineTest {
     @Test
     fun `logStreakMilestone — delegates to repository`() = runTest {
         engine.logStreakMilestone(streak = 7, chestType = ChestType.NORMAL)
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -168,7 +153,6 @@ class ActivityTimelineEngineTest {
             chestType = "RARE",
             hasCustomization = true
         )
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -181,7 +165,6 @@ class ActivityTimelineEngineTest {
             challengeName = "Three habit rhythm",
             rewards = listOf(ChallengeRewardDefinition.CoinReward(25))
         )
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -191,15 +174,40 @@ class ActivityTimelineEngineTest {
     @Test
     fun `start — logs first daily login on first visit`() = runTest {
         engine.start()
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
 
-    // Note: The "does not log twice same day" behavior is tested implicitly by the
-    // "logs first daily login on first visit" and "logs again when day changes" tests.
-    // Testing the negative case (same day = no log) requires complex mock isolation
-    // due to the engine's coroutine-based architecture and shared mock state.
+    @Test
+    fun `ensureFirstDailyLoginEvent — does not log twice on same day`() = runTest {
+        // Capture the dayKey that the engine writes via putString during first start
+        val dayKeyCapture = org.mockito.kotlin.argumentCaptor<String>()
+
+        // First run: trigger a login event so the engine writes today's dayKey
+        engine.start()
+
+        // Capture the dayKey that was written via putString
+        org.mockito.kotlin.verify(editor).putString(
+            org.mockito.kotlin.eq("last_login_day"),
+            dayKeyCapture.capture()
+        )
+        val actualDayKey = dayKeyCapture.firstValue
+
+        // Now set up logEvent tracking — count calls from the second start
+        var logCallCount = 0
+        org.mockito.kotlin.doAnswer { _ ->
+            logCallCount++
+            1L
+        }.whenever(gameEventRepository).logEvent(any())
+
+        // Make getString return the actual dayKey the engine produced
+        whenever(prefs.getString(any(), any())).thenReturn(actualDayKey)
+
+        // Second run: since lastLoginDay == today, no login event should be logged
+        engine.start()
+
+        assertEquals("logEvent should not be called when already logged today", 0, logCallCount)
+    }
 
     @Test
     fun `start — logs again when day changes`() = runTest {
@@ -207,7 +215,6 @@ class ActivityTimelineEngineTest {
         whenever(prefs.getString(any(), any())).thenReturn("2020-1-1")
 
         engine.start()
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -219,7 +226,6 @@ class ActivityTimelineEngineTest {
         // XP = 70, stage 0, next stage 1 (threshold 75)
         // Progress = (70 - 0) / (75 - 0) = 0.933... > 0.8
         engine.logEvolutionMilestoneNearing(toStage = 1, xp = 70L)
-        Thread.sleep(200)
 
         verify(gameEventRepository).logEvent(any())
     }
@@ -230,7 +236,6 @@ class ActivityTimelineEngineTest {
         whenever(prefs.getBoolean(any(), any())).thenReturn(true)
 
         engine.logEvolutionMilestoneNearing(toStage = 1, xp = 70L)
-        Thread.sleep(200)
 
         verify(gameEventRepository, never()).logEvent(any())
     }
@@ -240,7 +245,6 @@ class ActivityTimelineEngineTest {
         // XP = 10, stage 0, next stage 1 (threshold 75)
         // Progress = 10/75 = 0.133... < 0.8
         engine.logEvolutionMilestoneNearing(toStage = 1, xp = 10L)
-        Thread.sleep(200)
 
         verify(gameEventRepository, never()).logEvent(any())
     }
@@ -363,9 +367,7 @@ class ActivityTimelineEngineTest {
     fun `start — only runs once`() = runTest {
         // First call sets started=true, second call returns early
         engine.start()
-        Thread.sleep(200)
         engine.start()
-        Thread.sleep(200)
 
         // The engine's started flag prevents double-start, but since lastLoginDay is null,
         // the first start will log the event. The second start is a no-op.

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 @Singleton
 class ActivityTimelineEngine @Inject constructor(
@@ -25,10 +26,11 @@ class ActivityTimelineEngine @Inject constructor(
     private val petRepository: PetRepository,
     private val statisticsRepository: StatisticsRepository,
     private val challengeRepository: ChallengeRepository,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    scopeCoroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.IO
 ) {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val scope = CoroutineScope(scopeCoroutineContext)
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private var started = false
 

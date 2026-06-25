@@ -28,7 +28,9 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -182,6 +184,22 @@ fun StatisticsScreenContent(
                     value = "${stats.totalHabitsCompleted}",
                     icon = Icons.Default.TaskAlt,
                     accentColor = AppTheme.current.purple
+                )
+            }
+            item {
+                StatBentoCard(
+                    label = "Coins Earned",
+                    value = "${stats.totalCoins}",
+                    icon = Icons.Default.MonetizationOn,
+                    accentColor = AppTheme.current.gold
+                )
+            }
+            item {
+                StatBentoCard(
+                    label = "Best Combo",
+                    value = "${stats.bestCombo}x",
+                    icon = Icons.Default.Whatshot,
+                    accentColor = AppTheme.current.danger
                 )
             }
 

@@ -189,7 +189,7 @@ Reward processing rules:
 - `ExpReward` and `ChestReward.expAmount` add pet XP through `RewardManager.addPetExp()`, then check for level/evolution changes.
 - `ChestReward` grants customization through `InventoryItemRepository.grantItemByItemId()` or `grantItem()`.
 - `CustomizationReward` grants a configured customization item through `InventoryItemRepository.grantItemByItemId()`.
-- `LevelUpReward` currently adds coins in `RewardManager`; habit ViewModels also award level-up base coins directly before queueing `LevelUpReward`. Treat level-up coin double-award as an audit point when editing reward/economy logic.
+- `LevelUpReward` adds coins through `StatisticsRepository` in `RewardManager.rewardCompleted()`. ViewModels do NOT award level-up base coins directly — they only queue the reward. This is the single source of truth for level-up coins.
 - `AchievementReward` is already processed by `AchievementRewardProcessor`; `RewardManager` ignores its coin/exp fields to avoid double-processing.
 
 ## Achievement system
@@ -358,6 +358,6 @@ Important components:
 - `QUESTS.md` and `ENDGAME.md` document absent systems. Do not treat quests or a defined endgame as implemented.
 - `DAILY_REWARDS.md` now documents the rotating challenge system and the migration from obsolete daily goals.
 - `JournalEntryEntity` is legacy and not used by current DAOs or repositories.
-- Level-up coin double-award risk exists in current implementation: habit ViewModels award level-up base coins directly and also queue `LevelUpReward`, which `RewardManager` processes. Audit before changing reward/economy behavior.
+- ~~Level-up coin double-award risk exists in current implementation~~ (FIXED: `LevelUpReward` coins are now awarded solely in `RewardManager.rewardCompleted()`; ViewModels only queue the reward and do not award coins directly).
 - Some statistics are tracked but not prominently used/displayed (`bestStreak`, `rewardChestsAvailable`, `petAgeDays`, `lastStreakAwardedAt`).
 - `StatisticsEntity.currentStreak` is the persisted streak source; `globalStreak` mirrors it.
