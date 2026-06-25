@@ -203,6 +203,7 @@ fun PetScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(padding)
                     .background(AppTheme.current.background)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -261,71 +262,68 @@ private fun PetShowcase(
     val showcaseShape = RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp)
 
     Surface(
-        modifier = modifier,
+        modifier = modifier.clip(showcaseShape),
         shape = showcaseShape,
         color = AppTheme.current.surface,
         shadowElevation = DesignTokens.elevationSm
     ) {
-        Box(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp),
+                contentAlignment = Alignment.Center
             ) {
+                AnimatedPet(
+                    pet = pet,
+                    modifier = Modifier.fillMaxSize(),
+                    showNameOverlay = false,
+                    backgroundContentScale = ContentScale.Crop
+                )
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(320.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AnimatedPet(
-                        pet = pet,
-                        modifier = Modifier.fillMaxSize(),
-                        showNameOverlay = false,
-                        backgroundContentScale = ContentScale.Crop
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomCenter)
-                            .height(120.dp)
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        AppTheme.current.background.copy(alpha = DesignTokens.alpha70),
-                                        AppTheme.current.background
-                                    )
+                        .align(Alignment.BottomCenter)
+                        .height(120.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    AppTheme.current.background.copy(alpha = DesignTokens.alpha70),
+                                    AppTheme.current.background
                                 )
                             )
-                    )
+                        )
+                )
 
-                    MedallionConnectors(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = DesignTokens.space10)
-                            .fillMaxWidth()
-                            .height(MedallionSize)
-                    )
+                MoodPill(
+                    mood = mood,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = DesignTokens.space18, bottom = 86.dp)
+                )
+            }
 
-                    PetMedallion(
-                        level = level,
-                        name = name,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = DesignTokens.space10)
-                    )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(MedallionSize),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                MedallionConnectors(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(MedallionSize)
+                )
 
-                    MoodPill(
-                        mood = mood,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = DesignTokens.space18, bottom = 86.dp)
-                    )
-                }
+                PetMedallion(
+                    level = level,
+                    name = name
+                )
             }
         }
     }
