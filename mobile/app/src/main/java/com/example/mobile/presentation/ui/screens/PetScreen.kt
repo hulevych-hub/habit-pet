@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -313,22 +315,31 @@ private fun PetShowcase(
             }
 
             // Medallion overlays the bottom border of the background image
+            val medallionScale = 0.7f
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(MedallionSize)
-                    .align(Alignment.BottomCenter),
+                    .align(Alignment.BottomCenter)
+                    .offset(y = MedallionSize * medallionScale / 2),
                 contentAlignment = Alignment.TopCenter
             ) {
                 MedallionConnectors(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(MedallionSize)
+                        .graphicsLayer {
+                            scaleX = medallionScale
+                            scaleY = medallionScale
+                        }
                 )
 
                 PetMedallion(
                     level = level,
-                    name = name
+                    name = name,
+                    modifier = Modifier.graphicsLayer {
+                        scaleX = medallionScale
+                        scaleY = medallionScale
+                    }
                 )
             }
         }
