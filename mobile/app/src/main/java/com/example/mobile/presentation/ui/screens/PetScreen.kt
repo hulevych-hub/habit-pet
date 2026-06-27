@@ -215,7 +215,8 @@ fun PetScreenContent(
                     level = pet.level,
                     name = pet.name.ifBlank { "Baby Dragon" },
                     mood = DragonMood.from(pet.mood).displayName,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onNameClick = { showRenameDialog = true }
                 )
 
                 Spacer(modifier = Modifier.height(DesignTokens.Card.padding))
@@ -225,7 +226,6 @@ fun PetScreenContent(
                     progressFraction = progressFraction,
                     currentLevelXp = currentLevelXp,
                     xpRequiredForNextLevel = xpRequiredForNextLevel,
-                    onRenameClick = { showRenameDialog = true },
                     onEditCustomizationsClick = onNavigateToRewardsOwned
                 )
 
@@ -259,18 +259,17 @@ private fun PetShowcase(
     level: Int,
     name: String,
     mood: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNameClick: () -> Unit = {}
 ) {
     val showcaseShape = RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp)
 
-    Surface(
-        modifier = modifier.clip(showcaseShape),
-        shape = showcaseShape,
-        color = AppTheme.current.surface,
-        shadowElevation = DesignTokens.elevationSm
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
+    Box(modifier = modifier) {
+        Surface(
+            modifier = Modifier.fillMaxWidth().clip(showcaseShape),
+            shape = showcaseShape,
+            color = AppTheme.current.surface,
+            shadowElevation = DesignTokens.elevationSm
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -304,44 +303,46 @@ private fun PetShowcase(
                                 )
                             )
                     )
-
-                    MoodPill(
-                        mood = mood,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = DesignTokens.space18, bottom = 86.dp)
-                    )
                 }
             }
+        }
 
-            // Medallion overlays the bottom border of the background image
-            val medallionScale = 0.7f
-            Box(
+        // Medallion overlays the bottom border of the background image
+        val medallionScale = 0.7f
+        val medallionOffsetY = MedallionSize * medallionScale * 0.5f
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .offset(y = medallionOffsetY),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            MedallionConnectors(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .offset(y = MedallionSize * medallionScale / 2),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                MedallionConnectors(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(MedallionSize)
-                        .graphicsLayer {
-                            scaleX = medallionScale
-                            scaleY = medallionScale
-                        }
-                )
-
-                PetMedallion(
-                    level = level,
-                    name = name,
-                    modifier = Modifier.graphicsLayer {
+                    .height(MedallionSize)
+                    .graphicsLayer {
                         scaleX = medallionScale
                         scaleY = medallionScale
                     }
-                )
-            }
+            )
+
+            PetMedallion(
+                level = level,
+                name = name,
+                modifier = Modifier.graphicsLayer {
+                    scaleX = medallionScale
+                    scaleY = medallionScale
+                },
+                onNameClick = onNameClick
+            )
+
+            MoodPill(
+                mood = mood,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = DesignTokens.space12, top = 52.dp)
+            )
         }
     }
 }
@@ -355,7 +356,7 @@ private fun MedallionConnectors(modifier: Modifier = Modifier) {
         val centerY = size.height / 2f
         val centerX = size.width / 2f
         val medallionRadius = MedallionSize.toPx() / 2f
-        val connectorHalfWidth = 132.dp.toPx()
+        val connectorHalfWidth = 184.dp.toPx()
         val leftMedallionEdge = centerX - medallionRadius
         val rightMedallionEdge = centerX + medallionRadius
         val leftEnd = centerX - connectorHalfWidth
@@ -398,7 +399,8 @@ private fun MedallionConnectors(modifier: Modifier = Modifier) {
 private fun PetMedallion(
     level: Int,
     name: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNameClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
@@ -443,7 +445,9 @@ private fun PetMedallion(
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = DesignTokens.Card.padding)
+                    modifier = Modifier
+                        .padding(horizontal = DesignTokens.Card.padding)
+                        .clickable(onClick = onNameClick)
                 )
             }
         }
@@ -528,7 +532,6 @@ private fun PetDetailsPanel(
     progressFraction: Float,
     currentLevelXp: Long,
     xpRequiredForNextLevel: Long,
-    onRenameClick: () -> Unit,
     onEditCustomizationsClick: () -> Unit
 ) {
     Column(
@@ -546,46 +549,12 @@ private fun PetDetailsPanel(
             fontWeight = FontWeight.Medium
         )
 
-        PetBondButton(onClick = onRenameClick)
-
         AttributeCard(
             pet = pet,
             onEditClick = onEditCustomizationsClick
         )
 
         LevelUpButton(progressFraction = progressFraction)
-    }
-}
-
-@Composable
-private fun PetBondButton(onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .clip(DesignTokens.cardCornerCircle)
-            .background(AppTheme.current.card)
-            .border(DesignTokens.strokeMedium, AppTheme.current.gold.copy(alpha = DesignTokens.alpha62), DesignTokens.cardCornerCircle)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DesignTokens.space6)
-        ) {
-            Icon(
-                imageVector = Icons.Default.FavoriteBorder,
-                contentDescription = null,
-                tint = AppTheme.current.gold,
-                modifier = Modifier.size(DesignTokens.Icon.sizeXs)
-            )
-            Text(
-                text = "Pet bond",
-                color = AppTheme.current.ink,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
     }
 }
 
