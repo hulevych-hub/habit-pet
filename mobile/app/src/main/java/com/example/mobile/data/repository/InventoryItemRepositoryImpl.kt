@@ -114,4 +114,7 @@ class InventoryItemRepositoryImpl @Inject constructor(
 
     override fun getUnownedItemsByRarity(rarity: Rarity): Flow<List<InventoryItemEntity>> =
         inventoryItemDao.getUnownedItemsByRarity(rarity)
+
+    override fun getAllItems(): Flow<List<InventoryItemEntity>> =
+        inventoryItemDao.getAllItems()
 }

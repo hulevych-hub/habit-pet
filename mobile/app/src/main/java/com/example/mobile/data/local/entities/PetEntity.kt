@@ -17,5 +17,25 @@ data class PetEntity(
     @ColumnInfo(name = "equipped_background") var equippedBackground: String? = null,
     @ColumnInfo(name = "equipped_aura") var equippedAura: String? = null,
     @ColumnInfo(name = "mood") var mood: String = "Calm",
-    @ColumnInfo(name = "creation_date") var creationDate: Long = System.currentTimeMillis()
-)
+    @ColumnInfo(name = "creation_date") var creationDate: Long = System.currentTimeMillis(),
+    @ColumnInfo(name = "active_title_id") var activeTitleId: String? = null,
+    @ColumnInfo(name = "unlocked_title_ids_json") var unlockedTitleIdsJson: String = "[]",
+    @ColumnInfo(name = "equipped_frame") var equippedFrame: String? = null,
+    @ColumnInfo(name = "unlocked_frames_json") var unlockedFramesJson: String = "[]",
+    @ColumnInfo(name = "completed_sets_json") var completedSetsJson: String = "[]"
+) {
+    companion object {
+        fun parseUnlockedIds(value: String): Set<String> = value
+            .trim()
+            .trim('[', ']')
+            .split(',')
+            .mapNotNull { it.trim().trim('"').takeIf { it.isNotEmpty() } }
+            .toSet()
+
+        fun unlockedIdsToJson(ids: Set<String>): String = if (ids.isEmpty()) {
+            "[]"
+        } else {
+            ids.sorted().joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
+        }
+    }
+}

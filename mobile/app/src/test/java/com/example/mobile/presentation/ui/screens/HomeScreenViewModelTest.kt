@@ -1,11 +1,13 @@
 package com.example.mobile.presentation.ui.screens
 
 import com.example.mobile.domain.ChallengeEngine
+import com.example.mobile.domain.DailyLoginStreakEngine
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
+import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.StatisticsRepository
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +44,8 @@ class HomeScreenViewModelTest {
     private lateinit var achievementRepository: AchievementRepository
     private lateinit var challengeEngine: ChallengeEngine
     private lateinit var streakEngine: StreakEngine
+    private lateinit var dailyLoginStreakEngine: DailyLoginStreakEngine
+    private lateinit var inventoryItemRepository: InventoryItemRepository
     private lateinit var viewModel: HomeScreenViewModel
 
     private val statsFlow = MutableStateFlow(com.example.mobile.data.local.entities.StatisticsEntity())
@@ -58,6 +62,8 @@ class HomeScreenViewModelTest {
         achievementRepository = mock()
         challengeEngine = mock()
         streakEngine = mock()
+        dailyLoginStreakEngine = mock()
+        inventoryItemRepository = mock()
 
         whenever(statisticsRepository.getStatistics()).thenReturn(statsFlow)
         whenever(habitRepository.getAllHabits()).thenReturn(flowOf(emptyList()))
@@ -75,7 +81,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
 
         val job = launch {
@@ -94,7 +100,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
 
         viewModel.resetAllGameData()
@@ -113,7 +119,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
 
         viewModel.claimChallenge()
@@ -129,7 +135,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -146,7 +152,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -162,7 +168,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -181,7 +187,7 @@ class HomeScreenViewModelTest {
         viewModel = HomeScreenViewModel(
             statisticsRepository, habitRepository, petRepository,
             habitCompletionRepository, achievementRepository,
-            challengeEngine, streakEngine
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
         )
         testDispatcher.scheduler.advanceUntilIdle()
 

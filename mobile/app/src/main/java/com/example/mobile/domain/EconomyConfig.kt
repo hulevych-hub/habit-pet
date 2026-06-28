@@ -365,6 +365,16 @@ object EconomyConfig {
     const val ACHIEVEMENT_COMPLETIONS_2500_COINS: Int = 1000
     const val ACHIEVEMENT_STREAK_365_COINS: Int = 2000
 
+    /** Achievement: Reward systems */
+    const val ACHIEVEMENT_LOGINS_100_COINS: Int = 1500
+    const val ACHIEVEMENT_LOGINS_365_COINS: Int = 5000
+    const val ACHIEVEMENT_TITLES_1_COINS: Int = 100
+    const val ACHIEVEMENT_TITLES_3_COINS: Int = 300
+    const val ACHIEVEMENT_FRAMES_1_COINS: Int = 100
+    const val ACHIEVEMENT_FRAMES_3_COINS: Int = 300
+    const val ACHIEVEMENT_SETS_1_COINS: Int = 250
+    const val ACHIEVEMENT_SETS_3_COINS: Int = 750
+
     private fun ceilDiv(value: Int, divisor: Int): Int {
         require(divisor > 0) { "Divisor must be positive" }
         return (value + divisor - 1) / divisor

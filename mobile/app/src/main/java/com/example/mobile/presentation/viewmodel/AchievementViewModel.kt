@@ -123,6 +123,15 @@ class AchievementViewModel @Inject constructor(
     private val totalCoins: StateFlow<Int> = statistics.map { it.totalCoins }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
+    private val unlockedTitleCount: StateFlow<Int> = pet.map { PetEntity.parseUnlockedIds(it.unlockedTitleIdsJson).size }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val unlockedFrameCount: StateFlow<Int> = pet.map { PetEntity.parseUnlockedIds(it.unlockedFramesJson).size }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val completedSetCount: StateFlow<Int> = pet.map { PetEntity.parseUnlockedIds(it.completedSetsJson).size }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     init {
         loadAchievements()
     }
@@ -207,7 +216,10 @@ class AchievementViewModel @Inject constructor(
         stats: StatisticsEntity,
         petState: PetEntity,
         ownedCustomizationCount: Int,
-        currentHabitCount: Int
+        currentHabitCount: Int,
+        unlockedTitleCount: Int = 0,
+        unlockedFrameCount: Int = 0,
+        completedSetCount: Int = 0
     ): Int {
         val definition = AchievementsConfig.achievementById(achievement.id)
         if (achievement.isUnlocked && definition?.targetValue != null) {
@@ -227,6 +239,9 @@ class AchievementViewModel @Inject constructor(
             AchievementProgressSource.PET_AGE_DAYS -> stats.petAgeDays
             AchievementProgressSource.TOTAL_COINS -> stats.totalCoins
             AchievementProgressSource.FREEZES_USED -> StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).size
+            AchievementProgressSource.TITLES_UNLOCKED -> unlockedTitleCount
+            AchievementProgressSource.FRAMES_UNLOCKED -> unlockedFrameCount
+            AchievementProgressSource.SETS_COMPLETED -> completedSetCount
             AchievementProgressSource.CHALLENGES_COMPLETED,
             AchievementProgressSource.CHESTS_OPENED,
             AchievementProgressSource.DAILY_LOGINS,

@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
@@ -26,6 +28,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -50,6 +53,7 @@ import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.domain.PetTitleConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
@@ -87,7 +91,8 @@ fun HomeScreen(
         streakCalendarState = streakCalendarState,
         streakFreezePrompt = streakFreezePrompt,
         onUseStreakFreeze = homeScreenViewModel::usePendingStreakFreeze,
-        onDismissStreakFreeze = homeScreenViewModel::dismissStreakFreezePrompt
+        onDismissStreakFreeze = homeScreenViewModel::dismissStreakFreezePrompt,
+        onEquipTitle = homeScreenViewModel::equipTitle
     )
 }
 
@@ -108,12 +113,14 @@ fun HomeScreenContent(
     streakCalendarState: StreakCalendarUiState?,
     streakFreezePrompt: com.example.mobile.domain.StreakEngine.StreakFreezePrompt?,
     onUseStreakFreeze: () -> Unit,
-    onDismissStreakFreeze: () -> Unit
+    onDismissStreakFreeze: () -> Unit,
+    onEquipTitle: (String?) -> Unit
 ) {
     val pet = uiState.pet
     val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
     var showMandatoryPetNameDialog by remember { mutableStateOf(false) }
     var showResetGameDialog by remember { mutableStateOf(false) }
+    var showTitlePicker by remember { mutableStateOf(false) }
     var petNameDraft by remember { mutableStateOf(pet.name) }
 
     LaunchedEffect(shouldRequestPetName) { showMandatoryPetNameDialog = shouldRequestPetName }
@@ -148,7 +155,12 @@ fun HomeScreenContent(
                     message = "Waking up your dragon..."
                 )
             } else {
-                PetSummary(pet = pet)
+                PetSummary(
+                    pet = pet,
+                    activeTitleDisplay = uiState.activeTitleDisplay,
+                    unlockedTitleIds = uiState.unlockedTitleIds,
+                    onEditTitle = { showTitlePicker = true }
+                )
 
                 Column(
                     modifier = Modifier
@@ -243,11 +255,93 @@ fun HomeScreenContent(
             onPreviousMonth = onPreviousStreakMonth,
             onNextMonth = onNextStreakMonth
         )
+
+        if (showTitlePicker) {
+            TitlePickerDialog(
+                unlockedTitleIds = uiState.unlockedTitleIds,
+                activeTitleId = pet.activeTitleId,
+                onEquip = { titleId ->
+                    onEquipTitle(titleId)
+                    showTitlePicker = false
+                },
+                onDismiss = { showTitlePicker = false }
+            )
+        }
     }
 }
 
 @Composable
-private fun PetSummary(pet: PetEntity) {
+private fun TitlePickerDialog(
+    unlockedTitleIds: Set<String>,
+    activeTitleId: String?,
+    onEquip: (String?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Choose Title") },
+        text = {
+            val unlockedTitles = PetTitleConfig.titles.filter { it.id in unlockedTitleIds }
+            Column {
+                for (title in unlockedTitles) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onEquip(title.id) }
+                            .padding(vertical = DesignTokens.space8),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (title.id == activeTitleId)
+                                Icons.Default.CheckCircle
+                            else
+                                Icons.Default.RadioButtonUnchecked,
+                            contentDescription = null,
+                            tint = if (title.id == activeTitleId)
+                                AppTheme.current.ink
+                            else
+                                AppTheme.current.ink.copy(alpha = 0.4f),
+                            modifier = Modifier.size(DesignTokens.space24)
+                        )
+                        Spacer(modifier = Modifier.width(DesignTokens.space8))
+                        Column {
+                            Text(
+                                text = title.displayText,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (title.id == activeTitleId) FontWeight.Bold else FontWeight.Normal
+                            )
+                            Text(
+                                text = title.description,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = AppTheme.current.ink.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            if (activeTitleId != null) {
+                TextButton(onClick = { onEquip(null) }) {
+                    Text("Clear title")
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+@Composable
+private fun PetSummary(
+    pet: PetEntity,
+    activeTitleDisplay: String?,
+    unlockedTitleIds: Set<String>,
+    onEditTitle: () -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = AppTheme.current.card,
@@ -283,13 +377,41 @@ private fun PetSummary(pet: PetEntity) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = pet.name.ifBlank { "Baby Dragon" },
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = AppTheme.current.ink,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = pet.name.ifBlank { "Baby Dragon" },
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = AppTheme.current.ink,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    if (activeTitleDisplay != null) {
+                        Spacer(modifier = Modifier.width(DesignTokens.space6))
+                        Text(
+                            text = activeTitleDisplay,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = AppTheme.current.ink.copy(alpha = 0.6f),
+                            maxLines = 1
+                        )
+                    }
+                    if (unlockedTitleIds.isNotEmpty()) {
+                        Spacer(modifier = Modifier.width(DesignTokens.space4))
+                        IconButton(
+                            onClick = onEditTitle,
+                            modifier = Modifier.size(DesignTokens.space24)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Choose title",
+                                tint = AppTheme.current.ink.copy(alpha = 0.5f),
+                                modifier = Modifier.size(DesignTokens.space16)
+                            )
+                        }
+                    }
+                }
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(DesignTokens.space8),
@@ -574,7 +696,8 @@ private fun HomeScreenPreview() {
             streakCalendarState = null,
             streakFreezePrompt = null,
             onUseStreakFreeze = {},
-            onDismissStreakFreeze = {}
+            onDismissStreakFreeze = {},
+            onEquipTitle = {}
         )
     }
 }

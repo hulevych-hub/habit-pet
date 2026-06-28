@@ -1,5 +1,6 @@
 package com.example.mobile.data.local.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -25,7 +26,10 @@ data class StatisticsEntity(
     var lastHabitCompletionTimestamp: Long = 0L,
     var lastStreakFreezeDate: Long = 0L,
     var lastFrozenStreakDate: Long = 0L,
-    var streakFreezeDatesJson: String = "[]"
+    var streakFreezeDatesJson: String = "[]",
+    @ColumnInfo(name = "daily_login_streak") var dailyLoginStreak: Int = 0,
+    @ColumnInfo(name = "last_daily_login_date") var lastDailyLoginDate: Long = 0L,
+    @ColumnInfo(name = "last_daily_login_reward_day") var lastDailyLoginRewardDay: Int = 0
 ) {
     companion object {
         fun parseFreezeDates(value: String): Set<Long> = value

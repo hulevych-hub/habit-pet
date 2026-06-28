@@ -20,8 +20,8 @@ interface StatisticsDao {
     suspend fun updateStatistics(statistics: StatisticsEntity): Int
 
     @Query("""
-UPDATE statistics 
-SET 
+UPDATE statistics
+SET
     totalCoins = 0,
     totalCompletions = 0,
     currentStreak = 0,
@@ -38,6 +38,9 @@ SET
     lastStreakFreezeDate = 0,
     lastFrozenStreakDate = 0,
     streakFreezeDatesJson = '[]',
+    daily_login_streak = 0,
+    last_daily_login_date = 0,
+    last_daily_login_reward_day = 0,
     lastUpdated = 0
 """)
     suspend fun reset()

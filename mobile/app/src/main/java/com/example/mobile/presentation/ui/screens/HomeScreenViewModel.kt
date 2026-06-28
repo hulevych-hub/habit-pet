@@ -5,12 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.AvatarFrameConfig
 import com.example.mobile.domain.ChallengeEngine
+import com.example.mobile.domain.DailyLoginStreakEngine
+import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.ExpConfig
+import com.example.mobile.domain.PetTitleConfig
 import com.example.mobile.domain.StreakEngine
 import com.example.mobile.domain.repository.AchievementRepository
 import com.example.mobile.domain.repository.HabitCompletionRepository
 import com.example.mobile.domain.repository.HabitRepository
+import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.domain.repository.ChallengeUiState
 import com.example.mobile.domain.repository.StatisticsRepository
@@ -41,7 +46,9 @@ class HomeScreenViewModel @Inject constructor(
     private val habitCompletionRepository: HabitCompletionRepository,
     private val achievementRepository: AchievementRepository,
     private val challengeEngine: ChallengeEngine,
-    private val streakEngine: StreakEngine
+    private val streakEngine: StreakEngine,
+    private val dailyLoginStreakEngine: DailyLoginStreakEngine,
+    private val inventoryItemRepository: InventoryItemRepository
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(true)
@@ -67,6 +74,7 @@ class HomeScreenViewModel @Inject constructor(
     /**
      * Sets pet XP to one checkbox-habit completion (10 XP) before the next evolution threshold,
      * so completing any checkbox habit triggers a level-up + evolution transition.
+     * Also unlocks all customization items, titles, and frames for testing.
      */
     fun setXpBeforeEvolution() {
         viewModelScope.launch {
@@ -82,6 +90,22 @@ class HomeScreenViewModel @Inject constructor(
             petRepository.updatePet(
                 currentPet.copy(id = 1, xp = targetXp, level = newLevel, evolutionStage = newStage)
             )
+
+            // Grant all customization items from EquipableConfig catalog
+            for (equipable in EquipableConfig.equipables) {
+                inventoryItemRepository.grantItemByItemId(equipable.id)
+            }
+
+            // Unlock all titles and frames on PetEntity
+            val allTitleIds = PetTitleConfig.titles.map { it.id }.toSet()
+            val allFrameIds = AvatarFrameConfig.frames.map { it.id }.toSet()
+            petRepository.updatePet(
+                pet.value.copy(
+                    id = 1,
+                    unlockedTitleIdsJson = PetEntity.unlockedIdsToJson(allTitleIds),
+                    unlockedFramesJson = PetEntity.unlockedIdsToJson(allFrameIds)
+                )
+            )
         }
     }
 
@@ -89,6 +113,13 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val currentPet = pet.value
             petRepository.updatePet(currentPet.copy(id = 1, name = name))
+        }
+    }
+
+    fun equipTitle(titleId: String?) {
+        viewModelScope.launch {
+            val currentPet = pet.value ?: PetEntity(id = 1)
+            petRepository.updatePet(currentPet.copy(id = 1, activeTitleId = titleId))
         }
     }
 
@@ -242,6 +273,10 @@ class HomeScreenViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            dailyLoginStreakEngine.checkAndUpdateLoginStreak(System.currentTimeMillis())
+        }
+
+        viewModelScope.launch {
             combine(
                 statistics,
                 habits,
@@ -278,6 +313,8 @@ class HomeScreenViewModel @Inject constructor(
         todayCompletionXp,
         todayPartialState
     ) { stats, habList, petState, completionXp, partialState ->
+        val unlockedTitles = PetEntity.parseUnlockedIds(petState.unlockedTitleIdsJson)
+        val titleDisplay = petState.activeTitleId?.let { PetTitleConfig.displayName(it) }
         UiState(
             globalStreak = stats.currentStreak,
             habits = habList,
@@ -288,7 +325,9 @@ class HomeScreenViewModel @Inject constructor(
             currentCombo = activeCombo(stats),
             lastHabitCompletionTimestamp = stats.lastHabitCompletionTimestamp,
             globalStreakCompletedToday = partialState.first,
-            globalStreakPartialToday = partialState.second
+            globalStreakPartialToday = partialState.second,
+            activeTitleDisplay = titleDisplay,
+            unlockedTitleIds = unlockedTitles
         )
     }
     .stateIn(
@@ -304,7 +343,9 @@ class HomeScreenViewModel @Inject constructor(
             currentCombo = 0,
             lastHabitCompletionTimestamp = 0L,
             globalStreakCompletedToday = false,
-            globalStreakPartialToday = false
+            globalStreakPartialToday = false,
+            activeTitleDisplay = null,
+            unlockedTitleIds = emptySet()
         )
     )
 
@@ -318,7 +359,9 @@ class HomeScreenViewModel @Inject constructor(
         val currentCombo: Int,
         val lastHabitCompletionTimestamp: Long,
         val globalStreakCompletedToday: Boolean,
-        val globalStreakPartialToday: Boolean = false
+        val globalStreakPartialToday: Boolean = false,
+        val activeTitleDisplay: String? = null,
+        val unlockedTitleIds: Set<String> = emptySet()
     )
 
     private fun activeCombo(stats: StatisticsEntity): Int {

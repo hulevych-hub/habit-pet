@@ -1,6 +1,7 @@
 package com.example.mobile.domain
 
 import android.util.Log
+import com.example.mobile.data.local.entities.PetEntity
 import com.example.mobile.data.local.entities.StatisticsEntity
 import com.example.mobile.domain.GameEventType
 import com.example.mobile.domain.repository.AchievementRepository
@@ -61,6 +62,9 @@ class AchievementEngine @Inject constructor(
         observeFreezesUsed()
         observeEventCounts()
         observeAchievementsClaimed()
+        observeTitlesUnlocked()
+        observeFramesUnlocked()
+        observeSetsCompleted()
     }
 
     private fun observeHabitCount() {
@@ -240,6 +244,42 @@ class AchievementEngine @Inject constructor(
                 updateAchievementProgress(AchievementProgressSource.ACHIEVEMENTS_CLAIMED, claimed)
                 delay(5_000)
             }
+        }
+    }
+
+    private fun observeTitlesUnlocked() {
+        scope.launch {
+            petRepository.getPet()
+                .map { PetEntity.parseUnlockedIds(it.unlockedTitleIdsJson).size }
+                .distinctUntilChanged()
+                .collectLatest { count ->
+                    Log.d("AchievementEngine", "Titles unlocked = $count")
+                    updateAchievementProgress(AchievementProgressSource.TITLES_UNLOCKED, count)
+                }
+        }
+    }
+
+    private fun observeFramesUnlocked() {
+        scope.launch {
+            petRepository.getPet()
+                .map { PetEntity.parseUnlockedIds(it.unlockedFramesJson).size }
+                .distinctUntilChanged()
+                .collectLatest { count ->
+                    Log.d("AchievementEngine", "Frames unlocked = $count")
+                    updateAchievementProgress(AchievementProgressSource.FRAMES_UNLOCKED, count)
+                }
+        }
+    }
+
+    private fun observeSetsCompleted() {
+        scope.launch {
+            petRepository.getPet()
+                .map { PetEntity.parseUnlockedIds(it.completedSetsJson).size }
+                .distinctUntilChanged()
+                .collectLatest { count ->
+                    Log.d("AchievementEngine", "Sets completed = $count")
+                    updateAchievementProgress(AchievementProgressSource.SETS_COMPLETED, count)
+                }
         }
     }
 

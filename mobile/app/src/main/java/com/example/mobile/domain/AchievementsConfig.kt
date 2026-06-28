@@ -86,6 +86,16 @@ object AchievementsConfig {
     const val COMPLETIONS_2500 = "completions_2500"
     const val STREAK_365 = "streak_365"
 
+    // Reward system achievements
+    const val LOGINS_100 = "logins_100"
+    const val LOGINS_365 = "logins_365"
+    const val TITLES_1 = "titles_1"
+    const val TITLES_3 = "titles_3"
+    const val FRAMES_1 = "frames_1"
+    const val FRAMES_3 = "frames_3"
+    const val SETS_COMPLETED_1 = "sets_completed_1"
+    const val SETS_COMPLETED_3 = "sets_completed_3"
+
     data class AchievementDefinition(
         val id: String,
         val difficultyRank: Int = 0,
@@ -179,7 +189,16 @@ object AchievementsConfig {
         STREAK_365 to 76,
         PET_AGE_365 to 77,
         CELESTIAL_AURA to 78,
-        ACHIEVEMENTS_CLAIMED_50 to 79
+        ACHIEVEMENTS_CLAIMED_50 to 79,
+        // Reward system achievements
+        LOGINS_100 to 80,
+        TITLES_1 to 81,
+        FRAMES_1 to 82,
+        SETS_COMPLETED_1 to 83,
+        TITLES_3 to 84,
+        FRAMES_3 to 85,
+        SETS_COMPLETED_3 to 86,
+        LOGINS_365 to 87
     )
 
     val achievements: List<AchievementDefinition> = listOf(
@@ -1100,6 +1119,102 @@ object AchievementsConfig {
             rewards = listOf(
                 AchievementReward.ChestReward(ChestType.LEGENDARY),
                 AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENTS_CLAIMED_50_COINS)
+            )
+        ),
+
+        // ============================
+        // REWARD SYSTEM ACHIEVEMENTS
+        // ============================
+        AchievementDefinition(
+            id = LOGINS_100,
+            name = "Century of Welcome",
+            description = "Log in on 100 different days",
+            icon = "logins_100",
+            progressSource = AchievementProgressSource.DAILY_LOGINS,
+            targetValue = 100,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LOGINS_100_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = TITLES_1,
+            name = "Title Seeker",
+            description = "Unlock your first title",
+            icon = "titles_1",
+            progressSource = AchievementProgressSource.TITLES_UNLOCKED,
+            targetValue = 1,
+            rewards = listOf(
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_TITLES_1_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = FRAMES_1,
+            name = "Frame Collector",
+            description = "Unlock your first avatar frame",
+            icon = "frames_1",
+            progressSource = AchievementProgressSource.FRAMES_UNLOCKED,
+            targetValue = 1,
+            rewards = listOf(
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_FRAMES_1_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = SETS_COMPLETED_1,
+            name = "Set Complete",
+            description = "Complete your first customization set",
+            icon = "sets_completed_1",
+            progressSource = AchievementProgressSource.SETS_COMPLETED,
+            targetValue = 1,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.EPIC),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_SETS_1_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = TITLES_3,
+            name = "Title Hoarder",
+            description = "Unlock 3 titles",
+            icon = "titles_3",
+            progressSource = AchievementProgressSource.TITLES_UNLOCKED,
+            targetValue = 3,
+            rewards = listOf(
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_TITLES_3_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = FRAMES_3,
+            name = "Frame Hoarder",
+            description = "Unlock 3 avatar frames",
+            icon = "frames_3",
+            progressSource = AchievementProgressSource.FRAMES_UNLOCKED,
+            targetValue = 3,
+            rewards = listOf(
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_FRAMES_3_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = SETS_COMPLETED_3,
+            name = "Set Master",
+            description = "Complete 3 customization sets",
+            icon = "sets_completed_3",
+            progressSource = AchievementProgressSource.SETS_COMPLETED,
+            targetValue = 3,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_SETS_3_COINS)
+            )
+        ),
+        AchievementDefinition(
+            id = LOGINS_365,
+            name = "Year of Welcome",
+            description = "Log in on 365 different days",
+            icon = "logins_365",
+            progressSource = AchievementProgressSource.DAILY_LOGINS,
+            targetValue = 365,
+            rewards = listOf(
+                AchievementReward.ChestReward(ChestType.LEGENDARY),
+                AchievementReward.CoinReward(EconomyConfig.ACHIEVEMENT_LOGINS_365_COINS)
             )
         )
     ).mapIndexed { index, achievement ->

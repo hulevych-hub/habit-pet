@@ -117,7 +117,7 @@ private fun AchievementScreenContent(
     claimableCount: Int,
     isClaiming: Boolean,
     rewardLabels: (AchievementEntity) -> List<String>,
-    progressFor: (AchievementEntity, StatisticsEntity, PetEntity, Int, Int) -> Int,
+    progressFor: (AchievementEntity, StatisticsEntity, PetEntity, Int, Int, Int, Int, Int) -> Int,
     progressLabel: (Int, AchievementEntity) -> String,
     stats: StatisticsEntity,
     petState: PetEntity,
@@ -224,7 +224,10 @@ private fun AchievementScreenContent(
                         stats,
                         petState,
                         ownedCustomizations,
-                        currentHabitCount
+                        currentHabitCount,
+                        0,
+                        0,
+                        0
                     )
                     AchievementHallCard(
                         achievement = achievement,
@@ -867,7 +870,7 @@ private fun AchievementScreenPreview() {
             claimableCount = 1,
             isClaiming = false,
             rewardLabels = { listOf("+50 coins") },
-            progressFor = { achievement, _, _, _, _ -> achievement.progress },
+            progressFor = { achievement, _, _, _, _, _, _, _ -> achievement.progress },
             progressLabel = { progress, achievement -> "$progress/${AchievementsConfig.achievementById(achievement.id)?.targetValue ?: 1}" },
             stats = com.example.mobile.data.local.entities.StatisticsEntity(id = 1),
             petState = PetEntity(id = 1),

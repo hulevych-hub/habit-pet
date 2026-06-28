@@ -11,7 +11,11 @@ import com.example.mobile.data.local.database.MIGRATION_14_15
 import com.example.mobile.data.local.database.MIGRATION_17_18
 import com.example.mobile.data.local.database.MIGRATION_18_19
 import com.example.mobile.data.local.database.MIGRATION_19_20
+import com.example.mobile.data.local.database.MIGRATION_20_21
+import com.example.mobile.data.local.database.MIGRATION_21_22
 import com.example.mobile.data.local.database.StatisticsDatabaseInitializer
+import com.example.mobile.domain.CollectionSetEngine
+import com.example.mobile.domain.DailyLoginStreakEngine
 import com.example.mobile.domain.DragonMoodEngine
 import com.example.mobile.domain.ChallengeEngine
 import com.example.mobile.domain.StreakEngine
@@ -44,7 +48,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "habit_pet_database"
         )
-        .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_17_18, MIGRATION_18_19, MIGRATION_19_20)
+        .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_17_18, MIGRATION_18_19, MIGRATION_19_20, MIGRATION_20_21, MIGRATION_21_22)
         .fallbackToDestructiveMigration()
         .build()
     }
@@ -205,6 +209,34 @@ object DatabaseModule {
             activityTimelineEngine,
             dragonMoodEngine,
             challengeRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideDailyLoginStreakEngine(
+        statisticsRepository: StatisticsRepository,
+        rewardQueue: RewardQueue
+    ): DailyLoginStreakEngine {
+        return DailyLoginStreakEngine(
+            statisticsRepository,
+            rewardQueue
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideCollectionSetEngine(
+        inventoryItemRepository: InventoryItemRepository,
+        petRepository: PetRepository,
+        statisticsRepository: StatisticsRepository,
+        rewardQueue: RewardQueue
+    ): CollectionSetEngine {
+        return CollectionSetEngine(
+            inventoryItemRepository,
+            petRepository,
+            statisticsRepository,
+            rewardQueue
         )
     }
 
