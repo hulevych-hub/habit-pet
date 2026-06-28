@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -69,12 +70,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobile.R
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.AvatarFrameConfig
 import com.example.mobile.domain.CustomizationTypes
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.repository.PetRepository
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.AvatarFrameOverlay
 import com.example.mobile.presentation.ui.components.ErrorStateCard
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
@@ -304,6 +307,19 @@ private fun PetShowcase(
                             )
                     )
                 }
+            }
+        }
+
+        // Avatar frame overlay
+        pet.equippedFrame?.let { frameId ->
+            AvatarFrameConfig.frameById(frameId)?.let { frame ->
+                AvatarFrameOverlay(
+                    frame = frame,
+                    shape = showcaseShape,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(320.dp)
+                )
             }
         }
 
@@ -623,6 +639,13 @@ private fun AttributeCard(
                 iconTint = AppTheme.current.purple,
                 valueColor = AppTheme.current.ink,
                 secondaryColor = AppTheme.current.mint
+            )
+            AttributeRow(
+                icon = Icons.Default.AutoAwesome,
+                label = "Frame",
+                value = pet.equippedFrame?.let { AvatarFrameConfig.displayName(it) } ?: "None",
+                iconTint = AppTheme.current.gold,
+                valueColor = AppTheme.current.ink
             )
         }
     }

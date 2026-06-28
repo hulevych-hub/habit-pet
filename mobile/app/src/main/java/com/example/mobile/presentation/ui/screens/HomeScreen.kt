@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -43,6 +45,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -51,10 +55,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mobile.data.local.entities.HabitEntity
 import com.example.mobile.data.local.entities.PetEntity
+import com.example.mobile.domain.AvatarFrameConfig
 import com.example.mobile.domain.DragonMood
 import com.example.mobile.domain.ExpConfig
 import com.example.mobile.domain.PetTitleConfig
 import com.example.mobile.presentation.ui.components.AnimatedPet
+import com.example.mobile.presentation.ui.components.AvatarFrameOverlay
 import com.example.mobile.presentation.ui.components.GamifiedFixedHeader
 import com.example.mobile.presentation.ui.components.LoadingStateCard
 import com.example.mobile.presentation.ui.components.StreakCalendarOverlay
@@ -92,7 +98,8 @@ fun HomeScreen(
         streakFreezePrompt = streakFreezePrompt,
         onUseStreakFreeze = homeScreenViewModel::usePendingStreakFreeze,
         onDismissStreakFreeze = homeScreenViewModel::dismissStreakFreezePrompt,
-        onEquipTitle = homeScreenViewModel::equipTitle
+        onEquipTitle = homeScreenViewModel::equipTitle,
+        onEquipFrame = homeScreenViewModel::equipFrame
     )
 }
 
@@ -114,13 +121,15 @@ fun HomeScreenContent(
     streakFreezePrompt: com.example.mobile.domain.StreakEngine.StreakFreezePrompt?,
     onUseStreakFreeze: () -> Unit,
     onDismissStreakFreeze: () -> Unit,
-    onEquipTitle: (String?) -> Unit
+    onEquipTitle: (String?) -> Unit,
+    onEquipFrame: (String?) -> Unit
 ) {
     val pet = uiState.pet
     val shouldRequestPetName = pet.id == 0L || pet.name.trim().isEmpty()
     var showMandatoryPetNameDialog by remember { mutableStateOf(false) }
     var showResetGameDialog by remember { mutableStateOf(false) }
     var showTitlePicker by remember { mutableStateOf(false) }
+    var showFramePicker by remember { mutableStateOf(false) }
     var petNameDraft by remember { mutableStateOf(pet.name) }
 
     LaunchedEffect(shouldRequestPetName) { showMandatoryPetNameDialog = shouldRequestPetName }
@@ -159,7 +168,10 @@ fun HomeScreenContent(
                     pet = pet,
                     activeTitleDisplay = uiState.activeTitleDisplay,
                     unlockedTitleIds = uiState.unlockedTitleIds,
-                    onEditTitle = { showTitlePicker = true }
+                    onEditTitle = { showTitlePicker = true },
+                    unlockedFrameIds = uiState.unlockedFrameIds,
+                    equippedFrameId = uiState.equippedFrameId,
+                    onEditFrame = { showFramePicker = true }
                 )
 
                 Column(
@@ -267,6 +279,18 @@ fun HomeScreenContent(
                 onDismiss = { showTitlePicker = false }
             )
         }
+
+        if (showFramePicker) {
+            FramePickerDialog(
+                unlockedFrameIds = uiState.unlockedFrameIds,
+                activeFrameId = uiState.equippedFrameId,
+                onEquip = { frameId ->
+                    onEquipFrame(frameId)
+                    showFramePicker = false
+                },
+                onDismiss = { showFramePicker = false }
+            )
+        }
     }
 }
 
@@ -336,16 +360,109 @@ private fun TitlePickerDialog(
 }
 
 @Composable
+private fun FramePickerDialog(
+    unlockedFrameIds: Set<String>,
+    activeFrameId: String?,
+    onEquip: (String?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Choose Frame") },
+        text = {
+            val unlockedFrames = AvatarFrameConfig.frames.filter { it.id in unlockedFrameIds }
+            Column {
+                for (frame in unlockedFrames) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onEquip(frame.id) }
+                            .padding(vertical = DesignTokens.space8),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        FrameSwatch(
+                            frame = frame,
+                            isSelected = frame.id == activeFrameId,
+                            modifier = Modifier.size(DesignTokens.space24)
+                        )
+                        Spacer(modifier = Modifier.width(DesignTokens.space8))
+                        Column {
+                            Text(
+                                text = frame.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (frame.id == activeFrameId) FontWeight.Bold else FontWeight.Normal
+                            )
+                            Text(
+                                text = frame.description,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = AppTheme.current.ink.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            if (activeFrameId != null) {
+                TextButton(onClick = { onEquip(null) }) {
+                    Text("Clear frame")
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+@Composable
+private fun FrameSwatch(
+    frame: AvatarFrameConfig.FrameDefinition,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val innerColor = Color(frame.innerColor)
+    val outerColor = Color(frame.outerColor)
+    val accentColor = Color(frame.accentColor)
+
+    Canvas(modifier = modifier) {
+        val radius = size.minDimension / 2f
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(innerColor, outerColor),
+                center = Offset(radius, radius),
+                radius = radius
+            ),
+            radius = radius
+        )
+        if (isSelected) {
+            drawCircle(
+                color = accentColor,
+                radius = radius * 0.35f,
+                center = Offset(radius, radius)
+            )
+        }
+    }
+}
+
+@Composable
 private fun PetSummary(
     pet: PetEntity,
     activeTitleDisplay: String?,
     unlockedTitleIds: Set<String>,
-    onEditTitle: () -> Unit
+    onEditTitle: () -> Unit,
+    unlockedFrameIds: Set<String>,
+    equippedFrameId: String?,
+    onEditFrame: () -> Unit
 ) {
+    val summaryShape = RoundedCornerShape(bottomStart = DesignTokens.space28, bottomEnd = DesignTokens.space28)
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = AppTheme.current.card,
-        shape = RoundedCornerShape(bottomStart = DesignTokens.space28, bottomEnd = DesignTokens.space28),
+        shape = summaryShape,
         shadowElevation = DesignTokens.elevationSm
     ) {
         Column(
@@ -368,6 +485,17 @@ private fun PetSummary(
                     modifier = Modifier.fillMaxSize(),
                     showNameOverlay = false
                 )
+
+                // Avatar frame overlay
+                equippedFrameId?.let { frameId ->
+                    AvatarFrameConfig.frameById(frameId)?.let { frame ->
+                        AvatarFrameOverlay(
+                            frame = frame,
+                            shape = summaryShape,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
             }
 
             Row(
@@ -407,6 +535,20 @@ private fun PetSummary(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "Choose title",
                                 tint = AppTheme.current.ink.copy(alpha = 0.5f),
+                                modifier = Modifier.size(DesignTokens.space16)
+                            )
+                        }
+                    }
+                    if (unlockedFrameIds.isNotEmpty()) {
+                        Spacer(modifier = Modifier.width(DesignTokens.space4))
+                        IconButton(
+                            onClick = onEditFrame,
+                            modifier = Modifier.size(DesignTokens.space24)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = "Choose frame",
+                                tint = AppTheme.current.gold.copy(alpha = 0.7f),
                                 modifier = Modifier.size(DesignTokens.space16)
                             )
                         }
@@ -697,7 +839,8 @@ private fun HomeScreenPreview() {
             streakFreezePrompt = null,
             onUseStreakFreeze = {},
             onDismissStreakFreeze = {},
-            onEquipTitle = {}
+            onEquipTitle = {},
+            onEquipFrame = {}
         )
     }
 }

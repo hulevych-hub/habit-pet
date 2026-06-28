@@ -123,6 +123,13 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun equipFrame(frameId: String?) {
+        viewModelScope.launch {
+            val currentPet = pet.value ?: PetEntity(id = 1)
+            petRepository.updatePet(currentPet.copy(id = 1, equippedFrame = frameId))
+        }
+    }
+
     fun usePendingStreakFreeze() {
         viewModelScope.launch {
             val used = streakEngine.useStreakFreeze(System.currentTimeMillis())
@@ -315,6 +322,7 @@ class HomeScreenViewModel @Inject constructor(
     ) { stats, habList, petState, completionXp, partialState ->
         val unlockedTitles = PetEntity.parseUnlockedIds(petState.unlockedTitleIdsJson)
         val titleDisplay = petState.activeTitleId?.let { PetTitleConfig.displayName(it) }
+        val unlockedFrames = PetEntity.parseUnlockedIds(petState.unlockedFramesJson)
         UiState(
             globalStreak = stats.currentStreak,
             habits = habList,
@@ -327,7 +335,9 @@ class HomeScreenViewModel @Inject constructor(
             globalStreakCompletedToday = partialState.first,
             globalStreakPartialToday = partialState.second,
             activeTitleDisplay = titleDisplay,
-            unlockedTitleIds = unlockedTitles
+            unlockedTitleIds = unlockedTitles,
+            unlockedFrameIds = unlockedFrames,
+            equippedFrameId = petState.equippedFrame
         )
     }
     .stateIn(
@@ -345,7 +355,9 @@ class HomeScreenViewModel @Inject constructor(
             globalStreakCompletedToday = false,
             globalStreakPartialToday = false,
             activeTitleDisplay = null,
-            unlockedTitleIds = emptySet()
+            unlockedTitleIds = emptySet(),
+            unlockedFrameIds = emptySet(),
+            equippedFrameId = null
         )
     )
 
@@ -361,7 +373,9 @@ class HomeScreenViewModel @Inject constructor(
         val globalStreakCompletedToday: Boolean,
         val globalStreakPartialToday: Boolean = false,
         val activeTitleDisplay: String? = null,
-        val unlockedTitleIds: Set<String> = emptySet()
+        val unlockedTitleIds: Set<String> = emptySet(),
+        val unlockedFrameIds: Set<String> = emptySet(),
+        val equippedFrameId: String? = null
     )
 
     private fun activeCombo(stats: StatisticsEntity): Int {

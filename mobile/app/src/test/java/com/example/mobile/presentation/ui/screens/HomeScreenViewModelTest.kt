@@ -1,5 +1,6 @@
 package com.example.mobile.presentation.ui.screens
 
+import com.example.mobile.domain.AvatarFrameConfig
 import com.example.mobile.domain.ChallengeEngine
 import com.example.mobile.domain.DailyLoginStreakEngine
 import com.example.mobile.domain.StreakEngine
@@ -140,6 +141,23 @@ class HomeScreenViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.renamePet("Dragon")
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        verify(petRepository).updatePet(any())
+    }
+
+    @Test
+    fun `equipFrame — updates pet equippedFrame`() = runTest {
+        whenever(petRepository.updatePet(any())).thenReturn(1)
+
+        viewModel = HomeScreenViewModel(
+            statisticsRepository, habitRepository, petRepository,
+            habitCompletionRepository, achievementRepository,
+            challengeEngine, streakEngine, dailyLoginStreakEngine, inventoryItemRepository
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.equipFrame(AvatarFrameConfig.GOLDEN)
         testDispatcher.scheduler.advanceUntilIdle()
 
         verify(petRepository).updatePet(any())
