@@ -48,4 +48,7 @@ class AchievementRepositoryImpl @Inject constructor(
     override suspend fun reset() {
         achievementDao.resetAll()
     }
+
+    override suspend fun countClaimed(): Int =
+        achievementDao.countClaimed()
 }

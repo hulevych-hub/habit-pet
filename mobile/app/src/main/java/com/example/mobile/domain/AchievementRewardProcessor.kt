@@ -2,6 +2,7 @@ package com.example.mobile.domain
 
 import android.util.Log
 import androidx.room.withTransaction
+import com.example.mobile.data.local.dao.AchievementDao
 import com.example.mobile.data.local.database.AppDatabase
 import com.example.mobile.domain.EquipableConfig
 import com.example.mobile.domain.UnlockSources
@@ -28,46 +29,7 @@ class AchievementRewardProcessor @Inject constructor(
 
         try {
             preparedRewards = database.withTransaction {
-                val rewards = mutableListOf<PreparedAchievementReward>()
-
-                definition.rewards.forEach { reward ->
-                    when (reward) {
-                        is AchievementReward.CoinReward -> {
-                            if (reward.amount > 0) {
-                                rewards.add(PreparedAchievementReward(reward))
-                            }
-                        }
-
-                        is AchievementReward.ExpReward -> {
-                            if (reward.amount > 0) {
-                                rewards.add(PreparedAchievementReward(reward))
-                            }
-                        }
-
-                        is AchievementReward.ChestReward -> {
-                            rewards.add(
-                                PreparedAchievementReward(
-                                    reward = reward,
-                                    chestReward = ChestRewardFactory.buildChestReward(
-                                        rewardType = "achievement_${reward.chestType.name.lowercase()}",
-                                        chestType = reward.chestType,
-                                        inventoryItemRepository = inventoryItemRepository,
-                                        grantCustomization = false
-                                    )
-                                )
-                            )
-                        }
-
-                        is AchievementReward.CustomizationReward -> {
-                            validateCustomizationReward(reward)
-                            rewards.add(PreparedAchievementReward(reward))
-                        }
-                    }
-                }
-
-                database.achievementDao().markClaimed(achievementId)
-
-                rewards
+                buildAndMarkClaimed(definition, achievementId, database.achievementDao())
             }
 
             preparedRewards
@@ -83,6 +45,53 @@ class AchievementRewardProcessor @Inject constructor(
         }
     }
 
+    internal suspend fun buildAndMarkClaimed(
+        definition: AchievementsConfig.AchievementDefinition,
+        achievementId: String,
+        achievementDao: AchievementDao
+    ): List<PreparedAchievementReward> {
+        val rewards = mutableListOf<PreparedAchievementReward>()
+
+        definition.rewards.forEach { reward ->
+            when (reward) {
+                is AchievementReward.CoinReward -> {
+                    if (reward.amount > 0) {
+                        rewards.add(PreparedAchievementReward(reward))
+                    }
+                }
+
+                is AchievementReward.ExpReward -> {
+                    if (reward.amount > 0) {
+                        rewards.add(PreparedAchievementReward(reward))
+                    }
+                }
+
+                is AchievementReward.ChestReward -> {
+                    rewards.add(
+                        PreparedAchievementReward(
+                            reward = reward,
+                            chestReward = ChestRewardFactory.buildChestReward(
+                                rewardType = "achievement_${reward.chestType.name.lowercase()}",
+                                chestType = reward.chestType,
+                                inventoryItemRepository = inventoryItemRepository,
+                                grantCustomization = false
+                            )
+                        )
+                    )
+                }
+
+                is AchievementReward.CustomizationReward -> {
+                    validateCustomizationReward(reward)
+                    rewards.add(PreparedAchievementReward(reward))
+                }
+            }
+        }
+
+        achievementDao.markClaimed(achievementId)
+
+        return rewards
+    }
+
     private suspend fun validateCustomizationReward(reward: AchievementReward.CustomizationReward) {
         val equipable = EquipableConfig.definition(reward.equipableId)
             ?: throw IllegalStateException("Missing customization reward: ${reward.equipableId}")
@@ -95,14 +104,14 @@ class AchievementRewardProcessor @Inject constructor(
             ?: throw IllegalStateException("Missing customization reward: ${equipable.id}")
     }
 
-    private fun AchievementReward.toRewardUiEvent(): RewardUiEvent = when (this) {
+    internal fun AchievementReward.toRewardUiEvent(): RewardUiEvent = when (this) {
         is AchievementReward.CoinReward -> RewardUiEvent.CoinReward(amount)
         is AchievementReward.ExpReward -> RewardUiEvent.ExpReward(amount.toLong())
         is AchievementReward.ChestReward -> throw IllegalStateException("Chest rewards must provide a built ChestReward")
         is AchievementReward.CustomizationReward -> RewardUiEvent.CustomizationReward(equipableId)
     }
 
-    private data class PreparedAchievementReward(
+    internal data class PreparedAchievementReward(
         val reward: AchievementReward,
         val chestReward: RewardUiEvent.ChestReward? = null
     )

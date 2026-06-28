@@ -22,12 +22,18 @@ class AchievementDatabaseInitializer @Inject constructor(private val database: A
     }
 
     private suspend fun achievementRepositorySync() {
-        val existingIds = database.achievementDao().getAllRaw().map { it.id }.toSet()
+        val dao = database.achievementDao()
+        val configIds = AchievementsConfig.achievements.map { it.id }
 
+        // Remove stale achievement rows that are no longer defined in AchievementsConfig
+        dao.deleteStaleAchievements(configIds)
+
+        // Add any new achievements that don't have a persisted row yet
+        val existingIds = dao.getAllRaw().map { it.id }.toSet()
         AchievementsConfig.achievements
             .filterNot { it.id in existingIds }
             .forEach { definition ->
-                database.achievementDao().insertAchievement(AchievementsConfig.toEntity(definition))
+                dao.insertAchievement(AchievementsConfig.toEntity(definition))
             }
     }
 }

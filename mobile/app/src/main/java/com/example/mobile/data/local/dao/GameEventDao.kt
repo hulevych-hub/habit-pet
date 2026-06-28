@@ -13,4 +13,7 @@ interface GameEventDao {
 
     @Insert
     suspend fun insertGameEvent(event: GameEventEntity): Long
+
+    @Query("SELECT COUNT(*) FROM game_events WHERE type = :type")
+    suspend fun countByType(type: String): Int
 }

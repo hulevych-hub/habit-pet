@@ -108,6 +108,21 @@ class AchievementViewModel @Inject constructor(
             initialValue = 0
         )
 
+    private val bestStreak: StateFlow<Int> = statistics.map { it.bestStreak }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val bestCombo: StateFlow<Int> = statistics.map { it.bestCombo }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val daysActive: StateFlow<Int> = statistics.map { it.daysActive }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val petAgeDays: StateFlow<Int> = statistics.map { it.petAgeDays }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    private val totalCoins: StateFlow<Int> = statistics.map { it.totalCoins }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     init {
         loadAchievements()
     }
@@ -206,6 +221,17 @@ class AchievementViewModel @Inject constructor(
             AchievementProgressSource.TOTAL_XP -> petState.xp.toInt().coerceAtMost(Int.MAX_VALUE)
             AchievementProgressSource.PET_LEVEL -> petState.level
             AchievementProgressSource.OWNED_CUSTOMIZATIONS -> ownedCustomizationCount
+            AchievementProgressSource.BEST_STREAK -> stats.bestStreak
+            AchievementProgressSource.BEST_COMBO -> stats.bestCombo
+            AchievementProgressSource.DAYS_ACTIVE -> stats.daysActive
+            AchievementProgressSource.PET_AGE_DAYS -> stats.petAgeDays
+            AchievementProgressSource.TOTAL_COINS -> stats.totalCoins
+            AchievementProgressSource.FREEZES_USED -> StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).size
+            AchievementProgressSource.CHALLENGES_COMPLETED,
+            AchievementProgressSource.CHESTS_OPENED,
+            AchievementProgressSource.DAILY_LOGINS,
+            AchievementProgressSource.EVOLUTIONS,
+            AchievementProgressSource.ACHIEVEMENTS_CLAIMED -> achievement.progress
             null -> 0
         }.coerceAtLeast(0)
     }

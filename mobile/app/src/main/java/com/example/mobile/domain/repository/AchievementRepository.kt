@@ -17,4 +17,5 @@ interface AchievementRepository {
     suspend fun markClaimed(achievementId: String): Int
     suspend fun syncAchievements(definitions: List<AchievementsConfig.AchievementDefinition>)
     suspend fun reset()
+    suspend fun countClaimed(): Int
 }

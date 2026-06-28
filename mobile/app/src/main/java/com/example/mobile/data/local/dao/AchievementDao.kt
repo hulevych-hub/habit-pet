@@ -41,4 +41,10 @@ interface AchievementDao {
 
     @Query("SELECT * FROM achievements")
     suspend fun getAllRaw(): List<AchievementEntity>
+
+    @Query("SELECT COUNT(*) FROM achievements WHERE isClaimed = 1")
+    suspend fun countClaimed(): Int
+
+    @Query("DELETE FROM achievements WHERE id NOT IN (:ids)")
+    suspend fun deleteStaleAchievements(ids: List<String>)
 }

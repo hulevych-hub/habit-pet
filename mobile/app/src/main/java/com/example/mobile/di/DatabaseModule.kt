@@ -155,7 +155,8 @@ object DatabaseModule {
         statisticsRepository: com.example.mobile.domain.repository.StatisticsRepository,
         inventoryItemRepository: com.example.mobile.domain.repository.InventoryItemRepository,
         achievementRewardProcessor: com.example.mobile.domain.AchievementRewardProcessor,
-        activityTimelineEngine: com.example.mobile.domain.ActivityTimelineEngine
+        activityTimelineEngine: com.example.mobile.domain.ActivityTimelineEngine,
+        gameEventRepository: com.example.mobile.domain.repository.GameEventRepository
     ): com.example.mobile.domain.AchievementEngine {
         return com.example.mobile.domain.AchievementEngine(
             achievementRepository,
@@ -164,7 +165,8 @@ object DatabaseModule {
             statisticsRepository,
             inventoryItemRepository,
             achievementRewardProcessor,
-            activityTimelineEngine
+            activityTimelineEngine,
+            gameEventRepository
         )
     }
 

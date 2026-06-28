@@ -111,6 +111,10 @@ kapt {
     correctErrorTypes = true
 }
 
+tasks.withType(Test) {
+    jvmArgs '-Xmx2g'
+}
+
 
 repositories {
     google()

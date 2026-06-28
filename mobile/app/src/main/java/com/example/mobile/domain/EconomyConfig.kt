@@ -303,6 +303,68 @@ object EconomyConfig {
     /** Approximate days to save for a Legendary customization item (no spending) */
     val DAYS_FOR_LEGENDARY_CUSTOMIZATION: Int = ceilDiv(TARGET_LEGENDARY_CUSTOMIZATION_COST, TARGET_DAILY_COINS)
 
+    // =========================
+    // COIN REWARDS - ACHIEVEMENTS (NEW)
+    // =========================
+
+    /** Achievement: Best streak milestones */
+    const val ACHIEVEMENT_BEST_STREAK_14_COINS: Int = 200
+    const val ACHIEVEMENT_BEST_STREAK_30_COINS: Int = 400
+    const val ACHIEVEMENT_BEST_STREAK_60_COINS: Int = 700
+    const val ACHIEVEMENT_BEST_STREAK_100_COINS: Int = 1000
+
+    /** Achievement: Best combo milestones */
+    const val ACHIEVEMENT_BEST_COMBO_5_COINS: Int = 150
+    const val ACHIEVEMENT_BEST_COMBO_10_COINS: Int = 300
+
+    /** Achievement: Days active milestones */
+    const val ACHIEVEMENT_DAYS_ACTIVE_7_COINS: Int = 100
+    const val ACHIEVEMENT_DAYS_ACTIVE_30_COINS: Int = 250
+    const val ACHIEVEMENT_DAYS_ACTIVE_100_COINS: Int = 500
+
+    /** Achievement: Pet age milestones */
+    const val ACHIEVEMENT_PET_AGE_30_COINS: Int = 200
+    const val ACHIEVEMENT_PET_AGE_365_COINS: Int = 800
+
+    /** Achievement: Total coins hoarded milestones */
+    const val ACHIEVEMENT_COINS_1000_COINS: Int = 150
+    const val ACHIEVEMENT_COINS_10000_COINS: Int = 500
+
+    /** Achievement: Streak freezes used */
+    const val ACHIEVEMENT_FREEZES_1_COINS: Int = 100
+    const val ACHIEVEMENT_FREEZES_5_COINS: Int = 250
+
+    /** Achievement: Challenges completed milestones */
+    const val ACHIEVEMENT_CHALLENGES_1_COINS: Int = 100
+    const val ACHIEVEMENT_CHALLENGES_10_COINS: Int = 300
+    const val ACHIEVEMENT_CHALLENGES_50_COINS: Int = 700
+
+    /** Achievement: Chests opened milestones */
+    const val ACHIEVEMENT_CHESTS_10_COINS: Int = 150
+    const val ACHIEVEMENT_CHESTS_50_COINS: Int = 400
+    const val ACHIEVEMENT_CHESTS_100_COINS: Int = 700
+
+    /** Achievement: Daily logins milestones */
+    const val ACHIEVEMENT_LOGINS_7_COINS: Int = 150
+    const val ACHIEVEMENT_LOGINS_30_COINS: Int = 400
+
+    /** Achievement: Evolutions milestones */
+    const val ACHIEVEMENT_EVOLUTIONS_1_COINS: Int = 200
+    const val ACHIEVEMENT_EVOLUTIONS_3_COINS: Int = 500
+    const val ACHIEVEMENT_EVOLUTIONS_ALL_COINS: Int = 1000
+
+    /** Achievement: Achievements claimed meta milestones */
+    const val ACHIEVEMENTS_CLAIMED_10_COINS: Int = 200
+    const val ACHIEVEMENTS_CLAIMED_25_COINS: Int = 500
+    const val ACHIEVEMENTS_CLAIMED_50_COINS: Int = 1000
+
+    /** Achievement: Endgame milestones */
+    const val ACHIEVEMENT_LEVEL_75_COINS: Int = 1200
+    const val ACHIEVEMENT_LEVEL_100_COINS: Int = 2000
+    const val ACHIEVEMENT_XP_50000_COINS: Int = 1500
+    const val ACHIEVEMENT_COMPLETIONS_2500_COINS: Int = 1000
+    const val ACHIEVEMENT_STREAK_365_COINS: Int = 2000
+
     private fun ceilDiv(value: Int, divisor: Int): Int {
         require(divisor > 0) { "Divisor must be positive" }
         return (value + divisor - 1) / divisor

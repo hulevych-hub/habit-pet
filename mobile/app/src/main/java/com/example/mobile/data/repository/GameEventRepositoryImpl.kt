@@ -15,4 +15,7 @@ class GameEventRepositoryImpl @Inject constructor(
     override suspend fun logEvent(event: GameEventEntity) {
         gameEventDao.insertGameEvent(event)
     }
+
+    override suspend fun countByType(type: String): Int =
+        gameEventDao.countByType(type)
 }

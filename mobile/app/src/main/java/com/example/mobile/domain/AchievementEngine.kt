@@ -1,7 +1,10 @@
 package com.example.mobile.domain
 
 import android.util.Log
+import com.example.mobile.data.local.entities.StatisticsEntity
+import com.example.mobile.domain.GameEventType
 import com.example.mobile.domain.repository.AchievementRepository
+import com.example.mobile.domain.repository.GameEventRepository
 import com.example.mobile.domain.repository.HabitRepository
 import com.example.mobile.domain.repository.InventoryItemRepository
 import com.example.mobile.domain.repository.PetRepository
@@ -9,6 +12,7 @@ import com.example.mobile.domain.repository.StatisticsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -29,10 +33,12 @@ class AchievementEngine @Inject constructor(
     private val statisticsRepository: StatisticsRepository,
     private val inventoryItemRepository: InventoryItemRepository,
     private val achievementRewardProcessor: AchievementRewardProcessor,
-    private val activityTimelineEngine: ActivityTimelineEngine
+    private val activityTimelineEngine: ActivityTimelineEngine,
+    private val gameEventRepository: GameEventRepository,
+    private val scopeDispatcher: kotlinx.coroutines.CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + scopeDispatcher)
     private val claimMutex = Mutex()
 
     init {
@@ -47,6 +53,14 @@ class AchievementEngine @Inject constructor(
         observeXp()
         observeLevel()
         observeCollectionAchievements()
+        observeBestStreak()
+        observeBestCombo()
+        observeDaysActive()
+        observePetAge()
+        observeTotalCoins()
+        observeFreezesUsed()
+        observeEventCounts()
+        observeAchievementsClaimed()
     }
 
     private fun observeHabitCount() {
@@ -125,6 +139,107 @@ class AchievementEngine @Inject constructor(
                     Log.d("AchievementEngine", "Owned customization items = $ownedCount")
                     updateAchievementProgress(AchievementProgressSource.OWNED_CUSTOMIZATIONS, ownedCount)
                 }
+        }
+    }
+
+    private fun observeBestStreak() {
+        scope.launch {
+            statisticsRepository.getStatistics()
+                .map { it.bestStreak }
+                .distinctUntilChanged()
+                .collectLatest { bestStreak ->
+                    Log.d("AchievementEngine", "Best streak = $bestStreak")
+                    updateAchievementProgress(AchievementProgressSource.BEST_STREAK, bestStreak)
+                }
+        }
+    }
+
+    private fun observeBestCombo() {
+        scope.launch {
+            statisticsRepository.getStatistics()
+                .map { it.bestCombo }
+                .distinctUntilChanged()
+                .collectLatest { bestCombo ->
+                    Log.d("AchievementEngine", "Best combo = $bestCombo")
+                    updateAchievementProgress(AchievementProgressSource.BEST_COMBO, bestCombo)
+                }
+        }
+    }
+
+    private fun observeDaysActive() {
+        scope.launch {
+            statisticsRepository.getStatistics()
+                .map { it.daysActive }
+                .distinctUntilChanged()
+                .collectLatest { days ->
+                    Log.d("AchievementEngine", "Days active = $days")
+                    updateAchievementProgress(AchievementProgressSource.DAYS_ACTIVE, days)
+                }
+        }
+    }
+
+    private fun observePetAge() {
+        scope.launch {
+            statisticsRepository.getStatistics()
+                .map { it.petAgeDays }
+                .distinctUntilChanged()
+                .collectLatest { age ->
+                    Log.d("AchievementEngine", "Pet age days = $age")
+                    updateAchievementProgress(AchievementProgressSource.PET_AGE_DAYS, age)
+                }
+        }
+    }
+
+    private fun observeTotalCoins() {
+        scope.launch {
+            statisticsRepository.getStatistics()
+                .map { it.totalCoins }
+                .distinctUntilChanged()
+                .collectLatest { coins ->
+                    Log.d("AchievementEngine", "Total coins = $coins")
+                    updateAchievementProgress(AchievementProgressSource.TOTAL_COINS, coins)
+                }
+        }
+    }
+
+    private fun observeFreezesUsed() {
+        scope.launch {
+            statisticsRepository.getStatistics()
+                .map { StatisticsEntity.parseFreezeDates(it.streakFreezeDatesJson).size }
+                .distinctUntilChanged()
+                .collectLatest { freezes ->
+                    Log.d("AchievementEngine", "Freezes used = $freezes")
+                    updateAchievementProgress(AchievementProgressSource.FREEZES_USED, freezes)
+                }
+        }
+    }
+
+    private fun observeEventCounts() {
+        scope.launch {
+            while (true) {
+                refreshEventCount(GameEventType.CHALLENGE_COMPLETED.name, AchievementProgressSource.CHALLENGES_COMPLETED)
+                refreshEventCount(GameEventType.CHEST_OPENED.name, AchievementProgressSource.CHESTS_OPENED)
+                refreshEventCount(GameEventType.FIRST_DAILY_LOGIN.name, AchievementProgressSource.DAILY_LOGINS)
+                refreshEventCount(GameEventType.DRAGON_EVOLUTION.name, AchievementProgressSource.EVOLUTIONS)
+                delay(5_000)
+            }
+        }
+    }
+
+    private suspend fun refreshEventCount(type: String, source: AchievementProgressSource) {
+        val count = gameEventRepository.countByType(type)
+        Log.d("AchievementEngine", "Event count $type = $count")
+        updateAchievementProgress(source, count)
+    }
+
+    private fun observeAchievementsClaimed() {
+        scope.launch {
+            while (true) {
+                val claimed = achievementRepository.countClaimed()
+                Log.d("AchievementEngine", "Achievements claimed = $claimed")
+                updateAchievementProgress(AchievementProgressSource.ACHIEVEMENTS_CLAIMED, claimed)
+                delay(5_000)
+            }
         }
     }
 

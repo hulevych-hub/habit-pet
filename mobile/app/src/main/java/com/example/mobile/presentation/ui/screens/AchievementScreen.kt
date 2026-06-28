@@ -228,7 +228,8 @@ private fun AchievementScreenContent(
                     )
                     AchievementHallCard(
                         achievement = achievement,
-                        title = definition?.name ?: achievement.id,
+                        title = definition?.name ?: achievement.id.replace('_', ' ')
+                            .replaceFirstChar { it.uppercase() },
                         description = definition?.description ?: "Keep growing.",
                         progressFraction = (progress.toFloat() / target.toFloat()).coerceIn(0f, 1f),
                         progressLabel = progressLabel(progress, achievement),
