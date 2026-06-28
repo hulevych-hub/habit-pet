@@ -500,7 +500,8 @@ private fun todayInDaysSinceEpoch(): Long {
     calendar.set(Calendar.MINUTE, 0)
     calendar.set(Calendar.SECOND, 0)
     calendar.set(Calendar.MILLISECOND, 0)
-    return calendar.timeInMillis / 86_400_000L
+    val offset = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)
+    return (calendar.timeInMillis + offset) / 86_400_000L
 }
 
 private fun evolutionProgressFraction(totalXp: Long, stage: Int): Float {

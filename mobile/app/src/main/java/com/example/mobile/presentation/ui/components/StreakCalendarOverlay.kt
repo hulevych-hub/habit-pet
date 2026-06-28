@@ -122,7 +122,7 @@ object StreakCalendarBuilder {
         }
 
         val days = buildDays(monthStart) { date, _, isToday, isFuture ->
-            val dateKey = date / 86_400_000L
+            val dateKey = dayKey(date)
             val completionCount = completionCountByDate[date] ?: 0
             when {
                 isFuture || habits.isEmpty() -> StreakCalendarDayStatus.EMPTY
@@ -218,6 +218,17 @@ object StreakCalendarBuilder {
         }
 
         return days
+    }
+
+    private fun dayKey(timestamp: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val offset = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)
+        return (calendar.timeInMillis + offset) / 86_400_000L
     }
 }
 

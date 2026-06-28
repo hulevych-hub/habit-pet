@@ -40,7 +40,7 @@ class RewardsViewModel @Inject constructor(
     ) { statistics, pet ->
         UiState(
             globalStreak = statistics.currentStreak,
-            globalStreakCompletedToday = statistics.lastStreakDate == getDayStart(System.currentTimeMillis()) / 86_400_000L,
+            globalStreakCompletedToday = statistics.lastStreakDate == dayKey(System.currentTimeMillis()),
             totalCoins = statistics.totalCoins,
             pet = pet
         )
@@ -105,5 +105,16 @@ class RewardsViewModel @Inject constructor(
         calendar.set(java.util.Calendar.SECOND, 0)
         calendar.set(java.util.Calendar.MILLISECOND, 0)
         return calendar.timeInMillis
+    }
+
+    private fun dayKey(time: Long): Long {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.timeInMillis = time
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        calendar.set(java.util.Calendar.MINUTE, 0)
+        calendar.set(java.util.Calendar.SECOND, 0)
+        calendar.set(java.util.Calendar.MILLISECOND, 0)
+        val offset = calendar.get(java.util.Calendar.ZONE_OFFSET) + calendar.get(java.util.Calendar.DST_OFFSET)
+        return (calendar.timeInMillis + offset) / 86_400_000L
     }
 }

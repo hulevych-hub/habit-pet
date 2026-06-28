@@ -100,6 +100,9 @@ class StatisticsRepositoryImpl @Inject constructor(
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis / 86_400_000L
+        // Timezone-safe day key: midnight-local is not generally a multiple of 86400000
+        // from the UTC epoch, so add the zone+DST offset before dividing.
+        val offset = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)
+        return (calendar.timeInMillis + offset) / 86_400_000L
     }
 }

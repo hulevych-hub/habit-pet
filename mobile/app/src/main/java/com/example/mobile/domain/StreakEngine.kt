@@ -272,10 +272,31 @@ class StreakEngine(
         if (StatisticsEntity.parseFreezeDates(stats.streakFreezeDatesJson).contains(dateKey)) return true
 
         // A day counts as a streak day if at least 1 habit was completed (partial or full)
-        return habitCompletionRepository.hasAnyCompletionOnDate(getDayStart(dateKey * MILLISECONDS_PER_DAY))
+        return habitCompletionRepository.hasAnyCompletionOnDate(dayKeyToTimestamp(dateKey))
     }
 
-    private fun dayKey(time: Long): Long = getDayStart(time) / MILLISECONDS_PER_DAY
+    private fun dayKey(time: Long): Long {
+        val calendar = java.util.Calendar.getInstance()
+        calendar.timeInMillis = time
+        // Use a timezone-safe day key: days since the UTC epoch, computed from local-midnight.
+        // Dividing raw epoch ms by MILLISECONDS_PER_DAY is lossy across timezone offsets
+        // (midnight local is not generally a multiple of 86400000 from the UTC epoch),
+        // which would make the day key non-adjacent across day boundaries.
+        val offset = calendar.get(java.util.Calendar.ZONE_OFFSET) + calendar.get(java.util.Calendar.DST_OFFSET)
+        return (getDayStart(time) + offset) / MILLISECONDS_PER_DAY
+    }
+
+    /**
+     * Inverse of [dayKey]: converts a timezone-safe day key back to the local-midnight
+     * timestamp used to store habit completions.
+     */
+    private fun dayKeyToTimestamp(dateKey: Long): Long {
+        val midnightUtc = dateKey * MILLISECONDS_PER_DAY
+        val calendar = java.util.Calendar.getInstance()
+        calendar.timeInMillis = midnightUtc
+        val offset = calendar.get(java.util.Calendar.ZONE_OFFSET) + calendar.get(java.util.Calendar.DST_OFFSET)
+        return midnightUtc - offset
+    }
 
     private fun getDayStart(time: Long): Long {
         val calendar = java.util.Calendar.getInstance()

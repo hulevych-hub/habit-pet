@@ -339,7 +339,16 @@ class HomeScreenViewModel @Inject constructor(
         return calendar.timeInMillis
     }
 
-    private fun getDayKey(timestamp: Long): Long = getDayStart(timestamp) / 86_400_000L
+    private fun getDayKey(timestamp: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val offset = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)
+        return (calendar.timeInMillis + offset) / 86_400_000L
+    }
 
     private fun getMonthStart(timestamp: Long): Long {
         val calendar = Calendar.getInstance()
