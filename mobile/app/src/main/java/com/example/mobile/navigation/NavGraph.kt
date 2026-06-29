@@ -154,7 +154,7 @@ fun HabitPetNavGraph(
         val isRewardsRoute = currentRoute == AppRoutes.REWARDS ||
             currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true
         val selectedBottomRoute = when {
-            currentRoute?.startsWith("${AppRoutes.REWARDS}/${AppRoutes.REWARDS_OWNED}") == true -> BottomDestination.Pet.route
+            isRewardsRoute -> null
             else -> currentRoute
         }
         val shouldShowBottomBar = bottomDestinations.any { currentRoute == it.route } || isRewardsRoute
@@ -329,16 +329,6 @@ private fun navigateToBottomDestination(
     currentRoute: String? = null
 ) {
     microFeedbackManager?.triggerTabSwitched()
-    if (currentRoute?.startsWith("${AppRoutes.REWARDS}/") == true) {
-        navController.navigate(destination.route) {
-            popUpTo(currentRoute) {
-                inclusive = true
-            }
-            launchSingleTop = true
-        }
-        return
-    }
-
     navController.navigate(destination.route) {
         popUpTo(navController.graph.startDestinationId) {
             inclusive = false

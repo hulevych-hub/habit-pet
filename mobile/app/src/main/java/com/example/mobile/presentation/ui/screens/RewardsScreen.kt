@@ -330,8 +330,7 @@ private fun InventoryItemGridSquare(
                 color = if (isSelected) AppTheme.current.violet else if (isEquipped) AppTheme.current.mint else Color.Transparent,
                 shape = DesignTokens.cardCorner
             )
-            .clickable(onClick = onClick)
-            .pressableScale(),
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = AppTheme.current.card),
         shape = DesignTokens.cardCorner,
         elevation = CardDefaults.cardElevation(defaultElevation = if (item.isPurchased && !isSelected) DesignTokens.elevationSm else DesignTokens.elevationNone)
