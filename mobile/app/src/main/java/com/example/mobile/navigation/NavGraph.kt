@@ -328,14 +328,15 @@ private fun navigateToBottomDestination(
     microFeedbackManager: MicroFeedbackManager?,
     currentRoute: String? = null
 ) {
+    if (currentRoute == destination.route) return
     microFeedbackManager?.triggerTabSwitched()
     navController.navigate(destination.route) {
         popUpTo(navController.graph.startDestinationId) {
             inclusive = false
-            saveState = true
+            saveState = false
         }
         launchSingleTop = true
-        restoreState = true
+        restoreState = false
     }
 }
 
